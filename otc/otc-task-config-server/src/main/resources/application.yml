@@ -1,0 +1,28 @@
+spring:
+   application:
+    name: otc-task-config-server
+   thymeleaf:
+    cache: false
+    prefix: classpath:/templates/
+    suffix: .html
+    encoding: UTF-8
+    content-type: text/html
+    mode: HTML5   
+   cloud:
+    config:
+      label: master
+      profile: dev
+      discovery:
+        enabled:  true
+        serviceId:  task-config-server
+    bus:
+      enabled: true
+      trace:
+        enabled: true
+   client:
+    serviceUrl:
+      defaultZone:  http://localhost:8761/eureka/
+feign.hystrix.enabled: true  
+logging:
+  level:
+      otc.*: debug   

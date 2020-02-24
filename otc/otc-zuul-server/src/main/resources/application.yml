@@ -1,0 +1,18 @@
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+spring:
+  application:
+    name: otc-zuul-server
+zuul:
+  routes:
+    api-a:
+      path: /api-admin/**
+      serviceId: otc-admin-server
+    api-b:
+      path: /api-pay/**
+      serviceId: otc-pay-server
+    api-c:
+      path: /api-pay-deal/**
+      serviceId: otc-pay-server

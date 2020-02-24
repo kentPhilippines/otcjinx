@@ -1,0 +1,29 @@
+spring:
+   application:
+    name: otc-pay-server
+   thymeleaf:
+    cache: false
+    prefix: classpath:/templates/
+    suffix: .html
+    encoding: UTF-8
+    content-type: text/html
+    mode: HTML5   
+   cloud:
+    config:
+      label: master
+      profile: dev
+      discovery:
+        enabled:  true
+        serviceId:  pay-server
+    bus:
+      enabled: true
+      trace:
+        enabled: true
+   client:
+    serviceUrl:
+      defaultZone:  http://localhost:8761/eureka/
+#链路追踪
+feign.hystrix.enabled: true  
+logging:
+  level:
+      pay.*: debug   
