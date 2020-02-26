@@ -11,8 +11,6 @@ import otc.result.Result;
  * <p>远程调用服务接口</p>
  * @author K
  */
-@FeignClient(value=PayApiConstant.Server.PAY_SERVICE, fallback = TestSeviceClientFeignHystrix.class)
+@FeignClient(value=PayApiConstant.Server.PAY_SERVER, fallback = TestSeviceClientFeignHystrix.class)
 public interface TestSeviceClientFeign extends TestSeviceClientFeignCommon{
-	@GetMapping(PayApiConstant.Test.TEST+PayApiConstant.Test.FIND_TEST)
-	public Result findTest();
 }
