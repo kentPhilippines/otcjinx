@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<meta name="format-detection" content="telephone=no,email=no,adress=no">
+ 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta http-equiv="cleartype" content="on">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <script src="https://staticjy.oss-cn-hangzhou.aliyuncs.com/clipboard.min.js"></script>    <script type="text/javascript" src="https://staticjy.oss-cn-hangzhou.aliyuncs.com/networking/js/flexible.js"></script><style>@charset "utf-8";html{color:#000;background:#fff;overflow-y:scroll;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%}html *{outline:0;-webkit-text-size-adjust:none;-webkit-tap-highlight-color:rgba(0,0,0,0)}html,body{font-family:sans-serif}body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td,hr,button,article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{margin:0;padding:0}input,select,textarea{font-size:100%}table{border-collapse:collapse;border-spacing:0}fieldset,img{border:0}abbr,acronym{border:0;font-variant:normal}del{text-decoration:line-through}address,caption,cite,code,dfn,em,th,var{font-style:normal;font-weight:500}ol,ul{list-style:none}caption,th{text-align:left}h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:500}q:before,q:after{content:''}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sup{top:-.5em}sub{bottom:-.25em}a:hover{text-decoration:underline}ins,a{text-decoration:none}</style>
+    <script type="text/javascript" src="https://staticjy.oss-cn-hangzhou.aliyuncs.com/networking/js/zepto.min.js"></script>
+	<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://cdn.staticfile.org/vue/2.4.2/vue.min.js"></script>
+	<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+	<script src="https://cdn.bootcss.com/layer/2.3/layer.js"></script>
+	<script src="https://cdn.bootcss.com/dayjs/1.7.8/dayjs.min.js"></script>
+	<script src="https://staticjy.oss-cn-hangzhou.aliyuncs.com/clipboard.min.js"></script>
+	<script type="text/javascript" src="/js/clipboard.min.js"></script>
+<title>支付宝付款</title> 
+<style type="text/css">
+body {
+	background: #fff;
+}
+.container {
+	position: relative;
+	width: 1200px;
+	text-align: center;
+	margin: 0 auto;
+	padding: 150px 500px 0 0;
+	box-sizing: border-box;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+.aliLogo, .openBtn {
+	display: none;
+}
+.orderNo {
+	margin: 0;
+	font-size: 20px;
+	color: #303030;
+}
+.orderNo .orderMobile {
+	display: none;
+}
+.qrcode {
+	display: block;
+	width: 200px;
+	height: 200px;
+	margin: 0 auto;
+}
+.pc-font{
+	font-weight: 900;
+    	font-size: 1vw;
+    	color: #d85353;
+}
+.price {
+	display: none;
+	margin: 0 0 10px;
+	font-size: 20px;
+	color: #1F1F1F;
+	font-weight: 400;
+}
+.price1 {
+		display: block;
+	    font-size: 52px;
+    	margin-top: -3vw;
+	}
+.phone-font{
+	display: none;
+	}
+.phone-time{
+	font-weight: 500;
+    	font-size:1vw;
+    	margin-top: 1.1rem;
+}
+.info {
+	margin: 0;
+	font-size: 22px;
+	color: #252525;
+}
+@media ( max-width : 768px) {
+	.pc {
+		display: none;
+	}
+	.container {
+		width: 100vw;
+		padding: 10vw 0;
+	}
+	.aliLogo {
+		display: block;
+		height: 15vw;
+		margin:-10vw 20vw 1rem -6rem;
+		background:
+			url(https://t.alipayobjects.com/images/T11rdgXbFkXXXXXXXX.png)
+			no-repeat center;
+		background-size: auto 6vw;
+	}
+	.orderNo {
+		font-size: 4vw;
+		margin-top: 5vw;
+	}
+	.orderNo .orderMobile {
+		display: block;
+	}
+	.qrcode {
+		width: 60vw;
+		height: 60vw;
+	}
+	.price {
+		display: block;
+		font-size: 3vw;
+		margin: -20vw 0vw 0 19vw;
+	}
+	.price1 {
+		display: block;
+		font-size: 10vw;
+		margin-top: -13vw;
+	}
+	.pc-font{
+	display: none;
+	}
+	.openBtn {
+		display: block;
+		width: 30vw;
+    	height: 10vw;
+    	margin: 0vw auto 0;
+		font-size: 5vw;
+		font-weight: 700;
+		color: #fff;
+		border-radius: 5px;
+		background: #019fe8;
+		-webkit-appearance: none;
+	}
+	.openBtn:disabled {
+		background: #ccc;
+	}
+	.phone{
+	    background-color: #f2f2f2;
+    	height: 0.1rem;
+    	margin-top: 0.2rem;
+    }
+	.phone-font{
+		display: block;
+	 	font-weight: 900;
+    	font-size: 5vw;
+    	color: #d85353;
+    	margin-left: 0.1rem;
+    }
+    .phone-time{
+    	display: block;
+	 	font-weight: 500;
+    	font-size: 5vw;
+    	margin-top: 1.1rem;
+    }
+}
+</style>
+<script>
+</script>
+</head>
+<body>
+<div    id="pay"> 
+
+	<div class="container" >
+	<p>
+		<div class="aliLogo"></div>
+		<p class="price">
+			<span id="orderNo" >{{orderNo}}</span>
+			<a id="copyCode" class="label" onclick="copyUrl()" data-clipboard-target="#orderNo" style="margin-left:10px;color:#00AAEA;vertical-align:middle;" >复制</a>
+		</br> 
+		</p>
+		<p class="orderNo">
+			  <span class="pc"><font color=red>请在5分钟内完成支付</br>切勿重复支付 </font></span>  
+		</p>
+		<img  class="qrcode"  :src="orderInfo.orderQr != null ? '/storage/imgbak/' + orderInfo.orderQr :  'images/pay/loading.gif'"  style="width: 200px; height: 200px;"v-show="!overdueFlag"    > 
+			 <img class="image" src="/static/images/pay/overdue.png" style="width: 200px; height: 200px;" v-show="overdueFlag">
+		</p>
+		<p class="price1">
+			</br><span id="dealAmount">{{orderInfo.dealAmount}}</span> 元
+		</p>
+		<p class="info pc">
+			请使用<span style="color: #419bf9;">支付宝</span>扫描二维码
+		</p>
+		<p>
+			<img class="pc"
+				src="https://staticjy.oss-cn-hangzhou.aliyuncs.com/example.png"
+				style="position: absolute; top: 40px; right: 200px; width: 400px; height: 530px;" />
+		</p>
+		<input class="openBtn" type="button" id="copyAmount" data-clipboard-target="#dealAmount" value="复制金额" onclick="coptAmount()">
+		<p class="phone"> </p>
+		<p class="phone-font">截图-支付宝-扫一扫</p>
+		<p class="phone-font">请勿重复扫码和修改金额，付款金额以设定金额为准</p>
+		<!-- <p class="phone-font">避免带来不必要的损失</p> -->
+		<p class="phone-font">遇到无效二维码请返回商户重新下单</p>
+		<p class="phone-font">需要多次付款请重新发起订单</p>
+		<p class="phone-font">不要输入任何备注，以免影响到账</p>
+		<p class="pc-font">截图-支付宝-扫一扫</p>
+		<p class="pc-font">请勿重复扫码和修改金额，付款金额以设定金额为准</p>
+	<!-- 	<p class="pc-font">避免带来不必要的损失</p> -->
+		<p class="pc-font">遇到无效二维码请返回商户重新下单</p>
+		<p class="pc-font">需要多次付款请重新发起订单</p>
+		<p class="pc-font">不要输入任何备注，以免影响到账</p>
+		<p class="phone-time">
+		有效时间： <span id="leftTime" style="color: red;">{{countdownMinute}}:{{countdownSecond}}</span><br> 
+		</p>
+	</div>
+	    <script type="text/javascript">
+		  function copyUrl() {
+			  let orderNo = document.getElementById("orderNo").innerText;
+			  let val = document.getElementById("orderNo");
+			  val.value = orderNo;
+			  var clipboard = new ClipboardJS("#copyCode");
+			  clipboard.on("success", function (e) {
+				  layer.msg("复制成功", {time: 1000});
+				  e.clearSelection();
+			  });
+			  clipboard.on("error", function (e) {
+				  layer.msg("请选择内容进行复制")
+			  })
+		  }
+		  
+		  function coptAmount(){
+			  let amount = document.getElementById("dealAmount").innerText;
+			  let val = document.getElementById("dealAmount");
+			  val.value = amount;
+			  var clipboard = new ClipboardJS("#copyAmount");
+			  clipboard.on("success", function (e) {
+				  layer.msg("复制成功", {time: 1000});
+				  e.clearSelection();
+			  });
+			  clipboard.on("error", function (e) {
+				  layer.msg("请选择内容进行复制")
+			  })
+		  }
+  		</script>
+	</div>
+	
+	
+</body>
+
+<script type="text/javascript">
+var payVM = new Vue({
+	el : '#pay',
+	data : {
+		orderNo : '',
+		overdueFlag : false,
+		residueSecond : '',
+		countdownHour : '',
+		countdownMinute : '--',
+		countdownSecond : '--',
+		countdownInterval : null,
+		paySuccessFlag : false,
+		checkPaySuccessInterval : null,
+		orderInfo : {},
+		tinyurl : '',
+		showbtn : false
+	},
+	computed : {},
+	created : function() {
+		var orderNo = this.getQueryString('MD5');
+		if (orderNo == null || orderNo == '') {
+			layer.alert('无效的订单号', {
+				title : '提示',
+				icon : 7,
+				time : 3000
+			});
+			return;
+		}
+		this.orderNo = orderNo;
+		this.firstLoadGatheringCode();
+	},
+	methods : {
+		firstLoadGatheringCode : function() {
+			var that = this;
+			that.$http.get('/api/getOrderGatheringCode', {
+				params : {
+					orderNo : that.orderNo
+				}
+			}).then(function(res) {
+				that.orderInfo = res.body.result;
+				if(that.orderInfo.tinyurl){
+					that.showbtn = true;
+				}else{
+					that.showbtn = false;
+				}
+				that.orderNo = that.orderInfo.orderId;
+				if (that.orderInfo.orderState != '1') {
+					that.paySuccessFlag = true;
+					that.toReturnUrl();
+					return;
+				}
+				that.overdueFlag = !dayjs(that.orderInfo.usefulTime).isAfter(dayjs());
+				if (!that.overdueFlag) {
+					that.residueSecond = dayjs(that.orderInfo.usefulTime).diff(dayjs(res.body.timestamp), 'second');
+					that.countdown();
+					if (that.orderInfo.orderState == '1') {
+						that.loadGatheringCode();
+					}
+				}
+			});
+		},
+
+		toReturnUrl : function() {
+			var that = this;
+			setTimeout(function() {
+				window.location.href = that.orderInfo.returnUrl;
+			}, 2000);
+		},
+
+		loadGatheringCode : function() {
+			var that = this;
+			that.loadGatheringCodeInterval = window.setInterval(function() {
+				if (that.orderInfo.orderStatus == '2' || that.orderInfo.orderStatus == '4') {
+					if (that.loadGatheringCodeInterval != null) {
+						window.clearInterval(that.loadGatheringCodeInterval);
+						that.loadGatheringCodeInterval = null;
+					}
+					return;
+				}
+				that.loadGatheringCodeInner();
+			}, 3000);
+		},
+
+		loadGatheringCodeInner : function() {
+			var that = this;
+			that.$http.get('/api/getOrderGatheringCode1', {
+				params : {
+					orderNo : that.orderNo
+				}
+			}).then(function(res) {
+				that.orderInfo = res.body.result;
+				if (that.orderInfo.orderStatus == '2' || that.orderInfo.orderStatus == '4') {
+					that.residueSecond = dayjs(that.orderInfo.usefulTime).diff(dayjs(res.body.timestamp), 'second');
+					that.checkPaySuccess();
+				}
+			});
+		},
+		openWindow : function(url){
+			var newTab = 1;
+			if (newTab) {
+				newTab = 0;
+				window.open('alipays://platformapi/startapp?appId=66666675&url='+url+'');
+			} else {
+				if (top.location != location) {
+					top.location.href = location.href;
+				}
+				newTab = 1;
+				window.location.replace('alipays://platformapi/startapp?appId=66666675&url='+url+'', '');
+			}
+		},
+		checkPaySuccess : function() {
+			var that = this;
+			that.checkPaySuccessInterval = window.setInterval(function() {
+				if (that.orderInfo.orderState == '4') {//交易订单状态为4
+					that.paySuccessFlag = true;//支付成功状态
+					that.toReturnUrl();
+					if (that.checkPaySuccessInterval != null) {
+						window.clearInterval(that.checkPaySuccessInterval);
+						that.checkPaySuccessInterval = null;
+					}
+					if (that.countdownInterval != null) {
+						window.clearInterval(that.countdownInterval);
+						that.countdownInterval = null;
+					}
+					return;
+				}
+				that.checkPaySuccessInner();
+			}, 3000);
+		},
+
+		checkPaySuccessInner : function() {
+			var that = this;
+			that.$http.get('/api/getOrderGatheringCode1', {
+				params : {
+					orderNo : that.orderNo
+				}
+			}).then(function(res) {
+				that.orderInfo = res.body.result;
+			});
+		},
+
+		countdown : function() {
+			var that = this;
+			that.countdownInterval = window.setInterval(function() {
+				var residueSecond = that.residueSecond;
+				that.updateCountdownClock(residueSecond);
+				residueSecond--;
+				that.residueSecond = residueSecond;
+				if (residueSecond < 0) {
+					window.clearInterval(that.countdownInterval);
+					that.countdownInterval = null;
+					if (that.loadGatheringCodeInterval != null) {
+						window.clearInterval(that.loadGatheringCodeInterval);
+						that.loadGatheringCodeInterval = null;
+					}
+					that.overdueFlag = true;
+				}
+			}, 1000);
+		},
+
+		/**
+		 * 更新倒计时
+		 */
+		updateCountdownClock : function(residueSecond) {
+			var that = this;
+			var countdownHour = 0;
+			var countdownMinute = 0;
+			var countdownSecond = 0;
+			if (residueSecond > 0) {
+				countdownHour = parseInt(residueSecond / (60 * 60) % 24);
+				countdownMinute = parseInt(residueSecond / 60 % 60);
+				countdownSecond = parseInt(residueSecond % 60);
+			}
+			if (countdownHour < 10) {
+				countdownHour = '0' + countdownHour;
+			}
+			if (countdownMinute < 10) {
+				countdownMinute = '0' + countdownMinute;
+			}
+			if (countdownSecond < 10) {
+				countdownSecond = '0' + countdownSecond;
+			}
+			that.countdownHour = countdownHour;
+			that.countdownMinute = countdownMinute;
+			that.countdownSecond = countdownSecond;
+			console.log(that.countdownSecond);
+		},
+
+		getQueryString : function(name) {
+			var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+			var r = window.location.search.substr(1).match(reg);
+			if (r != null)
+				return unescape(r[2]);
+			return null;
+		}
+
+	}
+});
+</script>
+

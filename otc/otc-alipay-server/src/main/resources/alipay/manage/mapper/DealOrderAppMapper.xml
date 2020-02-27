@@ -1,0 +1,497 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="alipay.manage.mapper.DealOrderAppMapper" >
+  <resultMap id="BaseResultMap" type="alipay.manage.bean.DealOrderApp" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <id column="orderId" property="orderId" jdbcType="VARCHAR" />
+    <result column="orderType" property="orderType" jdbcType="INTEGER" />
+    <result column="orderAccount" property="orderAccount" jdbcType="VARCHAR" />
+    <result column="orderStatus" property="orderStatus" jdbcType="BIT" />
+    <result column="orderAmount" property="orderAmount" jdbcType="DECIMAL" />
+    <result column="orderIp" property="orderIp" jdbcType="VARCHAR" />
+    <result column="appOrderId" property="appOrderId" jdbcType="VARCHAR" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="feeId" property="feeId" jdbcType="INTEGER" />
+    <result column="notify" property="notify" jdbcType="VARCHAR" />
+    <result column="back" property="back" jdbcType="VARCHAR" />
+    <result column="submitTime" property="submitTime" jdbcType="TIMESTAMP" />
+    <result column="submitSystem" property="submitSystem" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="retain1" property="retain1" jdbcType="CHAR" />
+    <result column="retain2" property="retain2" jdbcType="CHAR" />
+    <result column="retain3" property="retain3" jdbcType="CHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="alipay.manage.bean.DealOrderApp" extends="BaseResultMap" >
+    <result column="dealDescribe" property="dealDescribe" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, orderId, orderType, orderAccount, orderStatus, orderAmount, orderIp, appOrderId, 
+    createTime, feeId, notify, back, submitTime, submitSystem, status, retain1, retain2, 
+    retain3
+  </sql>
+  <sql id="Blob_Column_List" >
+    dealDescribe
+  </sql>
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="alipay.manage.bean.DealOrderAppExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from alipay_deal_order_app
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="alipay.manage.bean.DealOrderAppExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from alipay_deal_order_app
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from alipay_deal_order_app
+    where id = #{id,jdbcType=INTEGER}
+      and orderId = #{orderId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="map" >
+    delete from alipay_deal_order_app
+    where id = #{id,jdbcType=INTEGER}
+      and orderId = #{orderId,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="alipay.manage.bean.DealOrderAppExample" >
+    delete from alipay_deal_order_app
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="alipay.manage.bean.DealOrderApp" useGeneratedKeys="true" keyProperty="id" >
+    insert into alipay_deal_order_app (orderId, orderType, orderAccount, 
+      orderStatus, orderAmount, orderIp, 
+      appOrderId, createTime, feeId, 
+      notify, back, submitTime, 
+      submitSystem, status, retain1, 
+      retain2, retain3, dealDescribe
+      )
+    values (#{orderId,jdbcType=VARCHAR}, #{orderType,jdbcType=INTEGER}, #{orderAccount,jdbcType=VARCHAR}, 
+      #{orderStatus,jdbcType=BIT}, #{orderAmount,jdbcType=DECIMAL}, #{orderIp,jdbcType=VARCHAR}, 
+      #{appOrderId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{feeId,jdbcType=INTEGER}, 
+      #{notify,jdbcType=VARCHAR}, #{back,jdbcType=VARCHAR}, #{submitTime,jdbcType=TIMESTAMP}, 
+      #{submitSystem,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{retain1,jdbcType=CHAR}, 
+      #{retain2,jdbcType=CHAR}, #{retain3,jdbcType=CHAR}, #{dealDescribe,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="alipay.manage.bean.DealOrderApp" useGeneratedKeys="true" keyProperty="id" >
+    insert into alipay_deal_order_app
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="orderId != null" >
+        orderId,
+      </if>
+      <if test="orderType != null" >
+        orderType,
+      </if>
+      <if test="orderAccount != null" >
+        orderAccount,
+      </if>
+      <if test="orderStatus != null" >
+        orderStatus,
+      </if>
+      <if test="orderAmount != null" >
+        orderAmount,
+      </if>
+      <if test="orderIp != null" >
+        orderIp,
+      </if>
+      <if test="appOrderId != null" >
+        appOrderId,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="feeId != null" >
+        feeId,
+      </if>
+      <if test="notify != null" >
+        notify,
+      </if>
+      <if test="back != null" >
+        back,
+      </if>
+      <if test="submitTime != null" >
+        submitTime,
+      </if>
+      <if test="submitSystem != null" >
+        submitSystem,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="retain1 != null" >
+        retain1,
+      </if>
+      <if test="retain2 != null" >
+        retain2,
+      </if>
+      <if test="retain3 != null" >
+        retain3,
+      </if>
+      <if test="dealDescribe != null" >
+        dealDescribe,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="orderId != null" >
+        #{orderId,jdbcType=VARCHAR},
+      </if>
+      <if test="orderType != null" >
+        #{orderType,jdbcType=INTEGER},
+      </if>
+      <if test="orderAccount != null" >
+        #{orderAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="orderStatus != null" >
+        #{orderStatus,jdbcType=BIT},
+      </if>
+      <if test="orderAmount != null" >
+        #{orderAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="orderIp != null" >
+        #{orderIp,jdbcType=VARCHAR},
+      </if>
+      <if test="appOrderId != null" >
+        #{appOrderId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="feeId != null" >
+        #{feeId,jdbcType=INTEGER},
+      </if>
+      <if test="notify != null" >
+        #{notify,jdbcType=VARCHAR},
+      </if>
+      <if test="back != null" >
+        #{back,jdbcType=VARCHAR},
+      </if>
+      <if test="submitTime != null" >
+        #{submitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="submitSystem != null" >
+        #{submitSystem,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="retain1 != null" >
+        #{retain1,jdbcType=CHAR},
+      </if>
+      <if test="retain2 != null" >
+        #{retain2,jdbcType=CHAR},
+      </if>
+      <if test="retain3 != null" >
+        #{retain3,jdbcType=CHAR},
+      </if>
+      <if test="dealDescribe != null" >
+        #{dealDescribe,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="alipay.manage.bean.DealOrderAppExample" resultType="java.lang.Integer" >
+    select count(*) from alipay_deal_order_app
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update alipay_deal_order_app
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.orderId != null" >
+        orderId = #{record.orderId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.orderType != null" >
+        orderType = #{record.orderType,jdbcType=INTEGER},
+      </if>
+      <if test="record.orderAccount != null" >
+        orderAccount = #{record.orderAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="record.orderStatus != null" >
+        orderStatus = #{record.orderStatus,jdbcType=BIT},
+      </if>
+      <if test="record.orderAmount != null" >
+        orderAmount = #{record.orderAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="record.orderIp != null" >
+        orderIp = #{record.orderIp,jdbcType=VARCHAR},
+      </if>
+      <if test="record.appOrderId != null" >
+        appOrderId = #{record.appOrderId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null" >
+        createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.feeId != null" >
+        feeId = #{record.feeId,jdbcType=INTEGER},
+      </if>
+      <if test="record.notify != null" >
+        notify = #{record.notify,jdbcType=VARCHAR},
+      </if>
+      <if test="record.back != null" >
+        back = #{record.back,jdbcType=VARCHAR},
+      </if>
+      <if test="record.submitTime != null" >
+        submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.submitSystem != null" >
+        submitSystem = #{record.submitSystem,jdbcType=VARCHAR},
+      </if>
+      <if test="record.status != null" >
+        status = #{record.status,jdbcType=INTEGER},
+      </if>
+      <if test="record.retain1 != null" >
+        retain1 = #{record.retain1,jdbcType=CHAR},
+      </if>
+      <if test="record.retain2 != null" >
+        retain2 = #{record.retain2,jdbcType=CHAR},
+      </if>
+      <if test="record.retain3 != null" >
+        retain3 = #{record.retain3,jdbcType=CHAR},
+      </if>
+      <if test="record.dealDescribe != null" >
+        dealDescribe = #{record.dealDescribe,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map" >
+    update alipay_deal_order_app
+    set id = #{record.id,jdbcType=INTEGER},
+      orderId = #{record.orderId,jdbcType=VARCHAR},
+      orderType = #{record.orderType,jdbcType=INTEGER},
+      orderAccount = #{record.orderAccount,jdbcType=VARCHAR},
+      orderStatus = #{record.orderStatus,jdbcType=BIT},
+      orderAmount = #{record.orderAmount,jdbcType=DECIMAL},
+      orderIp = #{record.orderIp,jdbcType=VARCHAR},
+      appOrderId = #{record.appOrderId,jdbcType=VARCHAR},
+      createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      feeId = #{record.feeId,jdbcType=INTEGER},
+      notify = #{record.notify,jdbcType=VARCHAR},
+      back = #{record.back,jdbcType=VARCHAR},
+      submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
+      submitSystem = #{record.submitSystem,jdbcType=VARCHAR},
+      status = #{record.status,jdbcType=INTEGER},
+      retain1 = #{record.retain1,jdbcType=CHAR},
+      retain2 = #{record.retain2,jdbcType=CHAR},
+      retain3 = #{record.retain3,jdbcType=CHAR},
+      dealDescribe = #{record.dealDescribe,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update alipay_deal_order_app
+    set id = #{record.id,jdbcType=INTEGER},
+      orderId = #{record.orderId,jdbcType=VARCHAR},
+      orderType = #{record.orderType,jdbcType=INTEGER},
+      orderAccount = #{record.orderAccount,jdbcType=VARCHAR},
+      orderStatus = #{record.orderStatus,jdbcType=BIT},
+      orderAmount = #{record.orderAmount,jdbcType=DECIMAL},
+      orderIp = #{record.orderIp,jdbcType=VARCHAR},
+      appOrderId = #{record.appOrderId,jdbcType=VARCHAR},
+      createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      feeId = #{record.feeId,jdbcType=INTEGER},
+      notify = #{record.notify,jdbcType=VARCHAR},
+      back = #{record.back,jdbcType=VARCHAR},
+      submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
+      submitSystem = #{record.submitSystem,jdbcType=VARCHAR},
+      status = #{record.status,jdbcType=INTEGER},
+      retain1 = #{record.retain1,jdbcType=CHAR},
+      retain2 = #{record.retain2,jdbcType=CHAR},
+      retain3 = #{record.retain3,jdbcType=CHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="alipay.manage.bean.DealOrderApp" >
+    update alipay_deal_order_app
+    <set >
+      <if test="orderType != null" >
+        orderType = #{orderType,jdbcType=INTEGER},
+      </if>
+      <if test="orderAccount != null" >
+        orderAccount = #{orderAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="orderStatus != null" >
+        orderStatus = #{orderStatus,jdbcType=BIT},
+      </if>
+      <if test="orderAmount != null" >
+        orderAmount = #{orderAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="orderIp != null" >
+        orderIp = #{orderIp,jdbcType=VARCHAR},
+      </if>
+      <if test="appOrderId != null" >
+        appOrderId = #{appOrderId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="feeId != null" >
+        feeId = #{feeId,jdbcType=INTEGER},
+      </if>
+      <if test="notify != null" >
+        notify = #{notify,jdbcType=VARCHAR},
+      </if>
+      <if test="back != null" >
+        back = #{back,jdbcType=VARCHAR},
+      </if>
+      <if test="submitTime != null" >
+        submitTime = #{submitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="submitSystem != null" >
+        submitSystem = #{submitSystem,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="retain1 != null" >
+        retain1 = #{retain1,jdbcType=CHAR},
+      </if>
+      <if test="retain2 != null" >
+        retain2 = #{retain2,jdbcType=CHAR},
+      </if>
+      <if test="retain3 != null" >
+        retain3 = #{retain3,jdbcType=CHAR},
+      </if>
+      <if test="dealDescribe != null" >
+        dealDescribe = #{dealDescribe,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+      and orderId = #{orderId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="alipay.manage.bean.DealOrderApp" >
+    update alipay_deal_order_app
+    set orderType = #{orderType,jdbcType=INTEGER},
+      orderAccount = #{orderAccount,jdbcType=VARCHAR},
+      orderStatus = #{orderStatus,jdbcType=BIT},
+      orderAmount = #{orderAmount,jdbcType=DECIMAL},
+      orderIp = #{orderIp,jdbcType=VARCHAR},
+      appOrderId = #{appOrderId,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      feeId = #{feeId,jdbcType=INTEGER},
+      notify = #{notify,jdbcType=VARCHAR},
+      back = #{back,jdbcType=VARCHAR},
+      submitTime = #{submitTime,jdbcType=TIMESTAMP},
+      submitSystem = #{submitSystem,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER},
+      retain1 = #{retain1,jdbcType=CHAR},
+      retain2 = #{retain2,jdbcType=CHAR},
+      retain3 = #{retain3,jdbcType=CHAR},
+      dealDescribe = #{dealDescribe,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+      and orderId = #{orderId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="alipay.manage.bean.DealOrderApp" >
+    update alipay_deal_order_app
+    set orderType = #{orderType,jdbcType=INTEGER},
+      orderAccount = #{orderAccount,jdbcType=VARCHAR},
+      orderStatus = #{orderStatus,jdbcType=BIT},
+      orderAmount = #{orderAmount,jdbcType=DECIMAL},
+      orderIp = #{orderIp,jdbcType=VARCHAR},
+      appOrderId = #{appOrderId,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      feeId = #{feeId,jdbcType=INTEGER},
+      notify = #{notify,jdbcType=VARCHAR},
+      back = #{back,jdbcType=VARCHAR},
+      submitTime = #{submitTime,jdbcType=TIMESTAMP},
+      submitSystem = #{submitSystem,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER},
+      retain1 = #{retain1,jdbcType=CHAR},
+      retain2 = #{retain2,jdbcType=CHAR},
+      retain3 = #{retain3,jdbcType=CHAR}
+    where id = #{id,jdbcType=INTEGER}
+      and orderId = #{orderId,jdbcType=VARCHAR}
+  </update>
+</mapper>

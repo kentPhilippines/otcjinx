@@ -1,0 +1,750 @@
+<html data-dpr="1" style="font-size: 54px;"><head>
+    <meta charset="UTF-8">
+    <title>充值</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta http-equiv="cleartype" content="on">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <script src="https://staticjy.oss-cn-hangzhou.aliyuncs.com/clipboard.min.js"></script>    <script type="text/javascript" src="https://staticjy.oss-cn-hangzhou.aliyuncs.com/networking/js/flexible.js"></script><style>@charset "utf-8";html{color:#000;background:#fff;overflow-y:scroll;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%}html *{outline:0;-webkit-text-size-adjust:none;-webkit-tap-highlight-color:rgba(0,0,0,0)}html,body{font-family:sans-serif}body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td,hr,button,article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{margin:0;padding:0}input,select,textarea{font-size:100%}table{border-collapse:collapse;border-spacing:0}fieldset,img{border:0}abbr,acronym{border:0;font-variant:normal}del{text-decoration:line-through}address,caption,cite,code,dfn,em,th,var{font-style:normal;font-weight:500}ol,ul{list-style:none}caption,th{text-align:left}h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:500}q:before,q:after{content:''}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sup{top:-.5em}sub{bottom:-.25em}a:hover{text-decoration:underline}ins,a{text-decoration:none}</style>
+    <script type="text/javascript" src="https://staticjy.oss-cn-hangzhou.aliyuncs.com/networking/js/zepto.min.js"></script>
+	<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://cdn.staticfile.org/vue/2.4.2/vue.min.js"></script>
+	<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+	<script src="https://cdn.bootcss.com/layer/2.3/layer.js"></script>
+	<script src="https://cdn.bootcss.com/dayjs/1.7.8/dayjs.min.js"></script>
+  </head>
+  <style>
+  html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  background: #00AAEA;
+  overflow: hidden;
+}
+
+body.weixin {
+  background: #3AC378;
+}
+
+.container {
+  width: 100%;
+}
+
+.mobileWrap {
+     width: 8.4rem;
+    height: 11.333333rem;
+    margin: 0.6rem 0.8rem 0.533333rem;
+    padding: 0.5rem 0.333333rem 0;
+    background: #fff;
+    border-radius: 0.133333rem;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.logo {
+ /*  display: block; */
+  width: 1.066666rem;
+  height: 1.066666rem;
+  margin: 0 0 0 0 ;
+}
+.logo.weixin { display: none; }
+
+.tip {
+  font-size: 0.32rem;
+  margin: 0.4rem 0 0;
+}
+
+.loading {
+  height: 2rem;
+  margin: 3.333333rem auto 0;
+}
+
+.qrcodeWrap { display: none; }
+
+.qrcodeWrap .qrcode {
+  position: relative;
+  height: 5rem;
+  width: 5rem;
+  margin: 0 auto 0.266666rem;
+}
+
+.qrcodeWrap .qrcode img {
+  width: 100%;
+}
+
+.qrcodeWrap .qrcodeCover {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.qrcodeWrap .label {
+  font-size: 0.4rem;
+  color: #1F1F1F;
+}
+
+.qrcodeWrap .price {
+  display: block;
+  width: 5.8rem;
+  height: 1rem;
+  line-height: 1rem;
+  margin: 0.266666rem auto;
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.qrcodeWrap .actionBtn {
+  display: none;
+  width: 7.466666rem;
+  height: 1.2rem;
+  margin-top: 0.5rem;
+  background: #00AAEA;
+  color: #fff;
+  font-size: 0.4rem;
+  border-radius: 0.133333rem;
+  border: none;
+  cursor:pointer;
+}
+
+.qrcodeWrap .actionBtn[disabled]{
+  background: #DEDDDC;
+}
+
+.extra {
+  line-height: 0.666666rem;
+  font-size: 0.373333rem;
+  color: #999;
+}
+
+ .statusWrap {
+  display: block;
+ } 
+
+.statusWrap .status {
+  width: 1.6rem;
+  height: 1.6rem;
+  margin: 2.4rem auto 0.4rem;
+  background: url(../img/warn.png);
+  background-size: 100%;
+}
+
+.statusWrap .status.success {
+  background: url(../img/success.png);
+  background-size: 100%;
+}
+
+.statusWrap p {
+  font-size: 0.426666rem;
+  color: #242424;
+}
+
+.help {
+  margin-top: 0.8rem;
+  font-size: 0.32rem;
+  color: #fff;
+  text-align: center;
+}
+
+.uploadBg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0 ,0.5);
+  display: none;
+}
+
+.uploadBg .uploadWrap {
+  position: relative;
+  width: 7rem;
+  height: 5rem;
+  margin: 5rem 1.5rem 0;
+  padding: 1rem;
+  background: #fff;
+  border-radius: 0.133333rem;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.uploadWrap .upload {
+  width: 5rem;
+  height: 1rem;
+  line-height: 1rem;
+  padding: 0 0.266666rem;
+  font-size: 0.373333rem;
+  color: #999;
+  border: 0.013333rem solid #ccc;
+  border-radius: 0.133333rem;
+  box-sizing: border-box;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.uploadWrap .uploadInput {
+  position: absolute;
+  left: 1rem;
+  top: 1rem;
+  width: 5rem;
+  height: 1rem;
+  opacity: 0;
+}
+
+.uploadWrap .uploadSubmit {
+  width: 5rem;
+  height: 1rem;
+  line-height: 1rem;
+  margin-top: 1rem;
+  font-size: 0.373333rem;
+  color: #fff;
+  background: #00AAEA;
+  border: none;
+  border-radius: 0.133333rem;
+  cursor: pointer;
+}
+
+.weixin .logo { display: none; }
+.weixin .logo.weixin { display: block; }
+.weixin .actionBtn,
+.weixin .uploadSubmit
+{ background: #3AC378; }
+
+/*
+ * Loading Dots
+ * Can we use pseudo elements here instead :after?
+ */
+.loading span {
+  display: inline-block;
+  vertical-align: middle;
+  width: 0.266666rem;
+  height: 0.266666rem;
+  margin: 0.053333rem;
+  background: #FF9304;
+  border-radius: 50%;
+  -webkit-animation: loading 1s infinite alternate;
+          animation: loading 1s infinite alternate;
+}
+
+/*
+ * Dots Colors
+ * Smarter targeting vs nth-of-type?
+ */
+.loading span:nth-of-type(2) {
+  background: #FF751C;
+  -webkit-animation-delay: 0.3s;
+          animation-delay: 0.3s;
+}
+.loading span:nth-of-type(3) {
+  background: #FF513C;
+  -webkit-animation-delay: 0.6s;
+          animation-delay: 0.6s;
+}
+.loading span:nth-of-type(4) {
+  background: #FF2560;
+  -webkit-animation-delay: 0.9s;
+          animation-delay: 0.9s;
+}
+.loading span:nth-of-type(5) {
+  background: #FF0102;
+  -webkit-animation-delay: 1.2s;
+          animation-delay: 1.2s;
+}
+.openBtn {
+		display: block;
+		width: 60vw;
+		height: 12vw;
+		margin: 5vw auto 0;
+		font-size: 5vw;
+		font-weight: 700;
+		color: #fff;
+		border-radius: 5px;
+		background: #019fe8;
+		-webkit-appearance: none;
+	}
+/*
+ * Animation keyframes
+ * Use transition opacity instead of keyframes?
+ */
+@-webkit-keyframes loading {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes loading {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+
+@media (min-width: 769px) {
+  html, body, body.weixin {
+    background: #F6F6F6;
+  }
+  
+  .container {
+    width: 650px;
+    height: 520px;
+    margin: 130px auto 0;
+    padding-top: 5px;
+    background-image: url(https://staticjy.oss-cn-hangzhou.aliyuncs.com/networking/img/bg.png);
+  }
+  
+  .mobileWrap {
+    width: 315px;
+    height: 500px;
+    margin: 0;
+    padding: 15px 12px 0;
+    background: #fff;
+    border-radius: 10px;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  
+  .logo {
+    display: block;
+    width: 40px;
+    height: 40px;
+    margin: 0 auto;
+  }
+  
+  .tip {
+    font-size: 12px;
+    margin: 10px 0 0;
+  }
+  
+  .loading {
+    height: 70px;
+    margin: 125px auto 0;
+  }
+  
+  .loading span {
+    width: 10px;
+    height: 10px;
+    margin: 2px;
+  }
+  
+  .qrcodeWrap .qrcode {
+    height: 187px;
+    width: 187px;
+    margin: 0 auto 10px;
+  }
+  
+  .qrcodeWrap .label {
+    font-size: 15px;
+    color: #1F1F1F;
+  }
+  
+  .qrcodeWrap .price {
+    display: block;
+    width: 255px;
+    height: 38px;
+    line-height: 38px;
+    margin: 10px auto;
+    font-size: 30px;
+    text-align: center;
+  }
+  
+  .qrcodeWrap .actionBtn {
+    width: 260px;
+    height: 45px;
+    margin-top: 20px;
+    background: #00AAEA;
+    color: #fff;
+    font-size: 15px;
+    cursor:pointer;
+  }
+  
+  .extra {
+    line-height: 22px;
+    font-size: 13px;
+    color: #AEAEAE;
+  }
+  
+  .statusWrap   {
+    display: none;
+  }
+  .statusWrap .status {
+    width: 60px;
+    height: 60px;
+    margin: 120px auto 20px;
+  }
+  
+  .statusWrap p {
+    font-size: 14px;
+  }
+  
+  .help {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #B3B3B3;
+    text-align: center;
+  }
+  
+  .uploadBg .uploadWrap {
+    position: relative;
+    width: 350px;
+    height: 200px;
+    margin: 200px auto 0;
+    padding: 40px;
+    border-radius: 5px;
+  }
+  
+  .uploadWrap .upload {
+    width: 270px;
+    height: 40px;
+    line-height: 40px;
+    padding: 0 10px; 
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  .uploadWrap .uploadInput {
+    position: absolute;
+    left: 40px;
+    top: 40px;
+    width: 270px;
+    height: 40px;
+    opacity: 0;
+  }
+  
+  .uploadWrap .uploadSubmit {
+    width: 270px;
+    height: 40px;
+    line-height: 40px;
+    margin-top: 40px;
+    font-size: 14px;
+    border-radius: 5px;
+  }
+}
+  </style>
+<body style="font-size: 12px;" >
+    <div class="container" id="pay">
+      <div class="mobileWrap">
+        <img class="logo" src="https://staticjy.oss-cn-hangzhou.aliyuncs.com/networking/img/zhifubao.png">
+        <span class="tip">
+        	<label>请在支付宝手动输入如下金额，</label>
+          <span style="color: #E5373D;">修改金额或保存二维码二次支付，将无法上分请自行承担损失!!</span><br>        
+		      </span> 
+        <div class="qrcodeWrap" style="display: block;">
+          <div class="qrcode">
+          <p class="price">￥<span>{{orderInfo.gatheringAmount}}</span><a id="copy_price" class="label" onclick="copyUrl()" style="margin-left:10px;color:#00AAEA;vertical-align:middle;" data-clipboard-text="{{orderInfo.gatheringAmount}}">复制</a></p>
+			<img   :src="orderInfo.orderQr != null ? '/storage/imgbak/' + orderInfo.orderQr :  'images/pay/loading.gif'"  style="width: 200px; height: 200px;"  v-show="!overdueFlag" > 
+           <img class="image" src="/static/images/pay/overdue.png" style="width: 200px; height: 200px;" v-show="overdueFlag">
+          </div>
+        </div>
+        <div class="remainseconds" style="margin: 2rem 0 0 0;">
+			 <span style="color: #E5373D;">保存此订单号:{{orderNo}}</span>  
+          <p>
+			有效时间： <span id="leftTime" style="color: red;">{{countdownMinute}}:{{countdownSecond}}</span><br>过期请重新发起支付
+			</p>
+          <p class="extra">请5分钟内完成支付</p>
+		</div>
+        <div class="statusWrap">
+        	<!-- <input  type="button" value="点击唤醒支付宝支付" v-show="showbtn && !overdueFlag" class="openBtn" v-on:click="openWindow(orderInfo.tinyurl)" /> -->
+         	<div style="margin: 1rem 2rem 0 0;width: 3rem;font-size: medium;">如支付宝弹出如图所示，请点击<span style="color: red;"><strong>【继续付款】</strong></span></div>
+        	<img  style="width: 3rem;height: 3rem;margin: -2rem -5rem -1rem 0rem;" src="../static/images/pay/payIsClick.png"> 
+       </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+		  function copyUrl() { 
+			  alert('复制金额成功!');
+		  }   
+  </script>
+    <script type="text/javascript">    
+    
+    Vue.http.interceptors.push(function(request) {
+		return function(response) {
+			if (response.body.code != 200) {
+				response.ok = false;
+				layer.alert(response.body.msg, {
+					title : '提示',
+					icon : 7,
+					time : 3000
+				});
+			}
+		};
+	});
+    
+	var payVM = new Vue({
+		el : '#pay',
+		data : {
+			orderNo : '',
+			overdueFlag : false,
+			residueSecond : '',
+			countdownHour : '',
+			countdownMinute : '--',
+			countdownSecond : '--',
+			countdownInterval : null,
+			paySuccessFlag : false,
+			checkPaySuccessInterval : null,
+			orderInfo : {},
+			tinyurl : '',
+			showbtn : false
+		},
+		computed : {},
+		created : function() {
+			var orderNo = this.getQueryString('MD5');
+			if (orderNo == null || orderNo == '') {
+				layer.alert('无效的订单号', {
+					title : '提示',
+					icon : 7,
+					time : 3000
+				});
+				return;
+			}
+			this.orderNo = orderNo;
+			this.firstLoadGatheringCode();
+		},
+		methods : {
+			firstLoadGatheringCode : function() {
+				var that = this;
+				that.$http.get('/api/getOrderGatheringCode', {
+					params : {
+						orderNo : that.orderNo
+					}
+				}).then(function(res) {
+					that.orderInfo = res.body.result;
+					if(that.orderInfo.tinyurl){
+						that.showbtn = true;
+					}else{
+						that.showbtn = false;
+					}
+					that.orderNo = that.orderInfo.orderId;
+					if (that.orderInfo.orderState != '1') {
+						that.paySuccessFlag = true;
+						that.toReturnUrl();
+						return;
+					}
+					that.overdueFlag = !dayjs(that.orderInfo.usefulTime).isAfter(dayjs());
+					if (!that.overdueFlag) {
+						that.residueSecond = dayjs(that.orderInfo.usefulTime).diff(dayjs(res.body.timestamp), 'second');
+						that.countdown();
+						if (that.orderInfo.orderState == '1') {
+							that.loadGatheringCode();
+						}
+					}
+				});
+			},
+
+			toReturnUrl : function() {
+				var that = this;
+				setTimeout(function() {
+					window.location.href = that.orderInfo.returnUrl;
+				}, 2000);
+			},
+
+			loadGatheringCode : function() {
+				var that = this;
+				that.loadGatheringCodeInterval = window.setInterval(function() {
+					if (that.orderInfo.orderStatus == '2' || that.orderInfo.orderStatus == '4') {
+						if (that.loadGatheringCodeInterval != null) {
+							window.clearInterval(that.loadGatheringCodeInterval);
+							that.loadGatheringCodeInterval = null;
+						}
+						return;
+					}
+					that.loadGatheringCodeInner();
+				}, 3000);
+			},
+
+			loadGatheringCodeInner : function() {
+				var that = this;
+				that.$http.get('/api/getOrderGatheringCode1', {
+					params : {
+						orderNo : that.orderNo
+					}
+				}).then(function(res) {
+					that.orderInfo = res.body.result;
+					if (that.orderInfo.orderStatus == '2' || that.orderInfo.orderStatus == '4') {
+						that.residueSecond = dayjs(that.orderInfo.usefulTime).diff(dayjs(res.body.timestamp), 'second');
+						that.checkPaySuccess();
+					}
+				});
+			},
+			openWindow : function(url){
+				var newTab = 1;
+				if (newTab) {
+					newTab = 0;
+					window.open('alipays://platformapi/startapp?appId=66666675&url='+url+'');
+				} else {
+					if (top.location != location) {
+						top.location.href = location.href;
+					}
+					newTab = 1;
+					window.location.replace('alipays://platformapi/startapp?appId=66666675&url='+url+'', '');
+				}
+			},
+			checkPaySuccess : function() {
+				var that = this;
+				that.checkPaySuccessInterval = window.setInterval(function() {
+					if (that.orderInfo.orderState == '4') {//交易订单状态为4
+						that.paySuccessFlag = true;//支付成功状态
+						that.toReturnUrl();
+						if (that.checkPaySuccessInterval != null) {
+							window.clearInterval(that.checkPaySuccessInterval);
+							that.checkPaySuccessInterval = null;
+						}
+						if (that.countdownInterval != null) {
+							window.clearInterval(that.countdownInterval);
+							that.countdownInterval = null;
+						}
+						return;
+					}
+					that.checkPaySuccessInner();
+				}, 3000);
+			},
+
+			checkPaySuccessInner : function() {
+				var that = this;
+				that.$http.get('/api/getOrderGatheringCode1', {
+					params : {
+						orderNo : that.orderNo
+					}
+				}).then(function(res) {
+					that.orderInfo = res.body.result;
+				});
+			},
+
+			countdown : function() {
+				var that = this;
+				that.countdownInterval = window.setInterval(function() {
+					var residueSecond = that.residueSecond;
+					that.updateCountdownClock(residueSecond);
+					residueSecond--;
+					that.residueSecond = residueSecond;
+					if (residueSecond < 0) {
+						window.clearInterval(that.countdownInterval);
+						that.countdownInterval = null;
+						if (that.loadGatheringCodeInterval != null) {
+							window.clearInterval(that.loadGatheringCodeInterval);
+							that.loadGatheringCodeInterval = null;
+						}
+						that.overdueFlag = true;
+					}
+				}, 1000);
+			},
+
+			/**
+			 * 更新倒计时
+			 */
+			updateCountdownClock : function(residueSecond) {
+				var that = this;
+				var countdownHour = 0;
+				var countdownMinute = 0;
+				var countdownSecond = 0;
+				if (residueSecond > 0) {
+					countdownHour = parseInt(residueSecond / (60 * 60) % 24);
+					countdownMinute = parseInt(residueSecond / 60 % 60);
+					countdownSecond = parseInt(residueSecond % 60);
+				}
+				if (countdownHour < 10) {
+					countdownHour = '0' + countdownHour;
+				}
+				if (countdownMinute < 10) {
+					countdownMinute = '0' + countdownMinute;
+				}
+				if (countdownSecond < 10) {
+					countdownSecond = '0' + countdownSecond;
+				}
+				that.countdownHour = countdownHour;
+				that.countdownMinute = countdownMinute;
+				that.countdownSecond = countdownSecond;
+				console.log(that.countdownSecond);
+			},
+
+			getQueryString : function(name) {
+				var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+				var r = window.location.search.substr(1).match(reg);
+				if (r != null)
+					return unescape(r[2]);
+				return null;
+			}
+		}
+	});
+    $(function() {
+  		//alert('\n1.付错金额不到账\n2.付款5分钟未到账请及时联系客服\n3.充值到账后请及时删除收款码,重复使用收款码不会到账');
+ /*  
+ 			豪富支付界面
+ function process() {
+    $.ajax({
+      url: 'https://mnapi2b.cshushu.com/api/ali/qrCodeInfo/' + TOKEN + '?t=' + new Date().getTime(),
+      success: function(response) {
+        if(response.status === 0) {
+          if(stauts === response.data.status) {
+            return;
+          }
+          stauts = response.data.status;
+          if(response.data.status === 0) {
+            $('.loadingWrap').hide();
+            $('.qrcodeWrap').hide();
+            $('.statusWrap .status').addClass('success');
+            $('.statusWrap p').html(response.data.statusStr);
+            $('.statusWrap').show();
+            clearInterval(orderTimer);
+          } else if(response.data.status === 2) {
+            $('.loadingWrap').hide();
+            $('.qrcodeWrap .js-qrcode').attr('src', response.data.payUrl);
+            $('.qrcodeWrap .price span').html(response.data.amount.toFixed(2));
+            $('.qrcodeWrap #copy_price').attr('data-clipboard-text',response.data.amount.toFixed(2));
+            $('.qrcodeWrap').show();
+            clearInterval(orderTimer);
+            orderTimer = setInterval(process, 20000);
+            if (response.data.reminder === 0) {
+              $('.qrcodeWrap .js-qrcode-cover').hide();
+              $('.qrcodeWrap .js-payed-btn').show();
+            } else if (response.data.reminder === 1) {
+              if (response.data.processingTime >= 120) {
+                $('.qrcodeWrap .js-reminder-btn').show();
+              } else {
+                $('.qrcodeWrap .js-wait-btn').show();
+                setTimeout(function (){
+                  $('.qrcodeWrap .js-wait-btn').hide();
+                  $('.qrcodeWrap .js-reminder-btn').show();
+                }, (120 - response.data.processingTime) * 1000)
+              }
+            } else {
+              $('.qrcodeWrap .js-result-btn').show();
+            }
+          }
+        } else {
+          clearInterval(orderTimer);
+          $('.loadingWrap').hide();
+          $('.qrcodeWrap').hide();
+          $('.statusWrap p').html(response.msg);
+          $('.statusWrap').show();
+        }
+      },
+      error: function(error) {
+        $('.statusWrap').show();
+      }
+    });
+  }
+   */
+  $(document).on('click', '.uploadBg', function(e) {
+    if($(e.target).hasClass('uploadBg')){
+      $('.uploadBg').hide();
+    }
+  });
+  
+  $(document).on('change', '.uploadInput', function(e) {
+    var file = e.target.value;
+    var fileStrs = file.split('\\')
+    $('.uploadWrap .upload').html(fileStrs[fileStrs.length - 1]);
+  });
+  
+})
+</script>
+<script type="text/javascript">
+      new ClipboardJS('#copy_price');
+</script>  
+</body>

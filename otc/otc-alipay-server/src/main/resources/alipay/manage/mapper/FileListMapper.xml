@@ -1,0 +1,424 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="alipay.manage.mapper.FileListMapper" >
+  <resultMap id="BaseResultMap" type="alipay.manage.bean.FileList" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="fileId" property="fileId" jdbcType="VARCHAR" />
+    <result column="fileholder" property="fileholder" jdbcType="VARCHAR" />
+    <result column="isFixation" property="isFixation" jdbcType="CHAR" />
+    <result column="fixationAmount" property="fixationAmount" jdbcType="DECIMAL" />
+    <result column="code" property="code" jdbcType="CHAR" />
+    <result column="concealId" property="concealId" jdbcType="VARCHAR" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="submitTime" property="submitTime" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="isDeal" property="isDeal" jdbcType="VARCHAR" />
+    <result column="isCut" property="isCut" jdbcType="CHAR" />
+    <result column="retain1" property="retain1" jdbcType="CHAR" />
+    <result column="retain2" property="retain2" jdbcType="CHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="alipay.manage.bean.FileList" extends="BaseResultMap" >
+    <result column="fileNote" property="fileNote" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, fileId, fileholder, isFixation, fixationAmount, code, concealId, createTime, 
+    submitTime, status, isDeal, isCut, retain1, retain2
+  </sql>
+  <sql id="Blob_Column_List" >
+    fileNote
+  </sql>
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="alipay.manage.bean.FileListExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from alipay_file_list
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="alipay.manage.bean.FileListExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from alipay_file_list
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from alipay_file_list
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from alipay_file_list
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="alipay.manage.bean.FileListExample" >
+    delete from alipay_file_list
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="alipay.manage.bean.FileList" useGeneratedKeys="true" keyProperty="id" >
+    insert into alipay_file_list (fileId, fileholder, isFixation, 
+      fixationAmount, code, concealId, 
+      createTime, submitTime, status, 
+      isDeal, isCut, retain1, retain2, 
+      fileNote)
+    values (#{fileId,jdbcType=VARCHAR}, #{fileholder,jdbcType=VARCHAR}, #{isFixation,jdbcType=CHAR}, 
+      #{fixationAmount,jdbcType=DECIMAL}, #{code,jdbcType=CHAR}, #{concealId,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{submitTime,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, 
+      #{isDeal,jdbcType=VARCHAR}, #{isCut,jdbcType=CHAR}, #{retain1,jdbcType=CHAR}, #{retain2,jdbcType=CHAR}, 
+      #{fileNote,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="alipay.manage.bean.FileList" useGeneratedKeys="true" keyProperty="id" >
+    insert into alipay_file_list
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="fileId != null" >
+        fileId,
+      </if>
+      <if test="fileholder != null" >
+        fileholder,
+      </if>
+      <if test="isFixation != null" >
+        isFixation,
+      </if>
+      <if test="fixationAmount != null" >
+        fixationAmount,
+      </if>
+      <if test="code != null" >
+        code,
+      </if>
+      <if test="concealId != null" >
+        concealId,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="submitTime != null" >
+        submitTime,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="isDeal != null" >
+        isDeal,
+      </if>
+      <if test="isCut != null" >
+        isCut,
+      </if>
+      <if test="retain1 != null" >
+        retain1,
+      </if>
+      <if test="retain2 != null" >
+        retain2,
+      </if>
+      <if test="fileNote != null" >
+        fileNote,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="fileId != null" >
+        #{fileId,jdbcType=VARCHAR},
+      </if>
+      <if test="fileholder != null" >
+        #{fileholder,jdbcType=VARCHAR},
+      </if>
+      <if test="isFixation != null" >
+        #{isFixation,jdbcType=CHAR},
+      </if>
+      <if test="fixationAmount != null" >
+        #{fixationAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="code != null" >
+        #{code,jdbcType=CHAR},
+      </if>
+      <if test="concealId != null" >
+        #{concealId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="submitTime != null" >
+        #{submitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="isDeal != null" >
+        #{isDeal,jdbcType=VARCHAR},
+      </if>
+      <if test="isCut != null" >
+        #{isCut,jdbcType=CHAR},
+      </if>
+      <if test="retain1 != null" >
+        #{retain1,jdbcType=CHAR},
+      </if>
+      <if test="retain2 != null" >
+        #{retain2,jdbcType=CHAR},
+      </if>
+      <if test="fileNote != null" >
+        #{fileNote,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="alipay.manage.bean.FileListExample" resultType="java.lang.Integer" >
+    select count(*) from alipay_file_list
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update alipay_file_list
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.fileId != null" >
+        fileId = #{record.fileId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.fileholder != null" >
+        fileholder = #{record.fileholder,jdbcType=VARCHAR},
+      </if>
+      <if test="record.isFixation != null" >
+        isFixation = #{record.isFixation,jdbcType=CHAR},
+      </if>
+      <if test="record.fixationAmount != null" >
+        fixationAmount = #{record.fixationAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="record.code != null" >
+        code = #{record.code,jdbcType=CHAR},
+      </if>
+      <if test="record.concealId != null" >
+        concealId = #{record.concealId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null" >
+        createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.submitTime != null" >
+        submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.status != null" >
+        status = #{record.status,jdbcType=INTEGER},
+      </if>
+      <if test="record.isDeal != null" >
+        isDeal = #{record.isDeal,jdbcType=VARCHAR},
+      </if>
+      <if test="record.isCut != null" >
+        isCut = #{record.isCut,jdbcType=CHAR},
+      </if>
+      <if test="record.retain1 != null" >
+        retain1 = #{record.retain1,jdbcType=CHAR},
+      </if>
+      <if test="record.retain2 != null" >
+        retain2 = #{record.retain2,jdbcType=CHAR},
+      </if>
+      <if test="record.fileNote != null" >
+        fileNote = #{record.fileNote,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map" >
+    update alipay_file_list
+    set id = #{record.id,jdbcType=INTEGER},
+      fileId = #{record.fileId,jdbcType=VARCHAR},
+      fileholder = #{record.fileholder,jdbcType=VARCHAR},
+      isFixation = #{record.isFixation,jdbcType=CHAR},
+      fixationAmount = #{record.fixationAmount,jdbcType=DECIMAL},
+      code = #{record.code,jdbcType=CHAR},
+      concealId = #{record.concealId,jdbcType=VARCHAR},
+      createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
+      status = #{record.status,jdbcType=INTEGER},
+      isDeal = #{record.isDeal,jdbcType=VARCHAR},
+      isCut = #{record.isCut,jdbcType=CHAR},
+      retain1 = #{record.retain1,jdbcType=CHAR},
+      retain2 = #{record.retain2,jdbcType=CHAR},
+      fileNote = #{record.fileNote,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update alipay_file_list
+    set id = #{record.id,jdbcType=INTEGER},
+      fileId = #{record.fileId,jdbcType=VARCHAR},
+      fileholder = #{record.fileholder,jdbcType=VARCHAR},
+      isFixation = #{record.isFixation,jdbcType=CHAR},
+      fixationAmount = #{record.fixationAmount,jdbcType=DECIMAL},
+      code = #{record.code,jdbcType=CHAR},
+      concealId = #{record.concealId,jdbcType=VARCHAR},
+      createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
+      status = #{record.status,jdbcType=INTEGER},
+      isDeal = #{record.isDeal,jdbcType=VARCHAR},
+      isCut = #{record.isCut,jdbcType=CHAR},
+      retain1 = #{record.retain1,jdbcType=CHAR},
+      retain2 = #{record.retain2,jdbcType=CHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="alipay.manage.bean.FileList" >
+    update alipay_file_list
+    <set >
+      <if test="fileId != null" >
+        fileId = #{fileId,jdbcType=VARCHAR},
+      </if>
+      <if test="fileholder != null" >
+        fileholder = #{fileholder,jdbcType=VARCHAR},
+      </if>
+      <if test="isFixation != null" >
+        isFixation = #{isFixation,jdbcType=CHAR},
+      </if>
+      <if test="fixationAmount != null" >
+        fixationAmount = #{fixationAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="code != null" >
+        code = #{code,jdbcType=CHAR},
+      </if>
+      <if test="concealId != null" >
+        concealId = #{concealId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="submitTime != null" >
+        submitTime = #{submitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="isDeal != null" >
+        isDeal = #{isDeal,jdbcType=VARCHAR},
+      </if>
+      <if test="isCut != null" >
+        isCut = #{isCut,jdbcType=CHAR},
+      </if>
+      <if test="retain1 != null" >
+        retain1 = #{retain1,jdbcType=CHAR},
+      </if>
+      <if test="retain2 != null" >
+        retain2 = #{retain2,jdbcType=CHAR},
+      </if>
+      <if test="fileNote != null" >
+        fileNote = #{fileNote,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="alipay.manage.bean.FileList" >
+    update alipay_file_list
+    set fileId = #{fileId,jdbcType=VARCHAR},
+      fileholder = #{fileholder,jdbcType=VARCHAR},
+      isFixation = #{isFixation,jdbcType=CHAR},
+      fixationAmount = #{fixationAmount,jdbcType=DECIMAL},
+      code = #{code,jdbcType=CHAR},
+      concealId = #{concealId,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      submitTime = #{submitTime,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=INTEGER},
+      isDeal = #{isDeal,jdbcType=VARCHAR},
+      isCut = #{isCut,jdbcType=CHAR},
+      retain1 = #{retain1,jdbcType=CHAR},
+      retain2 = #{retain2,jdbcType=CHAR},
+      fileNote = #{fileNote,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="alipay.manage.bean.FileList" >
+    update alipay_file_list
+    set fileId = #{fileId,jdbcType=VARCHAR},
+      fileholder = #{fileholder,jdbcType=VARCHAR},
+      isFixation = #{isFixation,jdbcType=CHAR},
+      fixationAmount = #{fixationAmount,jdbcType=DECIMAL},
+      code = #{code,jdbcType=CHAR},
+      concealId = #{concealId,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      submitTime = #{submitTime,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=INTEGER},
+      isDeal = #{isDeal,jdbcType=VARCHAR},
+      isCut = #{isCut,jdbcType=CHAR},
+      retain1 = #{retain1,jdbcType=CHAR},
+      retain2 = #{retain2,jdbcType=CHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

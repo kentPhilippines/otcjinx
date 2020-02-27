@@ -13,11 +13,5 @@ public class PayApiConstant {
 	public class Config{
 		public static final String CONFIG_API = "/config-api";//后台专用接口
 		public static final String CONFIG_API_GET_CONFIG_MANAGE = "/getConfigAdmin";//后台获取所有接口配置的接口
-		
-		
-		
-		
-		
-		
 	}
 }

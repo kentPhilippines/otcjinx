@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+		PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+		"http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+	<context id="testTables" targetRuntime="MyBatis3" defaultModelType="flat">
+	   <!-- 自动识别数据库关键字，默认false，如果设置为true，根据SqlReservedWords中定义的关键字列表；
+         一般保留默认值，遇到数据库关键字（Java关键字），使用columnOverride覆盖 -->
+        <property name="autoDelimitKeywords" value="false"/>
+        <!-- 生成的Java文件的编码 -->
+        <property name="javaFileEncoding" value="UTF-8"/>
+        <!-- 格式化java代码 -->
+        <property name="javaFormatter" value="org.mybatis.generator.api.dom.DefaultJavaFormatter"/>
+        <!-- 格式化XML代码 -->
+        <property name="xmlFormatter" value="org.mybatis.generator.api.dom.DefaultXmlFormatter"/>
+    <!-- beginningDelimiter和endingDelimiter：指明数据库的用于标记数据库对象名的符号，
+        比如ORACLE就是双引号，MYSQL默认是`反引号； -->
+        <property name="beginningDelimiter" value="`"/>
+        <property name="endingDelimiter" value="`"/>
+        <!--自定义的toString方法-->
+        <plugin type="alipay.manage.util.MyToStringPlugin"/>
+		<commentGenerator>
+			<!-- 是否去除自动生成的注释 true：是 ： false:否 -->
+			<property name="suppressAllComments" value="true" />
+		</commentGenerator>
+		<!--数据库连接的信息：驱动类、连接地址、用户名、密码 -->
+		<jdbcConnection driverClass="com.mysql.jdbc.Driver"
+						connectionURL="jdbc:mysql://47.91.218.103:3306/otc_alipay?serverTimezone=UTC"
+						userId="user_gw"
+						password="teus2019gw">
+		</jdbcConnection>
+		<!-- <jdbcConnection driverClass="oracle.jdbc.driver.OracleDriver"
+			connectionURL="jdbc:oracle:thin:@127.0.0.1:1521:orcl"
+			userId="scott"
+			password="wcy675600920">
+		</jdbcConnection> -->
+
+		<!-- 默认false，把JDBC DECIMAL 和 NUMERIC 类型解析为 Integer，为 true时把JDBC DECIMAL 和
+			NUMERIC 类型解析为java.math.BigDecimal -->
+		<javaTypeResolver>
+			<property name="forceBigDecimals" value="false" />
+		</javaTypeResolver>
+
+		<!-- targetProject:生成PO类的位置 -->
+		<javaModelGenerator targetPackage="alipay.manage.bean" 
+							targetProject="src/main/java">
+			<!-- enableSubPackages:是否让schema作为包的后缀 -->
+			<property name="enableSubPackages" value="false" />
+			<!-- 从数据库返回的值被清理前后的空格 -->
+			<property name="trimStrings" value="true" />
+		</javaModelGenerator>
+		<!-- targetProject:mapper映射文件生成的位置 -->
+		<sqlMapGenerator targetPackage="alipay/manage/mapper"
+						 targetProject="src/main/resources">
+			<!-- enableSubPackages:是否让schema作为包的后缀 -->
+			<property name="enableSubPackages" value="false" />
+		</sqlMapGenerator>
+		<!-- targetPackage：mapper接口生成的位置 -->
+		<javaClientGenerator type="XMLMAPPER"
+							 targetPackage="alipay.manage.mapper" 
+							 targetProject="src/main/java">
+			<!-- enableSubPackages:是否让schema作为包的后缀 -->
+			<property name="enableSubPackages" value="false" />
+		</javaClientGenerator>
+ <!-- 选择一个table来生成相关文件，可以有一个或多个table，必须要有table元素
+        选择的table会生成一下文件：
+        1，SQL map文件
+        2，生成一个主键类；
+        3，除了BLOB和主键的其他字段的类；
+        4，包含BLOB的类；
+        5，一个用户生成动态查询的条件类（selectByExample, deleteByExample），可选；
+        6，Mapper接口（可选）
+    
+        tableName（必要）：要生成对象的表名；
+        注意：大小写敏感问题。正常情况下，MBG会自动的去识别数据库标识符的大小写敏感度，在一般情况下，MBG会
+            根据设置的schema，catalog或tablename去查询数据表，按照下面的流程：
+            1，如果schema，catalog或tablename中有空格，那么设置的是什么格式，就精确的使用指定的大小写格式去查询；
+            2，否则，如果数据库的标识符使用大写的，那么MBG自动把表名变成大写再查找；
+            3，否则，如果数据库的标识符使用小写的，那么MBG自动把表名变成小写再查找；
+            4，否则，使用指定的大小写格式查询；
+        另外的，如果在创建表的时候，使用的""把数据库对象规定大小写，就算数据库标识符是使用的大写，在这种情况下也会使用给定的大小写来创建表名；
+        这个时候，请设置delimitIdentifiers="true"即可保留大小写格式；
+        
+        可选：
+        1，schema：数据库的schema；
+        2，catalog：数据库的catalog；
+        3，alias：为数据表设置的别名，如果设置了alias，那么生成的所有的SELECT SQL语句中，列名会变成：alias_actualColumnName
+        4，domainObjectName：生成的domain类的名字，如果不设置，直接使用表名作为domain类的名字；可以设置为somepck.domainName，那么会自动把domainName类再放到somepck包里面；
+        5，enableInsert（默认true）：指定是否生成insert语句；
+        6，enableSelectByPrimaryKey（默认true）：指定是否生成按照主键查询对象的语句（就是getById或get）；
+        7，enableSelectByExample（默认true）：MyBatis3Simple为false，指定是否生成动态查询语句；
+        8，enableUpdateByPrimaryKey（默认true）：指定是否生成按照主键修改对象的语句（即update)；
+        9，enableDeleteByPrimaryKey（默认true）：指定是否生成按照主键删除对象的语句（即delete）；
+        10，enableDeleteByExample（默认true）：MyBatis3Simple为false，指定是否生成动态删除语句；
+        11，enableCountByExample（默认true）：MyBatis3Simple为false，指定是否生成动态查询总条数语句（用于分页的总条数查询）；
+        12，enableUpdateByExample（默认true）：MyBatis3Simple为false，指定是否生成动态修改语句（只修改对象中不为空的属性）；
+        13，modelType：参考context元素的defaultModelType，相当于覆盖；
+        14，delimitIdentifiers：参考tableName的解释，注意，默认的delimitIdentifiers是双引号，如果类似MYSQL这样的数据库，使用的是`（反引号，那么还需要设置context的beginningDelimiter和endingDelimiter属性）
+        15，delimitAllColumns：设置是否所有生成的SQL中的列名都使用标识符引起来。默认为false，delimitIdentifiers参考context的属性
+        
+        注意，table里面很多参数都是对javaModelGenerator，context等元素的默认属性的一个复写；
+     -->
+           <!-- <property name="useActualColumnNames" value="false"/>-->
+          
+              
+             <table tableName="alipay_user_rate" domainObjectName="UserRate"   enableCountByExample="true"  enableUpdateByExample="true"  enableDeleteByExample="true"  enableSelectByExample="true"  selectByExampleQueryId="true">
+                    <property name="my.isgen.usekeys" value="true"/>
+                    <property name="useActualColumnNames" value="true"/>
+                    <generatedKey column="id" sqlStatement="JDBC"/>
+            </table> 
+          <!-- 	<table tableName="product_qrcode_recharge" domainObjectName="QrcodeRecharge"   enableCountByExample="true"  enableUpdateByExample="true"  enableDeleteByExample="true"  enableSelectByExample="true"  selectByExampleQueryId="true">
+                    <property name="my.isgen.usekeys" value="true"/>
+                    <property name="useActualColumnNames" value="true"/>
+                    <generatedKey column="id" sqlStatement="JDBC"/>
+            </table> 
+          	<table tableName="product_qrcode_running" domainObjectName="QrcodeRuning"   enableCountByExample="true"  enableUpdateByExample="true"  enableDeleteByExample="true"  enableSelectByExample="true"  selectByExampleQueryId="true">
+                    <property name="my.isgen.usekeys" value="true"/>
+                    <property name="useActualColumnNames" value="true"/>
+                    <generatedKey column="id" sqlStatement="JDBC"/>
+            </table> 
+          	<table tableName="product_qrcode_tripartite_recharge" domainObjectName="QrcodeTripartiteRecharge"   enableCountByExample="true"  enableUpdateByExample="true"  enableDeleteByExample="true"  enableSelectByExample="true"  selectByExampleQueryId="true">
+                    <property name="my.isgen.usekeys" value="true"/>
+                    <property name="useActualColumnNames" value="true"/>
+                    <generatedKey column="id" sqlStatement="JDBC"/>
+            </table> 
+          	<table tableName="product_qrcode_user" domainObjectName="QrcodeUser"   enableCountByExample="true"  enableUpdateByExample="true"  enableDeleteByExample="true"  enableSelectByExample="true"  selectByExampleQueryId="true">
+                    <property name="my.isgen.usekeys" value="true"/>
+                    <property name="useActualColumnNames" value="true"/>
+                    <generatedKey column="id" sqlStatement="JDBC"/>
+            </table>  
+          	<table tableName="product_qrcode_config" domainObjectName="QrcodeConfig"   enableCountByExample="true"  enableUpdateByExample="true"  enableDeleteByExample="true"  enableSelectByExample="true"  selectByExampleQueryId="true">
+                    <property name="my.isgen.usekeys" value="true"/>
+                    <property name="useActualColumnNames" value="true"/>
+                    <generatedKey column="id" sqlStatement="JDBC"/>
+            </table>  -->
+        <!--       <table tableName="manage_order_all" domainObjectName="OrderAll"   enableCountByExample="true"  enableUpdateByExample="true"  enableDeleteByExample="true"  enableSelectByExample="true"  selectByExampleQueryId="true">
+                    <property name="my.isgen.usekeys" value="true"/>
+                    <property name="useActualColumnNames" value="true"/>
+                    <generatedKey column="id" sqlStatement="JDBC"/>
+            </table> 
+            <table tableName="manage_running_order" domainObjectName="RunningOrder"   enableCountByExample="true"  enableUpdateByExample="true"  enableDeleteByExample="true"  enableSelectByExample="true"  selectByExampleQueryId="true">
+                    <property name="my.isgen.usekeys" value="true"/>
+                    <property name="useActualColumnNames" value="true"/>
+                    <generatedKey column="id" sqlStatement="JDBC"/>
+            </table> 
+            <table tableName="manage_withdrawals_order" domainObjectName="WithdrawalsOrder"   enableCountByExample="true"  enableUpdateByExample="true"  enableDeleteByExample="true"  enableSelectByExample="true"  selectByExampleQueryId="true">
+                    <property name="my.isgen.usekeys" value="true"/>
+                    <property name="useActualColumnNames" value="true"/>
+                    <generatedKey column="id" sqlStatement="JDBC"/>
+            </table>   
+            <table tableName="system_user_" domainObjectName="User"  enableCountByExample="true"  enableUpdateByExample="true"  enableDeleteByExample="false"  enableSelectByExample="true"  selectByExampleQueryId="false">
+                    <property name="my.isgen.usekeys" value="true"/>
+                    <property name="useActualColumnNames" value="true"/>
+                    <generatedKey column="id" sqlStatement="JDBC"/>
+                </table> -->
+	</context>
+</generatorConfiguration>

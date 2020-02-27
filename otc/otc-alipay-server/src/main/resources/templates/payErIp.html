@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1">
+<meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="renderer" content="webkit">
+<title>支付</title>
+<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdn.staticfile.org/vue/2.4.2/vue.min.js"></script>
+<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+<script src="https://cdn.bootcss.com/layer/2.3/layer.js"></script>
+<script src="https://cdn.bootcss.com/dayjs/1.7.8/dayjs.min.js"></script>
+<style type="text/css">
+@charset "UTF-8";
+
+[v-cloak] {
+	display: none;
+}
+
+html, body {
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	font-family: 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial,
+		sans-serif;
+	font-weight: 400;
+	overflow-x: hidden;
+	overflow-y: auto;
+	background: #f4f6f8;
+	font-size: 14px;
+	color: #616161;
+}
+
+.container {
+	max-width: 650px;
+	margin: 0 auto;
+}
+
+.header {
+	background: #fff;
+	border-bottom: 1px solid #eee;
+	height: 130px;
+	padding-top: 1px;
+	text-align: center;
+	margin-bottom: 15px;
+	box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+}
+
+.header .logo {
+	width: 123px;
+	height: 130px;
+	margin: 0 auto;
+	background: url(union.png) no-repeat;
+	background-size: cover;
+}
+
+.header .logo.union {
+	background-image: url(union.png);
+}
+
+.mainbody {
+	margin: 0 auto;
+	margin-top: 15px;
+	padding-bottom: 10px;
+	text-align: center;
+	color: #333;
+	padding-top: 6px;
+	background: #fff;
+	background-size: auto 6px;
+	min-height: 400px;
+	box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.1);
+}
+
+.realprice {
+	font-size: 26px;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+.discountprice {
+	color: #ff6600;
+	margin-bottom: 10px;
+}
+
+.qrcode {
+	width: 200px;
+	height: 200px;
+	margin: 20px auto;
+	position: relative;
+}
+
+.qrcode img {
+	width: 100%;
+	height: 100%;
+}
+
+.qrcode .logo {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	height: 30px;
+	width: 30px;
+	margin-left: -15px;
+	margin-top: -15px;
+	background: #fff url("wechat.png") no-repeat center center;
+	background-size: cover;
+	border-radius: 3px;
+}
+
+.qrcode .logo.logo-alipay {
+	background-image: url("alipay.png");
+}
+
+.qrcode .expired {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 100%;
+	opacity: .95;
+	background: #fff url("expired.png") center center no-repeat;
+}
+
+.qrcode .paid {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 100%;
+	opacity: .95;
+	background: #fff url("paid.png") center center no-repeat;
+}
+
+.warning {
+	color: #f00;
+}
+
+.success {
+	color: #05af19;
+}
+
+.remainseconds {
+	width: 200px;
+	margin: 0 auto;
+	text-align: center;
+}
+
+.remainseconds .time {
+	width: 55px;
+	height: 90px;
+}
+
+.remainseconds .time b {
+	font-size: 40px;
+	font-weight: 300;
+}
+
+.remainseconds .time b, .remainseconds .time em {
+	display: block;
+}
+
+.remainseconds .time em {
+	font-style: normal;
+	color: #888;
+}
+
+@media ( max-width : 375px) {
+	.container {
+		padding: 0;
+	}
+	.remainseconds {
+		padding: 0 35px 10px 35px;
+		height: 80px;
+	}
+	.remainseconds .time {
+		height: 100%;
+	}
+	.remainseconds .time b {
+		font-size: 36px;
+	}
+}
+
+@media ( max-width : 320px) {
+	.remainseconds {
+		padding: 0 35px 10px 35px;
+		height: 87px;
+	}
+	.remainseconds .time {
+		height: 100%;
+	}
+	.remainseconds .time b {
+		font-size: 36px;
+	}
+	.container {
+		padding: 0;
+	}
+	.qrcode {
+		width: 200px;
+		height: 200px;
+	}
+	.realprice {
+		font-size: 36px;
+	}
+}
+
+.minutes {
+	float: left;
+}
+
+.seconds {
+	float: left;
+}
+
+.colon {
+	float: left;
+	width: 20px;
+	font-size: 30px;
+	line-height: 50px;
+	font-family: Vernada, 'Microsoft Yahei';
+}
+
+.tips {
+	background: #fff;
+	padding: 5px 0;
+	line-height: 25px;
+	overflow: hidden;
+	display: block;
+	clear: both;
+}
+
+.help {
+	line-height: 25px;
+	text-align: center;
+	font-size: 14px;
+}
+
+.footer {
+	height: 60px;
+	line-height: 60px;
+	text-align: center;
+	font-size: 12px;
+}
+
+.overdue {
+	position: absolute;
+	width: 100%;
+	margin: 0 auto;
+	top: 260px;
+	display: none;
+}
+</style>
+</head>
+
+<body>
+	<div id="pay" class="container"  >
+		<div class="mainbody">
+		<h1>当前ip禁止使用</h1>
+		</div>
+	</div>
+</body>
+</html>

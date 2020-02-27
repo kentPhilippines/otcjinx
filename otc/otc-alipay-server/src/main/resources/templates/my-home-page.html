@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>我的主页</title>
+    <script src="/static/js/layui/layui.all.js"></script>
+    <link href="/static/js/layui/css/layui.mobile.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet"
+          href="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+    <script
+            src="https://cdn.staticfile.org/popper.js/1.12.5/umd/popper.min.js"></script>
+    <script
+            src="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/js/bootstrap.min.js"></script>
+    <script src="https://cdn.staticfile.org/vue/2.4.2/vue.min.js"></script>
+    <script
+            src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+    <link
+            href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"
+            rel="stylesheet">
+    <script src="/static/js/common/common.js"></script>
+    <link href="/static/css/common/common.css" rel="stylesheet" type="text/css">
+    <link href="/static/css/common/common.css" rel="stylesheet" type="text/css">
+    <link href="/static/js/layui/css/layui.css" rel="stylesheet" type="text/css">
+    <style type="text/css">
+        .login-or-register {
+            text-align: center;
+            background-color: #00a0e9 !important;
+            border-top: 0.001rem solid #e64f5d;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+            border-top: 0.001rem solid #e64f5d;
+            padding-top: 1rem;
+            padding-top: 1rem;
+        }
+
+        .login-or-register button {
+            background-color: #DA5756;
+        }
+
+        .account-info {
+            display: flex;
+            background-color: #00a0e9 !important;
+            border-top: 0.001rem solid #007bff;
+            height: 40px;
+        }
+
+        .user-name {
+            flex: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: #fff;
+            margin-left: 1.5rem;
+        }
+
+        .user-name div {
+            width: 100%;
+        }
+
+        .cash-deposit {
+            flex: 3;
+            line-height: 4rem;
+            color: #fff;
+        }
+
+        .personal-info {
+            flex: 0.8;
+        }
+
+        .personal-info i {
+            font-size: 3.4rem;
+            color: #fff;
+        }
+
+        .personal-nav {
+            display: flex;
+        }
+
+        .personal-nav div {
+            flex: 1;
+        }
+
+        .home-page-nav {
+            height: 6rem !important;
+            background-color: #fff !important;
+        }
+
+        .home-page-nav a {
+            min-width: 4rem;
+        }
+
+        .list-group span {
+            float: right;
+        }
+
+        .list-group i {
+            font-size: 1.3rem;
+        }
+
+        .logout-group-item {
+            color: #00a0e9;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="common/header::html"></div>
+<form class="layui-form" action="">
+    <div id="myHomePage" v-cloak>
+        <div class="page-body">
+            <div class="login-or-register" v-show="!isLoggedInFlag">
+                <button type="button" class="btn btn-lg  "
+                        v-on:click="footerVM.goTo('/login')">{{loginOrRegisterTxt}}
+                </button>
+            </div>
+            <div class="account-info" v-show="isLoggedInFlag">
+                <!-- <div class="user-name">
+                    <div>
+                        <label>{{userName}}</label>
+                    </div>
+                </div> -->
+                <div class="cash-deposit" style="margin-left: 1.2rem;">
+                    <span>余额:</span><label>{{cashDeposit + cashBalance | numFilter }}元</label>
+                </div>
+                <!-- <div class="cash-deposit" style="margin-left: 1.2rem;">
+                    <span>收益:</span><label>{{cashBalance != null ? cashBalance
+                        : 0}}元</label>
+                </div> -->
+                <div class="cash-deposit">
+                    <span>费率:</span><label>{{fee != null ? fee*100
+                    : 0 | numFilter }}%</label>
+                </div>
+                <div class="personal-info">
+                    <label><i class="fa fa-angle-right" aria-hidden="true"
+                              v-on:click="footerVM.goTo('/personal-info')"></i></label>
+                </div>
+            </div>
+            <div class="account-info">
+                <div class="cash-deposit" style="margin-left: 1.2rem;">
+                    <span>在线人数:</span><label>{{onlineStat.loginOnlineCount}}</label>
+                </div>
+                <div class="cash-deposit">
+                    <span>接单人数:</span><label>{{onlineStat.bizOnlineCount}}</label>
+                </div>
+                <div class="personal-info">
+                    <label><i class="fa fa-angle-right" aria-hidden="true" v-show="onlineStat.isAgent == 1"
+                              v-on:click="footerVM.goTo('/onlineStatMembers')"></i></label>
+                </div>
+            </div>
+            <div>
+                <nav class="navbar bg-light footer-navbar home-page-nav">
+                    <a class="navbar-brand footer-navbar-brand"
+                       v-on:click="footerVM.goTo('/recharge')"> <i class="fa fa-jpy"
+                                                                   aria-hidden="true"></i> <span>充值</span>
+                    </a> <a class="navbar-brand footer-navbar-brand"
+                            v-on:click="footerVM.goTo('/withdraw')"> <i
+                        class="fa fa-money" aria-hidden="true"></i> <span>提现</span>
+                </a> <a class="navbar-brand footer-navbar-brand"
+                        v-on:click="footerVM.goTo('/recharge-withdraw-log')"><i
+                        class="fa fa-hdd-o" aria-hidden="true"></i> <span>个人充提</span> </a>
+                </nav>
+                <nav class="navbar bg-light footer-navbar home-page-nav">
+                    <a class="navbar-brand footer-navbar-brand"
+                       v-on:click="footerVM.goTo('/gathering-code')"><i
+                            class="fa fa-qrcode" aria-hidden="true"></i> <span>收款码</span> </a> <a
+                        class="navbar-brand footer-navbar-brand"
+                        v-on:click="footerVM.goTo('/receive-order-record')"><i
+                        class="fa fa-list-ul" aria-hidden="true"></i> <span>接单记录</span> </a>
+                    <a class="navbar-brand footer-navbar-brand"
+                       v-on:click="footerVM.goTo('/personal-account-change')"><i
+                            class="fa fa-book" aria-hidden="true"></i> <span>个人帐变</span> </a>
+                    <!--  <a
+                    class="navbar-brand footer-navbar-brand"
+                    v-on:click="footerVM.goTo('/account_manage')"><i
+                    class="fa fa-university" aria-hidden="true"></i> <span>账户管理</span> </a> -->
+                </nav>
+                <nav class="navbar bg-light footer-navbar home-page-nav">
+
+                </nav>
+            </div>
+            <ul class="list-group">
+                <li class="list-group-item fa fa-users"
+                    v-show="isLoggedInFlag && accountType == 'agent'"
+                    v-on:click="footerVM.goTo('/agent-center')">代理中心<span><i
+                        aria-hidden="true" class="fa fa-angle-right"></i></span>
+                </li>
+                <!-- 	<li class="list-group-item"
+                        v-on:click="footerVM.goTo('/online-customer')">在线客服<span><i
+                            aria-hidden="true" class="fa fa-angle-right"></i></span>
+                    </li> -->
+                <li class="list-group-item logout-group-item fa fa-share"
+                    v-show="isLoggedInFlag" v-on:click="logout">退出登录<span><i
+                        aria-hidden="true" class="fa fa-angle-right"></i></span></li>
+            </ul>
+        </div>
+    </div>
+</form>
+<div th:replace="common/footer::html"></div>
+<script type="text/javascript">
+    var myHomePageVM = new Vue(
+        {
+            el: '#myHomePage',
+            data: {//初始全局变量
+                loginOrRegisterTxt: '',
+                onlineStat: '',
+                isLoggedInFlag: false,
+                userName: '',//若登录成功  获取登录账户3
+                fee: '',
+                cashDeposit: '',//登录成功  获取 保证金
+                cashBalance: '',
+                accountType: ''//登录成功获取用户类型
+            },
+            computed: {},
+            created: function () {
+            },
+            filters: {
+                numFilter(value) {
+                    let realVal = ''
+                    if (value) {
+                        // 截取当前数据到小数点后三位
+                        let tempVal = parseFloat(value).toFixed(3)
+                        realVal = tempVal.substring(0, tempVal.length - 1)
+                    } else {
+                        realVal = '0.00'
+                    }
+                    return realVal
+                }
+            },
+            mounted: function () {
+                this.loadRegisterSetting();
+                this.getUserAccountInfo();
+                this.onlineStatMethod();
+            },
+            methods: {
+                goTo: function (url) {
+                    window.location.href = url;
+                },
+
+                loadRegisterSetting: function () {
+                    var that = this;
+                    that.$http
+                        .get('/masterControl/getRegisterSetting')
+                        .then(
+                            function (res) {
+                                that.loginOrRegisterTxt = res.body.result.registerEnabled ? '登录/注册'
+                                    : '登录';
+                            });
+                },
+
+                /**
+                 * 获取用户账号信息
+                 */
+                getUserAccountInfo: function () {
+                    var that = this;
+                    that.$http
+                        .get('/userAccount/getUserAccountInfo')
+                        .then(
+                            function (res) {
+                                if (res.body.result != null) {
+                                    that.isLoggedInFlag = true;
+                                    that.userName = res.body.result.accountName;
+                                    that.cashDeposit = res.body.result.rechargeNumber;
+                                    that.cashBalance = res.body.result.cashBalance;
+                                    that.accountType = res.body.result.accountType;
+                                    that.fee = res.body.result.fee;
+                                    headerVM.title = that.userName + '(' + (60000 + res.body.result.id) + ')';
+                                }
+                            });
+                },
+
+                onlineStatMethod: function () {
+                    var that = this;
+                    that.$http.get('/statisticalAnalysis/querySubOnline').then(
+                        function (res) {
+                            that.onlineStat = res.body.result;
+                        }
+                    )
+                },
+
+                logout: function () {
+                    this.$http.post('/logout').then(function (res) {
+                        window.location.href = '/my-home-page';
+                    });
+                }
+            }
+        });
+</script>
+</body>
+</html>

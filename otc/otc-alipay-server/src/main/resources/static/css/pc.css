@@ -1,0 +1,89 @@
+body {
+	background: #fff;
+}
+.container {
+	position: relative;
+	width: 1200px;
+	text-align: center;
+	margin: 0 auto;
+	padding: 150px 500px 0 0;
+	box-sizing: border-box;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+.aliLogo, .openBtn {
+	display: none;
+}
+.orderNo {
+	margin: 0;
+	font-size: 20px;
+	color: #303030;
+}
+.orderNo .orderMobile {
+	display: none;
+}
+.qrcode {
+	display: block;
+	width: 200px;
+	height: 200px;
+	margin: 0 auto;
+}
+.price {
+	margin: 0 0 10px;
+	font-size: 20px;
+	color: #1F1F1F;
+	font-weight: 400;
+}
+.info {
+	margin: 0;
+	font-size: 22px;
+	color: #252525;
+}
+@media ( max-width : 768px) {
+	.pc {
+		display: none;
+	}
+	.container {
+		width: 100vw;
+		padding: 10vw 0;
+	}
+	.aliLogo {
+		display: block;
+		height: 15vw;
+		margin: 0 auto;
+		background:
+			url(https://t.alipayobjects.com/images/T11rdgXbFkXXXXXXXX.png)
+			no-repeat center;
+		background-size: auto 15vw;
+	}
+	.orderNo {
+		font-size: 4vw;
+		margin-top: 5vw;
+	}
+	.orderNo .orderMobile {
+		display: block;
+	}
+	.qrcode {
+		width: 60vw;
+		height: 60vw;
+	}
+	.price {
+		font-size: 4vw;
+		margin-top: -5vw;
+	}
+	.openBtn {
+		display: block;
+		width: 60vw;
+		height: 12vw;
+		margin: 5vw auto 0;
+		font-size: 5vw;
+		font-weight: 700;
+		color: #fff;
+		border-radius: 5px;
+		background: #019fe8;
+		-webkit-appearance: none;
+	}
+	.openBtn:disabled {
+		background: #ccc;
+	}
+}

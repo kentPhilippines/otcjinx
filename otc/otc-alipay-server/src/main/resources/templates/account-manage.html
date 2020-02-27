@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>账户管理</title>
+<script src="/static/js/layui/layui.all.js"></script> 
+<link href="/static/js/layui/css/layui.mobile.css" rel="stylesheet" type="text/css"> 
+<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/css/bootstrap.min.css">
+<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdn.staticfile.org/popper.js/1.12.5/umd/popper.min.js"></script>
+<script src="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/js/bootstrap.min.js"></script>
+<script src="https://cdn.staticfile.org/vue/2.4.2/vue.min.js"></script>
+<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+<script src="https://cdn.bootcss.com/dayjs/1.7.8/dayjs.min.js"></script>
+<script src="/static/js/common/common.js"></script>
+<link href="/static/css/common/common.css" rel="stylesheet" type="text/css">
+<link href="/static/js/layui/css/layui.css" rel="stylesheet" type="text/css"> 
+<style type="text/css">
+.platform-order {
+	background: rgb(255, 255, 255);
+	margin-bottom: 1rem;
+	display: flex;
+	padding-left: 1.2rem;
+	padding-right: 0.2rem;
+	padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+.platform-order-body {
+	flex: 4;
+	display: flex;
+	flex-direction: column;
+	margin-top: 0.5rem;
+}
+
+.platform-order-body-item label {
+	text-align: end;
+	width: 5rem;
+	margin-right: 0.5rem;
+}
+
+.platform-order-body-item span {
+	min-width: 5rem;
+	display: inline-block;
+}
+
+.platform-order-body-item button {
+	width: 96%;
+}
+
+.platform-order-body-item-highlight {
+	color: #c3606a;
+}
+.account-change {
+	background-color: #f5f5f5;;
+	margin-bottom: 1rem;
+	display: flex;
+	padding-left: 1.2rem;
+	padding-right: 0.2rem;
+	padding-top: 0.5rem;
+	padding-bottom: 0.5rem;
+}
+
+.account-change-body {
+	flex: 4;
+	display: flex;
+	flex-direction: column;
+}
+
+.account-change-body-item label {
+	text-align: end;
+	width: 5rem;
+	margin-right: 0.5rem;
+}
+
+.account-change-body-item span {
+	min-width: 5rem;
+	display: inline-block;
+}
+
+.account-change-body-item button {
+	width: 48%;
+}
+
+.account-change-body-item-highlight {
+	color: #c3606a;
+}
+
+.page-link {
+	color: #007bff !important
+}
+</style>
+<body>
+	<div th:replace="common/header::html"></div>
+	<div id="accountManage" v-cloak>
+		<div class="page-body" style="background: #f2f2f2;">
+			<div class="input-group" style="padding-bottom: 0.3rem; padding-top: 0.3rem;">
+				<select class="form-control" style="width: 2.2rem; height: 3rem;" v-model="gatheringChannelCode">
+					<option v-for="dictItem in gatheringChannelDictItems" :value="dictItem.payCode">{{dictItem.payName}}</option>
+				</select> 
+				<div class="input-group-append">
+					<button class="btn btn-outline-secondary" type="button" v-on:click="query">查询</button>
+				</div>
+			</div>
+			<div class="platform-order" v-for="gatheringCode in gatheringCodes">
+				<div class="platform-order-body">
+					<div class="account-change-body-item">
+						<label>账户:</label> <span>{{gatheringCode.mediumNumber }}</span>
+						<img style="float: right;"  src="https://i.alipayobjects.com/common/favicon/favicon.ico">
+					</div>
+					<div class="account-change-body-item">
+						<label>收款人:</label> <span class="account-change-body-item-highlight">{{gatheringCode.retain1}}</span>
+					 	<label>收款渠道:</label> <span>{{gatheringCode.code == 'alipay_qr' ? '支付宝' :'其他'}}</span>  
+					</div>
+					<div class="account-change-body-item">
+						<label>状态:</label> <span class="account-change-body-item-highlight">{{gatheringCode.status == 1 ? '正在接单' : '未接单'}}</span>
+							<span class="account-change-body-item-highlight" style="float: right;margin-right: 1rem;">
+								  <div class="layui-form-item" v-show="gatheringCode.status != 1"> 
+								   <div class="layui-input-block">
+								   <div class=" layui-unselect layui-form-switch"   v-on:click="updataQrStatus(gatheringCode.id,gatheringCode.status)" lay-skin="_switch">
+								   <em></em>
+								   <i></i></div></div>
+								   </div>
+								  <div class="layui-form-item"  v-show="gatheringCode.status == 1"> 
+								   <div class="layui-input-block">
+								   <div class=" layui-unselect layui-form-switch layui-form-onswitch "   v-on:click="updataQrStatus(gatheringCode.id,gatheringCode.status)" lay-skin="_switch">
+								   <em></em>
+								   <i></i></div></div>
+								   </div>
+						  		</span>
+					</div>
+				</div>
+			</div>
+			<div style="padding-left: 13rem;">
+				<ul class="pagination">
+					<li class="page-item"><a class="page-link" v-show="totalPage > 0 && pageNum > 1" v-on:click="prePage">上一页</a></li>
+					<li class="page-item"><a class="page-link" v-show="pageNum >= 1 && pageNum < totalPage" v-on:click="nextPage">下一页</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div th:replace="common/footer::html"></div>
+	<script type="text/javascript">
+	
+
+	var accountManageVM = new Vue({
+			el : '#accountManage',
+			data : {
+				gatheringCodes : [],
+				accountChangeTypeCode : '',
+				gatheringChannelCode : '',
+				accountChangeTypeDictItems : [],
+				accountTime : dayjs().format('YYYY-MM-DD'),
+				accountChangeLogs : [],
+				gatheringChannelDictItems :[],
+				pageNum : 1,
+				totalPage : 1
+			},
+			filters: {
+				 dateFilter: function (data, format = "") {
+		             var dt = new Date(data);
+		             var y = dt.getFullYear();
+		             var m = (dt.getMonth()+1).toString().padStart(2,"0");
+		             var d = dt.getDate().toString().padStart(2,"0");
+		             var h = dt.getHours().toString().padStart(2,"0");
+		             var mm = dt.getMinutes().toString().padStart(2,"0");
+		             var s = dt.getSeconds().toString().padStart(2,"0");
+		             if (format.toLocaleLowerCase() === "yyyy-mm-dd" ||
+		                 format.toLocaleLowerCase() === "") {
+		                 return `${y}-${m}-${d}`;
+		             } else if (format.toLocaleLowerCase() === "yyyy/mm/dd") {
+		                 return `${y}/${m}/${d}`;
+		             } else if (format.toLocaleLowerCase() === "yyyy-mm-dd hh:mm:ss") {
+		                 return `${y}-${m}-${d} ${h}:${mm}:${s}`;
+		             } else if (format.toLocaleLowerCase() === "yyyy/mm/dd hh:mm:ss") {
+		                 return `${y}/${m}/${d} ${h}:${mm}:${s}`;
+		             } else {
+		                 return `输入的时间格式有误`;
+		             }
+		         }
+			 },
+			computed : {},
+			created : function() {
+			},
+			mounted : function() {
+				headerVM.title = '账户管理';
+				this.loadByPage();
+				this.loadGatheringChannelDictItem();
+			},
+			methods : {
+				loadGatheringChannelDictItem : function() {
+					var that = this;
+					that.$http.get('/recharge/findEnabledPayType' ).then(function(res) {
+						this.gatheringChannelDictItems = res.body.result;
+					});
+				},
+				query : function() {
+					this.pageNum = 1;
+					this.loadByPage();
+				},
+				prePage : function() {
+					this.pageNum = this.pageNum - 1;
+					this.loadByPage();
+				},
+				nextPage : function() {
+					this.pageNum = this.pageNum + 1;
+					this.loadByPage();
+				},
+				updataQrStatus:function(gatheringCodeId,status){
+					 if( status == 1 )
+						 this.updataQrStatusEr(gatheringCodeId);
+					else
+						this.updataQrStatusSu(gatheringCodeId);
+					
+				},
+				updataQrStatusEr:function(gatheringCodeId){
+					var that = this;
+					that.$http.get('/qrcode/updataQrStatusEr', {
+						params : {
+							id : gatheringCodeId,
+						}
+					}).then(function(res) {
+						that.loadByPage();
+					});
+				},
+				updataQrStatusSu:function(gatheringCodeId){
+					var that = this;
+					that.$http.get('/qrcode/updataQrStatusSu', {
+						params : {
+							id : gatheringCodeId,
+						}
+					}).then(function(res) {
+						that.loadByPage();
+					});
+				},
+				loadByPage : function(){
+						var that = this;
+						that.$http.get('/qrcode/findIsMyQrcodePage', {
+							params : {
+								pageSize : 5,
+								pageNum : that.pageNum,
+								gatheringChannelCode : that.gatheringChannelCode,
+							}
+						}).then(function(res) {
+							if(!res.body.success){
+								layer.msg(res.body.message)		
+								return;
+							}
+							that.gatheringCodes = res.body.result.content;
+							that.pageNum = res.body.result.pageNum;
+							that.totalPage = res.body.result.totalPage;
+						});
+				}
+			}
+	})
+		</script>

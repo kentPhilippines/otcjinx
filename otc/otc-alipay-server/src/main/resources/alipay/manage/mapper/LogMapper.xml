@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="alipay.manage.mapper.LogMapper" >
+  <resultMap id="BaseResultMap" type="alipay.manage.bean.Log" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="ipAddr" property="ipAddr" jdbcType="VARCHAR" />
+    <result column="loginLocation" property="loginLocation" jdbcType="VARCHAR" />
+    <result column="loginTime" property="loginTime" jdbcType="TIMESTAMP" />
+    <result column="useName" property="useName" jdbcType="VARCHAR" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="submitTime" property="submitTime" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="alipay.manage.bean.Log" extends="BaseResultMap" >
+    <result column="msg" property="msg" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, ipAddr, loginLocation, loginTime, useName, createTime, submitTime, status
+  </sql>
+  <sql id="Blob_Column_List" >
+    msg
+  </sql>
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="alipay.manage.bean.LogExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from alipay_log
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="alipay.manage.bean.LogExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from alipay_log
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from alipay_log
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from alipay_log
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="alipay.manage.bean.LogExample" >
+    delete from alipay_log
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="alipay.manage.bean.Log" useGeneratedKeys="true" keyProperty="id" >
+    insert into alipay_log (ipAddr, loginLocation, loginTime, 
+      useName, createTime, submitTime, 
+      status, msg)
+    values (#{ipAddr,jdbcType=VARCHAR}, #{loginLocation,jdbcType=VARCHAR}, #{loginTime,jdbcType=TIMESTAMP}, 
+      #{useName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{submitTime,jdbcType=TIMESTAMP}, 
+      #{status,jdbcType=INTEGER}, #{msg,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="alipay.manage.bean.Log" useGeneratedKeys="true" keyProperty="id" >
+    insert into alipay_log
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="ipAddr != null" >
+        ipAddr,
+      </if>
+      <if test="loginLocation != null" >
+        loginLocation,
+      </if>
+      <if test="loginTime != null" >
+        loginTime,
+      </if>
+      <if test="useName != null" >
+        useName,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="submitTime != null" >
+        submitTime,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="msg != null" >
+        msg,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="ipAddr != null" >
+        #{ipAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="loginLocation != null" >
+        #{loginLocation,jdbcType=VARCHAR},
+      </if>
+      <if test="loginTime != null" >
+        #{loginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="useName != null" >
+        #{useName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="submitTime != null" >
+        #{submitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="msg != null" >
+        #{msg,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="alipay.manage.bean.LogExample" resultType="java.lang.Integer" >
+    select count(*) from alipay_log
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update alipay_log
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.ipAddr != null" >
+        ipAddr = #{record.ipAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="record.loginLocation != null" >
+        loginLocation = #{record.loginLocation,jdbcType=VARCHAR},
+      </if>
+      <if test="record.loginTime != null" >
+        loginTime = #{record.loginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.useName != null" >
+        useName = #{record.useName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null" >
+        createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.submitTime != null" >
+        submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.status != null" >
+        status = #{record.status,jdbcType=INTEGER},
+      </if>
+      <if test="record.msg != null" >
+        msg = #{record.msg,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map" >
+    update alipay_log
+    set id = #{record.id,jdbcType=INTEGER},
+      ipAddr = #{record.ipAddr,jdbcType=VARCHAR},
+      loginLocation = #{record.loginLocation,jdbcType=VARCHAR},
+      loginTime = #{record.loginTime,jdbcType=TIMESTAMP},
+      useName = #{record.useName,jdbcType=VARCHAR},
+      createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
+      status = #{record.status,jdbcType=INTEGER},
+      msg = #{record.msg,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update alipay_log
+    set id = #{record.id,jdbcType=INTEGER},
+      ipAddr = #{record.ipAddr,jdbcType=VARCHAR},
+      loginLocation = #{record.loginLocation,jdbcType=VARCHAR},
+      loginTime = #{record.loginTime,jdbcType=TIMESTAMP},
+      useName = #{record.useName,jdbcType=VARCHAR},
+      createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
+      status = #{record.status,jdbcType=INTEGER}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="alipay.manage.bean.Log" >
+    update alipay_log
+    <set >
+      <if test="ipAddr != null" >
+        ipAddr = #{ipAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="loginLocation != null" >
+        loginLocation = #{loginLocation,jdbcType=VARCHAR},
+      </if>
+      <if test="loginTime != null" >
+        loginTime = #{loginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="useName != null" >
+        useName = #{useName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="submitTime != null" >
+        submitTime = #{submitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="msg != null" >
+        msg = #{msg,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="alipay.manage.bean.Log" >
+    update alipay_log
+    set ipAddr = #{ipAddr,jdbcType=VARCHAR},
+      loginLocation = #{loginLocation,jdbcType=VARCHAR},
+      loginTime = #{loginTime,jdbcType=TIMESTAMP},
+      useName = #{useName,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      submitTime = #{submitTime,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=INTEGER},
+      msg = #{msg,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="alipay.manage.bean.Log" >
+    update alipay_log
+    set ipAddr = #{ipAddr,jdbcType=VARCHAR},
+      loginLocation = #{loginLocation,jdbcType=VARCHAR},
+      loginTime = #{loginTime,jdbcType=TIMESTAMP},
+      useName = #{useName,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      submitTime = #{submitTime,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

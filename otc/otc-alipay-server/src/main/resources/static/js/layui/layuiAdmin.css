@@ -1,0 +1,77 @@
+.layuiadmin-card-text {
+	background-color: #e0d3d3;
+	color: #777;
+	padding: 24px;
+}
+ 
+
+.layuiadmin-card-status dd:last-child {
+	border: none
+}
+
+.layuiadmin-card-status dd div.layui-status-img, .layuiadmin-card-team .layui-team-img
+	{
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	background-color: #009688;
+	margin-right: 15px
+}
+
+.layuiadmin-card-status dd div.layui-status-img a {
+	width: 100%;
+	height: 100%;
+	display: inline-block;
+	text-align: center;
+	line-height: 32px
+}
+
+.layuiadmin-card-status dd div.layui-status-img img,
+	.layuiadmin-card-team .layui-team-img img {
+	width: 50%;
+	height: 50%
+}
+
+.layuiadmin-card-status dd div a {
+	color: #01AAED
+}
+
+.layuiadmin-card-status dd div span {
+	color: #BBB
+}
+
+.layuiadmin-card-link {
+	padding-left: 10px;
+	font-size: 0
+}
+
+.layuiadmin-card-link a {
+	display: inline-block;
+	width: 25%;
+	color: #666;
+	font-size: 14px;
+	margin-bottom: 12px
+}
+
+.layuiadmin-card-link button {
+	vertical-align: top
+}
+
+.layuiadmin-card-link button:hover {
+	color: #009688
+}
+
+.layuiadmin-card-team li {
+	padding: 10px 0 10px 10px
+}
+
+.layuiadmin-card-team .layui-team-img {
+	display: inline-block;
+	margin-right: 8px;
+	width: 24px;
+	height: 24px;
+	text-align: center;
+	line-height: 24px
+}
+ 
+ 

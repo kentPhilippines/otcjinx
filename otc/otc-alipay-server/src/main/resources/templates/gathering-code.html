@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>收款码</title>
+<!--收款码绑定  -->
+<script src="/static/js/layui/layui.all.js"></script> 
+<link href="/static/js/layui/css/layui.mobile.css" rel="stylesheet" type="text/css"> 
+<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/css/bootstrap.min.css">
+<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdn.staticfile.org/popper.js/1.12.5/umd/popper.min.js"></script>
+<script src="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/js/bootstrap.min.js"></script>
+<script src="https://cdn.staticfile.org/vue/2.4.2/vue.min.js"></script>
+<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+<script src="https://cdn.bootcss.com/dayjs/1.7.8/dayjs.min.js"></script>
+<script src="https://cdn.bootcss.com/layer/2.3/layer.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/5.0.1/css/fileinput.min.css" media="all" rel="stylesheet" type="text/css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/5.0.1/js/fileinput.min.js"></script>
+<script src="/static/js/common/common.js"></script>
+<link href="/static/css/common/common.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+.account-change {
+	background-color: #fff;;
+	margin-bottom: 1rem;
+	display: flex;
+	padding-left: 1.2rem;
+	padding-right: 0.2rem;
+	padding-top: 0.5rem;
+	padding-bottom: 0.5rem;
+}
+.account-change-body {
+	flex: 4;
+	display: flex;
+	flex-direction: column;
+}
+.account-change-body-item label {
+	text-align: end;
+	width: 5rem;
+	margin-right: 0.5rem;
+}
+.account-change-body-item span {
+	min-width: 5rem;
+	display: inline-block;
+}
+.account-change-body-item button {
+	width: 48%;
+}
+.account-change-body-item-highlight {
+	color: #c3606a;
+}
+.page-link {
+	color: #007bff !important
+}
+</style>
+</head>
+
+<body>
+	<div th:replace="common/header::html"></div>
+	<div id="gatheringCode" v-cloak>
+	<!-- 收款媒介 -->
+		<div class="page-body" style="background: #f2f2f2;" v-show="mediumShow">
+			<button type="button" style="margin-top: 0.3rem;" class="btn btn-outline-info btn-lg btn-block" v-on:click="showEditMediumPage()">添加收款媒介</button> 
+			<div class="input-group" style="padding-bottom: 0.3rem; padding-top: 0.3rem;">
+				<select class="form-control" style="width: 2.2rem; height: 3rem;" v-model="status">
+					<option value="">状态</option>
+					<option :value="1">开启</option>
+					<option :value="0">关闭</option>
+				</select> 
+				<select class="form-control" style="width: 6.2rem; height: 3rem;" v-model="mediumCode">
+					<option value="">收款媒介</option>
+					<option v-for="dictItem in mediumDictItems" :value="dictItem.mediumCode">{{dictItem.mediumName}}</option>
+				</select>
+				<div class="input-group-append">
+					<button class="btn btn-outline-secondary" type="button" v-on:click="query1">查询</button>
+				</div>
+			</div>
+			<div class="account-change" v-for="medium in mediums">
+				<div class="account-change-body">
+					<div class="account-change-body-item">
+						<label>创建时间:</label> <span>{{medium.createTime | dateFilter("yyyy-mm-dd hh:mm:ss")}}</span>
+						<img style="float: right;"  src="https://i.alipayobjects.com/common/favicon/favicon.ico">
+					</div>
+					<div class="account-change-body-item">
+						<label>媒介:</label> <span>{{medium.code == 'alipay' ? '支付宝' :'其他'}}</span> 
+						<label>状态:</label> <span>{{medium.status == 1 ? '开启' : '关闭'}}</span>
+					</div>
+					<div class="account-change-body-item">
+						<label>账号:</label> <span class="account-change-body-item-highlight">{{medium.mediumNumber}}</span>
+					</div>
+					<div class="account-change-body-item">
+						<label>收款人:</label> <span class="account-change-body-item-highlight">{{medium.mediumHolder}}</span>
+					</div>
+					 <div class="account-change-body-item">
+						<button class="btn btn-outline-info btn-lg" type="button" v-on:click="showQrManage(medium.mediumId)">二维码管理</button>
+						<button class="btn btn-outline-info btn-lg" type="button" v-on:click="showEditMediumPage(medium.mediumId)">编辑媒介</button>
+					</div> 
+				</div>
+			</div>
+			<div style="padding-left: 13rem;">
+				<ul class="pagination">
+					<li class="page-item"><a class="page-link" v-show="totalPage1 > 0 && pageNum1 > 1" v-on:click="prePage1">上一页</a></li>
+					<li class="page-item"><a class="page-link" v-show="pageNum1 >= 1 && pageNum1 < totalPage1" v-on:click="nextPage1">下一页</a></li>
+				</ul>
+			</div>
+		</div>
+		<!-- 二维码管理 -->
+		<div class="page-body" style="background: #f2f2f2;" v-show="qrcodeShow">
+			<button type="button" class="btn btn-light btn-lg btn-block " v-on:click="addQr()"><li class="fa fa-plus-square">添加收款码</li></button>
+			<div class="account-change" v-for="qrcode in qrcodeArray">
+				<div class="account-change-body">
+					<div class="account-change-body-item">
+						<label>创建时间:</label> <span>{{qrcode.createTime | dateFilter("yyyy-mm-dd hh:mm:ss")}}</span>
+						<img style="float: right;"  src="https://i.alipayobjects.com/common/favicon/favicon.ico">
+					</div>
+					<div class="account-change-body-item">
+						<label> 收款金额: </label> <span class="account-change-body-item-highlight">{{qrcode.fixationAmount == '' || qrcode.fixationAmount == null ? '不固定'  :qrcode.fixationAmount + '元'}}</span> 
+					</div>
+					 <div class="form-group">
+					<button type="button" class="btn btn-secondary   btn-block" style="background-color:#00a0e9" v-on:click="dealeteQr(qrcode.qrcodeId)">删除</button>
+					</div> 
+				</div>
+			</div>
+			<button type="button" class="btn btn-light btn-lg btn-block " v-on:click="reply()"><i class="fa fa-reply-all" aria-hidden="true">返回</i></button>
+		</div>
+		<!-- 二维码上传 -->
+			<div class="page-body" style="background: #f2f2f2;"  v-show="addQrShow">
+			<div class="container" style="margin-top: 1.3rem;">
+				<form>
+					 <div class="form-group">
+						<label> <span> 收款金额:</span>
+							<div class="custom-control custom-checkbox custom-control-inline" v-on:click="switchGatheringAmountMode">
+								<input type="checkbox" id="fixedGatheringAmount" class="custom-control-input" v-model="editGatheringCode.fixedGatheringAmount"> 
+								<label for="fixedGatheringAmount" class="custom-control-label">固定收款金额</label>
+							</div>
+						</label> 
+						<input type="number" class="form-control" v-model="editGatheringCode.gatheringAmount" :disabled="!editGatheringCode.fixedGatheringAmount">
+					</div>
+					<div class="form-group">
+								 <label>收款码:</label> <input type="file" class="form-control gathering-code-pic">
+					</div>
+					<button type="button" class="btn bg-primary btn-lg btn-block" style="background-color:#00a0e9" v-on:click="addQrInfo()">保存</button>
+					<button type="button" class="btn btn-light btn-lg btn-block" v-on:click="forQrManage()">返回</button>
+				</form>
+			</div>
+		</div>
+		<!-- 添加编辑收款媒介-->
+		<div class="page-body" style="background: #f2f2f2;" v-show="mediumEdit">
+			<div class="container" style="margin-top: 1.3rem;">
+					<div class="form-group">
+						<label>收款媒介:</label> 
+						<select class="form-control" v-model="medium.code">
+							<option value="">请选择</option>
+							<option v-for="dictItem in mediumDictItems" :value="dictItem.mediumCode">{{dictItem.mediumName}}</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<label>状态:</label> 
+						<select class="form-control" v-model="medium.status">
+							<option value="">请选择</option>
+							<option :value="1">开启</option>
+							<option :value="0">关闭</option>
+							<!-- <option v-for="dictItem in gatheringCodeStateDictItems" :value="dictItem.dictItemCode">{{dictItem.dictItemName}}</option> -->
+						</select>
+					</div>
+					<div class="form-group">
+						<label>媒介登录账户:</label> <input type="text"   class="form-control" placeholder="如支付宝或微信登录账户"  v-model="medium.mediumNumber">
+					</div>
+					<div class="form-group">
+						<label>收款人:</label> <input type="text" class="form-control"  placeholder="填写真实姓名"   v-model="medium.mediumHolder">
+					</div>
+					<div class="form-group">
+						<label>关联手机号/邮箱/编号:</label> <input type="text" class="form-control"  placeholder="请填写关联的手机号/邮箱/编号等" v-model="medium.mediumPhone">
+					</div>
+						<form >
+					<button type="button" class="btn bg-primary btn-lg btn-block" style="background-color:#00a0e9" v-on:click="addMedium">保存</button>
+					<div v-show="editShow">
+						<button type="button" class="btn btn-warning btn-lg btn-block"   v-on:click="delMedium(medium.mediumId)">删除</button>
+					</div>
+					<button type="button" class="btn btn-light btn-lg btn-block" v-on:click="hideEditGatheringCodePage">返回</button>
+				</form>
+			</div>
+		</div>
+	</div>
+	<div th:replace="common/footer::html"></div>
+	<script type="text/javascript" src="/static/js/gathering-code.js"></script>
+</body>
+</html>

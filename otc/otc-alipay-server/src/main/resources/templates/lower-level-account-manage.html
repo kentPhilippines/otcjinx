@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>下级账号管理</title>
+<script src="/static/js/layui/layui.all.js"></script> 
+<link href="/static/js/layui/css/layui.mobile.css" rel="stylesheet" type="text/css"> 
+<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/css/bootstrap.min.css">
+<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdn.staticfile.org/popper.js/1.12.5/umd/popper.min.js"></script>
+<script src="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/js/bootstrap.min.js"></script>
+<script src="https://cdn.staticfile.org/vue/2.4.2/vue.min.js"></script>
+<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+<script src="https://cdn.bootcss.com/layer/2.3/layer.js"></script>
+<script src="/static/js/common/common.js"></script>
+<link href="/static/css/common/common.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+.form-details-item label {
+	width: 7rem;
+}
+</style>
+</head>
+
+<body>
+	<div th:replace="common/header::html"></div>
+	<div id="lowerLevelAccountManage" v-cloak>
+		<div class="page-body" style="background: #f2f2f2;">
+			<div class="input-group" style="padding-bottom: 0.3rem; padding-top: 0.3rem;">
+				</select> <input type="text" class="form-control" style="width: 8rem;" v-model="userName" placeholder="用户名">
+				<div class="input-group-append">
+					<button class="btn btn-outline-secondary" type="button" v-on:click="query">查询</button>
+				</div>
+			</div>
+			<div class="card-header">
+			 <span>直接下线代理：<strong>{{agent}}人</strong></span>
+			<span style="float: right;">直接下线会员：<strong>{{userAgent}}人</strong></span>  
+			<div>
+				<span>多级下线：<strong>{{moreAgent}}人</strong></span>
+				<span style="float: right;">多级流水：<strong>{{moreAmountRun | numFilter}}元</strong></span>
+			</div>
+		  	<div>
+				<span>多级下线代理：<strong>{{userAgentCount}}人</strong></span>
+				<span style="float: right;">多级会员：<strong>{{userCount}}人</strong></span>
+			</div>
+			<div>
+				<span>多级交易：<strong>{{moreDealCount}}笔</strong></span>
+				<span style="float: right;">多级返佣：<strong>{{moreDealProfit | numFilter}}元</strong></span>
+			</div>  
+			</div>
+			<div class="form-details" v-for="account in accounts">
+				<div class="form-details-body">
+					<div class="form-details-item">
+						<label>用户名:</label> <span>{{account.accountId}}({{60000+account.id}})</span>
+						<label>总下线人数:<strong class="form-details-item-highlight">{{account.agentCount}}</strong></label>  
+					</div>
+					<div class="form-details-item">
+						<label>保证金:</label> <span class="form-details-item-highlight">{{account.rechargeNumber}}</span>
+						<label>分润:<strong class="form-details-item-highlight">{{account.cashBalance}}</strong>  </label> 
+					</div>
+					<div class="form-details-item">
+						<label>成功交易人数:</label> <span class="form-details-item-highlight">{{account.online}}</span> 
+						<label>成功笔数:<strong class="form-details-item-highlight">{{account.toDayOrderCount}}</strong></label>  
+					</div>
+					<div class="form-details-item">
+						<label>费率</label> <span class="form-details-item-highlight">{{account.fee}}</span> 
+						<button  class="btn btn-outline-info btn-lg"   type="button"   style="margin: 0.2rem 0.2rem 0.2rem 0.2rem;  width: 7rem; height: 3rem;"  v-on:click="updataAccountFee(account.id)"><span>修改费率</span>  </button>		
+					</div>
+					<div class="form-details-item">
+						<label>账号性质:</label> <span class="form-details-item-highlight">{{account.isAgent == 1 ? '代理商' : '会员'}}</span> 
+						<button  class="btn btn-outline-info btn-lg"  v-show="account.isAgent != 1"  type="button"   style="margin: 0.2rem 0.2rem 0.2rem 0.2rem;  width: 7rem; height: 3rem;"  v-on:click="updateIsAgent(account.id)"><span>升级代理</span>  </button>		
+					</div>
+					<!-- <div class="form-details-item">
+						<label>接单状态:</label> <span class="form-details-item-highlight">{{account.receiveOrderState ==  1 ? '正常接单' : '暂停接单'}}</span> 
+						<button  class="btn btn-outline-info btn-lg"  v-show="account.receiveOrderState != 1"  type="button"   style="margin: 0.2rem 0.2rem 0.2rem 0.2rem;  width: 7rem; height: 3rem;"  v-on:click="updateReceiveOrderState(account.id,'1')"><span>激活</span>  </button>		
+						<button  class="btn btn-outline-info btn-lg" v-show="account.receiveOrderState == 1"  type="button"   style="margin: 0.2rem 0.2rem 0.2rem 0.2rem;  width: 7rem; height: 3rem;"  v-on:click="updateReceiveOrderState(account.id,'2')"><span>关闭</span>  </button>		
+					</div> -->
+					<div class="form-details-item">
+						<label>注册时间:</label> <span>{{account.createTime  | dateFilter("yyyy-mm-dd hh:mm:ss")}}</span>
+					</div>
+					<div class="form-details-item">
+						<label>最近登录时间:</label> <span>{{account.loginTime | dateFilter("yyyy-mm-dd hh:mm:ss")}}</span>
+					</div>
+				</div>
+			</div>
+			<div style="padding-left: 13rem;">
+				<ul class="pagination">
+					<li class="page-item"><a class="page-link" v-show="totalPage > 0 && pageNum > 1" v-on:click="prePage">上一页</a></li>
+					<li class="page-item"><a class="page-link" v-show="pageNum >= 1 && pageNum < totalPage" v-on:click="nextPage">下一页</a></li>
+				</ul>
+			</div>
+
+		</div>
+	</div>
+	<div th:replace="common/footer::html"></div>
+	<script type="text/javascript">
+		var lowerLevelAccountManageVM = new Vue({
+			el : '#lowerLevelAccountManage',
+			data : {
+				queryScope : '20',
+				userName : '',
+				accounts : [],
+				pageNum : 1,
+				totalPage : 1,
+				userCount : '',
+				userAgentCount: '',
+				moreAgent : '',
+				moreAmountRun : '',
+				moreDealCount : '',
+				moreDealProfit : '',
+				agent : '',
+				userAgent : ''
+			},
+			filters: { 
+				numFilter (value) {
+			    let realVal = ''
+				    if (value) {
+				      // 截取当前数据到小数点后三位
+				      let tempVal = parseFloat(value).toFixed(3)
+				      realVal = tempVal.substring(0, tempVal.length - 1)
+				    } else {
+				      realVal = '0.00'
+				    }
+				    return realVal
+				  },
+				 dateFilter: function (data, format = "") {
+		             var dt = new Date(data);
+		             var y = dt.getFullYear();
+		             var m = (dt.getMonth()+1).toString().padStart(2,"0");
+		             var d = dt.getDate().toString().padStart(2,"0");
+		             var h = dt.getHours().toString().padStart(2,"0");
+		             var mm = dt.getMinutes().toString().padStart(2,"0");
+		             var s = dt.getSeconds().toString().padStart(2,"0");
+		             if (format.toLocaleLowerCase() === "yyyy-mm-dd" ||
+		                 format.toLocaleLowerCase() === "") {
+		                 return `${y}-${m}-${d}`;
+		             } else if (format.toLocaleLowerCase() === "yyyy/mm/dd") {
+		                 return `${y}/${m}/${d}`;
+		             } else if (format.toLocaleLowerCase() === "yyyy-mm-dd hh:mm:ss") {
+		                 return `${y}-${m}-${d} ${h}:${mm}:${s}`;
+		             } else if (format.toLocaleLowerCase() === "yyyy/mm/dd hh:mm:ss") {
+		                 return `${y}/${m}/${d} ${h}:${mm}:${s}`;
+		             } else {
+		                 return `输入的时间格式有误`;
+		             }
+		         }
+			 },
+			computed : {},
+			created : function() {
+			},
+			mounted : function() {
+				headerVM.title = '下级账号管理';
+				headerVM.showBackFlag = true;
+				this.loadByPage();
+				this.findAgentCount();
+			},
+			methods : {
+				accountTypeFormat : function(account) {
+					if (account.accountType == 'admin') {
+						return account.accountTypeName;
+					}
+					return account.accountLevel + '级' + account.accountTypeName;
+				},
+				query : function() {
+					this.pageNum = 1;
+					this.loadByPage();
+				},
+
+				prePage : function() {
+					this.pageNum = this.pageNum - 1;
+					this.loadByPage();
+				},
+
+				nextPage : function() {
+					this.pageNum = this.pageNum + 1;
+					this.loadByPage();
+				},
+			/* 	updateReceiveOrderState : function(accountId,receiveOrderState) {
+					var that = this;
+					that.$http.post('/userAccount/updateReceiveOrderState', {
+						accountId : accountId,
+						receiveOrderState : receiveOrderState
+					}, {
+						emulateJSON : true
+					}).then(function(res) {
+						that.loadByPage();
+					});
+				}, */
+				updateIsAgent : function(accountId ) {
+					var that = this;
+					that.$http.post('/userAccount/updateIsAgent', {
+						accountId : accountId
+					}, {
+						emulateJSON : true
+					}).then(function(res) {
+						that.loadByPage();
+					});
+				},
+				findAgentCount : function(){
+					var that = this;
+					that.$http.get('/agent/findAgentCount' ).then(function(res){
+						that.userCount = res.body.result.userCount;
+						that.userAgentCount = res.body.result.userAgentCount;
+						that.moreAmountRun = res.body.result.moreAmountRun;
+						that.moreDealCount = res.body.result.moreDealCount;
+						that.moreDealProfit = res.body.result.moreDealProfit;
+						that.moreAgent = res.body.result.moreAgent;
+						that.agent = res.body.result.agent;
+						that.userAgent = res.body.result.userAgent;
+					})
+				},
+				updataAccountFee : function(accountId ) {
+					var that = this;
+					layer.open({
+						type: 2,
+						title:'修改下级费率',
+						shade: 0.5,
+						id:'LAY_layuipro',
+						shadeClose: true,
+						shade: false,
+						maxmin: true, //开启最大化最小化按钮
+						area: ['25rem','26rem'],
+						content: "/userAccount/updataAccountFee?accountId="+accountId,
+						success: function(){
+							  },
+						end : function(){
+							that.loadByPage();
+						}
+					});
+				},
+				loadByPage : function() {
+					var that = this;
+					that.$http.get('/agent/findLowerLevelAccountDetailsInfoByPage', {
+						params : {
+							pageSize : 5,
+							pageNum : that.pageNum,
+							queryScope : that.queryScope,
+							userName : that.userName
+						}
+					}).then(function(res) {
+						that.accounts = res.body.result.content;
+						that.pageNum = res.body.result.pageNum;
+						that.totalPage = res.body.result.totalPage;
+					});
+				}
+			}
+		});
+	</script>
+</body>
+</html>

@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="alipay.manage.mapper.MediumMapper" >
+  <resultMap id="BaseResultMap" type="alipay.manage.bean.Medium" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <id column="mediumNumber" property="mediumNumber" jdbcType="VARCHAR" />
+    <id column="mediumId" property="mediumId" jdbcType="VARCHAR" />
+    <result column="mediumHolder" property="mediumHolder" jdbcType="VARCHAR" />
+    <result column="mediumPhone" property="mediumPhone" jdbcType="VARCHAR" />
+    <result column="qrcodeId" property="qrcodeId" jdbcType="VARCHAR" />
+    <result column="code" property="code" jdbcType="CHAR" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="submitTime" property="submitTime" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="isDeal" property="isDeal" jdbcType="CHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="alipay.manage.bean.Medium" extends="BaseResultMap" >
+    <result column="mediumNote" property="mediumNote" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, mediumNumber, mediumId, mediumHolder, mediumPhone, qrcodeId, code, createTime, 
+    submitTime, status, isDeal
+  </sql>
+  <sql id="Blob_Column_List" >
+    mediumNote
+  </sql>
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="alipay.manage.bean.MediumExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from alipay_medium
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="alipay.manage.bean.MediumExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from alipay_medium
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from alipay_medium
+    where id = #{id,jdbcType=INTEGER}
+      and mediumNumber = #{mediumNumber,jdbcType=VARCHAR}
+      and mediumId = #{mediumId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="map" >
+    delete from alipay_medium
+    where id = #{id,jdbcType=INTEGER}
+      and mediumNumber = #{mediumNumber,jdbcType=VARCHAR}
+      and mediumId = #{mediumId,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="alipay.manage.bean.MediumExample" >
+    delete from alipay_medium
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="alipay.manage.bean.Medium" useGeneratedKeys="true" keyProperty="id" >
+    insert into alipay_medium (mediumNumber, mediumId, mediumHolder, 
+      mediumPhone, qrcodeId, code, 
+      createTime, submitTime, status, 
+      isDeal, mediumNote)
+    values (#{mediumNumber,jdbcType=VARCHAR}, #{mediumId,jdbcType=VARCHAR}, #{mediumHolder,jdbcType=VARCHAR}, 
+      #{mediumPhone,jdbcType=VARCHAR}, #{qrcodeId,jdbcType=VARCHAR}, #{code,jdbcType=CHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{submitTime,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, 
+      #{isDeal,jdbcType=CHAR}, #{mediumNote,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="alipay.manage.bean.Medium" useGeneratedKeys="true" keyProperty="id" >
+    insert into alipay_medium
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="mediumNumber != null" >
+        mediumNumber,
+      </if>
+      <if test="mediumId != null" >
+        mediumId,
+      </if>
+      <if test="mediumHolder != null" >
+        mediumHolder,
+      </if>
+      <if test="mediumPhone != null" >
+        mediumPhone,
+      </if>
+      <if test="qrcodeId != null" >
+        qrcodeId,
+      </if>
+      <if test="code != null" >
+        code,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="submitTime != null" >
+        submitTime,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="isDeal != null" >
+        isDeal,
+      </if>
+      <if test="mediumNote != null" >
+        mediumNote,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="mediumNumber != null" >
+        #{mediumNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="mediumId != null" >
+        #{mediumId,jdbcType=VARCHAR},
+      </if>
+      <if test="mediumHolder != null" >
+        #{mediumHolder,jdbcType=VARCHAR},
+      </if>
+      <if test="mediumPhone != null" >
+        #{mediumPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="qrcodeId != null" >
+        #{qrcodeId,jdbcType=VARCHAR},
+      </if>
+      <if test="code != null" >
+        #{code,jdbcType=CHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="submitTime != null" >
+        #{submitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="isDeal != null" >
+        #{isDeal,jdbcType=CHAR},
+      </if>
+      <if test="mediumNote != null" >
+        #{mediumNote,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="alipay.manage.bean.MediumExample" resultType="java.lang.Integer" >
+    select count(*) from alipay_medium
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update alipay_medium
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.mediumNumber != null" >
+        mediumNumber = #{record.mediumNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="record.mediumId != null" >
+        mediumId = #{record.mediumId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.mediumHolder != null" >
+        mediumHolder = #{record.mediumHolder,jdbcType=VARCHAR},
+      </if>
+      <if test="record.mediumPhone != null" >
+        mediumPhone = #{record.mediumPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.qrcodeId != null" >
+        qrcodeId = #{record.qrcodeId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.code != null" >
+        code = #{record.code,jdbcType=CHAR},
+      </if>
+      <if test="record.createTime != null" >
+        createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.submitTime != null" >
+        submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.status != null" >
+        status = #{record.status,jdbcType=INTEGER},
+      </if>
+      <if test="record.isDeal != null" >
+        isDeal = #{record.isDeal,jdbcType=CHAR},
+      </if>
+      <if test="record.mediumNote != null" >
+        mediumNote = #{record.mediumNote,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map" >
+    update alipay_medium
+    set id = #{record.id,jdbcType=INTEGER},
+      mediumNumber = #{record.mediumNumber,jdbcType=VARCHAR},
+      mediumId = #{record.mediumId,jdbcType=VARCHAR},
+      mediumHolder = #{record.mediumHolder,jdbcType=VARCHAR},
+      mediumPhone = #{record.mediumPhone,jdbcType=VARCHAR},
+      qrcodeId = #{record.qrcodeId,jdbcType=VARCHAR},
+      code = #{record.code,jdbcType=CHAR},
+      createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
+      status = #{record.status,jdbcType=INTEGER},
+      isDeal = #{record.isDeal,jdbcType=CHAR},
+      mediumNote = #{record.mediumNote,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update alipay_medium
+    set id = #{record.id,jdbcType=INTEGER},
+      mediumNumber = #{record.mediumNumber,jdbcType=VARCHAR},
+      mediumId = #{record.mediumId,jdbcType=VARCHAR},
+      mediumHolder = #{record.mediumHolder,jdbcType=VARCHAR},
+      mediumPhone = #{record.mediumPhone,jdbcType=VARCHAR},
+      qrcodeId = #{record.qrcodeId,jdbcType=VARCHAR},
+      code = #{record.code,jdbcType=CHAR},
+      createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
+      status = #{record.status,jdbcType=INTEGER},
+      isDeal = #{record.isDeal,jdbcType=CHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="alipay.manage.bean.Medium" >
+    update alipay_medium
+    <set >
+      <if test="mediumHolder != null" >
+        mediumHolder = #{mediumHolder,jdbcType=VARCHAR},
+      </if>
+      <if test="mediumPhone != null" >
+        mediumPhone = #{mediumPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="qrcodeId != null" >
+        qrcodeId = #{qrcodeId,jdbcType=VARCHAR},
+      </if>
+      <if test="code != null" >
+        code = #{code,jdbcType=CHAR},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="submitTime != null" >
+        submitTime = #{submitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="isDeal != null" >
+        isDeal = #{isDeal,jdbcType=CHAR},
+      </if>
+      <if test="mediumNote != null" >
+        mediumNote = #{mediumNote,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+      and mediumNumber = #{mediumNumber,jdbcType=VARCHAR}
+      and mediumId = #{mediumId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="alipay.manage.bean.Medium" >
+    update alipay_medium
+    set mediumHolder = #{mediumHolder,jdbcType=VARCHAR},
+      mediumPhone = #{mediumPhone,jdbcType=VARCHAR},
+      qrcodeId = #{qrcodeId,jdbcType=VARCHAR},
+      code = #{code,jdbcType=CHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      submitTime = #{submitTime,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=INTEGER},
+      isDeal = #{isDeal,jdbcType=CHAR},
+      mediumNote = #{mediumNote,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+      and mediumNumber = #{mediumNumber,jdbcType=VARCHAR}
+      and mediumId = #{mediumId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="alipay.manage.bean.Medium" >
+    update alipay_medium
+    set mediumHolder = #{mediumHolder,jdbcType=VARCHAR},
+      mediumPhone = #{mediumPhone,jdbcType=VARCHAR},
+      qrcodeId = #{qrcodeId,jdbcType=VARCHAR},
+      code = #{code,jdbcType=CHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      submitTime = #{submitTime,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=INTEGER},
+      isDeal = #{isDeal,jdbcType=CHAR}
+    where id = #{id,jdbcType=INTEGER}
+      and mediumNumber = #{mediumNumber,jdbcType=VARCHAR}
+      and mediumId = #{mediumId,jdbcType=VARCHAR}
+  </update>
+</mapper>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>登录</title>
+<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/css/bootstrap.min.css">
+<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdn.staticfile.org/popper.js/1.12.5/umd/popper.min.js"></script>
+<script src="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/js/bootstrap.min.js"></script>
+<script src="https://cdn.staticfile.org/vue/2.4.2/vue.min.js"></script>
+<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+<script src="../static/js/layui/layui.all.js"></script>
+<link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+<link href="/static/css/common/common.css" rel="stylesheet" type="text/css">
+<script src="/static/js/common/common.js"></script>
+<link href="/static/js/layui/css/layui.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+.login-container {
+	padding-top: 5rem;
+}
+
+.login-btn {
+	margin-bottom: 1rem;
+}
+</style>
+</head>
+
+<body>
+	<div th:replace="common/header::html"></div>
+	<div id="login" >
+		<div class="page-body">
+			<div class="container login-container">
+				<form class="layui-form layui-form-pane" >
+					<div class="input-group mb-3">
+						 <div class="input-group-prepend">
+						        <span class="input-group-text" id="basic-addon1">账号</span>
+						 </div> 
+						<input type="text" style="	border: 0;outline: none;border-bottom: 1px solid #35a79c;" class="form-control" placeholder="请输入账号" v-model="userName">
+					</div>
+					<div class="input-group mb-3">
+						 <div class="input-group-prepend">
+						         <span class="input-group-text" id="basic-addon1">密码</span>
+						 </div> 
+						 <input type="password" style="	border: 0;outline: none;border-bottom: 1px solid #35a79c;" class="form-control" placeholder="请输入密码" v-model="password">
+					</div>
+<!-- 					<div class="form-group"> -->
+<!-- 						<label>验证码</label> <input type="text" class="form-control" placeholder="请输入google验证码" v-model="googleCode"> -->
+<!-- 					</div> -->
+					<button type="button" class="btn btn-info btn-lg btn-block login-btn"  v-on:click="login">立即登录</button>
+					<button type="button" class="btn btn-light btn-lg btn-block" v-show="registerEnabled" v-on:click="footerVM.goTo('/register')">注册</button>
+				</form>
+			</div>
+		</div>
+	</div>
+	<div th:replace="common/footer::html"></div>
+	<script type="text/javascript">
+	layui.use(['form', 'layedit', 'laydate'], function(){
+		  var form = layui.form
+		  ,layer = layui.layer
+		  ,layedit = layui.layedit
+		  ,laydate = layui.laydate;
+		//监听指定开关
+		  form.on('switch(switchTest)', function(data){
+		    layer.msg('开关checked：'+ (this.checked ? 'true' : 'false'), {
+		      offset: '6px'
+		    });
+		    layer.tips('温馨提示：请注意开关状态的文字可以随意定义，而不仅仅是ON|OFF', data.othis)
+		  });
+	});
+	
+		var loginVM = new Vue({
+			el : '#login',
+			data : {
+				registerEnabled : false,
+				userName : '',
+				password : ''
+// 				googleCode: ''
+			},
+			computed : {},
+			created : function() {
+			},
+			mounted : function() {
+				headerVM.title = '登录';
+				this.loadRegisterSetting();
+			},
+			methods : {
+
+				loadRegisterSetting : function() {
+					var that = this;
+					that.$http.get('/masterControl/getRegisterSetting').then(function(res) {
+						that.registerEnabled = res.body.result.registerEnabled;
+					});
+				},
+				login : function() {
+					var that = this;
+					if (that.userName == null || that.userName == '') {
+						layer.msg('请输入用户名');
+						return;
+					}
+					if (that.password == null || that.password == '') {
+						layer.msg('请输入密码');
+						return;
+					}
+					that.$http.post('/login', {
+						username : that.userName,
+						password : that.password
+// 						googleCode : that.googleCode
+					}, {
+						emulateJSON : true
+					}).then(function(res) {
+						if(res.body.success){
+							window.location.href = '/';
+						}else{
+// 							if(!res.body.success && res.body.code == 1){
+// 								console.log(res.body);
+// 								window.location.href = '/google?username='+res.body.message;
+// 							}
+// 							else{
+// 								layer.alert(res.body.message);
+// 							}
+							layer.msg(res.body.message);
+						}
+					});
+				}
+			}
+		});
+	</script>
+</body>
+</html>

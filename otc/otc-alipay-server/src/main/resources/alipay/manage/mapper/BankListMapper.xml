@@ -1,0 +1,478 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="alipay.manage.mapper.BankListMapper" >
+  <resultMap id="BaseResultMap" type="alipay.manage.bean.BankList" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <id column="bankcardId" property="bankcardId" jdbcType="VARCHAR" />
+    <result column="bankcardAccount" property="bankcardAccount" jdbcType="VARCHAR" />
+    <result column="accountHolder" property="accountHolder" jdbcType="VARCHAR" />
+    <result column="openAccountBank" property="openAccountBank" jdbcType="VARCHAR" />
+    <result column="bankType" property="bankType" jdbcType="CHAR" />
+    <result column="bankcode" property="bankcode" jdbcType="CHAR" />
+    <result column="sysTYpe" property="sysTYpe" jdbcType="INTEGER" />
+    <result column="account" property="account" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="CHAR" />
+    <result column="limitAmount" property="limitAmount" jdbcType="DECIMAL" />
+    <result column="bankAmount" property="bankAmount" jdbcType="DECIMAL" />
+    <result column="cardType" property="cardType" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="isDeal" property="isDeal" jdbcType="INTEGER" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="submitTime" property="submitTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="alipay.manage.bean.BankList" extends="BaseResultMap" >
+    <result column="qrcodeNote" property="qrcodeNote" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, bankcardId, bankcardAccount, accountHolder, openAccountBank, bankType, bankcode, 
+    sysTYpe, account, phone, limitAmount, bankAmount, cardType, status, isDeal, createTime, 
+    submitTime
+  </sql>
+  <sql id="Blob_Column_List" >
+    qrcodeNote
+  </sql>
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="alipay.manage.bean.BankListExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from alipay_bank_list
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="alipay.manage.bean.BankListExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from alipay_bank_list
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from alipay_bank_list
+    where id = #{id,jdbcType=INTEGER}
+      and bankcardId = #{bankcardId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="map" >
+    delete from alipay_bank_list
+    where id = #{id,jdbcType=INTEGER}
+      and bankcardId = #{bankcardId,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="alipay.manage.bean.BankListExample" >
+    delete from alipay_bank_list
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="alipay.manage.bean.BankList" useGeneratedKeys="true" keyProperty="id" >
+    insert into alipay_bank_list (bankcardId, bankcardAccount, accountHolder, 
+      openAccountBank, bankType, bankcode, 
+      sysTYpe, account, phone, 
+      limitAmount, bankAmount, cardType, 
+      status, isDeal, createTime, 
+      submitTime, qrcodeNote)
+    values (#{bankcardId,jdbcType=VARCHAR}, #{bankcardAccount,jdbcType=VARCHAR}, #{accountHolder,jdbcType=VARCHAR}, 
+      #{openAccountBank,jdbcType=VARCHAR}, #{bankType,jdbcType=CHAR}, #{bankcode,jdbcType=CHAR}, 
+      #{sysTYpe,jdbcType=INTEGER}, #{account,jdbcType=VARCHAR}, #{phone,jdbcType=CHAR}, 
+      #{limitAmount,jdbcType=DECIMAL}, #{bankAmount,jdbcType=DECIMAL}, #{cardType,jdbcType=INTEGER}, 
+      #{status,jdbcType=INTEGER}, #{isDeal,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{submitTime,jdbcType=TIMESTAMP}, #{qrcodeNote,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="alipay.manage.bean.BankList" useGeneratedKeys="true" keyProperty="id" >
+    insert into alipay_bank_list
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="bankcardId != null" >
+        bankcardId,
+      </if>
+      <if test="bankcardAccount != null" >
+        bankcardAccount,
+      </if>
+      <if test="accountHolder != null" >
+        accountHolder,
+      </if>
+      <if test="openAccountBank != null" >
+        openAccountBank,
+      </if>
+      <if test="bankType != null" >
+        bankType,
+      </if>
+      <if test="bankcode != null" >
+        bankcode,
+      </if>
+      <if test="sysTYpe != null" >
+        sysTYpe,
+      </if>
+      <if test="account != null" >
+        account,
+      </if>
+      <if test="phone != null" >
+        phone,
+      </if>
+      <if test="limitAmount != null" >
+        limitAmount,
+      </if>
+      <if test="bankAmount != null" >
+        bankAmount,
+      </if>
+      <if test="cardType != null" >
+        cardType,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="isDeal != null" >
+        isDeal,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="submitTime != null" >
+        submitTime,
+      </if>
+      <if test="qrcodeNote != null" >
+        qrcodeNote,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="bankcardId != null" >
+        #{bankcardId,jdbcType=VARCHAR},
+      </if>
+      <if test="bankcardAccount != null" >
+        #{bankcardAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="accountHolder != null" >
+        #{accountHolder,jdbcType=VARCHAR},
+      </if>
+      <if test="openAccountBank != null" >
+        #{openAccountBank,jdbcType=VARCHAR},
+      </if>
+      <if test="bankType != null" >
+        #{bankType,jdbcType=CHAR},
+      </if>
+      <if test="bankcode != null" >
+        #{bankcode,jdbcType=CHAR},
+      </if>
+      <if test="sysTYpe != null" >
+        #{sysTYpe,jdbcType=INTEGER},
+      </if>
+      <if test="account != null" >
+        #{account,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=CHAR},
+      </if>
+      <if test="limitAmount != null" >
+        #{limitAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="bankAmount != null" >
+        #{bankAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="cardType != null" >
+        #{cardType,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="isDeal != null" >
+        #{isDeal,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="submitTime != null" >
+        #{submitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="qrcodeNote != null" >
+        #{qrcodeNote,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="alipay.manage.bean.BankListExample" resultType="java.lang.Integer" >
+    select count(*) from alipay_bank_list
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update alipay_bank_list
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.bankcardId != null" >
+        bankcardId = #{record.bankcardId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.bankcardAccount != null" >
+        bankcardAccount = #{record.bankcardAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="record.accountHolder != null" >
+        accountHolder = #{record.accountHolder,jdbcType=VARCHAR},
+      </if>
+      <if test="record.openAccountBank != null" >
+        openAccountBank = #{record.openAccountBank,jdbcType=VARCHAR},
+      </if>
+      <if test="record.bankType != null" >
+        bankType = #{record.bankType,jdbcType=CHAR},
+      </if>
+      <if test="record.bankcode != null" >
+        bankcode = #{record.bankcode,jdbcType=CHAR},
+      </if>
+      <if test="record.sysTYpe != null" >
+        sysTYpe = #{record.sysTYpe,jdbcType=INTEGER},
+      </if>
+      <if test="record.account != null" >
+        account = #{record.account,jdbcType=VARCHAR},
+      </if>
+      <if test="record.phone != null" >
+        phone = #{record.phone,jdbcType=CHAR},
+      </if>
+      <if test="record.limitAmount != null" >
+        limitAmount = #{record.limitAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="record.bankAmount != null" >
+        bankAmount = #{record.bankAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="record.cardType != null" >
+        cardType = #{record.cardType,jdbcType=INTEGER},
+      </if>
+      <if test="record.status != null" >
+        status = #{record.status,jdbcType=INTEGER},
+      </if>
+      <if test="record.isDeal != null" >
+        isDeal = #{record.isDeal,jdbcType=INTEGER},
+      </if>
+      <if test="record.createTime != null" >
+        createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.submitTime != null" >
+        submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.qrcodeNote != null" >
+        qrcodeNote = #{record.qrcodeNote,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map" >
+    update alipay_bank_list
+    set id = #{record.id,jdbcType=INTEGER},
+      bankcardId = #{record.bankcardId,jdbcType=VARCHAR},
+      bankcardAccount = #{record.bankcardAccount,jdbcType=VARCHAR},
+      accountHolder = #{record.accountHolder,jdbcType=VARCHAR},
+      openAccountBank = #{record.openAccountBank,jdbcType=VARCHAR},
+      bankType = #{record.bankType,jdbcType=CHAR},
+      bankcode = #{record.bankcode,jdbcType=CHAR},
+      sysTYpe = #{record.sysTYpe,jdbcType=INTEGER},
+      account = #{record.account,jdbcType=VARCHAR},
+      phone = #{record.phone,jdbcType=CHAR},
+      limitAmount = #{record.limitAmount,jdbcType=DECIMAL},
+      bankAmount = #{record.bankAmount,jdbcType=DECIMAL},
+      cardType = #{record.cardType,jdbcType=INTEGER},
+      status = #{record.status,jdbcType=INTEGER},
+      isDeal = #{record.isDeal,jdbcType=INTEGER},
+      createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
+      qrcodeNote = #{record.qrcodeNote,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update alipay_bank_list
+    set id = #{record.id,jdbcType=INTEGER},
+      bankcardId = #{record.bankcardId,jdbcType=VARCHAR},
+      bankcardAccount = #{record.bankcardAccount,jdbcType=VARCHAR},
+      accountHolder = #{record.accountHolder,jdbcType=VARCHAR},
+      openAccountBank = #{record.openAccountBank,jdbcType=VARCHAR},
+      bankType = #{record.bankType,jdbcType=CHAR},
+      bankcode = #{record.bankcode,jdbcType=CHAR},
+      sysTYpe = #{record.sysTYpe,jdbcType=INTEGER},
+      account = #{record.account,jdbcType=VARCHAR},
+      phone = #{record.phone,jdbcType=CHAR},
+      limitAmount = #{record.limitAmount,jdbcType=DECIMAL},
+      bankAmount = #{record.bankAmount,jdbcType=DECIMAL},
+      cardType = #{record.cardType,jdbcType=INTEGER},
+      status = #{record.status,jdbcType=INTEGER},
+      isDeal = #{record.isDeal,jdbcType=INTEGER},
+      createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      submitTime = #{record.submitTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="alipay.manage.bean.BankList" >
+    update alipay_bank_list
+    <set >
+      <if test="bankcardAccount != null" >
+        bankcardAccount = #{bankcardAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="accountHolder != null" >
+        accountHolder = #{accountHolder,jdbcType=VARCHAR},
+      </if>
+      <if test="openAccountBank != null" >
+        openAccountBank = #{openAccountBank,jdbcType=VARCHAR},
+      </if>
+      <if test="bankType != null" >
+        bankType = #{bankType,jdbcType=CHAR},
+      </if>
+      <if test="bankcode != null" >
+        bankcode = #{bankcode,jdbcType=CHAR},
+      </if>
+      <if test="sysTYpe != null" >
+        sysTYpe = #{sysTYpe,jdbcType=INTEGER},
+      </if>
+      <if test="account != null" >
+        account = #{account,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        phone = #{phone,jdbcType=CHAR},
+      </if>
+      <if test="limitAmount != null" >
+        limitAmount = #{limitAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="bankAmount != null" >
+        bankAmount = #{bankAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="cardType != null" >
+        cardType = #{cardType,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="isDeal != null" >
+        isDeal = #{isDeal,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="submitTime != null" >
+        submitTime = #{submitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="qrcodeNote != null" >
+        qrcodeNote = #{qrcodeNote,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+      and bankcardId = #{bankcardId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="alipay.manage.bean.BankList" >
+    update alipay_bank_list
+    set bankcardAccount = #{bankcardAccount,jdbcType=VARCHAR},
+      accountHolder = #{accountHolder,jdbcType=VARCHAR},
+      openAccountBank = #{openAccountBank,jdbcType=VARCHAR},
+      bankType = #{bankType,jdbcType=CHAR},
+      bankcode = #{bankcode,jdbcType=CHAR},
+      sysTYpe = #{sysTYpe,jdbcType=INTEGER},
+      account = #{account,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=CHAR},
+      limitAmount = #{limitAmount,jdbcType=DECIMAL},
+      bankAmount = #{bankAmount,jdbcType=DECIMAL},
+      cardType = #{cardType,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      isDeal = #{isDeal,jdbcType=INTEGER},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      submitTime = #{submitTime,jdbcType=TIMESTAMP},
+      qrcodeNote = #{qrcodeNote,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+      and bankcardId = #{bankcardId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="alipay.manage.bean.BankList" >
+    update alipay_bank_list
+    set bankcardAccount = #{bankcardAccount,jdbcType=VARCHAR},
+      accountHolder = #{accountHolder,jdbcType=VARCHAR},
+      openAccountBank = #{openAccountBank,jdbcType=VARCHAR},
+      bankType = #{bankType,jdbcType=CHAR},
+      bankcode = #{bankcode,jdbcType=CHAR},
+      sysTYpe = #{sysTYpe,jdbcType=INTEGER},
+      account = #{account,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=CHAR},
+      limitAmount = #{limitAmount,jdbcType=DECIMAL},
+      bankAmount = #{bankAmount,jdbcType=DECIMAL},
+      cardType = #{cardType,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      isDeal = #{isDeal,jdbcType=INTEGER},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      submitTime = #{submitTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+      and bankcardId = #{bankcardId,jdbcType=VARCHAR}
+  </update>
+</mapper>
