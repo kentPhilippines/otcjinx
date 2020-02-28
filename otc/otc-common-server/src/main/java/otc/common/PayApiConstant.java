@@ -18,8 +18,8 @@ public class PayApiConstant {
 	
 	
 	public class Alipay{
-		public static final String ACCOUNT_API = "/account-api";//后台专用接口
-		
+		public static final String ACCOUNT_API = "/account-api";//账户类型接口
+		public static final String ADD_ACCOUNT = "/add-account";//用户开户
 		
 		
 		

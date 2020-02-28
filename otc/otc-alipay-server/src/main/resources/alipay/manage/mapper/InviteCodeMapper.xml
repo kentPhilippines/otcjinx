@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="alipay.manage.mapper.InviteCodeMapper" >
+  <resultMap id="BaseResultMap" type="alipay.manage.bean.InviteCode" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="inviteCode" property="inviteCode" jdbcType="VARCHAR" />
+    <result column="belongUser" property="belongUser" jdbcType="VARCHAR" />
+    <result column="count" property="count" jdbcType="INTEGER" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="submitTime" property="submitTime" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="isDeal" property="isDeal" jdbcType="VARCHAR" />
+    <result column="userType" property="userType" jdbcType="VARCHAR" />
+    <result column="use" property="use" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, inviteCode, belongUser, count, createTime, submitTime, status, isDeal, userType, 
+    use
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="alipay.manage.bean.InviteCodeExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from alipay_invitecode
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from alipay_invitecode
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from alipay_invitecode
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="alipay.manage.bean.InviteCodeExample" >
+    delete from alipay_invitecode
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="alipay.manage.bean.InviteCode" useGeneratedKeys="true" keyProperty="id" >
+    insert into alipay_invitecode (inviteCode, belongUser, count, 
+      createTime, submitTime, status, 
+      isDeal, userType, use
+      )
+    values (#{inviteCode,jdbcType=VARCHAR}, #{belongUser,jdbcType=VARCHAR}, #{count,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{submitTime,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, 
+      #{isDeal,jdbcType=VARCHAR}, #{userType,jdbcType=VARCHAR}, #{use,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="alipay.manage.bean.InviteCode" useGeneratedKeys="true" keyProperty="id" >
+    insert into alipay_invitecode
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="inviteCode != null" >
+        inviteCode,
+      </if>
+      <if test="belongUser != null" >
+        belongUser,
+      </if>
+      <if test="count != null" >
+        count,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="submitTime != null" >
+        submitTime,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="isDeal != null" >
+        isDeal,
+      </if>
+      <if test="userType != null" >
+        userType,
+      </if>
+      <if test="use != null" >
+        use,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="inviteCode != null" >
+        #{inviteCode,jdbcType=VARCHAR},
+      </if>
+      <if test="belongUser != null" >
+        #{belongUser,jdbcType=VARCHAR},
+      </if>
+      <if test="count != null" >
+        #{count,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="submitTime != null" >
+        #{submitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="isDeal != null" >
+        #{isDeal,jdbcType=VARCHAR},
+      </if>
+      <if test="userType != null" >
+        #{userType,jdbcType=VARCHAR},
+      </if>
+      <if test="use != null" >
+        #{use,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="alipay.manage.bean.InviteCodeExample" resultType="java.lang.Integer" >
+    select count(*) from alipay_invitecode
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update alipay_invitecode
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.inviteCode != null" >
+        inviteCode = #{record.inviteCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.belongUser != null" >
+        belongUser = #{record.belongUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.count != null" >
+        count = #{record.count,jdbcType=INTEGER},
+      </if>
+      <if test="record.createTime != null" >
+        createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.submitTime != null" >
+        submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.status != null" >
+        status = #{record.status,jdbcType=INTEGER},
+      </if>
+      <if test="record.isDeal != null" >
+        isDeal = #{record.isDeal,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userType != null" >
+        userType = #{record.userType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.use != null" >
+        use = #{record.use,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update alipay_invitecode
+    set id = #{record.id,jdbcType=INTEGER},
+      inviteCode = #{record.inviteCode,jdbcType=VARCHAR},
+      belongUser = #{record.belongUser,jdbcType=VARCHAR},
+      count = #{record.count,jdbcType=INTEGER},
+      createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
+      status = #{record.status,jdbcType=INTEGER},
+      isDeal = #{record.isDeal,jdbcType=VARCHAR},
+      userType = #{record.userType,jdbcType=VARCHAR},
+      use = #{record.use,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="alipay.manage.bean.InviteCode" >
+    update alipay_invitecode
+    <set >
+      <if test="inviteCode != null" >
+        inviteCode = #{inviteCode,jdbcType=VARCHAR},
+      </if>
+      <if test="belongUser != null" >
+        belongUser = #{belongUser,jdbcType=VARCHAR},
+      </if>
+      <if test="count != null" >
+        count = #{count,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="submitTime != null" >
+        submitTime = #{submitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="isDeal != null" >
+        isDeal = #{isDeal,jdbcType=VARCHAR},
+      </if>
+      <if test="userType != null" >
+        userType = #{userType,jdbcType=VARCHAR},
+      </if>
+      <if test="use != null" >
+        use = #{use,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="alipay.manage.bean.InviteCode" >
+    update alipay_invitecode
+    set inviteCode = #{inviteCode,jdbcType=VARCHAR},
+      belongUser = #{belongUser,jdbcType=VARCHAR},
+      count = #{count,jdbcType=INTEGER},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      submitTime = #{submitTime,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=INTEGER},
+      isDeal = #{isDeal,jdbcType=VARCHAR},
+      userType = #{userType,jdbcType=VARCHAR},
+      use = #{use,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -18,7 +18,7 @@ public class MybatisGenerator {
 	//可以自动生成  entity   mapping 接口  和对应的  mapping文件  并且会自动生成一些代码。
 	//  要是有人不理解的话    百度下    逆向工程
     public static void main(String[] args) throws Exception {
-        String today = "2020-02-27";
+        String today = "2020-02-28";
         SimpleDateFormat sdf =new SimpleDateFormat("yyyy-MM-dd");
         Date now =sdf.parse(today);
         Date d = new Date();

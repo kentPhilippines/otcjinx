@@ -19,6 +19,19 @@ public class Common {
 		 * <p>商户</p>
 		 */
 		public static final String USER_TYPE_APP = "1";
+		
+		
+		
+		
+		//是否为代理商:1为代理商 2不为代理商
+		public static final String USER_IS_AGENT = "1";
+		public static final String USER_IS_MEMBER = "2";
+		
+		
+		
+		
+		
+		
 	}
 	
 	

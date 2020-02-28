@@ -16,3 +16,6 @@ zuul:
     api-c:
       path: /api-pay-deal/**
       serviceId: otc-pay-server
+    api-d:
+      path: /api-alipay/**
+      serviceId: otc-alipay-server
