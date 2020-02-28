@@ -11,10 +11,6 @@ public class charN {
 		int o = a - d ;
 		int ss = (o < 0) ? -o : o;
 		System.out.println(ss);
-		
-		
-		
-		
 	}
 
 }

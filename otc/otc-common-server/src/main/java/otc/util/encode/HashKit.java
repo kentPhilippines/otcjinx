@@ -5,19 +5,35 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import otc.result.Result;
 
 public class HashKit {
 	private static final String UTF_8 = "utf-8";
 	private static final String ENCODE_TYPE = "md5";
-	Logger log = LoggerFactory.getLogger(HashKit.class);
-	public Result encodePassword(String username ,String password , String salt ) {
+	static Logger log = LoggerFactory.getLogger(HashKit.class);
+	
+	
+	/**
+     * 生成随机盐
+     */
+    public static String randomSalt() {
+    	String randomString = RandomUtil.randomString(10);
+        return randomString;
+    }
+	
+	
+	
+	
+	
+	public static  Result encodePassword(String username ,String password , String salt ) {
 		if(StrUtil.isBlank(username) ||  StrUtil.isBlank(password) || StrUtil.isBlank(salt))
 			return Result.buildFailMessage("必传参数为空");
 		return Result.buildSuccessResult(forE(number(username), username+password, salt));
 	}
-	int number(String c){
+	static int number(String c){
 		char[] charArray = c.toCharArray();
 		char a = charArray[0];
 		char d = charArray[charArray.length-1];
@@ -39,7 +55,7 @@ public class HashKit {
 	 * @param b			加密盐
 	 * @return
 	 */
-	 String forE(int c , String a, String b ){
+	 static String forE(int c , String a, String b ){
 		 c--;
 		 String createPassword = createPassword(a, b);
 		 if(c==0)
@@ -52,7 +68,7 @@ public class HashKit {
 	 * @param c
 	 * @return
 	 */
-	String createPassword(String a,String c){
+	static String createPassword(String a,String c){
 		   	MessageDigest md5;
 		   	String result="";
 			try {
