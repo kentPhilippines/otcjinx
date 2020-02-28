@@ -14,7 +14,7 @@ spring:
       profile: dev
       discovery:
         enabled:  true
-        serviceId:  pay-server
+        serviceId:  otc-alipay-server
     bus:
       enabled: true
       trace:

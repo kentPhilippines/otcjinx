@@ -1,8 +1,8 @@
 package alipay.manage.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,7 +13,6 @@ import cn.hutool.core.util.StrUtil;
 import otc.api.alipay.Common;
 import otc.common.PayApiConstant;
 import otc.result.Result;
-import otc.util.encode.HashKit;
 
 @RequestMapping(PayApiConstant.Alipay.ACCOUNT_API)
 @RestController
@@ -26,7 +25,7 @@ public class AccountApi {
 	 * @param user
 	 * @return
 	 */
-	@PostMapping
+	@GetMapping(PayApiConstant.Alipay.ADD_ACCOUNT)
 	@Transactional
 	public Result addAccount(UserInfo user) {
 		if(ObjectUtil.isNull(user))

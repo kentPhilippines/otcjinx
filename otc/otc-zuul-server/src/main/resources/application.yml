@@ -6,16 +6,8 @@ spring:
   application:
     name: otc-zuul-server
 zuul:
+  strip-prefix: false
   routes:
     api-a:
-      path: /api-admin/**
-      serviceId: otc-admin-server
-    api-b:
-      path: /api-pay/**
-      serviceId: otc-pay-server
-    api-c:
-      path: /api-pay-deal/**
-      serviceId: otc-pay-server
-    api-d:
       path: /api-alipay/**
       serviceId: otc-alipay-server
