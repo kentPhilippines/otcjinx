@@ -35,7 +35,28 @@ public class UserInfo {
     private String retain2;
     private String retain3;
     private String retain4;
-    public Integer getId() {
+    private String inviteCode;//邀请码，注册专用
+    private String newPassword;//新的登录密码【修改密码专用】
+    private String newPayPassword;//新的支付密码【修改支付密码专用】
+    public String getNewPayPassword() {
+		return newPayPassword;
+	}
+	public void setNewPayPassword(String newPayPassword) {
+		this.newPayPassword = newPayPassword;
+	}
+	public String getNewPassword() {
+		return newPassword;
+	}
+	public void setNewPassword(String newPassword) {
+		this.newPassword = newPassword;
+	}
+	public String getInviteCode() {
+		return inviteCode;
+	}
+	public void setInviteCode(String inviteCode) {
+		this.inviteCode = inviteCode;
+	}
+	public Integer getId() {
         return id;
     }
     public void setId(Integer id) {

@@ -1,13 +1,18 @@
 package alipay.manage.api.Impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import alipay.manage.api.AccountApiService;
 import alipay.manage.bean.UserFund;
 import alipay.manage.bean.UserInfo;
+import alipay.manage.bean.UserInfoExample;
+import alipay.manage.bean.UserInfoExample.Criteria;
 import alipay.manage.mapper.UserFundMapper;
 import alipay.manage.mapper.UserInfoMapper;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import otc.api.alipay.Common;
@@ -45,7 +50,7 @@ public class AccountApiSericeImpl implements AccountApiService {
 		int insertSelective = userInfoDao.insertSelective(user);
 		boolean addUserFund = addUserFund(user);
 		if(insertSelective > 0 && insertSelective < 2 && addUserFund)
-			return Result.buildSuccessResult();
+			return Result.buildSuccess();
 		return Result.buildFailMessage("新增用户失败，联系技术人员处理");
 	}
 	boolean addUserFund(UserInfo info){
@@ -57,6 +62,52 @@ public class AccountApiSericeImpl implements AccountApiService {
 		fund.setUserName(info.getUserName());
 		int insertSelective = userFundDao.insertSelective(fund);
 		return insertSelective > 0 && insertSelective < 2;
+	}
+	@Override
+	public Result login(UserInfo user) {
+		UserInfoExample info = new UserInfoExample();
+		Criteria criteria = info.createCriteria();
+		if(StrUtil.isNotBlank(user.getUserId()))
+			criteria.andUserIdEqualTo(user.getUserId());
+		List<UserInfo> userList = userInfoDao.selectByExample(info);
+		if(userList.size()>1)
+			return Result.buildFailMessage("当前用户错误，联系技术人员处理");
+		UserInfo first = CollUtil.getFirst(userList);
+		Result password = HashKit.encodePassword(user.getUserId(), user.getPassword(), first.getSalt());
+		if(!password.isSuccess())
+			return Result.buildFailMessage("当前用户错误，联系技术人员处理");
+		if(first.getPayPasword().equals(password.getResult().toString())) 
+			return Result.buildSuccess();
+		return Result.buildFailMessage("密码错误，请检查");
+	}
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * <p>修改密码【登录密码】</p>
+	 */
+	@Override
+	public Result updateLoginPassword(UserInfo user) {
+		return null;
+	}
+	/**
+	 * <p>修改支付密码</p>
+	 */
+	@Override
+	public Result updatePayPassword(UserInfo user) {
+		return null;
+	}
+	@Override
+	public UserInfo findUserInfo(String userId) {
+		return null;
+	}
+	@Override
+	public boolean updateIsAgent(String accountId) {
+		return false;
 	}
 	
 	

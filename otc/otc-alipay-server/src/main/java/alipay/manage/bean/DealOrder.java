@@ -2,6 +2,8 @@ package alipay.manage.bean;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 /**
@@ -12,7 +14,7 @@ public class DealOrder {
     private Integer id;						//数据id
     private String orderId;					//订单id
     private String associatedId;			//关联订单id
-    private char orderStatus;				//订单状态:0预下单1处理中2成功3未收到回调4失败5超时6订单申述7人工处理
+    private String orderStatus;				//订单状态:0预下单1处理中2成功3未收到回调4失败5超时6订单申述7人工处理
     private BigDecimal dealAmount;			//订单交易金额
     private BigDecimal dealFee;				//订单交易手续费
     private BigDecimal actualAmount;		//实际到账金额
@@ -34,7 +36,21 @@ public class DealOrder {
     private String retain2;
     private String retain3;
     private String retain4;
-    public Integer getId() {
+	private String Time;
+	private List orderQrUserList;
+    public List getOrderQrUserList() {
+		return orderQrUserList;
+	}
+	public void setOrderQrUserList(List orderQrUserList) {
+		this.orderQrUserList = orderQrUserList;
+	}
+	public String getTime() {
+		return Time;
+	}
+	public void setTime(String time) {
+		Time = time;
+	}
+	public Integer getId() {
         return id;
     }
     public void setId(Integer id) {
@@ -52,10 +68,10 @@ public class DealOrder {
     public void setAssociatedId(String associatedId) {
         this.associatedId = associatedId == null ? null : associatedId.trim();
     }
-    public char getOrderStatus() {
+    public String getOrderStatus() {
         return orderStatus;
     }
-    public void setOrderStatus(char orderStatus) {
+    public void setOrderStatus(String orderStatus) {
         this.orderStatus = orderStatus;
     }
     public BigDecimal getDealAmount() {

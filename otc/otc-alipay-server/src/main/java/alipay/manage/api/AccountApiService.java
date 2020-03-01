@@ -12,5 +12,38 @@ public interface AccountApiService {
 	 * @return
 	 */
 	Result addAccount(UserInfo user);
+	
+	Result  login(UserInfo user);
+
+	/**
+	 * <p>修改密码【登录密码】</p>
+	 * @param user
+	 * @return
+	 */
+	Result updateLoginPassword(UserInfo user);
+
+	
+	Result updatePayPassword(UserInfo user);
+
+	/**
+	 * <p>根据账号查询自己详细信息</p>
+	 * @param userId
+	 * @return
+	 */
+	UserInfo findUserInfo(String userId);
+
+	
+	/**
+	 * <p>将会员修改为代理商</p>
+	 * @param accountId
+	 * @return
+	 */
+	boolean updateIsAgent(String accountId);
+
+	
+	
+	
+	
+	
 
 }

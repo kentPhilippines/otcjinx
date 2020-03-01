@@ -1,0 +1,36 @@
+package alipay.manage.mapper;
+
+import alipay.manage.bean.RunOrder;
+import alipay.manage.bean.RunOrderExample;
+import java.util.List;
+import org.apache.ibatis.annotations.Param;
+
+public interface RunOrderMapper {
+    int countByExample(RunOrderExample example);
+
+    int deleteByExample(RunOrderExample example);
+
+    int deleteByPrimaryKey(Integer id);
+
+    int insert(RunOrder record);
+
+    int insertSelective(RunOrder record);
+
+    List<RunOrder> selectByExampleWithBLOBs(RunOrderExample example);
+
+    List<RunOrder> selectByExample(RunOrderExample example);
+
+    RunOrder selectByPrimaryKey(Integer id);
+
+    int updateByExampleSelective(@Param("record") RunOrder record, @Param("example") RunOrderExample example);
+
+    int updateByExampleWithBLOBs(@Param("record") RunOrder record, @Param("example") RunOrderExample example);
+
+    int updateByExample(@Param("record") RunOrder record, @Param("example") RunOrderExample example);
+
+    int updateByPrimaryKeySelective(RunOrder record);
+
+    int updateByPrimaryKeyWithBLOBs(RunOrder record);
+
+    int updateByPrimaryKey(RunOrder record);
+}

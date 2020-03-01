@@ -13,7 +13,7 @@ public class Result {
 	 * <p>成功无返回值</p>
 	 * @return
 	 */
-	public static Result buildSuccessResult() {
+	public static Result buildSuccess() {
 		return new Result(true, null, null, null);
 	}
 	/**
@@ -32,6 +32,22 @@ public class Result {
 	public static Result buildSuccessResult(Object result) {
 		return new Result(true, null, result,null);
 	}
+	/**
+	 * <p>成功、无结果集，无通知，无code</p>
+	 * @param result
+	 * @return
+	 */
+	public static Result buildSuccessResult( ) {
+		return new Result(true, null, null,null);
+	}
+	/**
+	 * <p>成功、有结果集，无通知，无code</p>
+	 * @param result
+	 * @return
+	 */
+	public static Result buildSuccessResult(String msg ,Object result) {
+		return new Result(true, msg, result,null);
+	}
 	
 	/**
 	 * <p>失败有结果集</p>
@@ -40,6 +56,14 @@ public class Result {
 	 */
 	public static Result buildFailResult(Object result) {
 		return new Result(false, null, result,null);
+	}
+	/**
+	 * <p>失败</p>
+	 * @param result
+	 * @return
+	 */
+	public static Result buildFail( ) {
+		return new Result(false, null, null,null);
 	}
 	/**
 	 * <p>失败有通知消息</p>
