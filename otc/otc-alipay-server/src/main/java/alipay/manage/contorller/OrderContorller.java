@@ -246,13 +246,6 @@ public class OrderContorller {
 		pageR.setTotalPage(pageInfo.getPages());
 		return Result.buildSuccessResult(pageR);
 	}
-	
-	
-	
-	
-	
-	
-	
 	/**
 	 * <p>获取个人流水</p>
 	 * @param request
@@ -307,7 +300,6 @@ public class OrderContorller {
 			return Result.buildSuccessResult(pageR);
 		}
 	}
-	
 	/**
 	 * <p>码商确认提现成功</p>
 	 * @param orderId			提现订单号

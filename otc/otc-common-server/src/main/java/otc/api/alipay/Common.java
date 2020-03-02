@@ -39,6 +39,16 @@ public class Common {
 		public static final String RUN_TYPE_AUTOMATION = "1";//流水操作类型 自动操作
 		
 		
+		/**
+		 * <p>用户总开关，打开</p>
+		 */
+		public static final String USER_INFO_ON = "1";//用户总开关打开
+		/**
+		 * <p>用户总开关，关闭</p>
+		 */
+		public static final String USER_INFO_OFF = "0";//用户总开关关闭
+		
+		
 		
 		
 	}

@@ -37,4 +37,22 @@ public interface UserInfoService {
 	 */
 	boolean updateIsAgent(String accountId);
 
+	/**
+	 * <p>将用户总状态关闭【该状态关闭后该用户不产生任何资金变动】</p>
+	 * @param userId				用户状态
+	 * @return
+	 */
+	Boolean updataStatusEr(String userId);
+	/**
+	 * <p>根据账户id查询账户【查询资金账户】</p>
+	 * @param userId
+	 * @return
+	 */
+	UserInfo findUserInfoByUserId(String userId);
+	/**
+	 * <p>更新账户余额</p>
+	 * @param userFund
+	 * @return
+	 */
+	Boolean updataAmount(UserFund userFund);
 }
