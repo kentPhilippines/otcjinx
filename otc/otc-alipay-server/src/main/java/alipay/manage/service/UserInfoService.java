@@ -44,7 +44,7 @@ public interface UserInfoService {
 	 */
 	Boolean updataStatusEr(String userId);
 	/**
-	 * <p>根据账户id查询账户【查询资金账户】</p>
+	 * <p>根据账户id查询账户【查询详情账户】</p>
 	 * @param userId
 	 * @return
 	 */

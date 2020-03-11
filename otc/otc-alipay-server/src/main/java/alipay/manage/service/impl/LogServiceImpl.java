@@ -30,10 +30,6 @@ public class LogServiceImpl implements LogService{
 		log.setLoginTime(new Date());
 		int insertSelective = logDao.insertSelective(log);
 		return insertSelective > 0 && insertSelective < 2;
-		
-		
-		
-		
 	}
 
 }

@@ -17,7 +17,7 @@ public class Number {
         return instance;
     }
     private static int count = 1;
-    private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+    private static final SimpleDateFormat  sdf  = new SimpleDateFormat("yyyyMMddHHmmss");
     private static String getNowDateStr() {
         return sdf.format(new Date());
     }
