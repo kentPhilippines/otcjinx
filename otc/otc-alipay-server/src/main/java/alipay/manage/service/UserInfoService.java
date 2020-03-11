@@ -6,7 +6,6 @@ import alipay.manage.bean.UserFund;
 import alipay.manage.bean.UserInfo;
 
 public interface UserInfoService {
-
 	/**
 	 * <p>查询所有的下级</p>
 	 * @param user

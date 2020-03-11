@@ -1,5 +1,7 @@
 package alipay.manage.api;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import alipay.manage.bean.UserInfo;
+import alipay.manage.contorller.AccountContorller;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import otc.api.alipay.Common;
@@ -17,6 +20,7 @@ import otc.result.Result;
 @RequestMapping(PayApiConstant.Alipay.ACCOUNT_API)
 @RestController
 public class AccountApi {
+	Logger log = LoggerFactory.getLogger(AccountApi.class);
 	@Autowired
 	AccountApiService accountApiServiceImpl;
 	/**
@@ -30,7 +34,9 @@ public class AccountApi {
 	public Result addAccount(UserInfo user) {
 		if(ObjectUtil.isNull(user))
 			return Result.buildFailMessage("实体类为空，请检查传递方法是否正确");
-		if(StrUtil.isBlank(user.getUserId()) || StrUtil.isBlank(user.getUserName())
+		log.info("远程调用方法参数情况："+user.toString());
+		if(StrUtil.isBlank(user.getUserId()) 
+				|| StrUtil.isBlank(user.getUserName())
 				||ObjectUtil.isNull(user.getUserType())
 				|| StrUtil.isBlank(user.getIsAgent())
 				|| StrUtil.isBlank(user.getEmail())

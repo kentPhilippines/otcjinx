@@ -4,10 +4,12 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.stereotype.Component;
+
 import alipay.manage.bean.UserInfo;
 import cn.hutool.core.util.ObjectUtil;
 import otc.util.MapUtil;
-
+@Component
 public class SessionUtil {
 	/**
 	 * <p>获取当前浏览器端登录用户</p>

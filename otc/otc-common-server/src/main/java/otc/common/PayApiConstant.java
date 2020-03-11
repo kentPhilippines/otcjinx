@@ -15,9 +15,6 @@ public class PayApiConstant {
 		public static final String CONFIG_API_GET_CONFIG_MANAGE = "/getConfigAdmin";//后台获取所有接口配置的接口
 		public static final String CONFIG_API_GET_CONFIG_SYSTEM = "/getConfigSystem";//获取统一配置文件接口
 	}
-	
-	
-	
 	public class Alipay{
 		public static final String ACCOUNT_API = "/account-api";//账户类型接口
 		public static final String ADD_ACCOUNT = "/add-account";//用户开户

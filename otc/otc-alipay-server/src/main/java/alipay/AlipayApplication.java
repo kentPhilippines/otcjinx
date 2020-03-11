@@ -22,9 +22,9 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement //事务
 //@EnableConfigurationProperties //读取外部配置
 @EnableRedisHttpSession //redis   session 共享
-public class Application {
+public class AlipayApplication {
 	public static void main(String[] args) {
 		int port = 9010;
-		new SpringApplicationBuilder(Application.class).properties("server.port=" + port).run(args);
+		new SpringApplicationBuilder(AlipayApplication.class).properties("server.port=" + port).run(args);
 	}
 }

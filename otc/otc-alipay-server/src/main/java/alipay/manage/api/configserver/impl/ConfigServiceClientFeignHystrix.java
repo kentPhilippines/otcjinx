@@ -8,9 +8,6 @@ import alipay.manage.api.configserver.ConfigServiceClientFeign;
 import otc.result.Result;
 @Component
 public class ConfigServiceClientFeignHystrix implements ConfigServiceClientFeign{
-	
-	
-	
 	Logger log = LoggerFactory.getLogger(ConfigServiceClientFeignHystrix.class);
 	@Override
 	public Result getConfig(String system, String key) {

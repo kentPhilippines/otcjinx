@@ -14,18 +14,14 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 import alipay.config.redis.RedisUtil;
-import alipay.manage.api.configserver.ConfigServiceClientFeign;
 import alipay.manage.bean.util.AddressIpBean;
 import alipay.manage.bean.util.AreaIp;
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import otc.util.MapUtil;
 
 @Component
 public class IsDealIpUtil {
-	@Autowired
-	ConfigServiceClientFeign configServiceClientFeignImpl;
 	Logger log = LoggerFactory.getLogger(IsDealIpUtil.class);
 	@Autowired
 	StringRedisTemplate stringRedisTemplate;

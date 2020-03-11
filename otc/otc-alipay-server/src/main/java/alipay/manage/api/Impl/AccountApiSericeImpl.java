@@ -35,6 +35,9 @@ public class AccountApiSericeImpl implements AccountApiService {
 				) {
 			return Result.buildFailMessage("必传参数为空");
 		}
+		UserInfo user1 = userInfoDao.findUserId(user.getUserId(),user.getUserName());
+		if(ObjectUtil.isNotNull(user1))
+			return Result.buildFailMessage("当前账户、当前用户名已经被占用，请重新选择");
 		if(!user.getUserType().toString().equals(Common.User.USER_TYPE_QR))
 			return Result.buildFailMessage("开户账户类型不符合");
 		String salt = HashKit.randomSalt();
@@ -80,12 +83,6 @@ public class AccountApiSericeImpl implements AccountApiService {
 			return Result.buildSuccess();
 		return Result.buildFailMessage("密码错误，请检查");
 	}
-	
-	
-	
-	
-	
-	
 	
 	/**
 	 * <p>修改密码【登录密码】</p>

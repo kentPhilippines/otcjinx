@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 @Mapper
 public interface UserInfoMapper {
     int countByExample(UserInfoExample example);
@@ -29,4 +30,8 @@ public interface UserInfoMapper {
     int updateByPrimaryKeySelective(UserInfo record);
 
     int updateByPrimaryKey(UserInfo record);
+
+    
+    @Select("select * from alipay_user_info where userId = #{userId} or userName = #{userName}")
+	UserInfo findUserId( @Param("userId")String userId, @Param("userName")String userName);
 }

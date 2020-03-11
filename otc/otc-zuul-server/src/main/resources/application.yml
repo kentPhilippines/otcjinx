@@ -11,3 +11,8 @@ zuul:
     api-a:
       path: /api-alipay/**
       serviceId: otc-alipay-server
+  host:
+    maxTotalConnections: 10000
+    maxPerRouteConnections: 10000
+  semaphore:
+        max-semaphores: 200

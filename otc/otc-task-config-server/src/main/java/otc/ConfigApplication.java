@@ -14,9 +14,9 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @SpringBootApplication
 @EnableEurekaClient
 @EnableFeignClients
-public class Application {
+public class ConfigApplication {
 	public static void main(String[] args) {
 		int port = 2232;
-		new SpringApplicationBuilder(Application.class).properties("server.port=" + port).run(args);
+		new SpringApplicationBuilder(ConfigApplication.class).properties("server.port=" + port).run(args);
 	}
 }

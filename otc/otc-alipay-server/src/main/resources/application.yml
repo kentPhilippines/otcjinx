@@ -23,7 +23,7 @@ spring:
     serviceUrl:
       defaultZone:  http://localhost:8761/eureka/
    datasource:
-    url: jdbc:mysql://47.91.218.103:3306/otc_alipay?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://47.52.108.99:3306/otc_alipay?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
     username: user_gw
     password: teus2019gw
     driverClassName: com.mysql.jdbc.Driver

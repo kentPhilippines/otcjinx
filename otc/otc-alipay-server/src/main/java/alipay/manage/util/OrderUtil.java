@@ -1,7 +1,9 @@
 package alipay.manage.util;
 
-import otc.result.Result;
+import org.springframework.stereotype.Component;
 
+import otc.result.Result;
+@Component
 public class OrderUtil {
 	/**
 	 * <p>将交易订单置为成功，并标记交易订单生产流水的状态</p>

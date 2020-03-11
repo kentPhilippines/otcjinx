@@ -12,13 +12,13 @@ import cn.hutool.core.util.NetUtil;
  */
 @SpringBootApplication
 @EnableEurekaServer   
-public class Application {
+public class EurekaApplication {
 	public static void main(String[] args) {
         int port = 8761;
         if(!NetUtil.isUsableLocalPort(port)) {
             System.err.printf("该端口被占用", port );
             System.exit(1);
         }
-        new SpringApplicationBuilder(Application.class).properties("server.port=" + port).run(args);
+        new SpringApplicationBuilder(EurekaApplication.class).properties("server.port=" + port).run(args);
 	}
 }
