@@ -47,12 +47,31 @@ public class Common {
 		 * <p>用户总开关，关闭</p>
 		 */
 		public static final String USER_INFO_OFF = "0";//用户总开关关闭
-		
-		
-		
-		
 	}
 	
+	
+	public static class Order{
+		/**
+		 * <p>订单处理中</p>
+		 */
+		public static final Integer ORDER_STATUS_DISPOSE = 1;//订单处理中
+		/**
+		 * <p>订单成功</p>
+		 */
+		public static final Integer ORDER_STATUS_SU = 2;//订单成功
+		/**
+		 * <p>订单未收到回调</p>
+		 */
+		public static final Integer ORDER_STATUS_NO_CALLBACK= 3;//订单未收到回调
+		/**
+		 * <p>订单失败</p>
+		 */
+		public static final Integer ORDER_STATUS_ER= 4;//订单失败
+		/**
+		 * <p>订单超时</p>
+		 */
+		public static final Integer ORDER_STATUS_OVERTIME = 5;//订单超时
+	}
 	
 	
 	

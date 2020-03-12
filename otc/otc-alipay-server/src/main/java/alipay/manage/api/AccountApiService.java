@@ -4,6 +4,8 @@ import alipay.manage.bean.UserInfo;
 import otc.result.Result;
 
 public interface AccountApiService {
+	public static final String EDIT_PASSWORD_ADMIN = "EDIT_PASSWORD_ADMIN";
+	public static final String EDIT_PASSWORD_QR = "EDIT_PASSWORD_QR";
 
 	/**
 	 * <p>添加一个用户</p>
@@ -39,6 +41,20 @@ public interface AccountApiService {
 	 * @return
 	 */
 	boolean updateIsAgent(String accountId);
+
+	/**
+	 * <p>修改 用户详情</p>
+	 * @param user
+	 * @return
+	 */
+	Result editAccount(UserInfo user);
+
+	/**
+	 * <p>修改用户登录密码</p>
+	 * @param user
+	 * @return
+	 */
+	Result editAccountPassword(UserInfo user);
 
 	
 	

@@ -106,6 +106,24 @@ public class AccountApiSericeImpl implements AccountApiService {
 	public boolean updateIsAgent(String accountId) {
 		return false;
 	}
+	@Override
+	public Result editAccount(UserInfo user) {
+		UserInfoExample example = new UserInfoExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andUserIdEqualTo(user.getUserId());
+		int updateByExampleSelective = userInfoDao.updateByExampleSelective(user, example);
+		if(updateByExampleSelective > 0 && updateByExampleSelective < 2)
+			return Result.buildSuccessMessage("用户修改成功");
+		return Result.buildFail();
+	}
+	
+	
+	@Override
+	public Result editAccountPassword(UserInfo user) {
+		
+		
+		return null;
+	}
 	
 	
 	

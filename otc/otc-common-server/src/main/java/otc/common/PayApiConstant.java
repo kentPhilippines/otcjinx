@@ -18,5 +18,9 @@ public class PayApiConstant {
 	public class Alipay{
 		public static final String ACCOUNT_API = "/account-api";//账户类型接口
 		public static final String ADD_ACCOUNT = "/add-account";//用户开户
+		public static final String EDIT_ACCOUNT = "/edit-account";//修改用户资料
+		public static final String EDIT_ACCOUNT_PASSWORD = "/edit-account-password";//修改登录密码
+		public static final String EDIT_ACCOUNT_PAY_PASSWORD = "/edit-account-pay-password";//修改资金密码
+		
 	}
 }

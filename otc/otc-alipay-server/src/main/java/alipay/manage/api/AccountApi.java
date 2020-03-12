@@ -29,12 +29,12 @@ public class AccountApi {
 	 * @param user
 	 * @return
 	 */
-	@GetMapping(PayApiConstant.Alipay.ADD_ACCOUNT)
+	@PostMapping(PayApiConstant.Alipay.ADD_ACCOUNT)
 	@Transactional
 	public Result addAccount(UserInfo user) {
 		if(ObjectUtil.isNull(user))
 			return Result.buildFailMessage("实体类为空，请检查传递方法是否正确");
-		log.info("远程调用方法参数情况："+user.toString());
+		log.info("【远程调用开通顶级代理的方法】");
 		if(StrUtil.isBlank(user.getUserId()) 
 				|| StrUtil.isBlank(user.getUserName())
 				||ObjectUtil.isNull(user.getUserType())
@@ -48,6 +48,49 @@ public class AccountApi {
 		user.setIsAgent(Common.User.USER_IS_AGENT);
 		return accountApiServiceImpl.addAccount(user);
 	}
+	
+	@PostMapping(PayApiConstant.Alipay.EDIT_ACCOUNT)
+	@Transactional
+	public Result editAccount(UserInfo user) {
+		log.info("【远程调用修改用户的方法】");
+		if(ObjectUtil.isNull(user))
+			return Result.buildFailMessage("实体类为空，请检查传递方法是否正确");
+		if(StrUtil.isBlank(user.getUserId())) 
+			return Result.buildFailMessage("必传参数为空");
+		return accountApiServiceImpl.editAccount(user);
+	}
+	
+	
+	/**
+	 * 
+	 * @param user
+	 * @param editType
+	 * @return
+	 */
+	@PostMapping(PayApiConstant.Alipay.EDIT_ACCOUNT_PASSWORD)
+	@Transactional
+	public Result editAccountPassword(UserInfo user ,String editType) {
+		log.info("【远程调用修改用户登录密码的方法】");
+		if(ObjectUtil.isNull(user))
+			return Result.buildFailMessage("实体类为空，请检查传递方法是否正确");
+		if(StrUtil.isBlank(user.getUserId())  ) 
+			return Result.buildFailMessage("必传参数为空");
+		
+		return accountApiServiceImpl.editAccountPassword(user );
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	

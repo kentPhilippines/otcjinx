@@ -26,7 +26,7 @@
 		</commentGenerator>
 		<!--数据库连接的信息：驱动类、连接地址、用户名、密码 -->
 		<jdbcConnection driverClass="com.mysql.jdbc.Driver"
-						connectionURL="jdbc:mysql://47.91.218.103:3306/otc_alipay?serverTimezone=UTC"
+						connectionURL="jdbc:mysql://47.52.108.99:3306/otc_alipay?serverTimezone=UTC"
 						userId="user_gw"
 						password="teus2019gw">
 		</jdbcConnection>
@@ -104,17 +104,17 @@
            <!-- <property name="useActualColumnNames" value="false"/>-->
           
               
-             <table tableName="alipay_run_order" domainObjectName="RunOrder"   enableCountByExample="true"  enableUpdateByExample="true"  enableDeleteByExample="true"  enableSelectByExample="true"  selectByExampleQueryId="true">
+             <table tableName="alipay_correlation" domainObjectName="Correlation"   enableCountByExample="true"  enableUpdateByExample="true"  enableDeleteByExample="true"  enableSelectByExample="true"  selectByExampleQueryId="true">
                     <property name="my.isgen.usekeys" value="true"/>
                     <property name="useActualColumnNames" value="true"/>
                     <generatedKey column="id" sqlStatement="JDBC"/>
             </table> 
-          <!-- 	<table tableName="product_qrcode_recharge" domainObjectName="QrcodeRecharge"   enableCountByExample="true"  enableUpdateByExample="true"  enableDeleteByExample="true"  enableSelectByExample="true"  selectByExampleQueryId="true">
+         	<table tableName="alipay_correlation_data" domainObjectName="CorrelationData"   enableCountByExample="true"  enableUpdateByExample="true"  enableDeleteByExample="true"  enableSelectByExample="true"  selectByExampleQueryId="true">
                     <property name="my.isgen.usekeys" value="true"/>
                     <property name="useActualColumnNames" value="true"/>
                     <generatedKey column="id" sqlStatement="JDBC"/>
             </table> 
-          	<table tableName="product_qrcode_running" domainObjectName="QrcodeRuning"   enableCountByExample="true"  enableUpdateByExample="true"  enableDeleteByExample="true"  enableSelectByExample="true"  selectByExampleQueryId="true">
+         <!--   	<table tableName="product_qrcode_running" domainObjectName="QrcodeRuning"   enableCountByExample="true"  enableUpdateByExample="true"  enableDeleteByExample="true"  enableSelectByExample="true"  selectByExampleQueryId="true">
                     <property name="my.isgen.usekeys" value="true"/>
                     <property name="useActualColumnNames" value="true"/>
                     <generatedKey column="id" sqlStatement="JDBC"/>

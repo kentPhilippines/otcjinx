@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="alipay.manage.mapper.CorrelationMapper" >
+  <resultMap id="BaseResultMap" type="alipay.manage.bean.Correlation" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="parentId" property="parentId" jdbcType="INTEGER" />
+    <result column="parentName" property="parentName" jdbcType="CHAR" />
+    <result column="childrenId" property="childrenId" jdbcType="INTEGER" />
+    <result column="childrenName" property="childrenName" jdbcType="CHAR" />
+    <result column="distance" property="distance" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="submitTime" property="submitTime" jdbcType="TIMESTAMP" />
+    <result column="parentType" property="parentType" jdbcType="INTEGER" />
+    <result column="childrenType" property="childrenType" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="alipay.manage.bean.Correlation" extends="BaseResultMap" >
+    <result column="medium" property="medium" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, parentId, parentName, childrenId, childrenName, distance, status, createTime, 
+    submitTime, parentType, childrenType
+  </sql>
+  <sql id="Blob_Column_List" >
+    medium
+  </sql>
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="alipay.manage.bean.CorrelationExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from alipay_correlation
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="alipay.manage.bean.CorrelationExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from alipay_correlation
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from alipay_correlation
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from alipay_correlation
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="alipay.manage.bean.CorrelationExample" >
+    delete from alipay_correlation
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="alipay.manage.bean.Correlation" useGeneratedKeys="true" keyProperty="id" >
+    insert into alipay_correlation (parentId, parentName, childrenId, 
+      childrenName, distance, status, 
+      createTime, submitTime, parentType, 
+      childrenType, medium)
+    values (#{parentId,jdbcType=INTEGER}, #{parentName,jdbcType=CHAR}, #{childrenId,jdbcType=INTEGER}, 
+      #{childrenName,jdbcType=CHAR}, #{distance,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{submitTime,jdbcType=TIMESTAMP}, #{parentType,jdbcType=INTEGER}, 
+      #{childrenType,jdbcType=INTEGER}, #{medium,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="alipay.manage.bean.Correlation" useGeneratedKeys="true" keyProperty="id" >
+    insert into alipay_correlation
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="parentId != null" >
+        parentId,
+      </if>
+      <if test="parentName != null" >
+        parentName,
+      </if>
+      <if test="childrenId != null" >
+        childrenId,
+      </if>
+      <if test="childrenName != null" >
+        childrenName,
+      </if>
+      <if test="distance != null" >
+        distance,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="submitTime != null" >
+        submitTime,
+      </if>
+      <if test="parentType != null" >
+        parentType,
+      </if>
+      <if test="childrenType != null" >
+        childrenType,
+      </if>
+      <if test="medium != null" >
+        medium,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="parentId != null" >
+        #{parentId,jdbcType=INTEGER},
+      </if>
+      <if test="parentName != null" >
+        #{parentName,jdbcType=CHAR},
+      </if>
+      <if test="childrenId != null" >
+        #{childrenId,jdbcType=INTEGER},
+      </if>
+      <if test="childrenName != null" >
+        #{childrenName,jdbcType=CHAR},
+      </if>
+      <if test="distance != null" >
+        #{distance,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="submitTime != null" >
+        #{submitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="parentType != null" >
+        #{parentType,jdbcType=INTEGER},
+      </if>
+      <if test="childrenType != null" >
+        #{childrenType,jdbcType=INTEGER},
+      </if>
+      <if test="medium != null" >
+        #{medium,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="alipay.manage.bean.CorrelationExample" resultType="java.lang.Integer" >
+    select count(*) from alipay_correlation
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update alipay_correlation
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.parentId != null" >
+        parentId = #{record.parentId,jdbcType=INTEGER},
+      </if>
+      <if test="record.parentName != null" >
+        parentName = #{record.parentName,jdbcType=CHAR},
+      </if>
+      <if test="record.childrenId != null" >
+        childrenId = #{record.childrenId,jdbcType=INTEGER},
+      </if>
+      <if test="record.childrenName != null" >
+        childrenName = #{record.childrenName,jdbcType=CHAR},
+      </if>
+      <if test="record.distance != null" >
+        distance = #{record.distance,jdbcType=INTEGER},
+      </if>
+      <if test="record.status != null" >
+        status = #{record.status,jdbcType=INTEGER},
+      </if>
+      <if test="record.createTime != null" >
+        createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.submitTime != null" >
+        submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.parentType != null" >
+        parentType = #{record.parentType,jdbcType=INTEGER},
+      </if>
+      <if test="record.childrenType != null" >
+        childrenType = #{record.childrenType,jdbcType=INTEGER},
+      </if>
+      <if test="record.medium != null" >
+        medium = #{record.medium,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map" >
+    update alipay_correlation
+    set id = #{record.id,jdbcType=INTEGER},
+      parentId = #{record.parentId,jdbcType=INTEGER},
+      parentName = #{record.parentName,jdbcType=CHAR},
+      childrenId = #{record.childrenId,jdbcType=INTEGER},
+      childrenName = #{record.childrenName,jdbcType=CHAR},
+      distance = #{record.distance,jdbcType=INTEGER},
+      status = #{record.status,jdbcType=INTEGER},
+      createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
+      parentType = #{record.parentType,jdbcType=INTEGER},
+      childrenType = #{record.childrenType,jdbcType=INTEGER},
+      medium = #{record.medium,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update alipay_correlation
+    set id = #{record.id,jdbcType=INTEGER},
+      parentId = #{record.parentId,jdbcType=INTEGER},
+      parentName = #{record.parentName,jdbcType=CHAR},
+      childrenId = #{record.childrenId,jdbcType=INTEGER},
+      childrenName = #{record.childrenName,jdbcType=CHAR},
+      distance = #{record.distance,jdbcType=INTEGER},
+      status = #{record.status,jdbcType=INTEGER},
+      createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
+      parentType = #{record.parentType,jdbcType=INTEGER},
+      childrenType = #{record.childrenType,jdbcType=INTEGER}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="alipay.manage.bean.Correlation" >
+    update alipay_correlation
+    <set >
+      <if test="parentId != null" >
+        parentId = #{parentId,jdbcType=INTEGER},
+      </if>
+      <if test="parentName != null" >
+        parentName = #{parentName,jdbcType=CHAR},
+      </if>
+      <if test="childrenId != null" >
+        childrenId = #{childrenId,jdbcType=INTEGER},
+      </if>
+      <if test="childrenName != null" >
+        childrenName = #{childrenName,jdbcType=CHAR},
+      </if>
+      <if test="distance != null" >
+        distance = #{distance,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="submitTime != null" >
+        submitTime = #{submitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="parentType != null" >
+        parentType = #{parentType,jdbcType=INTEGER},
+      </if>
+      <if test="childrenType != null" >
+        childrenType = #{childrenType,jdbcType=INTEGER},
+      </if>
+      <if test="medium != null" >
+        medium = #{medium,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="alipay.manage.bean.Correlation" >
+    update alipay_correlation
+    set parentId = #{parentId,jdbcType=INTEGER},
+      parentName = #{parentName,jdbcType=CHAR},
+      childrenId = #{childrenId,jdbcType=INTEGER},
+      childrenName = #{childrenName,jdbcType=CHAR},
+      distance = #{distance,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      submitTime = #{submitTime,jdbcType=TIMESTAMP},
+      parentType = #{parentType,jdbcType=INTEGER},
+      childrenType = #{childrenType,jdbcType=INTEGER},
+      medium = #{medium,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="alipay.manage.bean.Correlation" >
+    update alipay_correlation
+    set parentId = #{parentId,jdbcType=INTEGER},
+      parentName = #{parentName,jdbcType=CHAR},
+      childrenId = #{childrenId,jdbcType=INTEGER},
+      childrenName = #{childrenName,jdbcType=CHAR},
+      distance = #{distance,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      submitTime = #{submitTime,jdbcType=TIMESTAMP},
+      parentType = #{parentType,jdbcType=INTEGER},
+      childrenType = #{childrenType,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+    <insert id="insertCorrlationList" parameterType="List"   >
+       insert into product_correlation 
+      	( 
+      		parentId, 
+      		parentName, 
+      		parentType, 
+      		childrenId, 
+      		childrenName, 
+      		childrenType, 
+      		distance  
+      	) values
+      	<foreach collection="list" item="list" separator=","   >
+      	     <trim prefix=" (" suffix=")" suffixOverrides="," >
+      	    #{list.parentId},
+      	    #{list.parentName},
+      	    #{list.parentType},
+      	    #{list.childrenId},
+      	    #{list.childrenName},
+      	    #{list.childrenType},
+      	    #{list.distance}
+      	    </trim>
+      	</foreach>
+  </insert>
+  <update id="addAccountMedium" parameterType="List"> 
+            update product_correlation
+             <trim prefix="set" suffixOverrides=",">
+	            <trim prefix="medium = case" suffix="end,">
+	                <foreach collection="list" item="item" index="index">
+	                     when id=#{item.id} then #{item.medium}
+	                </foreach>
+	            </trim>
+        	</trim>
+           where id in
+        <foreach collection="list" index="index" item="item" separator="," open="(" close=")">
+            #{item.id}
+        </foreach>
+</update>
+</mapper>

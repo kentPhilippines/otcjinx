@@ -38,7 +38,28 @@ public class UserInfo {
     private String inviteCode;//邀请码，注册专用
     private String newPassword;//新的登录密码【修改密码专用】
     private String newPayPassword;//新的支付密码【修改支付密码专用】
-    public String getNewPayPassword() {
+    private Integer toDayOrderCount;//
+    private String online;
+    private String agentCount;
+    public Integer getToDayOrderCount() {
+		return toDayOrderCount;
+	}
+	public void setToDayOrderCount(Integer toDayOrderCount) {
+		this.toDayOrderCount = toDayOrderCount;
+	}
+	public String getOnline() {
+		return online;
+	}
+	public void setOnline(String online) {
+		this.online = online;
+	}
+	public String getAgentCount() {
+		return agentCount;
+	}
+	public void setAgentCount(String agentCount) {
+		this.agentCount = agentCount;
+	}
+	public String getNewPayPassword() {
 		return newPayPassword;
 	}
 	public void setNewPayPassword(String newPayPassword) {
@@ -71,7 +92,6 @@ public class UserInfo {
     public String getUserName() {
         return userName;
     }
-
     public void setUserName(String userName) {
         this.userName = userName == null ? null : userName.trim();
     }
