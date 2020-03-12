@@ -61,25 +61,6 @@ public class AccountApi {
 	}
 	
 	
-	/**
-	 * 
-	 * @param user
-	 * @param editType
-	 * @return
-	 */
-	@PostMapping(PayApiConstant.Alipay.EDIT_ACCOUNT_PASSWORD)
-	@Transactional
-	public Result editAccountPassword(UserInfo user ,String editType) {
-		log.info("【远程调用修改用户登录密码的方法】");
-		if(ObjectUtil.isNull(user))
-			return Result.buildFailMessage("实体类为空，请检查传递方法是否正确");
-		if(StrUtil.isBlank(user.getUserId())  ) 
-			return Result.buildFailMessage("必传参数为空");
-		
-		return accountApiServiceImpl.editAccountPassword(user );
-	}
-	
-	
 	
 	
 	

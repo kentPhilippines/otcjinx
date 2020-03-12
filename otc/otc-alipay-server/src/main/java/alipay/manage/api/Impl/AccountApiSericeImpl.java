@@ -118,6 +118,9 @@ public class AccountApiSericeImpl implements AccountApiService {
 	}
 	
 	
+	/**
+	 * <p>修改用户的登录密码</p>
+	 */
 	@Override
 	public Result editAccountPassword(UserInfo user) {
 		
