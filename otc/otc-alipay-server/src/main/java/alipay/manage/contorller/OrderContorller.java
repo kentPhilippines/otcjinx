@@ -34,7 +34,6 @@ import alipay.manage.service.UserInfoService;
 import alipay.manage.util.LogUtil;
 import alipay.manage.util.OrderUtil;
 import alipay.manage.util.SessionUtil;
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;

@@ -1,12 +1,9 @@
 package alipay.config.redis;
 import java.time.Duration;
 
-import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cache.Cache;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
@@ -15,17 +12,10 @@ import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.connection.RedisPassword;
-import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
-import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
-import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
-import org.springframework.data.redis.connection.lettuce.LettucePoolingClientConfiguration;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
@@ -86,13 +76,9 @@ public class RedisConfig  extends CachingConfigurerSupport {
     	      om.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
     	      jackson2JsonRedisSerializer.setObjectMapper(om);
     	      StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
-    	      // key采用String的序列化方式
     	      template.setKeySerializer(stringRedisSerializer);
-    	      // hash的key也采用String的序列化方式
     	      template.setHashKeySerializer(stringRedisSerializer);
-    	      // value序列化方式采用jackson
     	      template.setValueSerializer(jackson2JsonRedisSerializer);
-    	      // hash的value序列化方式采用jackson
     	      template.setHashValueSerializer(jackson2JsonRedisSerializer);
     	      template.afterPropertiesSet();
     	      return template;
@@ -111,10 +97,6 @@ public class RedisConfig  extends CachingConfigurerSupport {
 			return rsToUse;
 		};
 	}
- 
-
- 
- 
 	@Override
 	@Bean
 	public CacheErrorHandler errorHandler() {

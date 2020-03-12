@@ -123,8 +123,15 @@ public class AccountApiSericeImpl implements AccountApiService {
 	 */
 	@Override
 	public Result editAccountPassword(UserInfo user) {
-		
-		
+		if(StrUtil.isBlank(user.getUserId()) || StrUtil.isBlank(user.getPassword()) || StrUtil.isBlank(user.getNewPassword()))
+			return Result.buildSuccessMessage("必传参数未传，请核实修改");
+		UserInfo userInfo = userInfoDao.findUserByUserId(user.getUserId());
+		Result password = HashKit.encodePassword(userInfo.getUserId(), user.getPassword(), userInfo.getSalt());
+		if(!password.isSuccess() && userInfo.getPassword().equals(password.getResult().toString()))
+			return Result.buildFailMessage("密码错误，请重新出修改密码，或联系客服人处理");
+		Result encodePassword = HashKit.encodePassword(userInfo.getUserId(), user.getNewPassword(), userInfo.getSalt());
+		if(!encodePassword.isSuccess())
+			return Result.buildFailMessage("生成密钥失败，联系客服人员处理");
 		return null;
 	}
 	

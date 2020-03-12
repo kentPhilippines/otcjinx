@@ -59,21 +59,4 @@ public class AccountApi {
 			return Result.buildFailMessage("必传参数为空");
 		return accountApiServiceImpl.editAccount(user);
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
 }

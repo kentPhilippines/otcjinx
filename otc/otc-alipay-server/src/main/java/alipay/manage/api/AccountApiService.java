@@ -6,7 +6,6 @@ import otc.result.Result;
 public interface AccountApiService {
 	public static final String EDIT_PASSWORD_ADMIN = "EDIT_PASSWORD_ADMIN";
 	public static final String EDIT_PASSWORD_QR = "EDIT_PASSWORD_QR";
-
 	/**
 	 * <p>添加一个用户</p>
 	 * <strong>添加一个用户，未强制规定该用户是否为代理商</strong>
@@ -14,7 +13,6 @@ public interface AccountApiService {
 	 * @return
 	 */
 	Result addAccount(UserInfo user);
-	
 	Result  login(UserInfo user);
 	/**
 	 * <p>修改密码【登录密码】</p>
@@ -47,11 +45,4 @@ public interface AccountApiService {
 	 * @return
 	 */
 	Result editAccountPassword(UserInfo user);
-
-	
-	
-	
-	
-	
-
 }
