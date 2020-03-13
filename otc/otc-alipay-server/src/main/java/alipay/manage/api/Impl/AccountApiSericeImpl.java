@@ -117,7 +117,6 @@ public class AccountApiSericeImpl implements AccountApiService {
 		return Result.buildFail();
 	}
 	
-	
 	/**
 	 * <p>修改用户的登录密码</p>
 	 */
