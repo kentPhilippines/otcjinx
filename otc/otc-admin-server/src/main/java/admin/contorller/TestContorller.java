@@ -20,6 +20,7 @@ public class TestContorller {
 	@GetMapping("/findTest")
 	public Result findResult() {
 		log.info("收到测试请求");
+		log.info("*****************************");
 		return testSeviceClientFeignImpl.findTest();
 	}
 
