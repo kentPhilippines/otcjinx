@@ -12,11 +12,18 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import alipay.config.annotion.LogMonitor;
+import alipay.config.redis.RedisUtil;
+import alipay.manage.bean.UserInfo;
+import alipay.manage.util.SessionUtil;
 import cn.hutool.core.util.ObjectUtil;
 
 @Component
 public class MyInterceptor implements HandlerInterceptor {
     Logger log = LoggerFactory.getLogger(MyInterceptor.class);
+    @Autowired
+    SessionUtil sessionUtil;
+    @Autowired
+    RedisUtil redisUtil;
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         if (!(handler instanceof HandlerMethod)) 
@@ -28,18 +35,20 @@ public class MyInterceptor implements HandlerInterceptor {
         LogMonitor loginRequired = method.getMethod().getAnnotation(LogMonitor.class);//获取登录注解
         if (!loginRequired.required()) //权限是否打开
             return true;
-     //   if (ObjectUtil.isNull(user)) {
-     //       response.sendRedirect("/login");
-     //       return false;
-   //     }
+        UserInfo user = sessionUtil.getUser(request);
+        if (!ObjectUtil.isNull(user)) 
+            redisUtil.set("USER_LOGIN" + user.getUserId(), user.getUserId(), 60 * 5);
+        if (ObjectUtil.isNull(user)) {
+            response.sendRedirect("/login");
+            return false;
+        }
         return true;
     }
     @Override
     public void postHandle(HttpServletRequest req, HttpServletResponse resp, Object arg2, ModelAndView arg3)
             throws Exception {
-        //	req.setAttribute("ctx", req.getContextPath());//前端全局变量
         resp.setContentType("text/html;charset=utf-8");
         resp.setCharacterEncoding("utf-8");
-    //    log.info("MyInterceptor01--->postHandle()执行控制器之后且在渲染视图前调用此方法....");
+        log.info("MyInterceptor01--->postHandle()执行控制器之后且在渲染视图前调用此方法....");
     }
 }

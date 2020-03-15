@@ -1,5 +1,4 @@
 package alipay.manage.contorller;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Controller;
@@ -10,7 +9,7 @@ import alipay.config.annotion.LogMonitor;
 @Controller
 public class IndexContorller {
 	/**
-	 * 首页
+	 *	 首页
 	 * @return
 	 */
 	@LogMonitor(required = true)
@@ -38,7 +37,7 @@ public class IndexContorller {
 	}
 
 	/**
-	 * 我的主页
+	 *	 我的主页
 	 *
 	 * @return
 	 */
@@ -49,7 +48,7 @@ public class IndexContorller {
 	}
 
 	/**
-	 * 个人信息
+	 *	 个人信息
 	 *
 	 * @return
 	 */
@@ -60,7 +59,7 @@ public class IndexContorller {
 	}
 
 	/**
-	 * 个人帐变
+	 * 	个人帐变
 	 *
 	 * @return
 	 */
@@ -69,9 +68,8 @@ public class IndexContorller {
 	public String personalAccountChange() {
 		return "personal-account-change";
 	}
-
 	/**
-	 * 充值
+	 *	 充值
 	 *
 	 * @return
 	 */
@@ -82,7 +80,7 @@ public class IndexContorller {
 	}
 
 	/**
-	 * 提现
+	 * 	提现
 	 *
 	 * @return
 	 */
@@ -91,9 +89,8 @@ public class IndexContorller {
 	public String withdraw() {
 		return "withdraw";
 	}
-
 	/**
-	 * 个人充提
+	 *   	个人充提
 	 * @return
 	 */
 	@LogMonitor(required = true)
@@ -101,7 +98,6 @@ public class IndexContorller {
 	public String rechargeWithdrawLog() {
 		return "recharge-withdraw-log";
 	}
-
 	/**
 	 * 收款码
 	 *
@@ -112,7 +108,6 @@ public class IndexContorller {
 	public String gatheringCode() {
 		return "gathering-code";
 	}
-
 	/**
 	 * 接单
 	 *
@@ -123,10 +118,8 @@ public class IndexContorller {
 	public String receiveOrder() {
 		return "receive-order";
 	}
-
 	/**
-	 * 审核订单
-	 *
+	 *	 审核订单
 	 * @return
 	 */
 	@LogMonitor(required = true)
@@ -134,10 +127,8 @@ public class IndexContorller {
 	public String auditOrder() {
 		return "audit-order";
 	}
-
 	/**
-	 * 接单记录
-	 *
+	 * 	接单记录
 	 * @return
 	 */
 	@LogMonitor(required = true)
@@ -145,10 +136,8 @@ public class IndexContorller {
 	public String receiveOrderRecord() {
 		return "receive-order-record";
 	}
-
 	/**
-	 * 申诉记录
-	 *
+	 * 	申诉记录
 	 * @return
 	 */
 	@LogMonitor(required = true)
@@ -156,10 +145,8 @@ public class IndexContorller {
 	public String appealRecord() {
 		return "appeal-record";
 	}
-
 	/**
-	 * 申诉详情
-	 *
+	 * 	申诉详情
 	 * @return
 	 */
 	@LogMonitor(required = true)
@@ -167,20 +154,16 @@ public class IndexContorller {
 	public String appealDetails() {
 		return "appeal-details";
 	}
-
 	/**
-	 * 在线客服
-	 *
+	 *	 在线客服
 	 * @return
 	 */
 	@GetMapping("/online-customer")
 	public String onlineCustomer() {
 		return "online-customer";
 	}
-
 	/**
-	 * 代理中心
-	 *
+	 * 	代理中心
 	 * @return
 	 */
 	@LogMonitor(required = true)
@@ -188,10 +171,8 @@ public class IndexContorller {
 	public String agentCenter() {
 		return "agent-center";
 	}
-
 	/**
-	 * 代理开户
-	 *
+	 * 	代理开户
 	 * @return
 	 */
 	@LogMonitor(required = true)
@@ -199,10 +180,8 @@ public class IndexContorller {
 	public String agentOpenAnAccount() {
 		return "agent-open-an-account";
 	}
-
 	/**
-	 * 下级开户
-	 *
+	 * 	下级开户
 	 * @return
 	 */
 	@LogMonitor(required = true)
@@ -210,9 +189,8 @@ public class IndexContorller {
 	public String lowerLevelOpenAnAccount() {
 		return "lower-level-open-an-account";
 	}
-
 	/**
-	 * 下级账号管理
+	 *	 下级账号管理
 	 * @return
 	 */
 	@LogMonitor(required = true)
@@ -220,14 +198,12 @@ public class IndexContorller {
 	public String LowerLevelAccountManage() {
 		return "lower-level-account-manage";
 	}
-
 	@GetMapping("/lower-level-account-change")
 	public String LowerLevelAccountChange() {
 		return "lower-level-account-change";
 	}
-
 	/**
-	 * 团队接单明细
+	 *	 团队接单明细
 	 * @return
 	 */
 	@LogMonitor(required = true)
@@ -235,9 +211,8 @@ public class IndexContorller {
 	public String LowerLevelAccountReceiveOrderRecord() {
 		return "lower-level-account-receive-order-record";
 	}
-
 	/**
-	 * 团队充值明细
+	 *	 团队充值明细
 	 * @return
 	 */
 	@LogMonitor(required = true)
@@ -245,9 +220,8 @@ public class IndexContorller {
 	public String lowerLevelRechargeDetails() {
 		return "lower-level-recharge-details";
 	}
-
 	/**
-	 * 团队提现明细
+	 *	 团队提现明细
 	 * @return
 	 */
 	@LogMonitor(required = true)
@@ -255,7 +229,6 @@ public class IndexContorller {
 	public String lowerLevelWithdrawDetails() {
 		return "lower-level-withdraw-details";
 	}
-
 	@GetMapping("/pay")
 	public String pay() {
 		return "pay";
@@ -269,17 +242,14 @@ public class IndexContorller {
 	public String paySuccessNotice() {
 		return "success";
 	}
-
 	@GetMapping("/google")
 	public String google( ) {
 		return "google";
 	}
-
 	@GetMapping("/account_manage")
 	public String accountManage() {
 		return "account-manage";
 	}
-
     @GetMapping("/onlineStatMembers")
 	public String onlineMemberList(){return "online-member-list";}
 

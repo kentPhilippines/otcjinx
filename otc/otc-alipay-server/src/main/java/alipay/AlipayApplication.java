@@ -5,22 +5,19 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.NetUtil;
 import cn.hutool.core.util.NumberUtil;
-
 /**
  * <p>宝转宝支付接口服务</p>
  * @author K
@@ -31,7 +28,6 @@ import cn.hutool.core.util.NumberUtil;
 @ServletComponentScan(basePackages = "alipay.*")
 @ComponentScan(basePackages = "alipay.*") //注入扫描
 @EnableTransactionManagement //事务
-//@EnableConfigurationProperties //读取外部配置
 @EnableRedisHttpSession //redis   session 共享
 public class AlipayApplication {
 	public static void main(String[] args) {
@@ -45,8 +41,7 @@ public class AlipayApplication {
 	                    if(!NumberUtil.isInteger(strPort)) {
 	                        System.err.println("只能是数字");
 	                        continue;
-	                    }
-	                    else {
+	                    } else {
 	                        p = Convert.toInt(strPort);
 	                        scanner.close();
 	                        break;
@@ -55,28 +50,14 @@ public class AlipayApplication {
 	                return p;
 	        });
 	            try {
-					port=future.get(5,TimeUnit.SECONDS);
+					port=future.get(1,TimeUnit.SECONDS);
 				} catch (InterruptedException | ExecutionException | TimeoutException e) {
 					 port = defaultPort;
 				}
-	            
-	        if(!NetUtil.isUsableLocalPort(port)) {
+	        while(!NetUtil.isUsableLocalPort(port)) {
 	            System.err.print("端口%d被占用了，无法启动%n"); 
 	            port = ++defaultPort;
 	        }
-	        if(!NetUtil.isUsableLocalPort(port)) {
-	        	System.err.print("端口%d被占用了，无法启动%n"); 
-	        	port = ++defaultPort;
-	        }
-	        if(!NetUtil.isUsableLocalPort(port)) {
-	        	System.err.print("端口%d被占用了，无法启动%n"); 
-	        	port = ++defaultPort;
-	        }
-	        if(!NetUtil.isUsableLocalPort(port)) {
-	        	System.err.print("端口%d被占用了，无法启动%n"); 
-	        	port = ++defaultPort;
-	        }
-	        
 	        new SpringApplicationBuilder(AlipayApplication.class).properties("server.port=" + port).run(args);
 	}
 }

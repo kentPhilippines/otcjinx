@@ -15,9 +15,9 @@ import cn.hutool.core.util.NetUtil;
 public class ZuulApplication {
     public static void main(String[] args) {
         int port = 5055;
-        if(!NetUtil.isUsableLocalPort(port)) {
-            System.err.printf("端口%d被占用了，无法启动%n", port );
-            System.exit(1);
+        while(!NetUtil.isUsableLocalPort(port)) {
+            System.err.print("端口%d被占用了，无法启动%n"); 
+            port += 1;
         }
         new SpringApplicationBuilder(ZuulApplication.class).properties("server.port=" + port).run(args);
     }
