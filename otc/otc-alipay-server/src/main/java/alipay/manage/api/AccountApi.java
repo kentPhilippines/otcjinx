@@ -15,6 +15,7 @@ import alipay.manage.bean.UserFund;
 import alipay.manage.bean.UserInfo;
 import alipay.manage.contorller.AccountContorller;
 import alipay.manage.util.LogUtil;
+import alipay.manage.util.UserUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import otc.api.alipay.Common;
@@ -27,8 +28,8 @@ public class AccountApi {
 	Logger log = LoggerFactory.getLogger(AccountApi.class);
 	@Autowired
 	AccountApiService accountApiServiceImpl;
-	@Autowired
-	LogUtil logUtil;
+	@Autowired LogUtil logUtil;
+	@Autowired UserUtil userUtil;
 	/**
 	 * <p>开户接口</p>
 	 * <P>当前开户接口只接受代理商开始，且该商户只能为码商</P>
@@ -52,7 +53,10 @@ public class AccountApi {
 		if(!user.getUserType().toString().equals(Common.User.USER_TYPE_QR))
 			return Result.buildFailMessage("开户账户类型不符合");
 		user.setIsAgent(Common.User.USER_IS_AGENT);
-		return accountApiServiceImpl.addAccount(user);
+		Result addAccount = accountApiServiceImpl.addAccount(user);
+		if(addAccount.isSuccess())
+			userUtil.openAccountCorrlation(user.getUserId());
+		return addAccount;
 	}
 	
 	@PostMapping(PayApiConstant.Alipay.EDIT_ACCOUNT)

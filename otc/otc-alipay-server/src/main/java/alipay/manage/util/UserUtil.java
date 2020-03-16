@@ -20,6 +20,8 @@ public class UserUtil {
 	Logger log = LoggerFactory.getLogger(UserUtil.class);
 	@Autowired UserInfoService userInfoServiceImpl;
     @Autowired CorrelationService correlationServiceImpl;
+    private static final Integer AGENT = 1;
+    private static final Integer MEMBER = 2;
 	 public Result  openAccountCorrlation(String userId){
 	    	Integer myId = null;
 	    	Integer myType = null;
@@ -31,9 +33,9 @@ public class UserUtil {
 	    		user4 = userInfoServiceImpl.findUserByAccount(userId);
 	    	String isAgentAgent = Common.User.USER_IS_AGENT;
 	    	if(user3.getIsAgent().equals(isAgentAgent.toString())) 
-	    		myType = 1;
+	    		myType = AGENT;
 	    	 else 
-	    		myType = 2;
+	    		myType = MEMBER;
 	    	if(ObjectUtil.isNull(user4)) {
 	    		parentId = user3.getUserId();
 	    		parentName = user3.getUserName();

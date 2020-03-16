@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import alipay.manage.bean.UserFund;
 import alipay.manage.bean.UserInfo;
-import alipay.manage.service.RunorderService;
+import alipay.manage.service.RunOrderService;
 import alipay.manage.service.UserInfoService;
 import otc.api.alipay.Common;
 import otc.exception.user.UserException;
@@ -19,7 +19,7 @@ import otc.result.Result;
 public class AmountUtil {
 	Logger log = LoggerFactory.getLogger(AmountUtil.class);
 	@Autowired UserInfoService userInfoServiceImpl;
-	@Autowired RunorderService runorderServiceImpl;
+	@Autowired RunOrderService runorderServiceImpl;
 	public static final String ADD_AMOUNT_RECHARGE = "ADD_AMOUNT_RECHARGE";//资金充值
 	public static final String ADD_AMOUNT_PROFIT = "ADD_AMOUNT_PROFIT";//代理利润分成
 	public static final String ADD_AMOUNT = "ADD_AMOUNT";//人工加钱

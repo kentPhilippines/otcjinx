@@ -82,16 +82,13 @@ public class CorrelationServiceImpl  implements CorrelationService {
 		 */
 		List<Correlation> findCorrelation = findCorrelation(parentId);
 		for(Correlation corr : findCorrelation ) {
-			corr.setChildrenId(myId);
 			corr.setChildrenName(myName);
 			corr.setDistance(corr.getDistance()+1);
 			corr.setChildrenType(myType);
 			corr.setMedium("");
 		}
 		Correlation entity = new Correlation();
-		entity.setChildrenId(myId);
 		entity.setChildrenName(myName);
-		entity.setParentId(myId);
 		entity.setParentName(myName);
 		entity.setParentType(myType);
 		entity.setChildrenType(myType);
@@ -104,7 +101,7 @@ public class CorrelationServiceImpl  implements CorrelationService {
 	List<Correlation> findCorrelation(String myId){
 		CorrelationExample example = new CorrelationExample();
 		Criteria criteria = example.createCriteria();
-		criteria.andChildrenIdEqualTo(myId);
+		criteria.andChildrenNameEqualTo(myId);
 		List<Correlation> selectByExample = correlationDao.selectByExample(example);
 		return selectByExample;
 	}
