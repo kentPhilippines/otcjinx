@@ -1,5 +1,6 @@
 package alipay.manage.api;
 
+import alipay.manage.bean.UserFund;
 import alipay.manage.bean.UserInfo;
 import otc.result.Result;
 
@@ -45,4 +46,5 @@ public interface AccountApiService {
 	 * @return
 	 */
 	Result editAccountPassword(UserInfo user);
+	Result addAmount(UserFund userFund);
 }

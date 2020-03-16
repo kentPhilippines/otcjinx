@@ -2,9 +2,12 @@ package alipay.manage.api.Impl;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import alipay.manage.api.AccountApi;
 import alipay.manage.api.AccountApiService;
 import alipay.manage.bean.UserFund;
 import alipay.manage.bean.UserInfo;
@@ -12,6 +15,7 @@ import alipay.manage.bean.UserInfoExample;
 import alipay.manage.bean.UserInfoExample.Criteria;
 import alipay.manage.mapper.UserFundMapper;
 import alipay.manage.mapper.UserInfoMapper;
+import alipay.manage.util.AmountUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
@@ -20,10 +24,13 @@ import otc.result.Result;
 import otc.util.encode.HashKit;
 @Component
 public class AccountApiSericeImpl implements AccountApiService {
+	Logger log = LoggerFactory.getLogger(AccountApiSericeImpl.class);
 	@Autowired
 	UserInfoMapper userInfoDao;
 	@Autowired
 	UserFundMapper userFundDao;
+	@Autowired
+	AmountUtil amountUtil;
 	@Override
 	public Result addAccount(UserInfo user) {
 		if(ObjectUtil.isNull(user))
@@ -132,6 +139,11 @@ public class AccountApiSericeImpl implements AccountApiService {
 		if(!encodePassword.isSuccess())
 			return Result.buildFailMessage("生成密钥失败，联系客服人员处理");
 		return null;
+	}
+	@Override
+	public Result addAmount(UserFund userFund) {
+		log.info("【调用加款接口】");
+		return amountUtil.addAmounRecharge(userFund, userFund.getRechargeNumber());
 	}
 	
 	

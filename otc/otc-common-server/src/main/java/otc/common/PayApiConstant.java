@@ -21,5 +21,9 @@ public class PayApiConstant {
 		public static final String EDIT_ACCOUNT = "/edit-account";//修改用户资料
 		public static final String EDIT_ACCOUNT_PASSWORD = "/edit-account-password";//修改登录密码
 		public static final String EDIT_ACCOUNT_PAY_PASSWORD = "/edit-account-pay-password";//修改资金密码
+		public static final String ADD_AMOUNT = "add_amount";//账户加钱接口 【充值点数】
+		public static final String DELETE_AMOUNT ="delete_amount";//账户减钱接口【账户金额扣除】
+		public static final String FREEZE_AMOUNT = "freeze_amount";//账户冻结接口【账户资金冻结】
+		
 	}
 }
