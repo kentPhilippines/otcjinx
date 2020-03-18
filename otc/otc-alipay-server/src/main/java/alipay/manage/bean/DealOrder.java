@@ -30,6 +30,7 @@ public class DealOrder {
     private String dealDescribe;			//交易备注
     private Date createTime;				
     private Date submitTime;
+    private String payType;					//产品类型
     private Integer feeId;
     private Integer status;
     private String retain1;
@@ -38,7 +39,13 @@ public class DealOrder {
     private String retain4;
 	private String Time;
 	private List orderQrUserList;
-    public List getOrderQrUserList() {
+    public String getPayType() {
+		return payType;
+	}
+	public void setPayType(String payType) {
+		this.payType = payType;
+	}
+	public List getOrderQrUserList() {
 		return orderQrUserList;
 	}
 	public void setOrderQrUserList(List orderQrUserList) {

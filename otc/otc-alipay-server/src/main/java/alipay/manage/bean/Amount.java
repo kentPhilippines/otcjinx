@@ -4,31 +4,42 @@ import java.math.BigDecimal;
 import java.util.Date;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-/**
- * <p>码商费率表</p>
- * @author K
- */
-public class UserRate {
-    private Integer id;						//数据id
-    private String userId;					//用户id
-    private Integer userType;				//用户类型,商户1 码商2
-    private Integer switchs;				//当前用户总开关 1开启0关闭【码商商户后台控制,该数据只能在后台显示】
-    private String payTypr;					//产品类型			
-    private BigDecimal fee;					//费率数值
-    private Integer feeType;				//费率类型:1交易费率，2代付费率
+
+public class Amount {
+	
+	
+	
+	
+	
+    private Integer id;
+    private String orderId;
+    private String userId;
+    private String amountType;
+    private String accname;
+    private String orderStatus;
+    private BigDecimal amount;
+    private BigDecimal fee;
+    private BigDecimal actualAmount;
     private Date createTime;
     private Date submitTime;
     private Integer status;
     private String retain1;
     private String retain2;
-    private String retain3;
-    private String retain4;
+    private String dealDescribe;
     public Integer getId() {
         return id;
     }
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(String orderId) {
+        this.orderId = orderId == null ? null : orderId.trim();
     }
 
     public String getUserId() {
@@ -39,28 +50,36 @@ public class UserRate {
         this.userId = userId == null ? null : userId.trim();
     }
 
-    public Integer getUserType() {
-        return userType;
+    public String getAmountType() {
+        return amountType;
     }
 
-    public void setUserType(Integer userType) {
-        this.userType = userType;
+    public void setAmountType(String amountType) {
+        this.amountType = amountType == null ? null : amountType.trim();
     }
 
-    public Integer getSwitchs() {
-        return switchs;
+    public String getAccname() {
+        return accname;
     }
 
-    public void setSwitchs(Integer switchs) {
-        this.switchs = switchs;
+    public void setAccname(String accname) {
+        this.accname = accname == null ? null : accname.trim();
     }
 
-    public String getPayTypr() {
-        return payTypr;
+    public String getOrderStatus() {
+        return orderStatus;
     }
 
-    public void setPayTypr(String payTypr) {
-        this.payTypr = payTypr == null ? null : payTypr.trim();
+    public void setOrderStatus(String orderStatus) {
+        this.orderStatus = orderStatus == null ? null : orderStatus.trim();
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
     }
 
     public BigDecimal getFee() {
@@ -71,12 +90,12 @@ public class UserRate {
         this.fee = fee;
     }
 
-    public Integer getFeeType() {
-        return feeType;
+    public BigDecimal getActualAmount() {
+        return actualAmount;
     }
 
-    public void setFeeType(Integer feeType) {
-        this.feeType = feeType;
+    public void setActualAmount(BigDecimal actualAmount) {
+        this.actualAmount = actualAmount;
     }
 
     public Date getCreateTime() {
@@ -119,20 +138,12 @@ public class UserRate {
         this.retain2 = retain2 == null ? null : retain2.trim();
     }
 
-    public String getRetain3() {
-        return retain3;
+    public String getDealDescribe() {
+        return dealDescribe;
     }
 
-    public void setRetain3(String retain3) {
-        this.retain3 = retain3 == null ? null : retain3.trim();
-    }
-
-    public String getRetain4() {
-        return retain4;
-    }
-
-    public void setRetain4(String retain4) {
-        this.retain4 = retain4 == null ? null : retain4.trim();
+    public void setDealDescribe(String dealDescribe) {
+        this.dealDescribe = dealDescribe == null ? null : dealDescribe.trim();
     }
 
     @Override

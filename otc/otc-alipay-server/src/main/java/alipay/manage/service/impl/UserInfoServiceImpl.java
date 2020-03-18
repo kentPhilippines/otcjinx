@@ -1,11 +1,13 @@
 package alipay.manage.service.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
 
 import alipay.manage.bean.UserFund;
 import alipay.manage.bean.UserInfo;
+import alipay.manage.bean.UserRate;
 import alipay.manage.service.UserInfoService;
 @Component
 public class UserInfoServiceImpl implements UserInfoService{
@@ -46,6 +48,11 @@ public class UserInfoServiceImpl implements UserInfoService{
 
 	@Override
 	public Boolean updataAmount(UserFund userFund) {
+		return null;
+	}
+
+	@Override
+	public UserRate findUserRateById(Integer feeId) {
 		return null;
 	}
 

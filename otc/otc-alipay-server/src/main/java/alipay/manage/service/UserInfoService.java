@@ -1,9 +1,11 @@
 package alipay.manage.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import alipay.manage.bean.UserFund;
 import alipay.manage.bean.UserInfo;
+import alipay.manage.bean.UserRate;
 
 public interface UserInfoService {
 	/**
@@ -54,4 +56,11 @@ public interface UserInfoService {
 	 * @return
 	 */
 	Boolean updataAmount(UserFund userFund);
+
+	/**
+	 * <p>根据费率id 查询费率具体信息</p>
+	 * @param dealFee
+	 * @return
+	 */
+	UserRate findUserRateById(Integer feeId);
 }

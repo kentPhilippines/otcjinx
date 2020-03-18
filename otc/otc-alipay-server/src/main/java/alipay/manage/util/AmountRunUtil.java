@@ -1,11 +1,22 @@
 package alipay.manage.util;
 
 import java.math.BigDecimal;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import alipay.manage.bean.Amount;
+import alipay.manage.bean.DealOrder;
 import alipay.manage.bean.RunOrder;
+import alipay.manage.bean.UserFund;
+import alipay.manage.bean.UserRate;
 import alipay.manage.service.RunOrderService;
+import alipay.manage.service.UserInfoService;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import otc.api.alipay.Common;
 import otc.result.Result;
 
 /**
@@ -15,8 +26,10 @@ import otc.result.Result;
  */
 @Component
 public class AmountRunUtil {
-	@Autowired
-	RunOrderService runOrderServiceImpl;
+	Logger log = LoggerFactory.getLogger(AmountRunUtil.class);
+	private static final String SYSTEM_APP = "SYSTEM_APP";//系统账户
+	@Autowired UserInfoService userInfoServiceImpl;
+	@Autowired RunOrderService runOrderServiceImpl;
 	private static final String RUN = "RUN";
 	private static final String ADD_AMOUNT = "ADD_AMOUNT";//人工加钱
 	private static final Integer ADD_AMOUNT_NUMBER = 17;
@@ -35,42 +48,152 @@ public class AmountRunUtil {
 	private static final Integer WITHDRAY_AMOUNT_NUMBER = 10;//代付冻结
 	private static final Integer WITHDRAY_AMOUNT_FEE_NUMBER = 9;//代付手续费冻结
 	
+	private static final String AMOUNT_TYPE_R = "0";//对于当前账户来说是   收入
+	private static final String AMOUNT_TYPE_W = "1";//对于当前账户来说是   支出
+	
+	private static final String RUNTYPE_ARTIFICIAL = "2";//人工流水
+	private static final String RUNTYPE_NATURAL = "1";//自然流水
 	
 	
 	
 	
-	
-	
-	private Result add(String userId,BigDecimal amount) {
-		
-		
-		
-		
-		
-		
+	public Result addAmountProfit(String orderId ,String userId ,BigDecimal amount ,  Integer feeId  , String generationIp ,Boolean flag ) {
+		UserFund userFund = userInfoServiceImpl.findUserByAccount(userId); //当前账户资金
+		UserRate userFee = userInfoServiceImpl.findUserRateById(feeId);//当前账户 费率
+		if(StrUtil.isBlank(userFund.getAgent()))
+			return Result.buildSuccessMessage("当前分润以结算完成");
+		UserFund userAccount = userInfoServiceImpl.findUserByAccount(userFund.getAgent());//当前账户上级代理账户
+		UserRate agentFee = userInfoServiceImpl.findUserRateById(feeId);
+		String userId2 = userFund.getUserId();
+		BigDecimal fee = userFee.getFee();
+		log.info("【流水关联订单号为："+orderId+"】");
+		log.info("【当前账户为："+userId2+"】");
+		log.info("【当前费率为："+fee+"】");
+		String userId3 = userAccount.getUserId();
+		BigDecimal fee2 = agentFee.getFee();
+		log.info("【上级代理商账户为："+userId3+"】");
+		log.info("【上级代理商费率为："+fee2+"】");
+		BigDecimal subtract = fee2.subtract(fee);
+		log.info("【当前费率差为："+subtract+"】");
+		BigDecimal multiply = amount.multiply(subtract);
+		log.info("【当前代理商："+userId3+"，结算分润为："+multiply+"】");
+		Result add = add(PROFIT_AMOUNT_AGENT, userAccount, orderId, multiply, generationIp, "码商代理商，代理分润结算", flag?RUNTYPE_ARTIFICIAL:RUNTYPE_NATURAL);
+		if(add.isSuccess()) 
+			return addAmountProfit(orderId, userId3, amount, feeId,  generationIp, flag);
+		else
+			return Result.buildFailMessage("代理商分润结算失败");
+	}
+	/**
+	 * <p>码商会员正常交易分润流水</p>
+	 * @param order					交易订单
+	 * @param generationIp			交易ip
+	 * @param flag					true 自然流水     false  人工流水
+	 * @return
+	 */
+	public Result addDealAmount( DealOrder order  , String generationIp ,Boolean flag ) {
+		UserFund userFund = userInfoServiceImpl.findUserByAccount(order.getOrderQrUser());
+		UserRate rate = userInfoServiceImpl.findUserRateById(order.getFeeId());
+		log.info("当前加入流水账号："+userFund.getUserId() + "，当前流水金额："+order.getDealAmount()+"，当前流水费率："+rate.getFee()+"，");
+		BigDecimal dealAmount = order.getDealAmount();
+		BigDecimal fee = rate.getFee();
+		BigDecimal amount =  dealAmount.multiply(fee);
+		Result add = add(PROFIT_AMOUNT_DEAL, userFund, order.getOrderId(), amount, generationIp, "商正常接单分润", flag?RUNTYPE_ARTIFICIAL:RUNTYPE_NATURAL);
+		if(add.isSuccess())
+			return add;
+		return Result.buildFailMessage("流水生成失败");
+	}
+	/**
+	 * <p>人工加钱</p>
+	 * @param userFund			资金账户
+	 * @param amount			加减款订单
+	 * @param generationIp		操作ip
+	 * @return
+	 */
+	public Result addAmount(  Amount amount , String generationIp) {
+		UserFund userFund = userInfoServiceImpl.findUserByAccount(amount.getUserId());
+		Result add = add(ADD_AMOUNT, userFund, amount.getOrderId(), amount.getActualAmount(),
+				generationIp, amount.getDealDescribe(), RUNTYPE_ARTIFICIAL);
+		if(add.isSuccess())
+			return add;
+		return Result.buildFailMessage("流水生成失败");
+	}
+	/**
+	 *<p>交易扣除交易点数【订单置为成功时调用该方法扣除点数】</p>
+	 * @param order					交易订单
+	 * @param generationIp			操作ip
+	 * @param flag					true 自然流水     false  人工流水
+	 * @return
+	 */
+	public Result deleteRechangerNumber(  DealOrder order , String generationIp,Boolean flag) {
+		UserFund userFund = userInfoServiceImpl.findUserByAccount(order.getOrderQrUser());
+		Result delete = delete(DEAL_AMOUNT_DETETE, userFund, order.getOrderId(), order.getDealAmount(), generationIp, 
+				"交易流水,扣除用户交易点数", flag?RUNTYPE_ARTIFICIAL:RUNTYPE_NATURAL);
+		if(delete.isSuccess()) 
+			return delete;
+		return Result.buildFailMessage("流水生成失败");
+	}
+	/**
+	 * <p>人工扣款</p>
+	 * @param userFund					资金账户
+	 * @param amount					加减款订单
+	 * @param generationIp				操作ip
+	 * @return
+	 */
+	public Result deleteAmount(  Amount amount , String generationIp) {
+		UserFund userFund = userInfoServiceImpl.findUserByAccount(amount.getUserId());
+		Result delete = delete(DETETE_AMOUNT, userFund, amount.getOrderId(), amount.getActualAmount(), 
+				generationIp, amount.getDealDescribe(), RUNTYPE_ARTIFICIAL);
+		if(delete.isSuccess())
+			return delete;
 		return Result.buildFailMessage("流水生成失败");
 	}
 	
+	/**
+	 * <p>当前账户加款流水</p>
+	 * @param userFund
+	 * @param associatedId
+	 * @param amount
+	 * @return
+	 */
+	@SuppressWarnings("unused")
+	private Result add(String orderType , UserFund userFund ,String associatedId , BigDecimal amount,String generationIp,String dealDescribe,String runType) {
+		String orderAccount,amountType,acountR ,accountW;
+		Integer runOrderType = null;
+		BigDecimal amountNow ;
+		orderAccount = userFund.getUserId();
+		amountType = AMOUNT_TYPE_R;
+		acountR =  orderAccount;
+		accountW = SYSTEM_APP ; 
+		runOrderType = getRunOrderType(orderType);
+		amountNow = userFund .getAccountBalance();
+		Result amountRun = amountRun(associatedId, orderAccount, runOrderType, amount, generationIp, acountR, accountW, runType, amountType, dealDescribe, amountNow);
+		if(amountRun.isSuccess())
+			return amountRun;
+		return Result.buildFailMessage("流水生成失败");
+	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	/**
+	 * <p>当前账户扣款流水</p>
+	 * @param userFund
+	 * @param associatedId
+	 * @param amount
+	 * @return
+	 */
+	private Result delete(String orderType , UserFund userFund ,String associatedId , BigDecimal amount,String generationIp,String dealDescribe,String runType) {
+		String orderAccount,amountType,acountR ,accountW;
+		Integer runOrderType = null;
+		BigDecimal amountNow ;
+		orderAccount = userFund.getUserId();
+		amountType = AMOUNT_TYPE_W;
+		acountR =  SYSTEM_APP;
+		accountW = orderAccount ; 
+		runOrderType = getRunOrderType(orderType);
+		amountNow = userFund .getAccountBalance();
+		Result amountRun = amountRun(associatedId, orderAccount, runOrderType, amount, generationIp, acountR, accountW, runType, amountType, dealDescribe, amountNow);
+		if(amountRun.isSuccess())
+			return amountRun;
+		return Result.buildFailMessage("流水生成失败");
+	}
 	/**
 	 * <p>创建流水总类</p>	
 	 * @param associatedId		关联订单号
