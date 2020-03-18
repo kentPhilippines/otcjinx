@@ -1,11 +1,8 @@
 package alipay.manage.util;
 
 import java.math.BigDecimal;
-import java.util.Date;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import alipay.manage.bean.RunOrder;
 import alipay.manage.service.RunOrderService;
 import cn.hutool.core.util.StrUtil;
@@ -37,6 +34,35 @@ public class AmountRunUtil {
 	private static final String WITHDRAY_AMOUNT_FEE = "WITHDRAY_AMOUNT_FEE";//代付手续费冻结
 	private static final Integer WITHDRAY_AMOUNT_NUMBER = 10;//代付冻结
 	private static final Integer WITHDRAY_AMOUNT_FEE_NUMBER = 9;//代付手续费冻结
+	
+	
+	
+	
+	
+	
+	
+	private Result add(String userId,BigDecimal amount) {
+		
+		
+		
+		
+		
+		
+		return Result.buildFailMessage("流水生成失败");
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	
@@ -125,7 +151,4 @@ public class AmountRunUtil {
 		}
 		return runOrderType;
 	}
-	
-
-	
 }
