@@ -9,9 +9,11 @@ import org.springframework.stereotype.Component;
 
 import alipay.manage.bean.Amount;
 import alipay.manage.bean.DealOrder;
+import alipay.manage.bean.Recharge;
 import alipay.manage.bean.RunOrder;
 import alipay.manage.bean.UserFund;
 import alipay.manage.bean.UserRate;
+import alipay.manage.bean.Withdraw;
 import alipay.manage.service.RunOrderService;
 import alipay.manage.service.UserInfoService;
 import cn.hutool.core.util.ObjectUtil;
@@ -26,10 +28,21 @@ import otc.result.Result;
  */
 @Component
 public class AmountRunUtil {
+	/**
+	 * ######################################
+		<p>流水处理接口</p>
+		1，人工加款接口				已完成
+		2，人工扣款接口				已完成
+		3，交易减少充值点数接口		已完成
+		4，交易增加交易分润接口		已完成
+		5，充值						已完成
+		6，提现						已完成
+	 */
 	Logger log = LoggerFactory.getLogger(AmountRunUtil.class);
 	private static final String SYSTEM_APP = "SYSTEM_APP";//系统账户
 	@Autowired UserInfoService userInfoServiceImpl;
 	@Autowired RunOrderService runOrderServiceImpl;
+	@Autowired AmountUtil amountUtil;
 	private static final String RUN = "RUN";
 	private static final String ADD_AMOUNT = "ADD_AMOUNT";//人工加钱
 	private static final Integer ADD_AMOUNT_NUMBER = 17;
@@ -53,10 +66,44 @@ public class AmountRunUtil {
 	
 	private static final String RUNTYPE_ARTIFICIAL = "2";//人工流水
 	private static final String RUNTYPE_NATURAL = "1";//自然流水
-	
-	
-	
-	
+	/**
+	 * <p>码商代付流水生成</p>
+	 * @param withdraw									代付订单表
+	 * @param generationIp								ip
+	 * @param flag										true 自然流水     false  人工流水
+	 * @return
+	 */
+	public Result deleteAmount(Withdraw withdraw,String generationIp,Boolean flag) {
+		UserFund userFund = userInfoServiceImpl.findUserByAccount(withdraw.getUserId()); //当前账户资金
+		Result delete = delete(WITHDRAY_AMOUNT, userFund, withdraw.getOrderId(), withdraw.getActualAmount(), generationIp, "码商代付冻结",  flag?RUNTYPE_ARTIFICIAL:RUNTYPE_NATURAL);
+		if(delete.isSuccess())
+			return delete;
+		return Result.buildFailMessage("流水生成失败");
+	}
+	/**
+	 * <p>充值</p>
+	 * @param recharge		充值订单
+	 * @param generationIp	充值ip
+	 * @param flag			true 自然流水     false  人工流水
+	 * @return
+	 */
+	public Result addAmount(Recharge recharge,String generationIp,Boolean flag) {
+		UserFund userFund = userInfoServiceImpl.findUserByAccount(recharge.getUserId()); //当前账户资金
+		Result add = add(RECHANGE_AMOUNT, userFund, recharge.getOrderId(), recharge.getActualAmount(), generationIp, "码商充值",  flag?RUNTYPE_ARTIFICIAL:RUNTYPE_NATURAL);
+		if(add.isSuccess())
+			return add;
+		return Result.buildFailMessage("流水生成失败");
+	}
+	/**
+	 * <p>代理商分润计算</p>
+	 * @param orderId				分润产生订单号
+	 * @param userId				分润产生账户
+	 * @param amount				分润产生金额
+	 * @param feeId					费率id
+	 * @param generationIp			产品分润ip	
+	 * @param flag					true 自然流水     false  人工流水
+	 * @return
+	 */
 	public Result addAmountProfit(String orderId ,String userId ,BigDecimal amount ,  Integer feeId  , String generationIp ,Boolean flag ) {
 		UserFund userFund = userInfoServiceImpl.findUserByAccount(userId); //当前账户资金
 		UserRate userFee = userInfoServiceImpl.findUserRateById(feeId);//当前账户 费率
@@ -76,6 +123,9 @@ public class AmountRunUtil {
 		BigDecimal subtract = fee2.subtract(fee);
 		log.info("【当前费率差为："+subtract+"】");
 		BigDecimal multiply = amount.multiply(subtract);
+		Result addAmounProfit = amountUtil.addAmounProfit(userAccount, multiply);
+		if(addAmounProfit.isSuccess())
+			return Result.buildFailMessage("资金账户修改失败");
 		log.info("【当前代理商："+userId3+"，结算分润为："+multiply+"】");
 		Result add = add(PROFIT_AMOUNT_AGENT, userAccount, orderId, multiply, generationIp, "码商代理商，代理分润结算", flag?RUNTYPE_ARTIFICIAL:RUNTYPE_NATURAL);
 		if(add.isSuccess()) 
@@ -109,7 +159,7 @@ public class AmountRunUtil {
 	 * @param generationIp		操作ip
 	 * @return
 	 */
-	public Result addAmount(  Amount amount , String generationIp) {
+	public Result addAmount(Amount amount , String generationIp) {
 		UserFund userFund = userInfoServiceImpl.findUserByAccount(amount.getUserId());
 		Result add = add(ADD_AMOUNT, userFund, amount.getOrderId(), amount.getActualAmount(),
 				generationIp, amount.getDealDescribe(), RUNTYPE_ARTIFICIAL);

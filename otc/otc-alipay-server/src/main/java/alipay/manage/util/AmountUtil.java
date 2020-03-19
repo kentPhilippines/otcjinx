@@ -57,8 +57,9 @@ public class AmountUtil {
 	}
 	/**
 	 * <p><strong>增加交易分润</strong></p>
-	 * @param userFund					当前账户实体【必传字段为userId】
-	 * @param balance					当前操作金额
+	 * @param userFund							资金账户
+	 * @param balance							记录资金【分润金额】
+	 * @param dealAmount						交易金额【订单金额】
 	 * @return
 	 */
 	public Result addDeal(UserFund userFund , BigDecimal balance, BigDecimal dealAmount) {
