@@ -3,11 +3,8 @@ package alipay.manage.mapper;
 import alipay.manage.bean.Medium;
 import alipay.manage.bean.MediumExample;
 import java.util.List;
-
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-@Mapper
+
 public interface MediumMapper {
     int countByExample(MediumExample example);
 
@@ -36,9 +33,4 @@ public interface MediumMapper {
     int updateByPrimaryKeyWithBLOBs(Medium record);
 
     int updateByPrimaryKey(Medium record);
-
-
-    List<Medium> findIsMyMediumPage(String accountId);
-    @Select("select  *  from alipay_medium where mediumId = #{mediumId}")
-    Medium findMediumBy(@Param("mediumId")String mediumId);
 }
