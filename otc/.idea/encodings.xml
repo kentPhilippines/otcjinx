@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/otc-admin-server/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/otc-alipay-server/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/otc-common-server/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/otc-dealpay-server/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/otc-eureka-server/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/otc-pay-server/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/otc-task-config-server/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/otc-zuul-server/src/main/java" charset="UTF-8" />
+  </component>
+</project>
