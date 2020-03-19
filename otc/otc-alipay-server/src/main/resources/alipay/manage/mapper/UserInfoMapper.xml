@@ -89,7 +89,7 @@
   <sql id="Base_Column_List" >
     id, userId, userName, password, payPasword, salt, userType, switchs, userNode, email, 
     agent, isAgent, credit, receiveOrderState, remitOrderState, QQ, telegram, skype, 
-    createTime, submitTime, status, retain1, retain2, retain3, retain4
+    createTime, submitTime, status, privateKey, publicKey, retain3, retain4
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="alipay.manage.bean.UserInfoExample" >
     select
@@ -107,11 +107,11 @@
     </if>
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="map" >
-    select 
+    select
     <include refid="Base_Column_List" />
     from alipay_user_info
     where id = #{id,jdbcType=INTEGER}
-      and userId = #{userId,jdbcType=VARCHAR}
+    and userId = #{userId,jdbcType=VARCHAR}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="map" >
     delete from alipay_user_info
@@ -385,30 +385,30 @@
   <update id="updateByExample" parameterType="map" >
     update alipay_user_info
     set id = #{record.id,jdbcType=INTEGER},
-      userId = #{record.userId,jdbcType=VARCHAR},
-      userName = #{record.userName,jdbcType=VARCHAR},
-      password = #{record.password,jdbcType=VARCHAR},
-      payPasword = #{record.payPasword,jdbcType=VARCHAR},
-      salt = #{record.salt,jdbcType=VARCHAR},
-      userType = #{record.userType,jdbcType=INTEGER},
-      switchs = #{record.switchs,jdbcType=INTEGER},
-      userNode = #{record.userNode,jdbcType=VARCHAR},
-      email = #{record.email,jdbcType=VARCHAR},
-      agent = #{record.agent,jdbcType=VARCHAR},
-      isAgent = #{record.isAgent,jdbcType=CHAR},
-      credit = #{record.credit,jdbcType=DECIMAL},
-      receiveOrderState = #{record.receiveOrderState,jdbcType=INTEGER},
-      remitOrderState = #{record.remitOrderState,jdbcType=INTEGER},
-      QQ = #{record.QQ,jdbcType=VARCHAR},
-      telegram = #{record.telegram,jdbcType=VARCHAR},
-      skype = #{record.skype,jdbcType=VARCHAR},
-      createTime = #{record.createTime,jdbcType=TIMESTAMP},
-      submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
-      status = #{record.status,jdbcType=INTEGER},
-      retain1 = #{record.retain1,jdbcType=CHAR},
-      retain2 = #{record.retain2,jdbcType=CHAR},
-      retain3 = #{record.retain3,jdbcType=CHAR},
-      retain4 = #{record.retain4,jdbcType=CHAR}
+    userId = #{record.userId,jdbcType=VARCHAR},
+    userName = #{record.userName,jdbcType=VARCHAR},
+    password = #{record.password,jdbcType=VARCHAR},
+    payPasword = #{record.payPasword,jdbcType=VARCHAR},
+    salt = #{record.salt,jdbcType=VARCHAR},
+    userType = #{record.userType,jdbcType=INTEGER},
+    switchs = #{record.switchs,jdbcType=INTEGER},
+    userNode = #{record.userNode,jdbcType=VARCHAR},
+    email = #{record.email,jdbcType=VARCHAR},
+    agent = #{record.agent,jdbcType=VARCHAR},
+    isAgent = #{record.isAgent,jdbcType=CHAR},
+    credit = #{record.credit,jdbcType=DECIMAL},
+    receiveOrderState = #{record.receiveOrderState,jdbcType=INTEGER},
+    remitOrderState = #{record.remitOrderState,jdbcType=INTEGER},
+    QQ = #{record.QQ,jdbcType=VARCHAR},
+    telegram = #{record.telegram,jdbcType=VARCHAR},
+    skype = #{record.skype,jdbcType=VARCHAR},
+    createTime = #{record.createTime,jdbcType=TIMESTAMP},
+    submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
+    status = #{record.status,jdbcType=INTEGER},
+    retain1 = #{record.retain1,jdbcType=CHAR},
+    retain2 = #{record.retain2,jdbcType=CHAR},
+    retain3 = #{record.retain3,jdbcType=CHAR},
+    retain4 = #{record.retain4,jdbcType=CHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -487,7 +487,7 @@
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
-      and userId = #{userId,jdbcType=VARCHAR}
+    and userId = #{userId,jdbcType=VARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="alipay.manage.bean.UserInfo" >
     update alipay_user_info

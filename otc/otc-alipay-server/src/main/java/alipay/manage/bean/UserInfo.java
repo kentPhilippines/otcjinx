@@ -1,5 +1,6 @@
 package alipay.manage.bean;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -9,7 +10,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * <p>用户详情表</p>
  * @author K
  */
-public class UserInfo {
+public class UserInfo implements Serializable {
     private Integer id;					//数据id
     private String userId;				//用户id
     private String userName;			//用户姓名
@@ -31,8 +32,10 @@ public class UserInfo {
     private Date createTime;
     private Date submitTime;
     private Integer status;
-    private String retain1;
-    private String retain2;
+    //    private String retain1;
+//    private String retain2;
+    private String privateKey;
+    private String publicKey;
     private String retain3;
     private String retain4;
     private String inviteCode;//邀请码，注册专用
@@ -42,42 +45,42 @@ public class UserInfo {
     private String online;
     private String agentCount;
     public Integer getToDayOrderCount() {
-		return toDayOrderCount;
-	}
-	public void setToDayOrderCount(Integer toDayOrderCount) {
-		this.toDayOrderCount = toDayOrderCount;
-	}
-	public String getOnline() {
-		return online;
-	}
-	public void setOnline(String online) {
-		this.online = online;
-	}
-	public String getAgentCount() {
-		return agentCount;
-	}
-	public void setAgentCount(String agentCount) {
-		this.agentCount = agentCount;
-	}
-	public String getNewPayPassword() {
-		return newPayPassword;
-	}
-	public void setNewPayPassword(String newPayPassword) {
-		this.newPayPassword = newPayPassword;
-	}
-	public String getNewPassword() {
-		return newPassword;
-	}
-	public void setNewPassword(String newPassword) {
-		this.newPassword = newPassword;
-	}
-	public String getInviteCode() {
-		return inviteCode;
-	}
-	public void setInviteCode(String inviteCode) {
-		this.inviteCode = inviteCode;
-	}
-	public Integer getId() {
+        return toDayOrderCount;
+    }
+    public void setToDayOrderCount(Integer toDayOrderCount) {
+        this.toDayOrderCount = toDayOrderCount;
+    }
+    public String getOnline() {
+        return online;
+    }
+    public void setOnline(String online) {
+        this.online = online;
+    }
+    public String getAgentCount() {
+        return agentCount;
+    }
+    public void setAgentCount(String agentCount) {
+        this.agentCount = agentCount;
+    }
+    public String getNewPayPassword() {
+        return newPayPassword;
+    }
+    public void setNewPayPassword(String newPayPassword) {
+        this.newPayPassword = newPayPassword;
+    }
+    public String getNewPassword() {
+        return newPassword;
+    }
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
+    }
+    public String getInviteCode() {
+        return inviteCode;
+    }
+    public void setInviteCode(String inviteCode) {
+        this.inviteCode = inviteCode;
+    }
+    public Integer getId() {
         return id;
     }
     public void setId(Integer id) {
@@ -231,20 +234,20 @@ public class UserInfo {
         this.status = status;
     }
 
-    public String getRetain1() {
-        return retain1;
+    public String getPrivateKey() {
+        return privateKey;
     }
 
-    public void setRetain1(String retain1) {
-        this.retain1 = retain1 == null ? null : retain1.trim();
+    public void setPrivateKey(String privateKey) {
+        this.privateKey = privateKey;
     }
 
-    public String getRetain2() {
-        return retain2;
+    public String getPublicKey() {
+        return publicKey;
     }
 
-    public void setRetain2(String retain2) {
-        this.retain2 = retain2 == null ? null : retain2.trim();
+    public void setPublicKey(String publicKey) {
+        this.publicKey = publicKey;
     }
 
     public String getRetain3() {

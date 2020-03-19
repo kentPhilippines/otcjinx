@@ -368,4 +368,42 @@
       and mediumNumber = #{mediumNumber,jdbcType=VARCHAR}
       and mediumId = #{mediumId,jdbcType=VARCHAR}
   </update>
+
+  <select id="findIsMyMediumPage" parameterType="String" resultType="alipay.manage.bean.Medium">
+		(SELECT
+			 (SELECT GROUP_CONCAT("",fixationAmount,"元") AS fixation  FROM alipay_file_list t2 WHERE  t2.`concealId` = m.`mediumId`    AND t2.isDeal = '2') AS
+			    fixation,
+			m.mediumNumber as  mediumNumber,
+			m.mediumHolder as mediumHolder,
+			m.mediumPhone as mediumPhone,
+			m.qrcodeId as qrcodeId,
+			m.status as status,
+			m.id as id
+		FROM
+			alipay_medium m
+			WHERE
+			m.isDeal = '2'
+			AND m.status = 1
+			AND m.`qrcodeId` = #{accountId}
+		ORDER BY m.id DESC
+		LIMIT 9999999)
+		UNION
+		(SELECT
+			 (SELECT GROUP_CONCAT("",fixationAmount,"元") AS fixation  FROM alipay_file_list t2 WHERE  t2.`concealId` = m.`mediumId`    AND t2.isDeal = '2') AS
+			    fixation,
+			m.mediumNumber as  mediumNumber,
+			m.mediumHolder as mediumHolder,
+			m.mediumPhone as mediumPhone,
+			m.qrcodeId as qrcodeId,
+			m.status as status,
+			m.id as id
+		FROM
+			alipay_medium m
+			WHERE
+			m.isDeal = '2'
+			AND m.status = 0
+			AND m.`qrcodeId` = #{accountId}
+		ORDER BY m.id DESC
+		LIMIT 9999999)
+  </select>
 </mapper>

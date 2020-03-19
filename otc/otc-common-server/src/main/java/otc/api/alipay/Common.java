@@ -71,9 +71,31 @@ public class Common {
 		 * <p>订单超时</p>
 		 */
 		public static final Integer ORDER_STATUS_OVERTIME = 5;//订单超时
+
+
+		public static final String QR_IS_DEAL_OFF = "1";//二维码不可用
+
+		public static final String QR_IS_DEAL_ON = "2";//二维码可用
 	}
-	
-	
-	
+
+	public static class Deals{
+		public static final String ORDERDEAL = "DE";//交易订单
+		public static final String ORDERRUN = "RUN";//流水订单
+		public static final String ORDERWIT = "WIT";//代付订单
+		public static final String ORDEREXCE = "EXCE";//异常订单
+		public static final String ORDERRECORD = "REX";//所有订单
+		public static final String IMG = "IMG";//所有订单
+		public static final String MEDIUM = "MM";//所有订单
+		public static final String BANK = "BAN";//所有订单
+		public static final String ADD_MOUNT = "ADD";//系统加钱订单
+		public static final String DEL_MOUNT = "DEL";//系统减钱订单
+		public static final String YUCHUANG_FLOW = "ANO";//越创流水
+	}
+
+	public static final Integer STATUS_IS_OK = 1;//数据有效
+	public static final Integer STATUS_IS_NOT_OK = 0;//数据无效
+	public static final String notOk = "1";//数据逻辑删除
+	public static final String isOk = "2";//数据逻辑可用
+	public static final String MEDIUM_ALIPAY = "alipay";//支付宝收款媒介
 
 }

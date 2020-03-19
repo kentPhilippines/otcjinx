@@ -186,7 +186,7 @@
 
 				loadSystemSetting : function() {
 					var that = this;
-					that.$http.get('/masterControl/getSystemSetting').then(function(res) {
+					that.$http.get('masterControl/getSystemSetting').then(function(res) {
 						document.title = res.body.result;
 						headerVM.title = res.body.result;
 					});
