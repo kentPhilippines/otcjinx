@@ -243,6 +243,52 @@ public class RSAUtils {
         }
     }
 
+
+    public static boolean verifySign(Map<String, Object> map) {
+        Map<String, Object> signMap = Maps.newHashMap();
+        signMap.put("appId", map.get("appId"));
+        signMap.put("orderId", map.get("orderId"));
+        signMap.put("notifyUrl", map.get("notifyUrl"));
+        signMap.put("amount", map.get("amount"));
+        signMap.put("passCode", map.get("passCode"));
+        signMap.put("applyDate", map.get("applyDate"));
+        String paramStr = MapUtil.createParam(signMap);
+        if (!map.get("sign").equals(md5(paramStr))) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * md5加密
+     * @param str
+     * @return
+     */
+    public static String md5(String str) {
+        MessageDigest md5 = null;
+        try {
+            md5 = MessageDigest.getInstance("MD5");
+        } catch (Exception e) {
+            System.out.println(e.toString());
+            e.printStackTrace();
+            return "";
+        }
+        char[] charArray = str.toCharArray();
+        byte[] byteArray = new byte[charArray.length];
+        for (int i = 0; i < charArray.length; i++)
+            byteArray[i] = (byte) charArray[i];
+        byte[] md5Bytes = md5.digest(byteArray);
+        StringBuffer hexValue = new StringBuffer();
+        for (int i = 0; i < md5Bytes.length; i++) {
+            int val = ((int) md5Bytes[i]) & 0xff;
+            if (val < 16)
+                hexValue.append("0");
+            hexValue.append(Integer.toHexString(val));
+        }
+        return hexValue.toString();
+    }
+
+
     /**
      * 将参数用公钥进行加密，平台内部调用
      *
@@ -282,15 +328,11 @@ public class RSAUtils {
     /**
      * 商户参数私钥解密方法，所有验证在调用前完成
      *
-     * @param request    request
+     * @param cipherText 商户传过来的密文
      * @param privateKey 解密私钥
      * @return 返回map
      */
-    public static Map<String, Object> getDecodePrivateKey(HttpServletRequest request, String privateKey) {
-        String cipherText = request.getParameter("cipherText");//密文
-        if (StringUtils.isEmpty(cipherText)) {
-            throw new BusinessException("request中密文为空");
-        }
+    public static Map<String, Object> getDecodePrivateKey(String cipherText, String privateKey) {
         String urlParam = privateDecrypt(cipherText, privateKey);
         if (StringUtils.isEmpty(urlParam)) {
             throw new BusinessException("解密字符串为空");
@@ -319,7 +361,7 @@ public class RSAUtils {
         String encrypt = getEncryptPublicKey(param, SystemConstants.INNER_PLATFORM_PUBLIC_KEY);
         System.out.println("alipay生成密文传给admin的值=" + encrypt);
         Map<String, Object> stringObjectMap = retMapDecode(encrypt, SystemConstants.INNER_PLATFORM_PRIVATE_KEY);
-        System.out.println("admin传过来的密文，解密后的值="+ stringObjectMap.toString());
+        System.out.println("admin传过来的密文，解密后的值=" + stringObjectMap.toString());
 
     }
 
