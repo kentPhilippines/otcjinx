@@ -49,12 +49,10 @@ public class CorrelationServiceImpl  implements CorrelationService {
         List<Correlation> list = correlationDao.selectAllParentRelList(accountId);
         return list;
     }
-
     @Override
     public Correlation findEntityByParentId(String accountId) {
         return correlationDao.findEntityByParentId(accountId);
     }
-
 	@Override
 	public boolean addCorrelationDate(CorrelationData entity) {
 		int insertSelective = correlationDataDao.insertSelective(entity);
@@ -72,7 +70,6 @@ public class CorrelationServiceImpl  implements CorrelationService {
 		if(updateByExampleSelective > 0 && updateByExampleSelective < 2)
 			log.info("当前订单已存入统计数据，当前订单号为："+orderId);
 	}
-	
 	public boolean openAccount(String myId ,  String myName,Integer myType ,  String parentId , String parentName){
 		/**
 		 * <p>开户逻辑</p>
@@ -107,7 +104,6 @@ public class CorrelationServiceImpl  implements CorrelationService {
 		log.info("selectByExample-->",selectByExample);
 		return selectByExample;
 	}
-
 	@Override
 	public boolean addAccountMedium(String myName, String myId, Integer mediumId) {
 		List<Correlation> findCorrelation = findCorrelation(myId);
@@ -119,7 +115,6 @@ public class CorrelationServiceImpl  implements CorrelationService {
 		int a = correlationDao.addAccountMedium(findCorrelation);
 		return a > 0  ;
 	}
-
 	@Override
 	public boolean deleteAccountMedium(String myName, String myId, Integer mediumId) {
     	log.info("参数myId" + myName);
@@ -146,19 +141,16 @@ public class CorrelationServiceImpl  implements CorrelationService {
 		int updateChildren = correlationDao.updateChildren(userId);
 		return updateChildren > 0 ;
 	}
-
 	@Override
 	public UserCountBean findMyDateAgen(Integer id) {
 		UserCountBean bean = correlationDao.findMyDateAgen(id);
 		return bean;
 	}
-
 	@Override
 	public UserCountBean findDealDate(@NotNull Integer id) {
 		UserCountBean bean = correlationDataDao.findDealDate(id);
 		return bean;
 	}
-
 	@Override
 	public int[][] findOnline(Integer id) {
 		int[][] a = new int[3][1];
@@ -175,5 +167,4 @@ public class CorrelationServiceImpl  implements CorrelationService {
 		a[2][0] = count;
 		return a;
 	}
-
 }

@@ -31,13 +31,11 @@ public interface UserInfoMapper {
 
     int updateByPrimaryKey(UserInfo record);
 
-    UserInfo selectByAccountId(String username);
-
+    
     @Select("select * from alipay_user_info where userId = #{userId} or userName = #{userName}")
 	UserInfo findUserId( @Param("userId")String userId, @Param("userName")String userName);
 
-    @Select("select queryChildAgents(#{accountId})")
-    List<String> selectChildAgentListById(@Param("accountId") String accountId);
+    
     /**
      * <p>根据用户名id【唯一】 ，查询用户详细信息</p>
      * @param userId

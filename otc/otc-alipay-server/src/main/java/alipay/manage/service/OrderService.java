@@ -54,4 +54,19 @@ public interface OrderService {
 	 */
 	List<Withdraw> findWithdrawOrder(Withdraw bean);
 
+	/**
+	 * <p>根据订单号查询订单【码商交易订单】</p>
+	 * @param orderId
+	 * @return
+	 */
+	DealOrder findOrderByOrderId(String orderId);
+	/**
+	 * <p>修改订单状态【码商交易订单】</p>
+	 * @param orderId
+	 * @param mag 
+	 * @param string
+	 * @return
+	 */
+	boolean updateOrderStatus(String orderId, String status, String mag);
+
 }

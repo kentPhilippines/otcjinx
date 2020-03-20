@@ -2,6 +2,7 @@ package alipay.manage.api;
 
 import alipay.manage.bean.UserFund;
 import alipay.manage.bean.UserInfo;
+import alipay.manage.bean.UserRate;
 import otc.result.Result;
 
 public interface AccountApiService {
@@ -47,4 +48,12 @@ public interface AccountApiService {
 	 */
 	Result editAccountPassword(UserInfo user);
 	Result addAmount(UserFund userFund);
+
+	/**
+	 * 查询商户的费率
+	 * @param userId
+	 * @param passCode
+	 * @return
+	 */
+    UserRate findUserRateByUserId(String userId, String passCode);
 }

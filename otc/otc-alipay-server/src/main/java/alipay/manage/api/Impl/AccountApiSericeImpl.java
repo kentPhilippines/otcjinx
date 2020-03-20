@@ -2,12 +2,12 @@ package alipay.manage.api.Impl;
 
 import java.util.List;
 
+import alipay.manage.bean.UserRate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import alipay.manage.api.AccountApi;
 import alipay.manage.api.AccountApiService;
 import alipay.manage.bean.UserFund;
 import alipay.manage.bean.UserInfo;
@@ -145,14 +145,17 @@ public class AccountApiSericeImpl implements AccountApiService {
 		log.info("【调用加款接口】");
 		return amountUtil.addAmounRecharge(userFund, userFund.getRechargeNumber());
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+	/**
+	 * 查询商户的下单费率
+	 * @param userId
+	 * @param passCode
+	 * @return
+	 */
+	@Override
+	public UserRate findUserRateByUserId(String userId, String passCode) {
+		return userInfoDao.selectUserRateByUserId(userId, passCode);
+	}
+
+
 }

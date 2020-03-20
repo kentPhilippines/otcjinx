@@ -43,4 +43,12 @@ public class OrderServiceImpl implements OrderService{
 	public List<Withdraw> findWithdrawOrder(Withdraw bean) {
 		return null;
 	}
+	@Override
+	public DealOrder findOrderByOrderId(String orderId) {
+		return null;
+	}
+	@Override
+	public boolean updateOrderStatus(String orderId, String status, String mag) {
+		return false;
+	}
 }

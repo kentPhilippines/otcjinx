@@ -122,10 +122,10 @@ public class OrderContorller {
 		boolean expired = DateUtil.isExpired(createTime,DateField.SECOND,1200,new Date());
 		if(!expired)
 			return Result.buildFailResult("无权限，请联系客服人员操作");
-		Result updataOrder = orderUtil.updataOrder(orderId,Common.User.RUN_TYPE_ARTIFICIAL);//成功状态，人工操作
-		if(updataOrder.isSuccess()) {
-			return updataOrder;
-		}
+	//	Result updataOrder = orderUtil.updataOrder(orderId,Common.User.RUN_TYPE_ARTIFICIAL);//成功状态，人工操作
+	//	if(updataOrder.isSuccess()) {
+	//		return updataOrder;
+	//	}
 		return Result.buildFailResult("无权限，请联系客服人员操作");
 	}
 	/**
