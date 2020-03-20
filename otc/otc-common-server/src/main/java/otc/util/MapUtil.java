@@ -5,9 +5,11 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 /**
@@ -62,5 +64,52 @@ public class MapUtil {
 	        throw new RuntimeException();
 	    }
 	 
+	}
+
+	/**
+	 * 将字符串参数转成Map集合
+	 * @param paramStr	解密后的拼接参数
+	 * @return			返回map结果
+	 */
+	public static Map<String,Object> paramToMap(String paramStr){
+		//将字符串参数转成数据组
+		String[] params = paramStr.split("&");
+		Map<String, Object> resMap = Maps.newHashMap();
+		for (int i = 0; i < params.length; i++) {
+			String[] param = params[i].split("=");
+			if (param.length >= 2) {
+				String key = param[0];
+				String value = param[1];
+				//处理参数中自带的=号
+				for (int j = 2; j < param.length; j++) {
+					value += "=" + param[j];
+				}
+				resMap.put(key, value);
+			}
+		}
+		return resMap;
+	}
+
+	/**
+	 * 对参数map进行升序排序用&拼接
+	 * @param map
+	 * @return
+	 */
+	public static String createParam(Map<String, Object> map) {
+		try {
+			if (map == null || map.isEmpty())
+				return null;
+			Object[] key = map.keySet().toArray();
+			Arrays.sort(key);
+			StringBuffer res = new StringBuffer(128);
+			for (int i = 0; i < key.length; i++) {
+				res.append(key[i] + "=" + map.get(key[i]) + "&");
+			}
+			String rStr = res.substring(0, res.length() - 1);
+			return rStr;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }
