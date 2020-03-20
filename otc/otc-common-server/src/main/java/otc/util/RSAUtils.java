@@ -1,9 +1,14 @@
 package otc.util;
 
+import cn.hutool.Hutool;
+import cn.hutool.json.JSON;
+import cn.hutool.json.JSONObject;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Maps;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.web.bind.annotation.PostMapping;
+import otc.common.SystemConstants;
 import otc.exception.BusinessException;
 
 import javax.crypto.Cipher;
@@ -17,6 +22,8 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.List;
 import java.util.Map;
+
+import static cn.hutool.json.JSONObject.*;
 
 
 public class RSAUtils {
@@ -45,13 +52,14 @@ public class RSAUtils {
             String privateKeyString = java.util.Base64.getEncoder().encodeToString(privateKey.getEncoded());
             // 将公钥和私钥保存到List
             return ImmutableList.of(publicKeyString, privateKeyString);
-        } catch (NoSuchAlgorithmException var15){
+        } catch (NoSuchAlgorithmException var15) {
             return null;
         }
     }
 
     /**
      * 公钥对象
+     *
      * @param publicKey
      * @return
      * @throws NoSuchAlgorithmException
@@ -71,6 +79,7 @@ public class RSAUtils {
 
     /**
      * 私钥对象
+     *
      * @param privateKey
      * @return
      * @throws NoSuchAlgorithmException
@@ -87,6 +96,7 @@ public class RSAUtils {
 
     /**
      * 公钥加密
+     *
      * @param data
      * @param publicKey
      * @return
@@ -104,6 +114,7 @@ public class RSAUtils {
 
     /**
      * 私钥解密
+     *
      * @param data
      * @param privateKey
      * @return
@@ -122,9 +133,10 @@ public class RSAUtils {
 
     /**
      * 私钥加密
-     * @param data          加密字符串
-     * @param privateKey    私钥字符串
-     * @return              密文
+     *
+     * @param data       加密字符串
+     * @param privateKey 私钥字符串
+     * @return 密文
      */
     public static String privateEncrypt(String data, String privateKey) {
         try {
@@ -139,9 +151,10 @@ public class RSAUtils {
 
     /**
      * 公钥解密
-     * @param data          加密字符串
-     * @param publicKey     公钥字符串
-     * @return              解密字符串
+     *
+     * @param data      加密字符串
+     * @param publicKey 公钥字符串
+     * @return 解密字符串
      */
     public static String publicDecrypt(String data, String publicKey) {
         try {
@@ -155,7 +168,8 @@ public class RSAUtils {
     }
 
     /**
-     *  RSA加密算法对于加密的长度是有要求的。一般来说，加密时，明文长度大于加密钥长度-11时，明文就要进行分段；解密时，密文大于解密钥长度时，密文就要进行分段（以字节为单位）
+     * RSA加密算法对于加密的长度是有要求的。一般来说，加密时，明文长度大于加密钥长度-11时，明文就要进行分段；解密时，密文大于解密钥长度时，密文就要进行分段（以字节为单位）
+     *
      * @param cipher
      * @param opmode
      * @param datas
@@ -185,7 +199,7 @@ public class RSAUtils {
                 offSet = i * maxBlock;
             }
         } catch (Exception e) {
-            throw new RuntimeException("加解密阀值为["+maxBlock+"]的数据时发生异常", e);
+            throw new RuntimeException("加解密阀值为[" + maxBlock + "]的数据时发生异常", e);
         }
         byte[] resultDatas = out.toByteArray();
         IOUtils.closeQuietly(out);
@@ -231,30 +245,33 @@ public class RSAUtils {
 
     /**
      * 将参数用公钥进行加密，平台内部调用
-     * @param map           map参数
-     * @param privateKey    私钥
-     * @return              返回map
+     *
+     * @param map        map参数
+     * @param privateKey 私钥
+     * @return 返回map
      */
-    public static String getEncryptPublicKey(Map<String, Object> map, String privateKey){
+    public static String getEncryptPublicKey(Map<String, Object> map, String privateKey) {
         //拼接参数
         String urlParam = MapUtil.createParam(map);
         //私钥解密密文得到字符串参数
-        String cipherText = publicEncrypt(urlParam,privateKey);
+        String cipherText = publicEncrypt(urlParam, privateKey);
         //调用方法转成map
         if (StringUtils.isEmpty(cipherText)) {
             throw new BusinessException("加密字符串为空");
         }
         return cipherText;
     }
+
     /**
      * 将解密的密文转成map返回 所有的验证都在调用前完成
-     * @param cipherText    密文
-     * @param privateKey    私钥
-     * @return              返回map
+     *
+     * @param cipherText 密文
+     * @param privateKey 私钥
+     * @return 返回map
      */
-    public Map<String, Object> retMapDecode(String cipherText, String privateKey){
+    public static Map<String, Object> retMapDecode(String cipherText, String privateKey) {
         //私钥解密密文得到字符串参数
-        String urlParam = privateDecrypt(cipherText,privateKey);
+        String urlParam = privateDecrypt(cipherText, privateKey);
         //调用方法转成map
         if (StringUtils.isEmpty(urlParam)) {
             throw new BusinessException("解密字符串为空");
@@ -264,20 +281,46 @@ public class RSAUtils {
 
     /**
      * 商户参数私钥解密方法，所有验证在调用前完成
-     * @param request       request
-     * @param privateKey    解密私钥
-     * @return              返回map
+     *
+     * @param request    request
+     * @param privateKey 解密私钥
+     * @return 返回map
      */
-    public static Map<String, Object> getDecodePrivateKey(HttpServletRequest request, String privateKey){
+    public static Map<String, Object> getDecodePrivateKey(HttpServletRequest request, String privateKey) {
         String cipherText = request.getParameter("cipherText");//密文
         if (StringUtils.isEmpty(cipherText)) {
             throw new BusinessException("request中密文为空");
         }
-        String urlParam = privateDecrypt(cipherText,privateKey);
+        String urlParam = privateDecrypt(cipherText, privateKey);
         if (StringUtils.isEmpty(urlParam)) {
             throw new BusinessException("解密字符串为空");
         }
         return MapUtil.paramToMap(urlParam);
+    }
+
+    //调用demo
+    public static void main(String[] args) {
+        JSONObject jsonObject = new JSONObject();
+        JSON json = new JSONObject();
+        //获取密钥
+        List<String> list = genKeyPair();
+        String publicKey = list.get(0);
+        String privateKey = list.get(1);
+        System.out.println("生成的公钥是=" + publicKey);
+        System.out.println("生成的私钥是=" + privateKey);
+        Map<String, Object> param = Maps.newHashMap();
+        param.put("userId", "abcdedfdfd001");
+        param.put("orderId", "898989888889");
+        param.put("userName", "密电码009");
+        param.put("sign", "dfsafdafdsafdsafdsa");
+        param.put("createTime", "2020-03-04 10:03:03");
+        param.put("remark", "这是我的测试数据");
+        //平台自身加密后传后台数据
+        String encrypt = getEncryptPublicKey(param, SystemConstants.INNER_PLATFORM_PUBLIC_KEY);
+        System.out.println("alipay生成密文传给admin的值=" + encrypt);
+        Map<String, Object> stringObjectMap = retMapDecode(encrypt, SystemConstants.INNER_PLATFORM_PRIVATE_KEY);
+        System.out.println("admin传过来的密文，解密后的值="+ stringObjectMap.toString());
+
     }
 
 }
