@@ -32,8 +32,8 @@ public class UserInfo implements Serializable {
     private Date createTime;
     private Date submitTime;
     private Integer status;
-    private String retain1;
-    private String retain2;
+    private String privateKey;
+    private String publicKey;
     private String retain3;
     private String retain4;
     private String inviteCode;//邀请码，注册专用
@@ -232,20 +232,20 @@ public class UserInfo implements Serializable {
         this.status = status;
     }
 
-    public String getRetain1() {
-        return retain1;
+    public String getPrivateKey() {
+        return privateKey;
     }
 
-    public void setRetain1(String retain1) {
-        this.retain1 = retain1 == null ? null : retain1.trim();
+    public void setPrivateKey(String privateKey) {
+        this.privateKey = privateKey;
     }
 
-    public String getRetain2() {
-        return retain2;
+    public String getPublicKey() {
+        return publicKey;
     }
 
-    public void setRetain2(String retain2) {
-        this.retain2 = retain2 == null ? null : retain2.trim();
+    public void setPublicKey(String publicKey) {
+        this.publicKey = publicKey;
     }
 
     public String getRetain3() {

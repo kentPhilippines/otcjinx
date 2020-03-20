@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/otc.iml" filepath="$PROJECT_DIR$/otc.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/otc.iml" filepath="$PROJECT_DIR$/.idea/otc.iml" />
       <module fileurl="file://$PROJECT_DIR$/otc-admin-server/otc-admin-server.iml" filepath="$PROJECT_DIR$/otc-admin-server/otc-admin-server.iml" />
       <module fileurl="file://$PROJECT_DIR$/otc-alipay-server/otc-alipay-server.iml" filepath="$PROJECT_DIR$/otc-alipay-server/otc-alipay-server.iml" />
       <module fileurl="file://$PROJECT_DIR$/otc-common-server/otc-common-server.iml" filepath="$PROJECT_DIR$/otc-common-server/otc-common-server.iml" />

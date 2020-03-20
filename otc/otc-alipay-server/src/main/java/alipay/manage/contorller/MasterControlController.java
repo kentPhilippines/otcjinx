@@ -1,5 +1,7 @@
 package alipay.manage.contorller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,21 +13,24 @@ import alipay.manage.bean.util.RegisterSetting;
 import otc.bean.config.ConfigFile;
 import otc.result.Result;
 
+import javax.annotation.Resource;
+
 @Controller
 @RequestMapping("/masterControl")
 public class MasterControlController {
-	@Autowired
+   private static Logger log= LoggerFactory.getLogger(MasterControlController.class);
+	@Resource
 	ConfigServiceClientFeign configServiceClientFeignImpl;
 	/**
 	 * <p>获取网站标题</p>
 	 * @return
 	 */
-	@GetMapping("/getSystemSetting")
-	@ResponseBody
-	public Result getSystemSetting() {
-		Result config = configServiceClientFeignImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.TIBLE_LINK);
-		return Result.buildSuccessResult(config.getResult().toString());
-	}
+//	@GetMapping("/getSystemSetting")
+//	@ResponseBody
+//	public Result getSystemSetting() {
+//		Result config = configServiceClientFeignImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.TIBLE_LINK);
+//		return Result.buildSuccessResult(config.getResult().toString());
+//	}
 	/**
 	 * <p>获取页面配置</p>
 	 * @return
@@ -36,7 +41,7 @@ public class MasterControlController {
 		RegisterSetting bean = new RegisterSetting();
 		bean.setInviteCodeEffectiveDuration(50000000); 
 		Result config = configServiceClientFeignImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.REGISTER_ENABLED);
-		bean.setRegisterEnabled(config.getResult().toString().equals("1")?true:false);//是否开放注册功能
+		bean.setRegisterEnabled(config.getResult()!=null?true:false);//是否开放注册功能 config.getResult().toString().equals("1")?true:false
 		bean.setInviteRegisterEnabled(false); 
 		bean.setRegitserDefaultRebate(0.01);
 		return Result.buildSuccessResult(bean);
