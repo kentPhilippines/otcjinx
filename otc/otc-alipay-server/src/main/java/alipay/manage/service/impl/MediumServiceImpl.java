@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import otc.api.alipay.Common;
-import otc.common.RedisConstant;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -77,12 +76,22 @@ public class MediumServiceImpl implements MediumService {
 
     @Override
     public Medium findMediumById(String mediumId) {
-        return null;
+        MediumExample example =  new MediumExample();
+        MediumExample.Criteria criteria = example.createCriteria();
+        criteria.andMediumIdEqualTo(mediumId);
+        criteria.andIsDealEqualTo(Common.Order.QR_IS_DEAL_ON);
+        List<Medium> selectByExample = mediumDao.selectByExample(example);
+        return CollUtil.getFirst(selectByExample);
     }
 
     @Override
     public Boolean updataMediumById(Medium medium) {
-        return null;
+        MediumExample example=new MediumExample();
+        MediumExample.Criteria criteria = example.createCriteria();
+        criteria.andMediumIdEqualTo(medium.getMediumId());
+        medium.setCreateTime(null);
+        int update = mediumDao.updateByExampleSelective(medium, example);
+        return update > 0 && update < 2;
     }
 
     @Override
@@ -96,9 +105,19 @@ public class MediumServiceImpl implements MediumService {
         return selectByExample;
     }
 
+    /**
+     * <p>删除媒介，根据媒介系统编号</p>
+     */
     @Override
     public Boolean deleteMedium(String mediumId) {
-        return null;
+        MediumExample example =  new MediumExample();
+        MediumExample.Criteria criteria = example.createCriteria();
+        criteria.andMediumIdEqualTo(mediumId);
+        Medium medium = new Medium();
+        medium.setIsDeal("1"); //二维码不可用
+        medium.setStatus(Common.STATUS_IS_NOT_OK);
+        int updateByExample = mediumDao.updateByExampleSelective(medium, example);
+        return updateByExample >  0 && updateByExample < 2;
     }
 
     @Override
@@ -139,6 +158,10 @@ public class MediumServiceImpl implements MediumService {
 
     @Override
     public Medium findMediumByMediumNumber(String mediumNumber) {
-        return null;
+        MediumExample example =  new MediumExample();
+        MediumExample.Criteria criteria = example.createCriteria();
+        criteria.andMediumNumberEqualTo(mediumNumber);
+        List<Medium> selectByExample = mediumDao.selectByExample(example);
+        return CollUtil.isEmpty(selectByExample)?null:CollUtil.getFirst(selectByExample);
     }
 }

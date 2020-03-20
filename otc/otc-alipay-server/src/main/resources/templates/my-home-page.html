@@ -152,25 +152,19 @@
             </div>
             <div>
                 <nav class="navbar bg-light footer-navbar home-page-nav">
-                    <a class="navbar-brand footer-navbar-brand"
-                       v-on:click="footerVM.goTo('/recharge')"> <i class="fa fa-jpy"
+                    <a class="navbar-brand footer-navbar-brand"  v-on:click="footerVM.goTo('/recharge')"> <i class="fa fa-jpy"
                                                                    aria-hidden="true"></i> <span>充值</span>
-                    </a> <a class="navbar-brand footer-navbar-brand"
-                            v-on:click="footerVM.goTo('/withdraw')"> <i
+                    </a> <a class="navbar-brand footer-navbar-brand"  v-on:click="footerVM.goTo('/withdraw')"> <i
                         class="fa fa-money" aria-hidden="true"></i> <span>提现</span>
-                </a> <a class="navbar-brand footer-navbar-brand"
-                        v-on:click="footerVM.goTo('/recharge-withdraw-log')"><i
+                </a> <a class="navbar-brand footer-navbar-brand"  v-on:click="footerVM.goTo('/recharge-withdraw-log')"><i
                         class="fa fa-hdd-o" aria-hidden="true"></i> <span>个人充提</span> </a>
                 </nav>
                 <nav class="navbar bg-light footer-navbar home-page-nav">
-                    <a class="navbar-brand footer-navbar-brand"
-                       v-on:click="footerVM.goTo('/gathering-code')"><i
+                    <a class="navbar-brand footer-navbar-brand"  v-on:click="footerVM.goTo('/gathering-code')"><i
                             class="fa fa-qrcode" aria-hidden="true"></i> <span>收款码</span> </a> <a
-                        class="navbar-brand footer-navbar-brand"
-                        v-on:click="footerVM.goTo('/receive-order-record')"><i
+                        class="navbar-brand footer-navbar-brand" v-on:click="footerVM.goTo('/receive-order-record')"><i
                         class="fa fa-list-ul" aria-hidden="true"></i> <span>接单记录</span> </a>
-                    <a class="navbar-brand footer-navbar-brand"
-                       v-on:click="footerVM.goTo('/personal-account-change')"><i
+                    <a class="navbar-brand footer-navbar-brand"  v-on:click="footerVM.goTo('/personal-account-change')"><i
                             class="fa fa-book" aria-hidden="true"></i> <span>个人帐变</span> </a>
                     <!--  <a
                     class="navbar-brand footer-navbar-brand"
@@ -191,9 +185,8 @@
                         v-on:click="footerVM.goTo('/online-customer')">在线客服<span><i
                             aria-hidden="true" class="fa fa-angle-right"></i></span>
                     </li> -->
-                <li class="list-group-item logout-group-item fa fa-share"
-                    v-show="isLoggedInFlag" v-on:click="logout">退出登录<span><i
-                        aria-hidden="true" class="fa fa-angle-right"></i></span></li>
+                <li class="list-group-item logout-group-item fa fa-share"  v-show="isLoggedInFlag" v-on:click="logout">退出登录<span>
+                    <i aria-hidden="true" class="fa fa-angle-right"></i></span></li>
             </ul>
         </div>
     </div>
@@ -238,15 +231,14 @@
                 goTo: function (url) {
                     window.location.href = url;
                 },
-
                 loadRegisterSetting: function () {
                     var that = this;
                     that.$http
                         .get('/masterControl/getRegisterSetting')
                         .then(
                             function (res) {
-                                that.loginOrRegisterTxt = res.body.result.registerEnabled ? '登录/注册'
-                                    : '登录';
+                                console.log("头部的登录 " , res.body.result)
+                                that.loginOrRegisterTxt = res.body.result.registerEnabled ? '登录/注册': '登录';
                             });
                 },
 
@@ -259,6 +251,7 @@
                         .get('/userAccount/getUserAccountInfo')
                         .then(
                             function (res) {
+                                console.log("获取用户账号信息：",res.body)
                                 if (res.body.result != null) {
                                     that.isLoggedInFlag = true;
                                     that.userName = res.body.result.accountName;
@@ -275,6 +268,7 @@
                     var that = this;
                     that.$http.get('/statisticalAnalysis/querySubOnline').then(
                         function (res) {
+                            console.log("用户在线 " , res.body)
                             that.onlineStat = res.body.result;
                         }
                     )

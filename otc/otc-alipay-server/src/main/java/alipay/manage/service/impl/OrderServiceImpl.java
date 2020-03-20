@@ -2,6 +2,8 @@ package alipay.manage.service.impl;
 
 import java.util.List;
 
+import alipay.manage.mapper.DealOrderMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import alipay.manage.bean.DealOrder;
@@ -11,10 +13,15 @@ import alipay.manage.bean.Withdraw;
 import alipay.manage.service.OrderService;
 @Component
 public class OrderServiceImpl implements OrderService{
+    @Autowired
+	DealOrderMapper dealOrderMapper;
 	@Override
 	public List<DealOrder> findOrderByUser(String userId, String createTime) {
-		return null;
+		List<DealOrder> selectByExample = dealOrderMapper.selectByExampleByMyId(userId,createTime);
+		return selectByExample;
 	}
+
+
 	@Override
 	public DealOrder getOrderByAssociatedId(String orderId) {
 		return null;

@@ -391,8 +391,9 @@
       	    </trim>
       	</foreach>
   </insert>
+
   <update id="addAccountMedium" parameterType="List"> 
-            update product_correlation
+            update alipay_correlation
              <trim prefix="set" suffixOverrides=",">
 	            <trim prefix="medium = case" suffix="end,">
 	                <foreach collection="list" item="item" index="index">
@@ -405,4 +406,5 @@
             #{item.id}
         </foreach>
 </update>
+
 </mapper>

@@ -102,7 +102,9 @@ public class CorrelationServiceImpl  implements CorrelationService {
 		CorrelationExample example = new CorrelationExample();
 		Criteria criteria = example.createCriteria();
 		criteria.andChildrenNameEqualTo(myId);
+		log.info("example ->",example);
 		List<Correlation> selectByExample = correlationDao.selectByExample(example);
+		log.info("selectByExample-->",selectByExample);
 		return selectByExample;
 	}
 
@@ -120,8 +122,12 @@ public class CorrelationServiceImpl  implements CorrelationService {
 
 	@Override
 	public boolean deleteAccountMedium(String myName, String myId, Integer mediumId) {
+    	log.info("参数myId" + myName);
+		log.info("参数myId" + myId);
+		log.info("参数myId" + mediumId);
 		List<Correlation> findCorrelation = findCorrelation(myId);
-		for(Correlation corr : findCorrelation ) 
+		log.info("获取参数findCorrelation ::: " + findCorrelation);
+		for(Correlation corr : findCorrelation )
 			corr.setMedium(corr.getMedium().replace(mediumId+",", ""));
 		int a = correlationDao.addAccountMedium(findCorrelation);
 		return a > 0  ;

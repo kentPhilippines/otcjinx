@@ -26,5 +26,10 @@ public class RedisConstant {
 	 */
 	public class User {
 		public static final String QUEUEQRNODE = "QUEUEQRNODE:ACCOUNT:"; // 支付宝账户  +  此id  决定是否该账户添加到了队列中
+		public static final String LOGIN_PARENT = "LOGIN:PARENT:STATUS:";// 用户登陆标识Key--只做统计人数用
+		public static final String BIZ_QUEUE = "BIZ:QUEUE:STATUS:";// 用户接单标识Key--只做统计人数用
+		public static final String USERPARENT = "USERPARENT:";
+		public static final String USER = "USER:";
 	}
+
 }

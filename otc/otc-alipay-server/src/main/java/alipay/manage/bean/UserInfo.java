@@ -34,14 +34,16 @@ public class UserInfo implements Serializable {
     private Integer status;
     private String privateKey;
     private String publicKey;
-    private String retain3;
-    private String retain4;
+    private String minAmount;
+    private String maxAmount;
+
     private String inviteCode;//邀请码，注册专用
     private String newPassword;//新的登录密码【修改密码专用】
     private String newPayPassword;//新的支付密码【修改支付密码专用】
     private Integer toDayOrderCount;//
     private String online;
     private String agentCount;
+
     public Integer getToDayOrderCount() {
 		return toDayOrderCount;
 	}
@@ -248,20 +250,20 @@ public class UserInfo implements Serializable {
         this.publicKey = publicKey;
     }
 
-    public String getRetain3() {
-        return retain3;
+    public String getMinAmount() {
+        return minAmount;
     }
 
-    public void setRetain3(String retain3) {
-        this.retain3 = retain3 == null ? null : retain3.trim();
+    public void setMinAmount(String minAmount) {
+        this.minAmount = minAmount;
     }
 
-    public String getRetain4() {
-        return retain4;
+    public String getMaxAmount() {
+        return maxAmount;
     }
 
-    public void setRetain4(String retain4) {
-        this.retain4 = retain4 == null ? null : retain4.trim();
+    public void setMaxAmount(String maxAmount) {
+        this.maxAmount = maxAmount;
     }
 
     @Override

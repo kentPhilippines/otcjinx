@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+
 @Mapper
 public interface FileListMapper {
     int countByExample(FileListExample example);
@@ -35,4 +37,7 @@ public interface FileListMapper {
     int updateByPrimaryKeyWithBLOBs(FileList record);
 
     int updateByPrimaryKey(FileList record);
+
+    @Select("select * from alipay_file_list where concealId = #{concealId} and isDeal='2' ")
+    FileList findConcealId(@Param("concealId")String mediumId);
 }

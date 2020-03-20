@@ -71,9 +71,12 @@ public class SettingFile {
      * @return
      */
     public String getName(String key) {
+        System.out.println("key:::: " + key);
         String string = setting.get(key);
+        System.out.println("string:::: " + string);
         return string;
     }
+
     /**
      * <p>从新加载配置文件</p>
      * @return

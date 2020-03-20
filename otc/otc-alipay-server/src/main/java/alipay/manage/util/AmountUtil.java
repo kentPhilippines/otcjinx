@@ -28,6 +28,7 @@ public class AmountUtil {
 	public static final String DELETE_AMOUNT = "DELETE_AMOUNT";//人工减钱
 	public static final String DELETE_WITHDRAW = "DELETE_WITHDRAW";//提现withdraw
 	public static final String DELETE_FREEZE = "DELETE_FREEZE";//冻结  FreezeBalance
+
 	/**
 	 * <p><strong>增加交易点数</strong></p>
 	 * @param userFund					当前账户实体【必传字段为userId】

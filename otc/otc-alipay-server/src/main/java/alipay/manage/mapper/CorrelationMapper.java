@@ -27,8 +27,10 @@ public interface CorrelationMapper {
     int insertSelective(Correlation record);
     @Cacheable(cacheNames= {CORR} ,  unless="#result == null")
     List<Correlation> selectByExampleWithBLOBs(CorrelationExample example);
+
     @Cacheable(cacheNames= {CORR} ,  unless="#result == null")
     List<Correlation> selectByExample(CorrelationExample example);
+
     @Cacheable(cacheNames= {CORR} ,  unless="#result == null")
     Correlation selectByPrimaryKey(Integer id);
 	@CacheEvict(value=CORR, allEntries=true)
@@ -58,11 +60,12 @@ public interface CorrelationMapper {
 	int insertCorrlationList(List<Correlation> findCorrelation);
 	/**
 	 * <p>新增支付宝账号到数据关系表</p>
-	 * @param findCorrelation
+	 * @param list
 	 * @return
 	 */
 	@CacheEvict(value=CORR, allEntries=true)
 	int addAccountMedium(@Param("list")List<Correlation> list);
+
 	@CacheEvict(value=CORR, allEntries=true)
 	@Update("update product_correlation " + 
 			"    set childrenType = 1 " + 

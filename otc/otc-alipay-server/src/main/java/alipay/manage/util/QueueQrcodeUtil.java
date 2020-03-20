@@ -31,7 +31,7 @@ public class QueueQrcodeUtil {
     private static final String REDISKEY_QUEUE = RedisConstant.Queue.QUEUE_REDIS;
     public Set<Object> getList() {
         if (!redisUtil.hasKey(REDISKEY_QUEUE)) {
-            List<Medium> findIsDealMedium = fileListService.findIsDealMedium(Common.MEDIUM_ALIPAY);
+            List<Medium> findIsDealMedium = fileListService.findIsDealMedium("alipay");
             log.info("findIsDealMedium 获取的值是：" +findIsDealMedium);
             for (Medium medium : findIsDealMedium)
                 addNode(medium.getMediumNumber());

@@ -1,11 +1,10 @@
 package alipay.manage.service;
-
-import java.math.BigDecimal;
 import java.util.List;
 
 import alipay.manage.bean.UserFund;
 import alipay.manage.bean.UserInfo;
 import alipay.manage.bean.UserRate;
+import otc.result.Result;
 
 public interface UserInfoService {
 	/**
@@ -16,6 +15,14 @@ public interface UserInfoService {
 	List<UserInfo> findSunAccount(UserInfo user);
 
 	List<UserInfo> findSumAgentUserByAccount(String userId);
+
+	/**
+	 * <p>根据用户账号查询码商账号</p>
+	 *
+	 * @param username
+	 * @return
+	 */
+	UserInfo getUser(String username);
 
 	/**
 	 * <p>根据账户id查询账户【查询资金账户】</p>
@@ -59,8 +66,24 @@ public interface UserInfoService {
 
 	/**
 	 * <p>根据费率id 查询费率具体信息</p>
-	 * @param dealFee
+	 * @param feeId
 	 * @return
 	 */
 	UserRate findUserRateById(Integer feeId);
+	/**
+	 * <p>根据accountId查询所有下级的ID</p>
+	 * @param accountId
+	 * @return
+	 */
+	List<String> findSubLevelMembers(String accountId);
+
+	/**
+	 * <p>根据二维码编号，金额，媒介编号，生成一条二维码数据</p>
+	 * @param qrcodeId
+	 * @param mediumId
+	 * @param amount
+	 * @return
+	 */
+	Result addQrByMedium(String qrcodeId, String mediumId, String amount, String userId, String flag);
+
 }

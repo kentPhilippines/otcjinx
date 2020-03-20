@@ -25,8 +25,8 @@
     <result column="status" property="status" jdbcType="INTEGER" />
     <result column="privateKey" property="privateKey" jdbcType="CHAR" />
     <result column="publicKey" property="publicKey" jdbcType="CHAR" />
-    <result column="retain3" property="retain3" jdbcType="CHAR" />
-    <result column="retain4" property="retain4" jdbcType="CHAR" />
+    <result column="minAmount" property="minAmount" jdbcType="CHAR" />
+    <result column="maxAmount" property="maxAmount" jdbcType="CHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -89,7 +89,7 @@
   <sql id="Base_Column_List" >
     id, userId, userName, password, payPasword, salt, userType, switchs, userNode, email,
     agent, isAgent, credit, receiveOrderState, remitOrderState, QQ, telegram, skype,
-    createTime, submitTime, status, privateKey, publicKey, retain3, retain4
+    createTime, submitTime, status, privateKey, publicKey, minAmount, maxAmount
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="alipay.manage.bean.UserInfoExample" >
     select
@@ -140,7 +140,7 @@
       #{receiveOrderState,jdbcType=INTEGER}, #{remitOrderState,jdbcType=INTEGER}, #{QQ,jdbcType=VARCHAR},
       #{telegram,jdbcType=VARCHAR}, #{skype,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
       #{submitTime,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, #{privateKey,jdbcType=CHAR},
-      #{publicKey,jdbcType=CHAR}, #{retain3,jdbcType=CHAR}, #{retain4,jdbcType=CHAR})
+      #{publicKey,jdbcType=CHAR}, #{minAmount,jdbcType=CHAR}, #{maxAmount,jdbcType=CHAR})
   </insert>
   <insert id="insertSelective" parameterType="alipay.manage.bean.UserInfo" useGeneratedKeys="true" keyProperty="id" >
     insert into alipay_user_info
@@ -211,11 +211,11 @@
       <if test="publicKey != null" >
         publicKey,
       </if>
-      <if test="retain3 != null" >
-        retain3,
+      <if test="minAmount != null" >
+        minAmount,
       </if>
-      <if test="retain4 != null" >
-        retain4,
+      <if test="maxAmount != null" >
+        maxAmount,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -285,11 +285,11 @@
       <if test="publicKey != null" >
         #{publicKey,jdbcType=CHAR},
       </if>
-      <if test="retain3 != null" >
-        #{retain3,jdbcType=CHAR},
+      <if test="minAmount != null" >
+        #{minAmount,jdbcType=CHAR},
       </if>
-      <if test="retain4 != null" >
-        #{retain4,jdbcType=CHAR},
+      <if test="maxAmount != null" >
+        #{maxAmount,jdbcType=CHAR},
       </if>
     </trim>
   </insert>
@@ -371,11 +371,11 @@
       <if test="record.publicKey != null" >
         publicKey = #{record.publicKey,jdbcType=CHAR},
       </if>
-      <if test="record.retain3 != null" >
-        retain3 = #{record.retain3,jdbcType=CHAR},
+      <if test="record.minAmount != null" >
+        minAmount = #{record.minAmount,jdbcType=CHAR},
       </if>
-      <if test="record.retain4 != null" >
-        retain4 = #{record.retain4,jdbcType=CHAR},
+      <if test="record.maxAmount != null" >
+        maxAmount = #{record.maxAmount,jdbcType=CHAR},
       </if>
     </set>
     <if test="_parameter != null" >
@@ -407,8 +407,8 @@
       status = #{record.status,jdbcType=INTEGER},
     publicKey = #{record.publicKey,jdbcType=CHAR},
     publicKey = #{record.publicKey,jdbcType=CHAR},
-      retain3 = #{record.retain3,jdbcType=CHAR},
-      retain4 = #{record.retain4,jdbcType=CHAR}
+      retain3 = #{record.minAmount,jdbcType=VARCHAR},
+      retain4 = #{record.maxAmount,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -479,11 +479,11 @@
       <if test="publicKey != null" >
         publicKey = #{publicKey,jdbcType=CHAR},
       </if>
-      <if test="retain3 != null" >
-        retain3 = #{retain3,jdbcType=CHAR},
+      <if test="minAmount != null" >
+        minAmount = #{minAmount,jdbcType=VARCHAR},
       </if>
-      <if test="retain4 != null" >
-        retain4 = #{retain4,jdbcType=CHAR},
+      <if test="maxAmount != null" >
+        maxAmount = #{maxAmount,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -512,9 +512,19 @@
       status = #{status,jdbcType=INTEGER},
       privateKey = #{privateKey,jdbcType=CHAR},
       publicKey = #{publicKey,jdbcType=CHAR},
-      retain3 = #{retain3,jdbcType=CHAR},
-      retain4 = #{retain4,jdbcType=CHAR}
+      minAmount = #{minAmount,jdbcType=CHAR},
+      maxAmount = #{maxAmount,jdbcType=CHAR}
     where id = #{id,jdbcType=INTEGER}
       and userId = #{userId,jdbcType=VARCHAR}
   </update>
+
+
+  <select id="selectByAccountId" resultMap="BaseResultMap"  parameterType="String">
+    select
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from alipay_user_info
+    where
+    userId = #{accountId}
+  </select>
 </mapper>

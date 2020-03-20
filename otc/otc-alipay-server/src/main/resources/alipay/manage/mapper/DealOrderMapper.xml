@@ -600,4 +600,30 @@
       retain4 = #{retain4,jdbcType=CHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+
+  <select id="selectByExampleByMyId" parameterType="String" resultMap="BaseResultMap">
+      SELECT
+     	m.mediumNumber  as orderQr,
+      	q1.orderId as orderId,
+      	q1.orderStatus as orderStatus,
+      	q1.associatedId as associatedId,
+      	q1.dealAmount as dealAmount,
+      	q1.actualAmount as actualAmount,
+      	q1.orderType as orderType,
+      	q1.orderAccount as orderAccount,
+      	q1.externalOrderId as externalOrderId,
+      	q1.dealType as dealType,
+      	q1.createTime as createTime,
+      	q1.orderQrUser as orderQrUser,
+      	q1.orderQrUser as orderQrUser
+      FROM alipay_deal_order q1
+      LEFT JOIN alipay_file_list q2 ON q1.orderQr = q2.qrcodeId
+      LEFT JOIN alipay_medium m ON m.mediumId = q2.concealId
+      WHERE
+      	q1.orderQrUser = #{userId}
+      	and   to_days(q1.createTime) = to_days(#{createTime})
+      	order by createTime desc
+  </select>
+
 </mapper>

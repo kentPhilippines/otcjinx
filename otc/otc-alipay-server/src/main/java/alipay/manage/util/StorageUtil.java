@@ -19,9 +19,10 @@ public class StorageUtil {
         if (!fileType.startsWith("image/"))
             throw new OtherErrors("只能上传图片类型的二维码");
         String id = Number.getImg();
+        System.out.println("id ::: " + id);
         try {
-            String localStoragePath = settingFile.getName(settingFile.LOCALSTORAGEPATH);
-            System.out.println(localStoragePath);
+            String localStoragePath = settingFile.getName("localStoragePath");
+            System.out.println(" localStoragePath ::::  "+localStoragePath);
             Files.copy(inputStream, Paths.get(localStoragePath).resolve(id), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             throw new RuntimeException("Failed to store file " + id, e);

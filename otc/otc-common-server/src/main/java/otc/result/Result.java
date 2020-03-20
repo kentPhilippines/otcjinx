@@ -30,6 +30,7 @@ public class Result {
 	 * @return
 	 */
 	public static Result buildSuccessResult(Object result) {
+		System.out.println("result ::----------->>" + result);
 		return new Result(true, null, result,null);
 	}
 	/**

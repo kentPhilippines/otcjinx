@@ -1,10 +1,11 @@
 package alipay.manage.bean;
 
+import java.io.Serializable;
 import java.util.Date;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-public class Correlation {
+public class Correlation implements Serializable {
     private Integer id;
 
     private String parentId;

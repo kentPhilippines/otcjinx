@@ -201,4 +201,7 @@ public interface FileListService {
      * @return
      */
     List<String> findQrAmountList(String concealId);
+
+
+
 }

@@ -6,8 +6,10 @@ import alipay.manage.bean.Medium;
 import alipay.manage.mapper.FileListMapper;
 import alipay.manage.service.FileListService;
 import alipay.manage.service.MediumService;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import otc.api.alipay.Common;
@@ -183,13 +185,25 @@ public class FileListServiceImpl implements FileListService {
     @Cacheable(cacheNames= {QR_CODE},  unless="#result == null")
     @Override
     public List<Medium> findIsDealMedium(String code) {
-        List<Medium> mediumList = mediumServiceImpl.findIsDealMedium(Common.MEDIUM_ALIPAY);
+        List<Medium> mediumList = mediumServiceImpl.findIsDealMedium(code);
         return mediumList;
     }
 
+    @CacheEvict(value=QR_CODE, allEntries=true)
     @Override
     public Boolean deleteQrByMediumId(String mediumId) {
-        return null;
+        FileList qr = fileListMapper.findConcealId(mediumId);
+        if(ObjectUtil.isNull(qr))
+            return true;
+        FileListExample example = new FileListExample();
+        FileListExample.Criteria criteria = example.createCriteria();
+        criteria.andConcealIdEqualTo(mediumId);
+        FileList bean = new FileList();
+        bean.setCreateTime(null);
+        bean.setIsDeal(Common.notOk);
+        bean.setStatus(Common.STATUS_IS_NOT_OK);
+        int updateByExampleSelective = fileListMapper.updateByExampleSelective(bean, example);
+        return updateByExampleSelective > 0 && updateByExampleSelective < 2;
     }
 
     @Override

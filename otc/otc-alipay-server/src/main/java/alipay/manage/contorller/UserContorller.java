@@ -52,7 +52,7 @@ public class UserContorller {
 	        log.info("当前用户未登陆");
 	        return Result.buildFailMessage("当前用户未登陆");
 	    }
-		log.info(user.toString());
+		log.info("当前用户 "+user.toString());
 		UserFund user2 = userInfoServiceImpl.findUserByAccount(user.getUserId());
 		return Result.buildSuccessResult("数据获取成功",user2);
 	}
@@ -76,7 +76,7 @@ public class UserContorller {
 	}
 	/**
 	 * <p>添加银行卡</p>
-	 * @param receiveOrderState
+	 * @param bank
 	 * @return
 	 */
 	@PostMapping("/bindBankInfo")
@@ -96,7 +96,7 @@ public class UserContorller {
 	}
 	/**
 	 * <p>用户通过邀请码注册</p>
-	 * @param receiveOrderState
+	 * @param request
 	 * @return
 	 */
 	@PostMapping("/register")
@@ -120,7 +120,7 @@ public class UserContorller {
 	}
 	/**
 	 * <p>修改密码</p>
-	 * @param receiveOrderState
+	 * @param newLoginPwd
 	 * @return
 	 */
 	@PostMapping("/modifyLoginPwd")
@@ -142,7 +142,7 @@ public class UserContorller {
 	}
 	/**
 	 * <p>修改密码</p>
-	 * @param receiveOrderState
+	 * @param newMoneyPwd
 	 * @return
 	 */
 	@PostMapping("/modifyMoneyPwd")
@@ -167,7 +167,6 @@ public class UserContorller {
 	 * @param request
 	 * @param accountId
 	 * @return
-	 * @throws ParseException
 	 */
 	@PostMapping("/updateIsAgent")
 	@ResponseBody

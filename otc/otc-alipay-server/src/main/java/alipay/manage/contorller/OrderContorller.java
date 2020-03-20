@@ -94,6 +94,7 @@ public class OrderContorller {
 	    }
 		PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
 		List<DealOrder> listOrder = orderServiceImpl.findOrderByUser(user2.getUserId(),createTime);
+		log.info("获取的集合:"+ listOrder);
 		PageInfo<DealOrder> pageInfo = new PageInfo<DealOrder>(listOrder);
 		PageResult<DealOrder> pageR = new PageResult<DealOrder>();
 		pageR.setContent(pageInfo.getList());
