@@ -4,6 +4,7 @@ import alipay.manage.bean.UserInfo;
 import alipay.manage.bean.UserInfoExample;
 import java.util.List;
 
+import alipay.manage.bean.UserRate;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -31,11 +32,13 @@ public interface UserInfoMapper {
 
     int updateByPrimaryKey(UserInfo record);
 
+    UserInfo selectByAccountId(String username);
     
     @Select("select * from alipay_user_info where userId = #{userId} or userName = #{userName}")
 	UserInfo findUserId( @Param("userId")String userId, @Param("userName")String userName);
 
-    
+    @Select("select queryChildAgents(#{accountId})")
+    List<String> selectChildAgentListById(@Param("accountId") String accountId);
     /**
      * <p>根据用户名id【唯一】 ，查询用户详细信息</p>
      * @param userId
@@ -43,4 +46,7 @@ public interface UserInfoMapper {
      */
     @Select("select * from alipay_user_info where userId = #{userId}")
     UserInfo findUserByUserId( @Param("userId")String userId);
+
+
+    UserRate selectUserRateByUserId(String userId, String passCode);
 }
