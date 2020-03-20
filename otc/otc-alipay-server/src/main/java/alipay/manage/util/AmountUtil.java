@@ -66,7 +66,7 @@ public class AmountUtil {
 		return addAmountBalance(userFund, balance, ADD_AMOUNT_DEAL,dealAmount);
 	}
 	/**
-	 * <p><strong>减少交易点数</strong></p>
+	 * <p><strong>减少交易点数【交易订单置为成功调用这个方法】</strong></p>
 	 * @param userFund					当前账户实体【必传字段为userId】
 	 * @param balance					当前操作金额
 	 * @return
