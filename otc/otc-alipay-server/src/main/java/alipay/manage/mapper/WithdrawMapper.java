@@ -3,8 +3,10 @@ package alipay.manage.mapper;
 import alipay.manage.bean.Withdraw;
 import alipay.manage.bean.WithdrawExample;
 import java.util.List;
-import org.apache.ibatis.annotations.Param;
 
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+@Mapper
 public interface WithdrawMapper {
     int countByExample(WithdrawExample example);
 

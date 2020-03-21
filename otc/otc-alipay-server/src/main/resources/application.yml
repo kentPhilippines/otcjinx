@@ -1,7 +1,7 @@
 server:
   session:
     store-type: redis
-    timeout: 3600s
+      timeout: 3600s
     redis:
       flush-mode: on_save
       namespace: spring:session
@@ -41,7 +41,7 @@ spring:
    redis:
     port: 6379
     host: 127.0.0.1
-    timeout : 500
+    timeout : 5000
     pool :
         max-idle : 100
         min-idle : 10

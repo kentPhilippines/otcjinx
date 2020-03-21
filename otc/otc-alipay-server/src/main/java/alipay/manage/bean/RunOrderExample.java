@@ -150,7 +150,10 @@ public class RunOrderExample {
             addCriterion("id in", values, "id");
             return (Criteria) this;
         }
-
+        public Criteria andOrderAccountListEqualTo(List value) {
+            addCriterion("orderAccount in", value, "orderAccount");
+            return (Criteria) this;
+        }
         public Criteria andIdNotIn(List<Integer> values) {
             addCriterion("id not in", values, "id");
             return (Criteria) this;

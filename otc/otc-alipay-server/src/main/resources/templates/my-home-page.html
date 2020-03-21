@@ -116,19 +116,21 @@
                         v-on:click="footerVM.goTo('/login')">{{loginOrRegisterTxt}}
                 </button>
             </div>
+
             <div class="account-info" v-show="isLoggedInFlag">
-                <!-- <div class="user-name">
+               <div class="user-name">
                     <div>
                         <label>{{userName}}</label>
                     </div>
-                </div> -->
+                </div>
+
                 <div class="cash-deposit" style="margin-left: 1.2rem;">
                     <span>余额:</span><label>{{cashDeposit + cashBalance | numFilter }}元</label>
                 </div>
-                <!-- <div class="cash-deposit" style="margin-left: 1.2rem;">
+                 <div class="cash-deposit" style="margin-left: 1.2rem;">
                     <span>收益:</span><label>{{cashBalance != null ? cashBalance
                         : 0}}元</label>
-                </div> -->
+                </div>
                 <div class="cash-deposit">
                     <span>费率:</span><label>{{fee != null ? fee*100
                     : 0 | numFilter }}%</label>
@@ -181,10 +183,10 @@
                     v-on:click="footerVM.goTo('/agent-center')">代理中心<span><i
                         aria-hidden="true" class="fa fa-angle-right"></i></span>
                 </li>
-                <!-- 	<li class="list-group-item"
+                 	<li class="list-group-item"
                         v-on:click="footerVM.goTo('/online-customer')">在线客服<span><i
                             aria-hidden="true" class="fa fa-angle-right"></i></span>
-                    </li> -->
+                    </li>
                 <li class="list-group-item logout-group-item fa fa-share"  v-show="isLoggedInFlag" v-on:click="logout">退出登录<span>
                     <i aria-hidden="true" class="fa fa-angle-right"></i></span></li>
             </ul>
@@ -199,7 +201,7 @@
             data: {//初始全局变量
                 loginOrRegisterTxt: '',
                 onlineStat: '',
-                isLoggedInFlag: false,
+                isLoggedInFlag: true,
                 userName: '',//若登录成功  获取登录账户3
                 fee: '',
                 cashDeposit: '',//登录成功  获取 保证金

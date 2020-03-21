@@ -36,6 +36,7 @@ var personalInfoVM = new Vue({
 		getUserAccountInfo : function() {
 			var that = this;
 			that.$http.get('/userAccount/getUserAccountInfo').then(function(res) {
+				console.log("getUserAccountInfo==>",res.bdoy)
 				if (res.body.result != null) {
 					that.accountInfo = res.body.result;
 				}
@@ -45,6 +46,7 @@ var personalInfoVM = new Vue({
 		loadBankInfo : function() {
 			var that = this;
 			that.$http.get('/userAccount/getBankInfo').then(function(res) {
+				console.log("getBankInfo ::: " , res.body)
 				that.bankInfo = res.body.result[0];
 			});
 		},
@@ -99,6 +101,7 @@ var personalInfoVM = new Vue({
 			}, {
 				emulateJSON : true
 			}).then(function(res) {
+				console.log("bindBankInfo ::: " , res.body)
 				layer.alert('银行卡信息绑定成功!', {
 					icon : 1,
 					time : 2000,
@@ -169,6 +172,7 @@ var personalInfoVM = new Vue({
 			}, {
 				emulateJSON : true
 			}).then(function(res) {
+				console.log("modifyLoginPwd ::: " , res.body)
 				if(res.body.success){
 					layer.alert('登录密码修改成功!', {
 						icon : 1,
@@ -246,6 +250,7 @@ var personalInfoVM = new Vue({
 			}, {
 				emulateJSON : true
 			}).then(function(res) {
+				console.log("modifyMoneyPwd ->",res.body)
 				if(res.body.success){
 					layer.alert('资金密码修改成功!', {
 						icon : 1,

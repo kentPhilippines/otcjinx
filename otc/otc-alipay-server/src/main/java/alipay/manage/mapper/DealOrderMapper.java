@@ -6,8 +6,11 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.cache.annotation.Cacheable;
+
 @Mapper
 public interface DealOrderMapper {
+    static final String ORDER_INFO_QR = "ORDERINFO:QR";
     int countByExample(DealOrderExample example);
 
     int deleteByExample(DealOrderExample example);
@@ -42,4 +45,12 @@ public interface DealOrderMapper {
      * @return
      */
     List<DealOrder> selectByExampleByMyId(@Param("userId")String userId,@Param("createTime") String createTime);
+
+    /**
+     * <p>根据用户id查询自己的交易订单号记录</p>
+     * @param order
+     * @return
+     */
+    @Cacheable(cacheNames= {ORDER_INFO_QR} ,  unless="#result == null")
+    List<DealOrder> findMyOrder(DealOrder order);
 }

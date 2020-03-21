@@ -64,9 +64,18 @@ public interface OrderService {
 	 * <p>修改订单状态【码商交易订单】</p>
 	 * @param orderId
 	 * @param mag 
-	 * @param string
+	 * @param status
 	 * @return
 	 */
 	boolean updateOrderStatus(String orderId, String status, String mag);
+
+	/**
+	 * <p>获取有关于自己的所有订单</p>
+	 * @param order
+	 * @return
+	 */
+	List<DealOrder> findMyOrder(DealOrder order);
+
+
 
 }

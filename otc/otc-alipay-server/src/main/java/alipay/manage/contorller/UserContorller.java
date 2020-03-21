@@ -1,9 +1,12 @@
 package alipay.manage.contorller;
 
+import java.math.BigDecimal;
 import java.util.List;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import alipay.manage.util.QrUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +27,7 @@ import alipay.manage.service.UserInfoService;
 import alipay.manage.util.SessionUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import otc.exception.user.UserException;
 import otc.result.Result;
 
 @Controller
@@ -40,6 +44,8 @@ public class UserContorller {
 	InviteCodeService inviteCodeServiceImpl;
 	@Autowired
 	AccountApiService accountApiServiceImpl;
+	@Resource
+	QrUtil qrUtil;
 	/**
 	 * <p>获取账号登录情况</p>
 	 * @return
@@ -162,6 +168,17 @@ public class UserContorller {
 			return Result.buildSuccessResult();
 		return updateAccountPassword;
 	}
+
+	@GetMapping("/virtualAmount")
+	@ResponseBody
+	public Result virtualAmount(HttpServletRequest request ){
+		UserInfo user = sessionUtil.getUser(request);
+		if(ObjectUtil.isNull(user))
+			throw new UserException("当前用户未登录",null);
+		BigDecimal userAmount = qrUtil.getUserAmount(user.getUserId());
+		return Result.buildSuccessResult(userAmount);
+	}
+
 	/**
 	 * <p>修改会员性质为代理商</p>
 	 * @param request

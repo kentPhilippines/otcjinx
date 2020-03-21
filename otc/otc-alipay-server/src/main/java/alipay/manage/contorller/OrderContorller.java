@@ -39,6 +39,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import otc.api.alipay.Common;
+import otc.exception.user.UserException;
 import otc.result.Result;
 
 @Controller
@@ -127,6 +128,29 @@ public class OrderContorller {
 	//		return updataOrder;
 	//	}
 		return Result.buildFailResult("无权限，请联系客服人员操作");
+	}
+	@GetMapping("/findMyReceiveOrderRecordByPage")
+	@ResponseBody
+	@Transactional
+	public Result findMyReceiveOrderRecordByPage(HttpServletRequest request,String receiveOrderTime,String pageNum,String pageSize,String gatheringChannelCode) {
+		UserInfo user = sessionUtil.getUser(request);
+		DealOrder order = new DealOrder();
+		if(ObjectUtil.isNull(user))
+			throw new UserException("当前用户未登录",null);
+		order.setOrderQrUser(user.getUserId());
+		if(StrUtil.isNotBlank(receiveOrderTime))
+			order.setTime(receiveOrderTime);
+//		if(StrUtil.isNotBlank(gatheringChannelCode))
+//			order.setOrderType(gatheringChannelCode);
+		PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
+		List<DealOrder> orderList = orderServiceImpl.findMyOrder(order);
+		PageInfo<DealOrder> pageInfo = new PageInfo<DealOrder>(orderList);
+		PageResult<DealOrder> pageR = new PageResult<DealOrder>();
+		pageR.setContent(pageInfo.getList());
+		pageR.setPageNum(pageInfo.getPageNum());
+		pageR.setTotal(pageInfo.getTotal());
+		pageR.setTotalPage(pageInfo.getPages());
+		return Result.buildSuccessResult(pageR);
 	}
 	/**
 	 * <p>获取个人流水</p>
@@ -252,7 +276,7 @@ public class OrderContorller {
 	 * @param startTime
 	 * @param pageNum
 	 * @param pageSize
-	 * @param accountChangeTypeCode
+	 * @param orderType
 	 * @return
 	 */
 	@GetMapping("/findMyRechargeWithdrawLogByPage")

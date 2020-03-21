@@ -27,7 +27,6 @@ public class StorageApi {
     @Autowired
     FtpImgUtil ftpImgUtil;
 
-
     @PostMapping("/uploadPic")
     @ResponseBody
     public Result uploadPic(@RequestParam("file_data") MultipartFile[] files) throws IOException {
