@@ -98,4 +98,11 @@ public class Common {
 	public static final String isOk = "2";//数据逻辑可用
 	public static final String MEDIUM_ALIPAY = "alipay";//支付宝收款媒介
 
+	
+	public static class Deal{
+		public static final String  PRODUCT_ALIPAY_SCAN  = "ALIPAY_SCAN";//支付宝扫码
+		public static final String  PRODUCT_ALIPAY_H5  = "ALIPAY_H5";//支付宝H5
+	}
+	
+	
 }
