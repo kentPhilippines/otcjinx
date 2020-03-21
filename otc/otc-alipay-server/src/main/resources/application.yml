@@ -1,7 +1,7 @@
 server:
   session:
     store-type: redis
-      timeout: 3600s
+    #  timeout: 3600s
     redis:
       flush-mode: on_save
       namespace: spring:session
