@@ -37,6 +37,9 @@ public class UserInfo implements Serializable {
     private String minAmount;
     private String maxAmount;
 
+    private String witip; //代付ip
+    
+    
     private String inviteCode;//邀请码，注册专用
     private String newPassword;//新的登录密码【修改密码专用】
     private String newPayPassword;//新的支付密码【修改支付密码专用】
@@ -44,7 +47,15 @@ public class UserInfo implements Serializable {
     private String online;
     private String agentCount;
 
-    public Integer getToDayOrderCount() {
+    
+    
+    public String getWitip() {
+		return witip;
+	}
+	public void setWitip(String witip) {
+		this.witip = witip;
+	}
+	public Integer getToDayOrderCount() {
 		return toDayOrderCount;
 	}
 	public void setToDayOrderCount(Integer toDayOrderCount) {
@@ -178,7 +189,7 @@ public class UserInfo implements Serializable {
         this.receiveOrderState = receiveOrderState;
     }
 
-    public Integer getRemitOrderState() {
+    public Integer  getRemitOrderState() {
         return remitOrderState;
     }
 

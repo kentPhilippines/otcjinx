@@ -244,20 +244,6 @@ public class RSAUtils {
     }
 
 
-    public static boolean verifySign(Map<String, Object> map) {
-        Map<String, Object> signMap = Maps.newHashMap();
-        signMap.put("appId", map.get("appId"));
-        signMap.put("orderId", map.get("orderId"));
-        signMap.put("notifyUrl", map.get("notifyUrl"));
-        signMap.put("amount", map.get("amount"));
-        signMap.put("passCode", map.get("passCode"));
-        signMap.put("applyDate", map.get("applyDate"));
-        String paramStr = MapUtil.createParam(signMap);
-        if (!map.get("sign").equals(md5(paramStr))) {
-            return false;
-        }
-        return true;
-    }
 
     /**
      * md5加密
@@ -302,9 +288,8 @@ public class RSAUtils {
         //私钥解密密文得到字符串参数
         String cipherText = publicEncrypt(urlParam, privateKey);
         //调用方法转成map
-        if (StringUtils.isEmpty(cipherText)) {
+        if (StringUtils.isEmpty(cipherText)) 
             throw new BusinessException("加密字符串为空");
-        }
         return cipherText;
     }
 
@@ -319,9 +304,8 @@ public class RSAUtils {
         //私钥解密密文得到字符串参数
         String urlParam = privateDecrypt(cipherText, privateKey);
         //调用方法转成map
-        if (StringUtils.isEmpty(urlParam)) {
+        if (StringUtils.isEmpty(urlParam)) 
             throw new BusinessException("解密字符串为空");
-        }
         return MapUtil.paramToMap(urlParam);
     }
 
@@ -334,9 +318,8 @@ public class RSAUtils {
      */
     public static Map<String, Object> getDecodePrivateKey(String cipherText, String privateKey) {
         String urlParam = privateDecrypt(cipherText, privateKey);
-        if (StringUtils.isEmpty(urlParam)) {
+        if (StringUtils.isEmpty(urlParam)) 
             throw new BusinessException("解密字符串为空");
-        }
         return MapUtil.paramToMap(urlParam);
     }
 

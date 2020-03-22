@@ -91,6 +91,16 @@ public class Number {
 			}
     }
     
+  public static  String getWitOrder(){
+	  try {
+		  return GetRandom(Common.Deals.ORDERWIT_APP);
+	  } catch (UnknownHostException e) {
+		  String randomString2 = RandomUtil.randomNumbers(15);
+		  String orderId = Common.Deals.ORDERWIT_APP +randomString2 ; 
+		  return orderId;
+	  }
+  }
+  
     
     
     

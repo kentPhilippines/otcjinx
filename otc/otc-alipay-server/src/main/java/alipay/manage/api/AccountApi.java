@@ -69,7 +69,6 @@ public class AccountApi {
 			return Result.buildFailMessage("必传参数为空");
 		return accountApiServiceImpl.editAccount(user);
 	}
-	
 	/**
 	 * <p>增加充值点数</p>
 	 * @param 	userFund			账户名
@@ -93,19 +92,4 @@ public class AccountApi {
 			return Result.buildFailMessage("必传参数为空");
 		return accountApiServiceImpl.addAmount(userFund);
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 }

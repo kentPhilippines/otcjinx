@@ -56,4 +56,11 @@ public interface AccountApiService {
 	 * @return
 	 */
     UserRate findUserRateByUserId(String userId, String passCode);
+    /**
+     * <p>查询当前用户的代付费率</p>
+     * @param userId
+     *	<p>当前用户只可以查询到唯一一个 可以正常使用的代付费率  【本地代付处理】【代付通道代付处理】</p>
+     * @return
+     */
+	UserRate findUserRateWitByUserId(String userId);
 }

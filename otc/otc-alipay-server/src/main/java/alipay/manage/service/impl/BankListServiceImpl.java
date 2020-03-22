@@ -33,4 +33,10 @@ public class BankListServiceImpl implements BankListService{
 	public boolean addBankcard(BankList bank) {
 		return false;
 	}
+
+
+	@Override
+	public BankList findBankByNo(String bankNo) {
+		return null;
+	}
 }

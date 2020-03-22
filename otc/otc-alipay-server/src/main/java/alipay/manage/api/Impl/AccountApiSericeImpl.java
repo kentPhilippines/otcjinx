@@ -15,6 +15,7 @@ import alipay.manage.bean.UserInfoExample;
 import alipay.manage.bean.UserInfoExample.Criteria;
 import alipay.manage.mapper.UserFundMapper;
 import alipay.manage.mapper.UserInfoMapper;
+import alipay.manage.mapper.UserRateMapper;
 import alipay.manage.util.AmountUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
@@ -25,12 +26,10 @@ import otc.util.encode.HashKit;
 @Component
 public class AccountApiSericeImpl implements AccountApiService {
 	Logger log = LoggerFactory.getLogger(AccountApiSericeImpl.class);
-	@Autowired
-	UserInfoMapper userInfoDao;
-	@Autowired
-	UserFundMapper userFundDao;
-	@Autowired
-	AmountUtil amountUtil;
+	@Autowired UserInfoMapper userInfoDao;
+	@Autowired UserFundMapper userFundDao;
+	@Autowired AmountUtil amountUtil;
+	@Autowired UserRateMapper userRateDao;
 	@Override
 	public Result addAccount(UserInfo user) {
 		if(ObjectUtil.isNull(user))
@@ -155,6 +154,10 @@ public class AccountApiSericeImpl implements AccountApiService {
 	@Override
 	public UserRate findUserRateByUserId(String userId, String passCode) {
 		return userInfoDao.selectUserRateByUserId(userId, passCode);
+	}
+	@Override
+	public UserRate findUserRateWitByUserId(String userId) {
+		return userRateDao.findUserRateWitByUserId(userId);
 	}
 
 

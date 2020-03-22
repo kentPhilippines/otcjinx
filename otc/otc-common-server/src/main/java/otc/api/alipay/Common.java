@@ -55,6 +55,14 @@ public class Common {
 		public static final Integer ORDER_TYPE_WIT = 5;//代付充值
 		
 		
+		public static final Integer DAPY_OPEN = 1;//代付开启
+		public static final Integer DAPY_OFF = 2;//代付关闭
+		
+		public static final Integer DEAL_OPEN = 1;//交易开启
+		public static final Integer DEAL_OFF = 2;//交易关闭
+		
+		public static final Integer WIT_APP = 1;//商户提现
+		public static final Integer WIT_QR = 2 ; //码商提现
 		/**
 		 * <p>订单处理中</p>
 		 */
@@ -86,6 +94,7 @@ public class Common {
 		public static final String ORDERDEAL = "DE";//交易订单
 		public static final String ORDERRUN = "RUN";//流水订单
 		public static final String ORDERWIT = "WIT";//代付订单
+		public static final String ORDERWIT_APP = "AW";//代付订单
 		public static final String ORDEREXCE = "EXCE";//异常订单
 		public static final String ORDERRECORD = "REX";//所有订单
 		public static final String IMG = "IMG";//所有订单

@@ -3,8 +3,12 @@ package alipay.manage.mapper;
 import alipay.manage.bean.UserRate;
 import alipay.manage.bean.UserRateExample;
 import java.util.List;
-import org.apache.ibatis.annotations.Param;
 
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.type.MappedJdbcTypes;
+@Mapper
 public interface UserRateMapper {
     int countByExample(UserRateExample example);
 
@@ -27,4 +31,12 @@ public interface UserRateMapper {
     int updateByPrimaryKeySelective(UserRate record);
 
     int updateByPrimaryKey(UserRate record);
+
+    /**
+     * <p>查询当前用户唯一可用的代付费率</p>
+     * @param userId
+     * @return
+     */
+    @Select("select * from alipay_user_rate where feeType = 2 and userId = #{userId}")
+	UserRate findUserRateWitByUserId(@Param("userId") String userId);
 }

@@ -20,4 +20,6 @@ public interface BankListService {
 	 */
 	boolean addBankcard(BankList bank);
 
+	BankList findBankByNo(String bankNo);
+
 }
