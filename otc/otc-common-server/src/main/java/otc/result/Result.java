@@ -8,7 +8,15 @@ public class Result {
 	private boolean success; 
 	private String message; 
 	private Object result; 
-	private Integer code; 
+	private Integer code;
+
+	public Result(boolean b, Integer o, Object result) {
+		this.success=b;
+		this.result=result;
+		this.code=o;
+
+	}
+
 	/**
 	 * <p>成功无返回值</p>
 	 * @return
@@ -32,6 +40,7 @@ public class Result {
 	public static Result buildSuccessResult(Object result) {
 		return new Result(true, null, result,null);
 	}
+
 	/**
 	 * <p>成功、无结果集，无通知，无code</p>
 	 * @param result
@@ -48,7 +57,17 @@ public class Result {
 	public static Result buildSuccessResult(String msg ,Object result) {
 		return new Result(true, msg, result,null);
 	}
-	
+	/**
+	 * <p>返回结果为成功,无返回提示,结果集</p>
+	 * <li>boolean success : true // 请求操作成功</li>
+	 * <li>String  message : null // 提示消息null</li>
+	 * <li>Object  result  : result // 返回结果集result</li>
+	 * @param result 返回结果集result
+	 * @return
+	 */
+	public static Result buildSuccessResults(Object result) {
+		return new Result(true, null, result);
+	}
 	/**
 	 * <p>失败有结果集</p>
 	 * @param result

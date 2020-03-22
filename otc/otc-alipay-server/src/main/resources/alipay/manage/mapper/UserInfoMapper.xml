@@ -518,13 +518,28 @@
       and userId = #{userId,jdbcType=VARCHAR}
   </update>
 
-
-  <select id="selectByAccountId" resultMap="BaseResultMap"  parameterType="String">
+  <select id="selectByUserId" resultType="alipay.manage.bean.UserInfo"  parameterType="String">
     select
-    'true' as QUERYID,
     <include refid="Base_Column_List" />
     from alipay_user_info
     where
-    userId = #{accountId}
+    userId = #{userId,jdbcType=VARCHAR}
   </select>
+
+  <select id="selectByUserName" resultType="alipay.manage.bean.UserInfo"  parameterType="String">
+    select
+    <include refid="Base_Column_List" />
+    from alipay_user_info
+    where
+    userName = #{userName,jdbcType=VARCHAR}
+  </select>
+
+  <select id="getLoginAccountInfo" parameterType="String" resultType="alipay.manage.bean.UserInfo">
+    select
+    <include refid="Base_Column_List" />
+    from alipay_user_info
+    where
+    userId = #{userId,jdbcType=VARCHAR}
+  </select>
+
 </mapper>

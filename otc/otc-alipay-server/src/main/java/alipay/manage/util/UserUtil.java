@@ -22,15 +22,15 @@ public class UserUtil {
     @Autowired CorrelationService correlationServiceImpl;
     private static final Integer AGENT = 1;
     private static final Integer MEMBER = 2;
-	 public Result  openAccountCorrlation(String userId){
+	 public Result  openAccountCorrlation(String userId){ //开户统计  顶戴开户
 	    	Integer myId = null;
 	    	Integer myType = null;
 	    	UserFund user4 = null;
 	    	String parentId = null;
 	    	String parentName = null;
-	    	UserFund user3 = userInfoServiceImpl.findUserByAccount(userId);
+	    	UserFund user3 = userInfoServiceImpl.findUserFundByAccount(userId);
 	    	if(StrUtil.isNotBlank(user3.getAgent())) 
-	    		user4 = userInfoServiceImpl.findUserByAccount(userId);
+	    		user4 = userInfoServiceImpl.findUserFundByAccount(userId);
 	    	String isAgentAgent = Common.User.USER_IS_AGENT;
 	    	if(user3.getIsAgent().equals(isAgentAgent.toString())) 
 	    		myType = AGENT;

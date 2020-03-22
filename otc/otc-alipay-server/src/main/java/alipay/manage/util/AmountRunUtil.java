@@ -74,7 +74,7 @@ public class AmountRunUtil {
 	 * @return
 	 */
 	public Result deleteAmount(Withdraw withdraw,String generationIp,Boolean flag) {
-		UserFund userFund = userInfoServiceImpl.findUserByAccount(withdraw.getUserId()); //当前账户资金
+		UserFund userFund = userInfoServiceImpl.findUserFundByAccount(withdraw.getUserId()); //当前账户资金
 		Result delete = delete(WITHDRAY_AMOUNT, userFund, withdraw.getOrderId(), withdraw.getActualAmount(), generationIp, "码商代付冻结",  flag?RUNTYPE_ARTIFICIAL:RUNTYPE_NATURAL);
 		if(delete.isSuccess())
 			return delete;
@@ -88,7 +88,7 @@ public class AmountRunUtil {
 	 * @return
 	 */
 	public Result addAmount(Recharge recharge,String generationIp,Boolean flag) {
-		UserFund userFund = userInfoServiceImpl.findUserByAccount(recharge.getUserId()); //当前账户资金
+		UserFund userFund = userInfoServiceImpl.findUserFundByAccount(recharge.getUserId()); //当前账户资金
 		Result add = add(RECHANGE_AMOUNT, userFund, recharge.getOrderId(), recharge.getActualAmount(), generationIp, "码商充值",  flag?RUNTYPE_ARTIFICIAL:RUNTYPE_NATURAL);
 		if(add.isSuccess())
 			return add;
@@ -105,11 +105,11 @@ public class AmountRunUtil {
 	 * @return
 	 */
 	public Result addAmountProfit(String orderId ,String userId ,BigDecimal amount ,  Integer feeId  , String generationIp ,Boolean flag ) {
-		UserFund userFund = userInfoServiceImpl.findUserByAccount(userId); //当前账户资金
+		UserFund userFund = userInfoServiceImpl.findUserFundByAccount(userId); //当前账户资金
 		UserRate userFee = userInfoServiceImpl.findUserRateById(feeId);//当前账户 费率
 		if(StrUtil.isBlank(userFund.getAgent()))
 			return Result.buildSuccessMessage("当前分润以结算完成");
-		UserFund userAccount = userInfoServiceImpl.findUserByAccount(userFund.getAgent());//当前账户上级代理账户
+		UserFund userAccount = userInfoServiceImpl.findUserFundByAccount(userFund.getAgent());//当前账户上级代理账户
 		UserRate agentFee = userInfoServiceImpl.findUserRateById(feeId);
 		String userId2 = userFund.getUserId();
 		BigDecimal fee = userFee.getFee();
@@ -141,7 +141,7 @@ public class AmountRunUtil {
 	 * @return
 	 */
 	public Result addDealAmount( DealOrder order  , String generationIp ,Boolean flag ) {
-		UserFund userFund = userInfoServiceImpl.findUserByAccount(order.getOrderQrUser());
+		UserFund userFund = userInfoServiceImpl.findUserFundByAccount(order.getOrderQrUser());
 		UserRate rate = userInfoServiceImpl.findUserRateById(order.getFeeId());
 		log.info("当前加入流水账号："+userFund.getUserId() + "，当前流水金额："+order.getDealAmount()+"，当前流水费率："+rate.getFee()+"，");
 		BigDecimal dealAmount = order.getDealAmount();
@@ -154,13 +154,12 @@ public class AmountRunUtil {
 	}
 	/**
 	 * <p>人工加钱</p>
-	 * @param userFund			资金账户
 	 * @param amount			加减款订单
 	 * @param generationIp		操作ip
 	 * @return
 	 */
 	public Result addAmount(Amount amount , String generationIp) {
-		UserFund userFund = userInfoServiceImpl.findUserByAccount(amount.getUserId());
+		UserFund userFund = userInfoServiceImpl.findUserFundByAccount(amount.getUserId());
 		Result add = add(ADD_AMOUNT, userFund, amount.getOrderId(), amount.getActualAmount(),
 				generationIp, amount.getDealDescribe(), RUNTYPE_ARTIFICIAL);
 		if(add.isSuccess())
@@ -175,7 +174,7 @@ public class AmountRunUtil {
 	 * @return
 	 */
 	public Result deleteRechangerNumber(  DealOrder order , String generationIp,Boolean flag) {
-		UserFund userFund = userInfoServiceImpl.findUserByAccount(order.getOrderQrUser());
+		UserFund userFund = userInfoServiceImpl.findUserFundByAccount(order.getOrderQrUser());
 		Result delete = delete(DEAL_AMOUNT_DETETE, userFund, order.getOrderId(), order.getDealAmount(), generationIp, 
 				"交易流水,扣除用户交易点数", flag?RUNTYPE_ARTIFICIAL:RUNTYPE_NATURAL);
 		if(delete.isSuccess()) 
@@ -184,13 +183,12 @@ public class AmountRunUtil {
 	}
 	/**
 	 * <p>人工扣款</p>
-	 * @param userFund					资金账户
 	 * @param amount					加减款订单
 	 * @param generationIp				操作ip
 	 * @return
 	 */
 	public Result deleteAmount(  Amount amount , String generationIp) {
-		UserFund userFund = userInfoServiceImpl.findUserByAccount(amount.getUserId());
+		UserFund userFund = userInfoServiceImpl.findUserFundByAccount(amount.getUserId());
 		Result delete = delete(DETETE_AMOUNT, userFund, amount.getOrderId(), amount.getActualAmount(), 
 				generationIp, amount.getDealDescribe(), RUNTYPE_ARTIFICIAL);
 		if(delete.isSuccess())

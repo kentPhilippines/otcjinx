@@ -1,6 +1,7 @@
 package alipay.manage.service;
 
 import java.util.List;
+import java.util.Map;
 
 import alipay.manage.bean.DealOrder;
 import alipay.manage.bean.Recharge;
@@ -45,6 +46,7 @@ public interface OrderService {
 	 * @param bean
 	 * @return
 	 */
+
 	List<Recharge> findRechargeOrder(Recharge bean);
 
 	/**
@@ -75,7 +77,10 @@ public interface OrderService {
 	 * @return
 	 */
 	List<DealOrder> findMyOrder(DealOrder order);
-
-
+	/**
+	 * 创建充值订单
+	 * @param param
+	 */
+	public Map<String, Object> createRechangeOrder(Map<String, String> param);
 
 }

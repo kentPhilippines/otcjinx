@@ -110,6 +110,7 @@ public class PaymentCodeContorller {
             throw new OtherErrors("当前用户未登录");
         log.info("接受的介质参数为：" + mediumId);
         List<FileList> qrList = fileListService.findQrByMediumId(mediumId);
+        log.info("获取结果集合 " + qrList);
         return Result.buildSuccessResult(qrList);
     }
 

@@ -75,13 +75,15 @@
       </foreach>
     </where>
   </sql>
+
   <sql id="Base_Column_List" >
-    id, mediumNumber, mediumId, mediumHolder, mediumPhone, qrcodeId, code, createTime, 
+    id, mediumNumber, mediumId, mediumHolder,mediumNote, mediumPhone, qrcodeId, code, createTime,
     submitTime, status, isDeal
   </sql>
   <sql id="Blob_Column_List" >
     mediumNote
   </sql>
+
   <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="alipay.manage.bean.MediumExample" >
     select
     <if test="distinct" >
@@ -114,6 +116,7 @@
       order by ${orderByClause}
     </if>
   </select>
+
   <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="map" >
     select
     <include refid="Base_Column_List" />

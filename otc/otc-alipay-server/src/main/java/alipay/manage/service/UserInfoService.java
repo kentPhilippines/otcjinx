@@ -29,7 +29,7 @@ public interface UserInfoService {
 	 * @param userId
 	 * @return
 	 */
-	UserFund findUserByAccount(String userId);
+	//UserInfo findUserByAccount(String userId);
 
 	/**
 	 *	<p>根据自己的id查询所有自己子账户的id</p>
@@ -86,4 +86,20 @@ public interface UserInfoService {
 	 */
 	Result addQrByMedium(String qrcodeId, String mediumId, String amount, String userId, String flag);
 
+	UserFund findUserFundByAccount(String userId);
+
+	/**
+	 * 修改登录密码
+	 * @param user
+	 * @return
+	 */
+	boolean updataAccountPassword(UserInfo user);
+
+	/**
+	 * <p>根据用户明查询用户的详细信息</p>
+	 *
+	 * @param userId 用户名
+	 * @return
+	 */
+	List<UserInfo> getLoginAccountInfo(String userId);
 }

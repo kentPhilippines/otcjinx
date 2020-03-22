@@ -23,7 +23,7 @@ public class StorageUtil {
         try {
             String localStoragePath = settingFile.getName("localStoragePath");
             System.out.println(" localStoragePath ::::  "+localStoragePath);
-            Files.copy(inputStream, Paths.get(localStoragePath).resolve(id), StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(inputStream, Paths.get("D:\\otherPath\\image").resolve(id), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             throw new RuntimeException("Failed to store file " + id, e);
         }

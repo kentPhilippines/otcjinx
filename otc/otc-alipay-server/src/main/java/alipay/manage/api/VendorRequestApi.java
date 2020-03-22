@@ -144,7 +144,7 @@ public class VendorRequestApi {
     	   log.info("【当前银行卡超出当日可用金额】");
     	   return Result.buildFailMessage("当前银行卡超出当日可用金额");
        }
-       UserFund userFund = userInfoServiceImpl.findUserByAccount(userId);
+       UserFund userFund = userInfoServiceImpl.findUserFundByAccount(userId);
        BigDecimal accountBalance = userFund.getAccountBalance();
        if(accountBalance.compareTo(new BigDecimal(amount)) == -1 ) {
     	   log.info("【当前账户金额不足】");

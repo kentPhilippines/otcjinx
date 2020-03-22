@@ -150,7 +150,7 @@ public class AgentContorller {
 	    	UserInfo user2 = sessionUtil.getUser(request);
 	        if (StrUtil.isBlank(user2.getUserId()))
 	            return Result.buildFail();
-	        UserFund findUserByAccount = userInfoServiceImpl.findUserByAccount(user2.getUserId());
+	        UserFund findUserByAccount = userInfoServiceImpl.findUserFundByAccount(user2.getUserId());
 	        UserCountBean findMoreCount = findMyDate(findUserByAccount.getId());
 	        findMoreCount.setMoreDealProfit(findUserByAccount.getTodayAgentProfit().toString());
 	        return Result.buildSuccessResult(findMoreCount);

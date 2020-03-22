@@ -292,6 +292,10 @@ public class OrderContorller {
 	        log.info("当前用户未登陆");
 	        return Result.buildFailMessage("当前用户未登陆");
 	    }
+		log.info("startTime->"+ startTime);
+		log.info("pageNum->"+ pageNum);
+		log.info("pageSize->"+ pageSize);
+		log.info("orderType->"+ orderType);
 		if(StrUtil.isBlank(orderType))
 			orderType = "1";
 		if(orderType.equals("1")) {//充值
@@ -301,6 +305,7 @@ public class OrderContorller {
 				bean.setTime(startTime);
 			PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
 			List<Recharge> witList = orderServiceImpl.findRechargeOrder(bean);
+			log.info("获取结果集合 " + witList);
 			PageInfo<Recharge> pageInfo = new PageInfo<Recharge>(witList);
 			PageResult<Recharge> pageR = new PageResult<Recharge>();
 			pageR.setContent(pageInfo.getList());

@@ -100,12 +100,10 @@ public class AmountUtil {
 	 */
 	/**
 	 * <p>增加余额</p>
-	 * @param userId			用户id
-	 * @param amount			金额
 	 * @return
 	 */
 	private Result addAmountBalance(UserFund userFund , BigDecimal balance , String addType  , BigDecimal dealAmount) {
-		userFund = userInfoServiceImpl.findUserByAccount(userFund.getUserId());
+		userFund = userInfoServiceImpl.findUserFundByAccount(userFund.getUserId());
 		if(!clickUserFund(userFund).isSuccess())
 			return Result.buildFailMessage("【资金账户存在问题】");
 		if(ADD_AMOUNT_RECHARGE.equals(addType)) {//资金充值【加充值点数】
@@ -143,7 +141,7 @@ public class AmountUtil {
 	 * @return
 	 */
 	private Result deleteAmountBalance(UserFund userFund , BigDecimal balance , String addType ) {
-		userFund = userInfoServiceImpl.findUserByAccount(userFund.getUserId());
+		userFund = userInfoServiceImpl.findUserFundByAccount(userFund.getUserId());
 		if(!clickUserFund(userFund).isSuccess())
 			return Result.buildFailMessage("【资金账户存在问题】");
 		if(DELETE_DEAL.equals(addType)) {//交易减点数
@@ -219,8 +217,6 @@ public class AmountUtil {
 	}
 	/**
 	 * <p>取款</p>
-	 * @param userId					用户id
-	 * @param amount					金额
 	 * @return
 	 */
 	private Result withdrawBalance(UserFund userFund, BigDecimal amount) {
@@ -249,7 +245,6 @@ public class AmountUtil {
 	}
 	/**
 	 * <p>扣款【或者扣点数】</p>
-	 * @param userId
 	 * @param amount
 	 * @return
 	 * 当前扣款为系统或者后台人员操作扣款，所以针对账户详情的资金开关，针对后台和系统管理人员无效
@@ -280,7 +275,6 @@ public class AmountUtil {
 	}
 	/**
 	 * <p>交易减充值点数</p>
-	 * @param userId
 	 * @param amount
 	 * @return
 	 */

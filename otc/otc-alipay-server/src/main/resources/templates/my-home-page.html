@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:v-on="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8">
     <meta name="viewport"
@@ -123,7 +123,6 @@
                         <label>{{userName}}</label>
                     </div>
                 </div>
-
                 <div class="cash-deposit" style="margin-left: 1.2rem;">
                     <span>余额:</span><label>{{cashDeposit + cashBalance | numFilter }}元</label>
                 </div>
@@ -132,8 +131,7 @@
                         : 0}}元</label>
                 </div>
                 <div class="cash-deposit">
-                    <span>费率:</span><label>{{fee != null ? fee*100
-                    : 0 | numFilter }}%</label>
+                    <span>费率:</span><label>{{fee != null ? fee*100: 0 | numFilter }}%</label>
                 </div>
                 <div class="personal-info">
                     <label><i class="fa fa-angle-right" aria-hidden="true"
@@ -256,8 +254,8 @@
                                 console.log("获取用户账号信息：",res.body)
                                 if (res.body.result != null) {
                                     that.isLoggedInFlag = true;
-                                    that.userName = res.body.result.accountName;
-                                    that.cashDeposit = res.body.result.rechargeNumber;
+                                    that.userName = res.body.result.userName;
+                                    that.cashDeposit = 1212;
                                     that.cashBalance = res.body.result.cashBalance;
                                     that.accountType = res.body.result.accountType;
                                     that.fee = res.body.result.fee;

@@ -79,7 +79,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, fileId, fileholder, isFixation, fixationAmount, code, concealId, createTime, 
+    id, fileId, fileholder,fileNote, isFixation, fixationAmount, code, concealId, createTime,
     submitTime, status, isDeal, isCut, retain1, retain2
   </sql>
   <sql id="Blob_Column_List" >
