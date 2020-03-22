@@ -39,8 +39,7 @@ public class VendorRequestApi {
      * @param request
      * @return
      */
-    @PostMapping("/pay")
-    public Result pay(HttpServletRequest request) {
+     public Result pay(HttpServletRequest request) {
         String userId = request.getParameter("userId");//商户号
         //根据商户号查询商户实体
         UserInfo userInfo = accountApiServiceImpl.findUserInfo(userId);
@@ -71,8 +70,9 @@ public class VendorRequestApi {
         }
 
         // TODO: 2020/3/20  时间、次数、金额三个维度验证
+         //从redis缓存读取数据
 
-        return null;
+        return Result.buildFailResult(paramMap);
 
     }
 
