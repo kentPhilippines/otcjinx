@@ -51,7 +51,7 @@ public class MasterControlController {
 		Result config = configServiceClientFeignImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.TIBLE_LINK);
 		log.info("获取参数config:::"+ config);
 		log.info("获取参数config.getResult():::"+ config.getResult());
-		return Result.buildSuccessResult(config.getResult().toString());
+		return Result.buildSuccessResults(config.getResult());
 	}
 
 	/**

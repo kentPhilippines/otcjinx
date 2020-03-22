@@ -625,10 +625,9 @@
       	and   to_days(q1.createTime) = to_days(#{createTime})
       	order by createTime desc
   </select>
-
+<!--  q2.qrcodeNumber as orderQr,  q1.payType as payType, -->
   <select id="findMyOrder" parameterType="alipay.manage.bean.DealOrder" resultMap="BaseResultMap">
     SELECT
-    q2.qrcodeNumber as orderQr,
     q1.orderId as orderId,
     q1.orderStatus as orderStatus,
     q1.associatedId as associatedId,
@@ -637,7 +636,6 @@
     q1.orderType as orderType,
     q1.orderAccount as orderAccount,
     q1.externalOrderId as externalOrderId,
-    q1.payType as payType,
     q1.createTime as createTime,
     q1.orderQrUser as orderQrUser,
     q1.orderQrUser as orderQrUser
@@ -646,10 +644,7 @@
     WHERE
     1=1
     <if test="orderQrUser != null and orderQrUser != ''">
-      and q1.orderQrUser = #{orderQrUser}
-    </if>
-    <if test="payType != null and payType != ''">
-      and q1.payType = #{payType}
+      and q1.orderQrUser = #{orderQrUser,jdbcType=VARCHAR}
     </if>
     and   to_days(q1.createTime) = to_days(#{time})
     order by createTime desc

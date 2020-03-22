@@ -8,6 +8,8 @@ import alipay.manage.service.FileListService;
 import alipay.manage.service.MediumService;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -25,6 +27,7 @@ public class FileListServiceImpl implements FileListService {
     FileListMapper fileListMapper;
     @Autowired
     MediumService mediumServiceImpl;
+    Logger log= LoggerFactory.getLogger(FileListServiceImpl.class);
     @Override
     public boolean addQr(FileList editGatheringCode) {
         return false;
@@ -131,7 +134,6 @@ public class FileListServiceImpl implements FileListService {
     public void updataAmount(int i) {
 
     }
-
     @Override
     public FileList findQrByAlipayandUser(String accountId, String alipayAccount, BigDecimal amount) {
         return null;
@@ -166,20 +168,56 @@ public class FileListServiceImpl implements FileListService {
     public List<FileList> findQrEr() {
         return null;
     }
-
+    @Cacheable(cacheNames= {QR_CODE},  unless="#result == null")
     @Override
     public List<FileList> findQrByMediumId(String mediumId) {
-        return null;
+        log.info("mediumId :::->"+ mediumId);
+        FileListExample example = new FileListExample();
+        FileListExample.Criteria criteria = example.createCriteria();
+        criteria.andConcealIdEqualTo(mediumId);
+        criteria.andIsDealEqualTo("2"); //数据逻辑可用
+        List<FileList> fileResult=fileListMapper.selectByExample(example);
+        log.info("fileResult   :: " + fileResult);
+        return fileResult;
     }
-
+    /**
+     * <p>根据二维码编号，媒介编号，交易金额生成二位码数据</p>
+     */
+    @CacheEvict(value=QR_CODE, allEntries=true)
     @Override
     public Result addQrByMedium(String qrcodeId, String mediumId, String amount, String userId, String flag) {
-        return null;
+        Medium medium = mediumServiceImpl.findMediumById(mediumId);
+        if(ObjectUtil.isNull(medium))
+            return Result.buildFailResult("无此收款媒介");
+        FileList qrcode = new FileList();
+        qrcode.setConcealId(mediumId);
+        qrcode.setCode(medium.getCode()+"_qr");
+        qrcode.setFileholder(qrcodeId);
+        if("false".equals(flag))
+            qrcode.setFixationAmount(new BigDecimal(9999.0000));
+        else
+            qrcode.setFixationAmount(new BigDecimal(StrUtil.isBlank(amount)?"0":amount));
+        qrcode.setIsFixation(StrUtil.isBlank(amount)?"1":"2");
+        qrcode.setFileholder(userId);
+        qrcode.setIsDeal("2"); //二维码可用
+        int insertSelective = fileListMapper.insertSelective(qrcode);
+        if(insertSelective > 0 && insertSelective < 2)
+            return Result.buildSuccessResult();
+        return Result.buildFail();
     }
 
+    @CacheEvict(value=QR_CODE, allEntries=true)
     @Override
     public Boolean deleteQrByQrcodeId(String qrcodeId) {
-        return null;
+        FileListExample example = new FileListExample();
+        FileListExample.Criteria criteria = example.createCriteria();
+        FileList bean = new FileList();
+        bean.setCreateTime(null);
+        bean.setIsDeal(Common.notOk);
+        bean.setStatus(Common.STATUS_IS_NOT_OK);
+        criteria.andConcealIdEqualTo(qrcodeId);
+        int updateByExampleSelective = fileListMapper.updateByExampleSelective(bean, example);
+        return updateByExampleSelective > 0 && updateByExampleSelective < 2;
     }
 
     @Cacheable(cacheNames= {QR_CODE},  unless="#result == null")
@@ -205,14 +243,24 @@ public class FileListServiceImpl implements FileListService {
         int updateByExampleSelective = fileListMapper.updateByExampleSelective(bean, example);
         return updateByExampleSelective > 0 && updateByExampleSelective < 2;
     }
-
+    @CacheEvict(value=QR_CODE, allEntries=true)
     @Override
     public void updataConcealId(String qrcodeholder, String qrcodeNumber, String mediumId) {
-
+        FileListExample example = new FileListExample();
+        FileListExample.Criteria criteria = example.createCriteria();
+        FileList bean = new FileList();
+        criteria.andConcealIdEqualTo(qrcodeNumber);
+        criteria.andConcealIdEqualTo(qrcodeholder);
+        criteria.andIsDealEqualTo( "2"); //二维码可用
+        bean.setConcealId(mediumId);
+        bean.setCreateTime(null);
+        bean.setSubmitTime(null);
+        fileListMapper.updateByExampleSelective(bean, example);
     }
 
+    @Cacheable(cacheNames= {QR_CODE},  unless="#result == null")
     @Override
     public List<String> findQrAmountList(String concealId) {
-        return null;
+        return fileListMapper.selectQrAmountList(concealId);
     }
 }

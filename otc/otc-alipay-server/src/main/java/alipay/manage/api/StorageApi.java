@@ -37,8 +37,8 @@ public class StorageApi {
         List<String> storageIds = new ArrayList<>();
         for (MultipartFile file : files) {
             String filename = file.getOriginalFilename();
-            String storageId = storageUtil.uploadGatheringCode(file.getInputStream(), file.getSize(),
-                    file.getContentType(), filename);
+            String storageId = storageUtil.uploadGatheringCode(file.getInputStream(), file.getSize(),file.getContentType(), filename);
+            log.info("storageId ::: " + storageId);
             storageIds.add(storageId);
         }
         return Result.buildSuccessResult(storageIds);

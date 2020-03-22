@@ -42,6 +42,7 @@ public class AccountContorller {
     InviteCodeService inviteCodeServiceImpl;
     @Autowired
     UserInfoService accountServiceImpl;
+
     @Autowired
     RedisUtil redisUtil;
     /**
@@ -160,7 +161,7 @@ public class AccountContorller {
         	return Result.buildFailMessage("当前用户未登陆");
         }
         List<UserInfo> sumUserList = accountServiceImpl.findSumAgentUserByAccount(user2.getUserId());
-        UserFund findUserById = accountServiceImpl.findUserByAccount(user2.getUserId());
+        UserFund findUserById = accountServiceImpl.findUserFundByAccount(user2.getUserId());
 
         Integer userCount = 0;
         Integer userAgentCount = 0;

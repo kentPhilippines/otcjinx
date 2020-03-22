@@ -22,4 +22,6 @@ public interface BankListMapper {
     int updateByPrimaryKeySelective(BankList record);
     int updateByPrimaryKeyWithBLOBs(BankList record);
     int updateByPrimaryKey(BankList record);
+
+    List<BankList> selectBankCardByQ(String userId);
 }

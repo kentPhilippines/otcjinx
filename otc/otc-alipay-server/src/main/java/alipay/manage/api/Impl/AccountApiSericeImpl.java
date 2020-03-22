@@ -3,6 +3,8 @@ package alipay.manage.api.Impl;
 import java.util.List;
 
 import alipay.manage.bean.UserRate;
+import alipay.manage.service.UserInfoService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import otc.api.alipay.Common;
+import otc.exception.user.UserException;
 import otc.result.Result;
 import otc.util.encode.HashKit;
 @Component
@@ -29,6 +32,8 @@ public class AccountApiSericeImpl implements AccountApiService {
 	UserInfoMapper userInfoDao;
 	@Autowired
 	UserFundMapper userFundDao;
+	@Autowired
+	UserInfoService userInfoService;
 	@Autowired
 	AmountUtil amountUtil;
 	@Override
@@ -96,15 +101,70 @@ public class AccountApiSericeImpl implements AccountApiService {
 	 */
 	@Override
 	public Result updateLoginPassword(UserInfo user) {
-		return null;
+		/***
+		 * <p>修改账户密码</p>   accountId : 账号,   password : 密码,  newPassword : 新密码
+		 * <li>1验证账号</li>
+		 * <li>2修改数据</li>
+		 */
+		if(StringUtils.isEmpty(user.getUserId()) || StrUtil.isBlank(user.getNewPassword()) || StrUtil.isBlank(user.getPassword()))
+			return	Result.buildFailResult("必传参数为空");
+		//判断商户是否存在
+		List<UserInfo> qrcodeUserInfo  = userInfoService.getLoginAccountInfo(user.getUserId());
+		if(CollUtil.isEmpty(qrcodeUserInfo) )
+			return	Result.buildFailResult("当前登录账号不存在");
+		UserInfo qrcodeUser = new UserInfo();
+		qrcodeUser.setUserName(user.getUserId());
+		if(!user.getPassword().equals(CollUtil.getFirst(qrcodeUserInfo).getPassword()))
+			return	Result.buildFailResult("密码不正确");
+		qrcodeUser.setPassword(user.getNewPassword());
+		boolean s = this.updateAccountPassword(qrcodeUser);
+		if(!s)
+			return	Result.buildFailResult("修改失败");
+		return Result.buildSuccessMessage("添加成功");
+	}
+
+	public boolean updateAccountPassword(UserInfo user) {
+		//密码加密
+		String passWord = user.getPassword();
+		log.info("old获取密码 " + passWord);
+		String payPassword = user.getPayPasword();
+		log.info("pay获取密码 " + payPassword);
+		if(!StringUtils.isEmpty(passWord))
+			user.setPassword(passWord);
+		if(!StringUtils.isEmpty(payPassword))
+			user.setNewPassword(payPassword);
+		boolean flag = userInfoService.updataAccountPassword(user);
+		if(!flag)
+			throw new UserException("修改失败",null);
+		return true;
 	}
 	/**
 	 * <p>修改支付密码</p>
 	 */
 	@Override
 	public Result updatePayPassword(UserInfo user) {
-		return null;
+		/***
+		 * <p>修改资金密码和账户密码</p>      accountId : 账号,    securityPassword ： 资金密码 , NewSecurityPassword ： 新资金密码
+		 * <li>1验证账号</li>
+		 * <li>3添加数据</li>
+		 */
+		if(StringUtils.isEmpty(user.getUserId()) || StrUtil.isBlank(user.getPayPasword()) || StrUtil.isBlank(user.getNewPayPassword()))
+			return	Result.buildFailResult("必传参数为空");
+		List<UserInfo> qrcodeUserInfo  = userInfoService.getLoginAccountInfo(user.getUserId());
+		if(CollUtil.isEmpty(qrcodeUserInfo))
+			return	Result.buildFailResult("当前登录账号不存在");
+		UserInfo qrcodeUser = new UserInfo();
+		qrcodeUser.setUserName(user.getUserId());
+		if(!user.getPayPasword().equals(CollUtil.getFirst(qrcodeUserInfo).getPayPasword()))
+			return	Result.buildFailResult("密码不正确");
+		qrcodeUser.setPayPasword(user.getNewPayPassword());
+		boolean falg = this.updateAccountPassword(qrcodeUser);
+		if(!falg)
+			return	Result.buildFailResult("添加失败");
+		return Result.buildSuccessMessage("添加成功");
 	}
+
+
 	@Override
 	public UserInfo findUserInfo(String userId) {
 		return null;

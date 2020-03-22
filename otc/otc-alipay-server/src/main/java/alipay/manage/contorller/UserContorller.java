@@ -6,15 +6,13 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import alipay.manage.util.Md5Util;
 import alipay.manage.util.QrUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import alipay.manage.api.AccountApiService;
 import alipay.manage.bean.BankList;
@@ -59,19 +57,19 @@ public class UserContorller {
 	        return Result.buildFailMessage("当前用户未登陆");
 	    }
 		log.info("当前用户 "+user.toString());
-		UserFund user2 = userInfoServiceImpl.findUserByAccount(user.getUserId());
-		return Result.buildSuccessResult("数据获取成功",user2);
+		UserInfo user2 = userInfoServiceImpl.findUserInfoByUserId(user.getUserId());
+		log.info("获取user2  " + user2);
+		return Result.buildSuccessResult(user2);
 	}
 	
 	
 	/**
 	 * <p>获取用户绑定的银行卡接口</p>
-	 * @param receiveOrderState
 	 * @return
 	 */
 	@GetMapping("/getBankInfo")
 	@ResponseBody
-	public Result getBankInfo(String receiveOrderState ,HttpServletRequest request) {
+	public Result getBankInfo(HttpServletRequest request) {
 		UserInfo user = sessionUtil.getUser(request);
 		if (ObjectUtil.isNull(user)) {
 	        log.info("当前用户未登陆");
@@ -87,7 +85,7 @@ public class UserContorller {
 	 */
 	@PostMapping("/bindBankInfo")
 	@ResponseBody
-	public Result bindBankInfo(BankList bank ,HttpServletRequest request) {
+	public Result bindBankInfo(BankList bank , HttpServletRequest request) {
 		UserInfo user = sessionUtil.getUser(request);
 		if (ObjectUtil.isNull(user)) {
 	        log.info("当前用户未登陆");
@@ -147,7 +145,7 @@ public class UserContorller {
 		return updateAccountPassword;
 	}
 	/**
-	 * <p>修改密码</p>
+	 * <p>修改支付密码</p>
 	 * @param newMoneyPwd
 	 * @return
 	 */
@@ -161,7 +159,9 @@ public class UserContorller {
 	        log.info("当前用户未登陆");
 	        return Result.buildFailMessage("当前用户未登陆");
 	    }
-		user.setNewPayPassword(newMoneyPwd); 
+		newMoneyPwd = Md5Util.md5(newMoneyPwd);
+		oldMoneyPwd = Md5Util.md5(oldMoneyPwd);
+		user.setNewPayPassword(newMoneyPwd);
 		user.setPayPasword(oldMoneyPwd); 
 		Result updateAccountPassword = accountApiServiceImpl.updatePayPassword(user);
 		if(updateAccountPassword.isSuccess())

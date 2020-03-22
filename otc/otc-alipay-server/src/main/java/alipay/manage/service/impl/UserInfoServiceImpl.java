@@ -3,6 +3,7 @@ package alipay.manage.service.impl;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import alipay.config.redis.RedisUtil;
 import alipay.manage.bean.*;
@@ -12,6 +13,7 @@ import alipay.manage.service.MediumService;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import com.sun.istack.internal.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -31,7 +33,7 @@ public class UserInfoServiceImpl implements UserInfoService{
 	@Autowired
 	MediumService mediumService;
 	@Autowired
-	FileListMapper fileListService;
+	FileListMapper fileListMapper;
 	@Override
 	public List<UserInfo> findSunAccount(UserInfo user) {
 		return null;
@@ -45,13 +47,8 @@ public class UserInfoServiceImpl implements UserInfoService{
 	@Override
 	@Cacheable(cacheNames= {RedisConstant.User.USER} ,  unless="#result == null")
 	public UserInfo getUser(String username) {
-		UserInfo selectByAccountId = userInfoMapper.selectByAccountId(username);
+		UserInfo selectByAccountId = userInfoMapper.selectByUserName(username);
 		return selectByAccountId;
-	}
-
-	@Override
-	public UserFund findUserByAccount(String userId) {
-		return null;
 	}
 
 	@Override
@@ -71,7 +68,10 @@ public class UserInfoServiceImpl implements UserInfoService{
 
 	@Override
 	public UserInfo findUserInfoByUserId(String userId) {
-		return null;
+		System.out.println("获取用户id " + userId);
+		UserInfo selectByAccountId = userInfoMapper.selectByUserId(userId);
+		System.out.println("获取用户信息"+selectByAccountId);
+		return selectByAccountId;
 	}
 
 	@Override
@@ -105,9 +105,11 @@ public class UserInfoServiceImpl implements UserInfoService{
 		if(ObjectUtil.isNull(medium))
 			return Result.buildFailResult("无此收款媒介");
 		FileList qrcode = new FileList();
+		qrcode.setFileId(UUID.randomUUID().toString());
 		qrcode.setConcealId(mediumId);
 		qrcode.setCode(medium.getCode()+"_qr");
 		qrcode.setConcealId(qrcodeId);
+		qrcode.setStatus(1);
 		if("false".equals(flag)){
 			qrcode.setFixationAmount(new BigDecimal(9999.0000));
 		}else{
@@ -121,9 +123,41 @@ public class UserInfoServiceImpl implements UserInfoService{
 			qrcode.setRetain1(medium.getMediumHolder());
 		*/
 		qrcode.setIsDeal("2");
-		int insertSelective = fileListService.insertSelective(qrcode);
+		int insertSelective = fileListMapper.insertSelective(qrcode);
 		if(insertSelective > 0 && insertSelective < 2)
 			return Result.buildSuccessResult();
 		return Result.buildFail();
+	}
+
+	@Override
+	public UserFund findUserFundByAccount(String userId) {
+		return null;
+	}
+	/**
+	 * 修改登录密码
+	 * @param user
+	 * @return
+	 */
+
+	@Override
+	public boolean updataAccountPassword(UserInfo user) {
+		UserInfoExample example = new UserInfoExample();
+		UserInfoExample.Criteria createCriteria = example.createCriteria();
+		createCriteria.andUserNameEqualTo(user.getUserName());
+		int updateByExample = userInfoMapper.updateByExampleSelective(user,example);
+		System.out.println("结果为 ::: "+ updateByExample);
+		return updateByExample > 0 && updateByExample < 2;
+	}
+
+
+	@Cacheable(cacheNames= {RedisConstant.User.USER} ,  unless="#result == null")
+	@Override
+	public List<UserInfo> getLoginAccountInfo(String userName) {
+		UserInfoExample example = new UserInfoExample();
+		UserInfoExample.Criteria criteria = example.createCriteria();
+		if(StrUtil.isNotBlank(userName))
+			criteria.andUserNameEqualTo(userName);
+		List<UserInfo> selectByExample = userInfoMapper.selectByExample(example);
+		return selectByExample;
 	}
 }

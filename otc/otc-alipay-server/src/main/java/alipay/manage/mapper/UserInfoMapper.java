@@ -32,8 +32,10 @@ public interface UserInfoMapper {
 
     int updateByPrimaryKey(UserInfo record);
 
-    UserInfo selectByAccountId(String username);
-    
+    UserInfo selectByUserId(String userId);
+
+    UserInfo selectByUserName(String username);
+
     @Select("select * from alipay_user_info where userId = #{userId} or userName = #{userName}")
 	UserInfo findUserId( @Param("userId")String userId, @Param("userName")String userName);
 
@@ -49,4 +51,7 @@ public interface UserInfoMapper {
 
 
     UserRate selectUserRateByUserId(String userId, String passCode);
+
+
+    List<UserInfo> getLoginAccountInfo(String userId);
 }

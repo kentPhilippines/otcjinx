@@ -36,7 +36,6 @@ var personalInfoVM = new Vue({
 		getUserAccountInfo : function() {
 			var that = this;
 			that.$http.get('/userAccount/getUserAccountInfo').then(function(res) {
-				console.log("getUserAccountInfo==>",res.bdoy)
 				if (res.body.result != null) {
 					that.accountInfo = res.body.result;
 				}
@@ -97,7 +96,7 @@ var personalInfoVM = new Vue({
 			that.$http.post('/userAccount/bindBankInfo', {
 				openAccountBank : that.openAccountBank,
 				accountHolder : that.accountHolder,
-				bankCardAccount : that.bankCardAccount
+				bankcardAccount : that.bankCardAccount
 			}, {
 				emulateJSON : true
 			}).then(function(res) {
