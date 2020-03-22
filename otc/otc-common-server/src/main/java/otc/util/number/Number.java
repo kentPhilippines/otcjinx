@@ -4,7 +4,10 @@ import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.locks.ReentrantLock;
+
+import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
+import otc.api.alipay.Common;
 public class Number {
 	// 使用单例模式，不允许直接创建实例
     private Number() {}
@@ -29,7 +32,7 @@ public class Number {
      * @return
      * @throws UnknownHostException
      */
-    private static String GetRandom(final String haed) throws UnknownHostException{
+    private static String GetRandom(final String haed) throws UnknownHostException {
     	String Newnumber=null;
     	String dateStr=getNowDateStr();
     	lock.lock();//加锁
@@ -76,4 +79,22 @@ public class Number {
 		}
          return Newnumber;//返回的值
     }
+    
+    
+  public static  String getAppOreder(){
+			  try {
+				return GetRandom(Common.Deals.YUCHUANG_FLOW);
+			} catch (UnknownHostException e) {
+				String randomString2 = RandomUtil.randomNumbers(15);
+		    	String orderId = Common.Deals.YUCHUANG_FLOW +randomString2 ; 
+				return orderId;
+			}
+    }
+    
+    
+    
+    
+    
+    
+    
 }

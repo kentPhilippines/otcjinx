@@ -13,7 +13,7 @@ public class DealOrderApp {
     private String orderId;							//订单号	
     private Integer orderType;						//订单类型:1交易,5代付
     private String orderAccount;					//订单关联商户账号
-    private char orderStatus;						//订单状态:1处理中2成功3未收到回调4失败5超时6订单申述7人工处理
+    private String orderStatus;						//订单状态:1处理中2成功3未收到回调4失败5超时6订单申述7人工处理
     private BigDecimal orderAmount;					//订单金额
     private String orderIp;							//请求订单ip
     private String appOrderId;						//外部订单号
@@ -28,7 +28,10 @@ public class DealOrderApp {
     private String retain2;
     private String retain3;
     private String dealDescribe;					//交易备注
-    public Integer getId() {
+    public void setDealDescribe(String dealDescribe) {
+		this.dealDescribe = dealDescribe;
+	}
+	public Integer getId() {
         return id;
     }
     public void setId(Integer id) {
@@ -59,11 +62,11 @@ public class DealOrderApp {
         this.orderAccount = orderAccount == null ? null : orderAccount.trim();
     }
 
-    public char getOrderStatus() {
+    public String getOrderStatus() {
         return orderStatus;
     }
 
-    public void setOrderStatus(char orderStatus) {
+    public void setOrderStatus(String orderStatus) {
         this.orderStatus = orderStatus;
     }
 
@@ -175,7 +178,7 @@ public class DealOrderApp {
         return dealDescribe;
     }
 
-    public void setDealDescribe(String dealDescribe) {
+    public void dealApp(String dealDescribe) {
         this.dealDescribe = dealDescribe == null ? null : dealDescribe.trim();
     }
 

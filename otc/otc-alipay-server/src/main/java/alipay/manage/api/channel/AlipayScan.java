@@ -14,13 +14,8 @@ import otc.result.Result;
  */
 @Component(Common.Deal.PRODUCT_ALIPAY_SCAN)
 public class AlipayScan extends PayOrderService{
-	
-	
 	@Override
-	public Result dealAlipayScan(DealOrderApp dealOrderApp) {
-		return super.dealAlipayScan(dealOrderApp);
+	public Result deal(DealOrderApp dealOrderApp, String payType) {
+		return super.deal(dealOrderApp, payType);
 	}
-	
-	
-	
 }

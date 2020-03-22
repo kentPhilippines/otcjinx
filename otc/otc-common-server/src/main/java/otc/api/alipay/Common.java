@@ -51,6 +51,10 @@ public class Common {
 
 
 	public static class Order{
+		public static final Integer ORDER_TYPE_DEAL = 1;//交易订单
+		public static final Integer ORDER_TYPE_WIT = 5;//代付充值
+		
+		
 		/**
 		 * <p>订单处理中</p>
 		 */
