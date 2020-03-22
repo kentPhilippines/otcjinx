@@ -39,7 +39,7 @@ public class VendorRequestApi {
      * @param request
      * @return
      */
-     public Result pay(HttpServletRequest request) {
+    public Result pay(HttpServletRequest request) {
         String userId = request.getParameter("userId");//商户号
         //根据商户号查询商户实体
         UserInfo userInfo = accountApiServiceImpl.findUserInfo(userId);
@@ -59,6 +59,7 @@ public class VendorRequestApi {
         }
         //验证商户是否配置费率
         String passCode = paramMap.get("passCode").toString();
+        //后期优化从缓存读取数据
         UserRate userRate = accountApiServiceImpl.findUserRateByUserId(userId, passCode);
         if (userRate == null) {
             log.info("|--------------【15032 :商户未开通交易服务】----------------");
@@ -70,7 +71,7 @@ public class VendorRequestApi {
         }
 
         // TODO: 2020/3/20  时间、次数、金额三个维度验证
-         //从redis缓存读取数据
+        //从redis缓存读取数据
 
         return Result.buildFailResult(paramMap);
 

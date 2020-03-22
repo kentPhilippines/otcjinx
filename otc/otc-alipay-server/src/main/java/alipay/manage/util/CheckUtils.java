@@ -28,7 +28,6 @@ public class CheckUtils {
     AccountApiService accountApiServiceImpl;
 
     public Result requestVerify(HttpServletRequest request, Map<String, Object> paramMap) {
-
         //验传必填参数是否为空
         if (!checkParam(paramMap)) {
             return Result.buildFailMessage("必传参数为空");
@@ -39,21 +38,6 @@ public class CheckUtils {
         boolean flag = verifyUrl(request);
         if (!flag) {
             return Result.buildFailMessage("字符编码错误");
-        }
-        //请求时间超过10秒系统视为超时
-        String applyDate = paramMap.get("applyDate").toString();
-        DateFormat formatter = new SimpleDateFormat(SystemConstants.DATE_FORMAT);
-        try {
-            Date date = formatter.parse(applyDate);
-            boolean expired = DateUtil.isExpired(date, DateField.SECOND, 10, new Date());//请求10秒过期
-            if (!expired) {
-                log.info("|--------------【15034 ：请求过期】----------------");
-                return Result.buildFailMessage("请求超长");
-            }
-        } catch (
-                ParseException e1) {
-            log.info("|--------------【15035 ：时间格式错误】----------------");
-            return Result.buildFailMessage("时间格式错误");
         }
         log.info("|--------------【用户开始MD5验签】----------------");
         boolean vSign = RSAUtils.verifySign(paramMap);
@@ -98,7 +82,7 @@ public class CheckUtils {
         String amount = (String) map.get("amount");
         String passCode = (String) map.get("passCode");
         String applyDate = (String) map.get("applyDate");
-        String rsaSign = (String) map.get("rsaSign");
+        String rsaSign = (String) map.get("sign");
         if (StringUtils.isEmpty(appId)) {
             return false;
         }
