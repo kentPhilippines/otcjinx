@@ -88,5 +88,9 @@
   	<module>otc-dealpay-server</module>
   	<module>otc-task-config-server</module>
   	<module>otc-zuul-server</module>
+  	<module>otc-queue-server</module>
+  	<module>otc-queue-apk-server</module>
+  	<module>otc-file-service</module>
+  	<module>otc-file-server</module>
   </modules>
 </project>

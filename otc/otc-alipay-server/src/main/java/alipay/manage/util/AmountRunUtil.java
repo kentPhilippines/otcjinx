@@ -61,6 +61,17 @@ public class AmountRunUtil {
 	private static final Integer WITHDRAY_AMOUNT_NUMBER = 10;//代付冻结
 	private static final Integer WITHDRAY_AMOUNT_FEE_NUMBER = 9;//代付手续费冻结
 	
+	private static final String WITHDRAY_AMOUNT_OPEN = "WITHDRAY_AMOUNT_OPEN";//代付失败解冻
+	private static final Integer WITHDRAY_AMOUNT_OPEN_NUMBER = 8;//代付失败解冻
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	private static final String AMOUNT_TYPE_R = "0";//对于当前账户来说是   收入
 	private static final String AMOUNT_TYPE_W = "1";//对于当前账户来说是   支出
 	
@@ -75,7 +86,32 @@ public class AmountRunUtil {
 	 */
 	public Result deleteAmount(Withdraw withdraw,String generationIp,Boolean flag) {
 		UserFund userFund = userInfoServiceImpl.findUserFundByAccount(withdraw.getUserId()); //当前账户资金
-		Result delete = delete(WITHDRAY_AMOUNT, userFund, withdraw.getOrderId(), withdraw.getActualAmount(), generationIp, "码商代付冻结",  flag?RUNTYPE_ARTIFICIAL:RUNTYPE_NATURAL);
+		Result delete = delete(WITHDRAY_AMOUNT, userFund, withdraw.getOrderId(), withdraw.getActualAmount(), generationIp, "账户代付冻结",  flag?RUNTYPE_ARTIFICIAL:RUNTYPE_NATURAL);
+		if(delete.isSuccess())
+			return delete;
+		return Result.buildFailMessage("流水生成失败");
+	}
+	/**
+	 * <p>代付失败解冻</p>
+	 * @param withdraw				代付订单
+	 * @param generationIp			操作ip
+	 * @return
+	 */
+	public Result addAmountW(Withdraw withdraw,String generationIp ) {
+		UserFund userFund = userInfoServiceImpl.findUserFundByAccount(withdraw.getUserId()); //当前账户资金
+		add(WITHDRAY_AMOUNT_OPEN, userFund, withdraw.getOrderId(), withdraw.getAmount(), generationIp, "代付失败解冻", RUNTYPE_ARTIFICIAL);
+		return null;
+	}
+	/**
+	 * <p>代付手续费冻结</p>
+	 * @param withdraw
+	 * @param generationIp
+	 * @param flag
+	 * @return
+	 */
+	public Result deleteAmountFee(Withdraw withdraw,String generationIp,Boolean flag) {
+		UserFund userFund = userInfoServiceImpl.findUserFundByAccount(withdraw.getUserId()); //当前账户资金
+		Result delete = delete(WITHDRAY_AMOUNT_FEE, userFund, withdraw.getOrderId(), withdraw.getFee(), generationIp, "账户代付手续费冻结",  flag?RUNTYPE_ARTIFICIAL:RUNTYPE_NATURAL);
 		if(delete.isSuccess())
 			return delete;
 		return Result.buildFailMessage("流水生成失败");

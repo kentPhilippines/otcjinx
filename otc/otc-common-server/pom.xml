@@ -11,14 +11,13 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
         </dependency>
-		<dependency><!-- 逆向工程mybatis支持 -->
-             <groupId>org.mybatis.generator</groupId>
-             <artifactId>mybatis-generator-core</artifactId>
-             <version>1.3.2</version>
-         </dependency>
           <dependency>
              <groupId>org.springframework.boot</groupId>
              <artifactId>spring-boot-starter-web</artifactId>
          </dependency>
+         <dependency><!-- redis数据库 -->
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
+		</dependency>
   </dependencies>
 </project>

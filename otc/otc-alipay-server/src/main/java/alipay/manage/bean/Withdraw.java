@@ -26,10 +26,17 @@ public class Withdraw {
     private Date createTime;			
     private Date submitTime;
     private Integer status;
-    private String retain1;
-    private String retain2;
-    private String Time;
-    public String getTime() {
+    private String retain1;	//1  api   代付   				2  后台代付
+    private String retain2;		//代付 ip
+    private String Time;	
+    private String witType;//  代付产品类型
+    public String getWitType() {
+		return witType;
+	}
+	public void setWitType(String witType) {
+		this.witType = witType;
+	}
+	public String getTime() {
 		return Time;
 	}
 	public void setTime(String time) {

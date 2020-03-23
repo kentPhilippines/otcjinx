@@ -1,4 +1,4 @@
-package alipay.manage.api.channel;
+package alipay.manage.api.channel.deal;
 
 import org.springframework.stereotype.Component;
 
@@ -18,4 +18,11 @@ public class AlipayScan extends PayOrderService{
 	public Result deal(DealOrderApp dealOrderApp, String payType) {
 		return super.deal(dealOrderApp, payType);
 	}
+	
+	@Override
+	public Result dealAlipayScan(DealOrderApp dealOrderApp) {
+		// TODO Auto-generated method stub
+		return super.dealAlipayScan(dealOrderApp);
+	}
+	
 }

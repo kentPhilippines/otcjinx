@@ -2,8 +2,11 @@ package otc.common;
 
 public class PayApiConstant {
 	public class Server{
-		public static final String PAY_SERVER = "otc-pay-server";
+		public static final String PAY_SERVER = "otc-pay-server";//四方支付服务
 		public static final String CONFIG_TASK_SERVER = "otc-task-config-server";//定时任务和配置类服务
+		public static final String ALIPAY_SERVER = "otc-alipay-server";//支付宝服务
+		public static final String FILE_SERVER = "otc-file-server";
+		public static final String QUEUE_APK_SERVER = "otc-queue-apk-server";
 	}
 	public class Test{
 		public static final String FIND_TEST = "/findTest";
@@ -24,6 +27,13 @@ public class PayApiConstant {
 		public static final String ADD_AMOUNT = "add_amount";//账户加钱接口 【充值点数】
 		public static final String DELETE_AMOUNT ="delete_amount";//账户减钱接口【账户金额扣除】
 		public static final String FREEZE_AMOUNT = "freeze_amount";//账户冻结接口【账户资金冻结】
-		
+		public static final String MEDIUM_API = "/medium";									//媒介处理公共接口
+		public static final String FIND_MEDIUM_IS_DEAL = "/find-medium-is-deal";			//查询当前可以交易的媒介
 	}
+	
+	public class File{
+		public static final String FILE_API = "/file-api";//文件服务api
+	}
+	
+	
 }

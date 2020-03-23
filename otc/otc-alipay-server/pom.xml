@@ -54,10 +54,6 @@
             <artifactId>mybatis-spring-boot-starter</artifactId>
             <version>1.3.2</version>
         </dependency>
-        <dependency><!-- redis  -->
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
-        </dependency>
         <dependency><!--  同String 方法支持 -->
 		    <groupId>org.apache.commons</groupId>
 		    <artifactId>commons-lang3</artifactId>

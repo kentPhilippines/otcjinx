@@ -2,10 +2,16 @@ package alipay.manage.api.config;
 
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.google.common.collect.Maps;
 
 import alipay.manage.bean.DealOrderApp;
+import alipay.manage.bean.UserFund;
 import alipay.manage.bean.Withdraw;
+import alipay.manage.service.UserInfoService;
+import alipay.manage.util.AmountRunUtil;
+import alipay.manage.util.AmountUtil;
 import otc.api.alipay.Common;
 import otc.common.SystemConstants;
 import otc.result.Result;
@@ -17,12 +23,9 @@ import otc.util.RSAUtils;
  */
 public abstract class PayOrderService implements PayService{
 	private static final String ORDER = "orderid";
-	
-	
-	
-	
-	
-	//TODO 未确认 是否加入四方交易逻辑
+	@Autowired AmountUtil amountUtil;
+	@Autowired AmountRunUtil amountRunUtil;
+    @Autowired UserInfoService userInfoServiceImpl;
 	@Override
 	public Result deal(DealOrderApp dealOrderApp,String payType) {
 		if(Common.Deal.PRODUCT_ALIPAY_SCAN.equals(payType))
@@ -62,10 +65,21 @@ public abstract class PayOrderService implements PayService{
 	public Result withdraw(Withdraw wit) {
 		/**
 		 * #####################################
-		 * 生成代付订单并做 扣款操作
+		 * 代付扣款操作
 		 */
-		return null;
+		UserFund userFund = userInfoServiceImpl.findUserFundByAccount(wit.getUserId());
+		Result deleteWithdraw = amountUtil.deleteWithdraw(userFund, wit.getActualAmount());
+		if(!deleteWithdraw.isSuccess())
+			return Result.buildFailMessage("账户扣减失败,请联系技术人员处理");
+		Result deleteAmount = amountRunUtil.deleteAmount(wit, wit.getRetain2(), true);
+		if(!deleteAmount.isSuccess())
+			return Result.buildFailMessage("账户扣减失败,请联系技术人员处理");
+		Result deleteWithdraw2 = amountUtil.deleteWithdraw(userFund, wit.getFee());
+		if(!deleteWithdraw2.isSuccess())
+			return Result.buildFailMessage("账户扣减失败,请联系技术人员处理");
+		Result deleteAmountFee = amountRunUtil.deleteAmountFee(wit, wit.getRetain2(), true);
+		if(!deleteAmountFee.isSuccess())
+			return  Result.buildFailMessage("账户扣减失败,请联系技术人员处理");
+		return Result.buildSuccess();
 	}
-	
-	
 }

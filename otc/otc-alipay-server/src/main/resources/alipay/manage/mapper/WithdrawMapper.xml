@@ -8,6 +8,7 @@
     <result column="withdrawType" property="withdrawType" jdbcType="CHAR" />
     <result column="bankNo" property="bankNo" jdbcType="VARCHAR" />
     <result column="accname" property="accname" jdbcType="VARCHAR" />
+    <result column="witType" property="witType" jdbcType="VARCHAR" />
     <result column="orderStatus" property="orderStatus" jdbcType="CHAR" />
     <result column="bankName" property="bankName" jdbcType="VARCHAR" />
     <result column="amount" property="amount" jdbcType="DECIMAL" />
@@ -81,7 +82,7 @@
   </sql>
   <sql id="Base_Column_List" >
     id, orderId, userId, withdrawType, bankNo, accname, orderStatus, bankName, amount, 
-    fee, actualAmount, mobile, notify, createTime, submitTime, status, retain1, retain2
+    fee, actualAmount, mobile, notify, createTime, submitTime, status, retain1, retain2,witType
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="alipay.manage.bean.WithdrawExample" >
     select
@@ -120,13 +121,13 @@
       bankName, amount, fee, 
       actualAmount, mobile, notify, 
       createTime, submitTime, status, 
-      retain1, retain2)
+      retain1, retain2,witType)
     values (#{orderId,jdbcType=CHAR}, #{userId,jdbcType=VARCHAR}, #{withdrawType,jdbcType=CHAR}, 
       #{bankNo,jdbcType=VARCHAR}, #{accname,jdbcType=VARCHAR}, #{orderStatus,jdbcType=CHAR}, 
       #{bankName,jdbcType=VARCHAR}, #{amount,jdbcType=DECIMAL}, #{fee,jdbcType=DECIMAL}, 
       #{actualAmount,jdbcType=DECIMAL}, #{mobile,jdbcType=CHAR}, #{notify,jdbcType=VARCHAR}, 
       #{createTime,jdbcType=TIMESTAMP}, #{submitTime,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, 
-      #{retain1,jdbcType=CHAR}, #{retain2,jdbcType=CHAR})
+      #{retain1,jdbcType=CHAR}, #{retain2,jdbcType=CHAR},#{witType})
   </insert>
   <insert id="insertSelective" parameterType="alipay.manage.bean.Withdraw" useGeneratedKeys="true" keyProperty="id" >
     insert into alipay_withdraw
@@ -182,6 +183,9 @@
       <if test="retain2 != null" >
         retain2,
       </if>
+      <if test="witType != null" >
+        witType,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="orderId != null" >
@@ -234,6 +238,9 @@
       </if>
       <if test="retain2 != null" >
         #{retain2,jdbcType=CHAR},
+      </if>
+      <if test="witType != null" >
+        #{witType},
       </if>
     </trim>
   </insert>
@@ -300,6 +307,9 @@
       <if test="record.retain2 != null" >
         retain2 = #{record.retain2,jdbcType=CHAR},
       </if>
+      <if test="record.witType != null" >
+        witType = #{record.witType},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -324,7 +334,8 @@
       submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
       status = #{record.status,jdbcType=INTEGER},
       retain1 = #{record.retain1,jdbcType=CHAR},
-      retain2 = #{record.retain2,jdbcType=CHAR}
+      retain2 = #{record.retain2,jdbcType=CHAR},
+      witType = #{record.witType}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -383,6 +394,9 @@
       <if test="retain2 != null" >
         retain2 = #{retain2,jdbcType=CHAR},
       </if>
+      <if test="witType != null" >
+        witType = #{witType},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -404,7 +418,8 @@
       submitTime = #{submitTime,jdbcType=TIMESTAMP},
       status = #{status,jdbcType=INTEGER},
       retain1 = #{retain1,jdbcType=CHAR},
-      retain2 = #{retain2,jdbcType=CHAR}
+      retain2 = #{retain2,jdbcType=CHAR},
+      witType = #{witType}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

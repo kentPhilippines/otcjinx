@@ -1,10 +1,10 @@
-package alipay.manage.api.configserver;
+package alipay.manage.api.Feign;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import alipay.manage.api.configserver.impl.ConfigServiceClientFeignHystrix;
+import alipay.manage.api.Feign.impl.ConfigServiceClientFeignHystrix;
 import otc.common.PayApiConstant;
 import otc.result.Result;
 

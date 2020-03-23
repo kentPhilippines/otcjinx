@@ -19,6 +19,7 @@ import alipay.manage.bean.Withdraw;
 import alipay.manage.bean.util.DealBean;
 import alipay.manage.bean.util.WithdrawalBean;
 import alipay.manage.service.OrderAppService;
+import alipay.manage.service.UserInfoService;
 import alipay.manage.service.WithdrawService;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
@@ -86,6 +87,7 @@ public class DealAppApi {
 			return withdrawal;
 		Object result = withdrawal.getResult();
 		WithdrawalBean wit = MapUtil.mapToBean((Map<String, Object>)result, WithdrawalBean.class);
+		wit.setIp(HttpUtil.getClientIP(request));
 		UserRate userRate = accountApiServiceImpl.findUserRateWitByUserId(wit.getAppid());
 		Withdraw bean = createWit(wit,userRate);
         Result deal = null;
@@ -116,6 +118,8 @@ public class DealAppApi {
 		witb.setOrderId(Number.getWitOrder());
 		witb.setOrderStatus(Common.Order.ORDER_STATUS_DISPOSE.toString());
 		witb.setNotify(wit.getNotifyurl());
+		witb.setRetain2(wit.getIp());//代付ip
+		witb.setWitType(userRate.getPayTypr());//代付类型
 		boolean flag = withdrawServiceImpl.addOrder(witb);
 		if(flag)
 			return witb;

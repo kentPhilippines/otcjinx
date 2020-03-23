@@ -176,7 +176,7 @@ public class AmountUtil {
 				throw new UserException("账户修改异常", null);
 			return 	Result.buildFailMessage("【当前账户余额扣除失败，请联系技术人员查询情况】");
 		}else if (DELETE_FREEZE.equals(addType)) {
-			Result freezeBalance = FreezeBalance(userFund, balance);
+			Result freezeBalance = freezeBalance(userFund, balance);
 			if(freezeBalance.isSuccess()) 
 				return freezeBalance;
 			log.info("【账户金额冻结失败，请查询当前时间范围内的异常情况，并修改当前账户交易和资金状态为 不可用】");
@@ -195,7 +195,7 @@ public class AmountUtil {
 	 * @param amount
 	 * @return
 	 */
-	private Result FreezeBalance(UserFund userFund, BigDecimal amount) {
+	private Result freezeBalance(UserFund userFund, BigDecimal amount) {
 		log.info("【当前方法为 【码商或者商户资金冻结】 ，当前操作金额为："+amount+"】");
 		BigDecimal accountBalance = userFund.getAccountBalance();
 		BigDecimal rechargeNumber = userFund.getRechargeNumber();

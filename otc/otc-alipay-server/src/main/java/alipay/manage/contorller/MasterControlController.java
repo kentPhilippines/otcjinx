@@ -1,6 +1,7 @@
 package alipay.manage.contorller;
 
 import alipay.config.redis.RedisUtil;
+import alipay.manage.api.Feign.ConfigServiceClientFeign;
 import alipay.manage.bean.UserInfo;
 import alipay.manage.bean.util.OnlineVO;
 import alipay.manage.service.UserInfoService;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import alipay.manage.api.configserver.ConfigServiceClientFeign;
 import alipay.manage.bean.util.RegisterSetting;
 import otc.bean.config.ConfigFile;
 import otc.common.RedisConstant;

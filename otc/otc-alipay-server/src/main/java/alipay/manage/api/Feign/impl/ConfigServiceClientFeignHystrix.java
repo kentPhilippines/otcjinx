@@ -1,10 +1,10 @@
-package alipay.manage.api.configserver.impl;
+package alipay.manage.api.Feign.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import alipay.manage.api.configserver.ConfigServiceClientFeign;
+import alipay.manage.api.Feign.ConfigServiceClientFeign;
 import otc.result.Result;
 @Component
 public class ConfigServiceClientFeignHystrix implements ConfigServiceClientFeign{

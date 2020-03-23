@@ -86,6 +86,11 @@ public interface UserInfoService {
 	 */
 	Result addQrByMedium(String qrcodeId, String mediumId, String amount, String userId, String flag);
 
+	/**
+	 * <p>查询【资金】账户详情</p>
+	 * @param userId
+	 * @return
+	 */
 	UserFund findUserFundByAccount(String userId);
 
 	/**
