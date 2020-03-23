@@ -63,4 +63,11 @@ public interface AccountApiService {
      * @return
      */
 	UserRate findUserRateWitByUserId(String userId);
+
+	/**
+	 * 根据商户号查询资金账户
+	 * @param userId
+	 * @return
+	 */
+	UserFund findUserFundByUserId(String userId);
 }

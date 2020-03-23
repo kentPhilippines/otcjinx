@@ -1,5 +1,6 @@
 package alipay.manage.mapper;
 
+import alipay.manage.bean.UserFund;
 import alipay.manage.bean.UserInfo;
 import alipay.manage.bean.UserInfoExample;
 import java.util.List;
@@ -54,4 +55,11 @@ public interface UserInfoMapper {
 
 
     List<UserInfo> getLoginAccountInfo(String userId);
+
+
+    @Select("select  id, userId, userName, cashBalance, rechargeNumber, freezeBalance, accountBalance, " +
+            " sumDealAmount, sumRechargeAmount, sumProfit, sumAgentProfit, sumOrderCount, todayDealAmount, " +
+            " todayProfit, todayOrderCount, todayAgentProfit, userType, agent, isAgent, createTime, " +
+            " submitTime, status, version from alipay_user_fund where userId = #{userId}")
+    UserFund selectUsrFundByUserId(@Param("userId") String userId);
 }

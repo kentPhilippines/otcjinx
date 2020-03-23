@@ -166,5 +166,10 @@ public class AccountApiSericeImpl implements AccountApiService {
 		return userRateDao.findUserRateWitByUserId(userId);
 	}
 
+	@Override
+	public UserFund findUserFundByUserId(String userId) {
+		return userInfoDao.selectUsrFundByUserId(userId);
+	}
+
 
 }

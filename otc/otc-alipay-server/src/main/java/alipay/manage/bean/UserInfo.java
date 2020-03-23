@@ -2,6 +2,7 @@ package alipay.manage.bean;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.Date;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -36,6 +37,10 @@ public class UserInfo implements Serializable {
     private String publicKey;
     private String minAmount;
     private String maxAmount;
+    private BigDecimal totalAmount;
+    private String startTime;
+    private String endTime;
+    private Integer timesTotal;
 
     private String witip; //代付ip
     
@@ -275,6 +280,38 @@ public class UserInfo implements Serializable {
 
     public void setMaxAmount(String maxAmount) {
         this.maxAmount = maxAmount;
+    }
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
+
+    public Integer getTimesTotal() {
+        return timesTotal;
+    }
+
+    public void setTimesTotal(Integer timesTotal) {
+        this.timesTotal = timesTotal;
+    }
+
+    public BigDecimal getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(BigDecimal totalAmount) {
+        this.totalAmount = totalAmount;
     }
 
     @Override
