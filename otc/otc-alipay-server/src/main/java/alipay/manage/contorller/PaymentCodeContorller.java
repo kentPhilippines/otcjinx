@@ -2,8 +2,6 @@ package alipay.manage.contorller;
 
 import alipay.config.exception.OtherErrors;
 import alipay.config.redis.RedisUtil;
-import alipay.manage.bean.FileList;
-import alipay.manage.bean.Medium;
 import alipay.manage.bean.UserInfo;
 import alipay.manage.bean.util.OnlineVO;
 import alipay.manage.bean.util.PageResult;
@@ -24,6 +22,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import otc.bean.alipay.FileList;
+import otc.bean.alipay.Medium;
 import otc.common.RedisConstant;
 import otc.exception.user.UserException;
 import otc.result.Result;

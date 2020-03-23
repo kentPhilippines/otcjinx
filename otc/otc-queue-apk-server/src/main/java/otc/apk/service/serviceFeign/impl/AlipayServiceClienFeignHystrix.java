@@ -13,8 +13,13 @@ import otc.bean.alipay.Medium;
 public class AlipayServiceClienFeignHystrix implements AlipayServiceClienFeign{
 	Logger log = LoggerFactory.getLogger(ConfigServiceClientFeignHystrix.class);
 	@Override
-	public List<Medium> findIsDealMedium(String code) {
+	public List<Medium> findIsDealMedium(String mediumType, String code) {
 		 log.info(" 当前服务不可用" + code);
+		return new ArrayList();
+	}
+	@Override
+	public List<Medium> findIsDealMedium(String mediumAlipay) {
+		 log.info(" 当前服务不可用" + mediumAlipay);
 		return new ArrayList();
 	}
 }

@@ -1,7 +1,8 @@
 package alipay.manage.mapper;
 
-import alipay.manage.bean.Medium;
 import alipay.manage.bean.MediumExample;
+import otc.bean.alipay.Medium;
+
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -41,4 +42,8 @@ public interface MediumMapper {
     List<Medium> findIsMyMediumPage(String accountId);
     @Select("select  *  from alipay_medium where mediumId = #{mediumId}")
     Medium findMediumBy(@Param("mediumId")String mediumId);
+    @Select("select  *  from alipay_medium where code = #{mediumType} and attr = #{code} and isDeal = 2 and status = 1")
+	List<Medium> findMediumByType(@Param("mediumType")String mediumType,@Param("code") String code);
+    @Select("select  *  from alipay_medium where code = #{mediumType}  and isDeal = 2 and status = 1")
+	List<Medium> findMediumByType(@Param("mediumType")String mediumType);
 }

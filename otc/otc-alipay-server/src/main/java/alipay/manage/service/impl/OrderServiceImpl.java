@@ -13,6 +13,8 @@ import alipay.manage.util.IdGenerator;
 import alipay.manage.util.SettingFile;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
+import otc.api.alipay.Common;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,8 +44,6 @@ public class OrderServiceImpl implements OrderService{
 		List<DealOrder> selectByExample = dealOrderMapper.selectByExampleByMyId(userId,createTime);
 		return selectByExample;
 	}
-
-
 	@Override
 	public DealOrder getOrderByAssociatedId(String orderId) {
 		return null;
@@ -240,5 +240,12 @@ public class OrderServiceImpl implements OrderService{
 //			return result;
 //		}
 		return result;
+	}
+
+
+	@Override
+	public boolean addOrder(DealOrder orderApp) {
+		int insertSelective = dealOrderMapper.insertSelective(orderApp);
+		return insertSelective > 0 && insertSelective < 2;
 	}
 }

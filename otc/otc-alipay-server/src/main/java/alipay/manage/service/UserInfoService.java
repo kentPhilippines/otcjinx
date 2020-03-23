@@ -1,4 +1,5 @@
 package alipay.manage.service;
+import java.math.BigDecimal;
 import java.util.List;
 
 import alipay.manage.bean.UserFund;
@@ -107,4 +108,19 @@ public interface UserInfoService {
 	 * @return
 	 */
 	List<UserInfo> getLoginAccountInfo(String userId);
+
+	/**
+	 * <p>根据交易金额【查询可用的交易账户】</p>
+	 * @param amount				交易金额
+	 * @return
+	 */
+	List<UserFund> findUserByAmount(BigDecimal amount);
+
+	/**
+	 * <P>根据用户id和产品类型查询用户交易费率</P>
+	 * @param fileholder
+	 * @param productAlipayScan
+	 * @return
+	 */
+	UserRate findUserRate(String userId, String productAlipayScan);
 }

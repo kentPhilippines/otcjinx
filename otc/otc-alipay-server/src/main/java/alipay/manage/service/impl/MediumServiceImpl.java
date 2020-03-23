@@ -1,7 +1,6 @@
 package alipay.manage.service.impl;
 
 import alipay.config.redis.RedisUtil;
-import alipay.manage.bean.Medium;
 import alipay.manage.bean.MediumExample;
 import alipay.manage.bean.UserInfo;
 import alipay.manage.mapper.MediumMapper;
@@ -16,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import otc.api.alipay.Common;
+import otc.bean.alipay.Medium;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -164,4 +164,14 @@ public class MediumServiceImpl implements MediumService {
         List<Medium> selectByExample = mediumDao.selectByExample(example);
         return CollUtil.isEmpty(selectByExample)?null:CollUtil.getFirst(selectByExample);
     }
+
+	@Override
+	public List<Medium> findMediumByType(String mediumType) {
+		return mediumDao.findMediumByType(mediumType);
+	}
+
+	@Override
+	public List<Medium> findMediumByType(String mediumType, String code) {
+		return mediumDao.findMediumByType(mediumType,code);
+	}
 }

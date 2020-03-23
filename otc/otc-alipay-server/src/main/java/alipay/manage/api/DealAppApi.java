@@ -9,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import alipay.manage.api.config.FactoryForStrategy;
@@ -35,6 +37,7 @@ import otc.util.number.Number;
  *
  */
 @RestController
+@RequestMapping("/deal")
 public class DealAppApi {
 	@Autowired VendorRequestApi vendorRequestApi;
 	Logger log = LoggerFactory.getLogger(DealAppApi.class);
@@ -48,6 +51,7 @@ public class DealAppApi {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
+	@PostMapping("/pay")
 	public Result dealAppPay(HttpServletRequest request) {
 		Result pay = vendorRequestApi.pay(request);
 		if(!pay.isSuccess())
@@ -77,6 +81,7 @@ public class DealAppApi {
 	}
 	
 	@SuppressWarnings("unchecked")
+	@PostMapping("/wit")
 	public Result witOrder(HttpServletRequest request) {
 		String manage = request.getParameter("manage");
 		boolean flag = false;

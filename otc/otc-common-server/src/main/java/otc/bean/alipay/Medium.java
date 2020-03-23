@@ -19,7 +19,16 @@ public class Medium {
     private Integer status;
     private String isDeal;
     private String mediumNote;					//媒介备注
-    public Integer getId() {
+    private String attr;   						//收款媒介供应链标识
+    public String getAttr() {
+		return attr;
+	}
+
+	public void setAttr(String attr) {
+		this.attr = attr;
+	}
+
+	public Integer getId() {
         return id;
     }
 

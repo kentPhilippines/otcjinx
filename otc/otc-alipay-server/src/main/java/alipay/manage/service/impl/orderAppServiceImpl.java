@@ -10,4 +10,10 @@ public class orderAppServiceImpl implements OrderAppService {
     public boolean add(DealOrderApp dealApp) {
         return false;
     }
+
+	@Override
+	public DealOrderApp findOrderByOrderId(String orderId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

@@ -1,11 +1,12 @@
 package alipay.manage.mapper;
 
-import alipay.manage.bean.FileList;
 import alipay.manage.bean.FileListExample;
 import java.util.List;
 
 import alipay.manage.bean.UserInfo;
 import alipay.manage.bean.UserInfoExample;
+import otc.bean.alipay.FileList;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;

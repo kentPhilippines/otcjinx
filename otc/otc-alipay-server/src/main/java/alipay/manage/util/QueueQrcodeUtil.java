@@ -1,7 +1,6 @@
 package alipay.manage.util;
 import alipay.config.redis.RedisUtil;
 import alipay.manage.bean.FileList;
-import alipay.manage.bean.Medium;
 import alipay.manage.service.FileListService;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateBetween;
@@ -13,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.ZSetOperations.TypedTuple;
 import org.springframework.stereotype.Component;
 import otc.api.alipay.Common;
+import otc.bean.alipay.Medium;
 import otc.common.RedisConstant;
 
 import java.sql.Timestamp;

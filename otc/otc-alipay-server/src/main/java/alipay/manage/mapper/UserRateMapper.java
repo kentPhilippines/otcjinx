@@ -39,4 +39,7 @@ public interface UserRateMapper {
      */
     @Select("select * from alipay_user_rate where feeType = 2 and userId = #{userId}")
 	UserRate findUserRateWitByUserId(@Param("userId") String userId);
+
+    @Select("select * from alipay_user_rate where feeType = 1 and userId = #{userId} and switchs = 1 and payTypr = #{productAlipayScan} and status  = 1")
+	UserRate findUserRate(@Param("userId")String userId,@Param("productAlipayScan") String productAlipayScan);
 }

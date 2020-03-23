@@ -1,6 +1,6 @@
 package alipay.manage.service;
-import alipay.manage.bean.FileList;
-import alipay.manage.bean.Medium;
+import otc.bean.alipay.FileList;
+import otc.bean.alipay.Medium;
 import otc.result.Result;
 
 import java.math.BigDecimal;

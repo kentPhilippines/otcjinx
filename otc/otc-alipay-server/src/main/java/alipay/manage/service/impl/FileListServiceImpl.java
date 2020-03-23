@@ -1,8 +1,6 @@
 package alipay.manage.service.impl;
 
-import alipay.manage.bean.FileList;
 import alipay.manage.bean.FileListExample;
-import alipay.manage.bean.Medium;
 import alipay.manage.mapper.FileListMapper;
 import alipay.manage.service.FileListService;
 import alipay.manage.service.MediumService;
@@ -15,6 +13,8 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import otc.api.alipay.Common;
+import otc.bean.alipay.FileList;
+import otc.bean.alipay.Medium;
 import otc.result.Result;
 
 import java.math.BigDecimal;

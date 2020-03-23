@@ -83,7 +83,7 @@ public class AccountApi {
 		log.info("【远程调用修改用户的方法】");
 		if(StrUtil.isBlank(user) )
 			return Result.buildFailMessage("加款人不详");
-		if(StrUtil.isBlank(note))
+		if(StrUtil.isBlank(note)) 
 			return Result.buildFailMessage("请填写加款理由");
 		logUtil.addLog(request, "【加钱】	当前账户人工处理为加钱，加款金额："+userFund.getRechargeNumber()+"，加款理由："+note+"，加款人："+user+"", user);
 		if(ObjectUtil.isNull(userFund))

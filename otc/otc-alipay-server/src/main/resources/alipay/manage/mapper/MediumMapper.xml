@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="alipay.manage.mapper.MediumMapper" >
-  <resultMap id="BaseResultMap" type="alipay.manage.bean.Medium" >
+  <resultMap id="BaseResultMap" type="otc.bean.alipay.Medium" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <id column="mediumNumber" property="mediumNumber" jdbcType="VARCHAR" />
     <id column="mediumId" property="mediumId" jdbcType="VARCHAR" />
@@ -14,7 +14,7 @@
     <result column="status" property="status" jdbcType="INTEGER" />
     <result column="isDeal" property="isDeal" jdbcType="CHAR" />
   </resultMap>
-  <resultMap id="ResultMapWithBLOBs" type="alipay.manage.bean.Medium" extends="BaseResultMap" >
+  <resultMap id="ResultMapWithBLOBs" type="otc.bean.alipay.Medium" extends="BaseResultMap" >
     <result column="mediumNote" property="mediumNote" jdbcType="LONGVARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
@@ -139,7 +139,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="alipay.manage.bean.Medium" useGeneratedKeys="true" keyProperty="id" >
+  <insert id="insert" parameterType="otc.bean.alipay.Medium" useGeneratedKeys="true" keyProperty="id" >
     insert into alipay_medium (mediumNumber, mediumId, mediumHolder, 
       mediumPhone, qrcodeId, code, 
       createTime, submitTime, status, 
@@ -149,7 +149,7 @@
       #{createTime,jdbcType=TIMESTAMP}, #{submitTime,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, 
       #{isDeal,jdbcType=CHAR}, #{mediumNote,jdbcType=LONGVARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="alipay.manage.bean.Medium" useGeneratedKeys="true" keyProperty="id" >
+  <insert id="insertSelective" parameterType="otc.bean.alipay.Medium" useGeneratedKeys="true" keyProperty="id" >
     insert into alipay_medium
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="mediumNumber != null" >
@@ -307,7 +307,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="alipay.manage.bean.Medium" >
+  <update id="updateByPrimaryKeySelective" parameterType="otc.bean.alipay.Medium" >
     update alipay_medium
     <set >
       <if test="mediumHolder != null" >
@@ -342,7 +342,7 @@
     and mediumNumber = #{mediumNumber,jdbcType=VARCHAR}
     and mediumId = #{mediumId,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="alipay.manage.bean.Medium" >
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="otc.bean.alipay.Medium" >
     update alipay_medium
     set mediumHolder = #{mediumHolder,jdbcType=VARCHAR},
       mediumPhone = #{mediumPhone,jdbcType=VARCHAR},
@@ -357,7 +357,7 @@
       and mediumNumber = #{mediumNumber,jdbcType=VARCHAR}
       and mediumId = #{mediumId,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKey" parameterType="alipay.manage.bean.Medium" >
+  <update id="updateByPrimaryKey" parameterType="otc.bean.alipay.Medium" >
     update alipay_medium
     set mediumHolder = #{mediumHolder,jdbcType=VARCHAR},
       mediumPhone = #{mediumPhone,jdbcType=VARCHAR},
@@ -372,7 +372,7 @@
       and mediumId = #{mediumId,jdbcType=VARCHAR}
   </update>
 
-  <select id="findIsMyMediumPage" parameterType="String" resultType="alipay.manage.bean.Medium">
+  <select id="findIsMyMediumPage" parameterType="String" resultType="otc.bean.alipay.Medium">
 		(SELECT
 			 (SELECT GROUP_CONCAT("",fixationAmount,"元") AS fixation  FROM alipay_file_list t2 WHERE  t2.`concealId` = m.`mediumId`    AND t2.isDeal = '2') AS
 			    fixation,

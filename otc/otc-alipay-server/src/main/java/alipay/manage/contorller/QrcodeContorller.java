@@ -1,7 +1,6 @@
 package alipay.manage.contorller;
 
 import alipay.config.redis.RedisUtil;
-import alipay.manage.bean.Medium;
 import alipay.manage.bean.UserInfo;
 import alipay.manage.bean.util.PageResult;
 import alipay.manage.service.MediumService;
@@ -16,6 +15,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import otc.bean.alipay.Medium;
 import otc.result.Result;
 
 import javax.servlet.http.HttpServletRequest;

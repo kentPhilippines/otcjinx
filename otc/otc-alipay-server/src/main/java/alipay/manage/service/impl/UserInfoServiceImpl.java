@@ -6,9 +6,13 @@ import java.util.List;
 import java.util.UUID;
 
 import alipay.config.redis.RedisUtil;
-import alipay.manage.bean.*;
+import alipay.manage.bean.UserFund;
+import alipay.manage.bean.UserInfo;
+import alipay.manage.bean.UserInfoExample;
+import alipay.manage.bean.UserRate;
 import alipay.manage.mapper.FileListMapper;
 import alipay.manage.mapper.UserInfoMapper;
+import alipay.manage.mapper.UserRateMapper;
 import alipay.manage.service.MediumService;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
@@ -20,20 +24,19 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import alipay.manage.service.UserInfoService;
+import otc.bean.alipay.FileList;
+import otc.bean.alipay.Medium;
 import otc.common.RedisConstant;
 import otc.result.Result;
 
 @Component
 public class UserInfoServiceImpl implements UserInfoService{
 	static final String QR_CODE = "QR:CODE";
-	@Autowired
-	UserInfoMapper userInfoMapper;
-	@Autowired
-	RedisUtil redisUtil;
-	@Autowired
-	MediumService mediumService;
-	@Autowired
-	FileListMapper fileListMapper;
+	@Autowired UserInfoMapper userInfoMapper;
+	@Autowired RedisUtil redisUtil;
+	@Autowired MediumService mediumService;
+	@Autowired FileListMapper fileListMapper;
+	@Autowired UserRateMapper userRateDao;
 	@Override
 	public List<UserInfo> findSunAccount(UserInfo user) {
 		return null;
@@ -159,5 +162,16 @@ public class UserInfoServiceImpl implements UserInfoService{
 			criteria.andUserNameEqualTo(userName);
 		List<UserInfo> selectByExample = userInfoMapper.selectByExample(example);
 		return selectByExample;
+	}
+
+	@Override
+	public List<UserFund> findUserByAmount(BigDecimal amount) {
+		return null;
+	}
+
+	@Override
+	public UserRate findUserRate(String userId, String productAlipayScan) {
+		UserRate rate = userRateDao.findUserRate(userId,productAlipayScan);
+		return rate;
 	}
 }

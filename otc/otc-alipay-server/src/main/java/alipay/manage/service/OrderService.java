@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import alipay.manage.bean.DealOrder;
+import alipay.manage.bean.DealOrderApp;
 import alipay.manage.bean.Recharge;
 import alipay.manage.bean.RunOrder;
 import alipay.manage.bean.Withdraw;
@@ -82,5 +83,12 @@ public interface OrderService {
 	 * @param param
 	 */
 	public Map<String, Object> createRechangeOrder(Map<String, String> param);
+
+	/**
+	 * <p>根据商户订单生成码商交易订单</p>
+	 * @param orderApp
+	 * @return
+	 */
+	boolean addOrder(DealOrder orderApp);
 
 }

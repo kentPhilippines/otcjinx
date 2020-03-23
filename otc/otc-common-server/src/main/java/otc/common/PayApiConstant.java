@@ -35,5 +35,9 @@ public class PayApiConstant {
 		public static final String FILE_API = "/file-api";//文件服务api
 	}
 	
-	
+	public class Queue{
+		public static final String QUEUE_API = "/queue-api";
+		public static final String FIND_QR = "/find-qr";
+		
+	}
 }

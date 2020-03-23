@@ -43,9 +43,16 @@ public class UserInfo implements Serializable {
     private Integer timesTotal;
 
     private String witip; //代付ip
+    private String queueList;//供应队列code  以逗号分隔
     
-    
-    private String inviteCode;//邀请码，注册专用
+    public String getQueueList() {
+		return queueList;
+	}
+	public void setQueueList(String queueList) {
+		this.queueList = queueList;
+	}
+
+	private String inviteCode;//邀请码，注册专用
     private String newPassword;//新的登录密码【修改密码专用】
     private String newPayPassword;//新的支付密码【修改支付密码专用】
     private Integer toDayOrderCount;//

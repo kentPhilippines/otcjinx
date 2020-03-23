@@ -1,8 +1,9 @@
 package alipay.manage.service;
 
-import alipay.manage.bean.Medium;
 
 import java.util.List;
+
+import otc.bean.alipay.Medium;
 
 public interface MediumService {
     /**
@@ -84,4 +85,19 @@ public interface MediumService {
     boolean selectOpenAlipayAccount(String accountId);
 
     Medium findMediumByMediumNumber(String mediumNumber);
+
+    /**
+     * <p>根据媒介类型查询所有可用的媒介</p>
+     * @param mediumType			媒介类型
+     * @return
+     */
+	List<Medium> findMediumByType(String mediumType);
+
+	/**
+	 * <p>根据媒介类型和媒介供应code 查询所有的可用的媒介</p>
+	 * @param mediumType				媒介类型
+	 * @param code						供应code
+	 * @return
+	 */
+	List<Medium> findMediumByType(String mediumType, String code);
 }
