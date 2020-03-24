@@ -51,7 +51,8 @@ public interface UserInfoMapper {
     UserInfo findUserByUserId( @Param("userId")String userId);
 
 
-    UserRate selectUserRateByUserId(String userId, String passCode);
+    @Select("select * from alipay_user_rate where userId = #{userId} and payTypr = #{passCode} and switchs = 1")
+    UserRate selectUserRateByUserId(@Param("userId")String userId, @Param("passCode")String passCode);
 
 
     List<UserInfo> getLoginAccountInfo(String userId);

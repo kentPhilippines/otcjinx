@@ -31,7 +31,7 @@ public class CheckUtils {
     @Autowired
     AccountApiService accountApiServiceImpl;
 
-    public Result requestVerify(HttpServletRequest request, Map<String, Object> paramMap) {
+    public Result requestVerify(HttpServletRequest request, Map<String, Object> paramMap, String key) {
         if (!checkParam(paramMap))
             return Result.buildFailMessage("必传参数为空");
         log.info("【访问URL：" + request.getRequestURL() + "】");
@@ -40,7 +40,7 @@ public class CheckUtils {
         if (!flag)
             return Result.buildFailMessage("字符编码错误");
         log.info("--------------【用户开始MD5验签】----------------");
-        boolean vSign = verifySign(paramMap);
+        boolean vSign = verifySign(paramMap,key);
         if (!vSign)
             return Result.buildFailMessage("签名验证失败");
         return Result.buildSuccess();
@@ -120,7 +120,7 @@ public class CheckUtils {
     }
 
 
-    public Result requestWithdrawalVerify(HttpServletRequest request, Map<String, Object> paramMap) {
+    public Result requestWithdrawalVerify(HttpServletRequest request, Map<String, Object> paramMap, String key) {
         if (!witcheckParam(paramMap))
             return Result.buildFailMessage("必传参数为空");
         log.info("【访问URL：" + request.getRequestURL() + "】");
@@ -129,7 +129,7 @@ public class CheckUtils {
         if (!flag)
             return Result.buildFailMessage("字符编码错误");
         log.info("--------------【用户开始MD5验签】----------------");
-        boolean vSign = verifySign(paramMap);
+        boolean vSign = verifySign(paramMap,key);
         if (!vSign)
             return Result.buildFailMessage("签名验证失败");
         return Result.buildSuccess();
@@ -139,12 +139,13 @@ public class CheckUtils {
      * <p>验签方法调用</p>
      *
      * @param map 签名参数
+     * @param key 
      * @return 验签是否通过
      */
-    public boolean verifySign(Map<String, Object> map) {
-        Map<String, Object> signMap = Maps.newHashMap();
-        String paramStr = MapUtil.createParam(signMap);
-        String md5 = RSAUtils.md5(paramStr);
+    public boolean verifySign(Map<String, Object> map, String key) {
+        String paramStr = MapUtil.createParam(map);
+        log.info("【验证签名前的参数为："+paramStr.toString()+"】");
+        String md5 = RSAUtils.md5(paramStr+key);
         Object oldmd5 = map.get("sign");
         if (!oldmd5.toString().equals(md5)) {
             log.info("【当前用户验签不通过】");

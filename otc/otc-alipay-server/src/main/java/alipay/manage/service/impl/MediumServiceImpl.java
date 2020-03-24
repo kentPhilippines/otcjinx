@@ -167,7 +167,7 @@ public class MediumServiceImpl implements MediumService {
 
 	@Override
 	public List<Medium> findMediumByType(String mediumType) {
-		return mediumDao.findMediumByType(mediumType);
+		return mediumDao.findMediumByType1(mediumType);
 	}
 
 	@Override

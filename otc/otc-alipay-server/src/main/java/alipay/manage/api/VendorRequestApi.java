@@ -69,16 +69,16 @@ public class VendorRequestApi {
         log.info("--------------【用户开始RSA解密】----------------");
         String rsaSign = request.getParameter("cipherText");//商户传过来的密文
         Map<String, Object> paramMap = RSAUtils.getDecodePrivateKey(rsaSign, userInfo.getPrivateKey());
-        log.info("-------------【商户RSA解密的参数】：" + paramMap == null ? "解密参数为空" : paramMap.toString());
+        log.info("【商户RSA解密的参数：" + paramMap.toString()+"】 " );
         //验证结果
-        Result result = checkUtils.requestVerify(request, paramMap);
+        Result result = checkUtils.requestVerify(request, paramMap,userInfo.getPayPasword());
         if (result.isSuccess())
             log.info("【requestVerif】方法验证通过");
         else
             return result;
         //验证商户是否配置费率
         Integer remitOrderState = userInfo.getReceiveOrderState();// 1 接单 2 暂停接单
-        if (Common.Order.DEAL_OFF.equals(remitOrderState)) {
+        if (Common.Order.DEAL_OPEN.equals(remitOrderState)) {
             log.info("【当前账户交易权限未开通】");
             return Result.buildFailMessage("当前账户交易权限未开通");
         }
@@ -104,7 +104,7 @@ public class VendorRequestApi {
             }
         }
         log.info("--------------【验证单笔交易金额】----------------");
-        Double orderAmount = (Double) paramMap.get("amount");//商户请求单笔金额
+        Double orderAmount =Double.valueOf(paramMap.get("amount").toString()) ;//商户请求单笔金额
         if(StringUtils.isNotEmpty(userInfo.getMinAmount()) && StringUtils.isNotEmpty(userInfo.getMaxAmount())){
             if(orderAmount <= Double.parseDouble(userInfo.getMinAmount()) || orderAmount >= Double.parseDouble(userInfo.getMaxAmount())){
                 return Result.buildFailResult("单笔交易金额不在区间范围内");
@@ -142,10 +142,10 @@ public class VendorRequestApi {
         log.info("--------------【用户开始RSA解密】----------------");
         String rsaSign = request.getParameter("cipherText");//商户传过来的密文
         Map<String, Object> paramMap = RSAUtils.getDecodePrivateKey(rsaSign, userInfo.getPrivateKey());
-        log.info("-------------【商户RSA解密的参数】：" + paramMap == null ? "解密参数为空" : paramMap.toString());
+        log.info("【商户RSA解密的参数：" + paramMap.toString()+"】 " );
         if (CollUtil.isEmpty(paramMap))
             return Result.buildFailMessage("RSA解密参数为空");
-        Result result = checkUtils.requestWithdrawalVerify(request, paramMap);
+        Result result = checkUtils.requestWithdrawalVerify(request, paramMap,userInfo.getPayPasword());
         if (result.isSuccess())
             log.info("【requestVerif】方法验证通过");
         else

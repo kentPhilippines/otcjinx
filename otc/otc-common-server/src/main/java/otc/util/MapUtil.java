@@ -11,6 +11,7 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 
 import org.slf4j.Logger;
@@ -106,7 +107,7 @@ public class MapUtil {
 			Arrays.sort(key);
 			StringBuffer res = new StringBuffer(128);
 			for (int i = 0; i < key.length; i++) 
-				if(StrUtil.isNotBlank(map.get(key[i]).toString()))
+				if(ObjectUtil.isNotNull(map.get(key[i])) && !"sign".equals(key[i]))
 					res.append(key[i] + "=" + map.get(key[i]) + "&");
 			String rStr = res.substring(0, res.length() - 1);
 			return rStr;

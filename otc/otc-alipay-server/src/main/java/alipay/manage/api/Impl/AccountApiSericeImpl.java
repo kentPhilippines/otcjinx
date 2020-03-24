@@ -112,7 +112,7 @@ public class AccountApiSericeImpl implements AccountApiService {
 	}
 	@Override
 	public UserInfo findUserInfo(String userId) {
-		return null;
+		return userInfoDao.findUserByUserId(userId);
 	}
 	@Override
 	public boolean updateIsAgent(String accountId) {

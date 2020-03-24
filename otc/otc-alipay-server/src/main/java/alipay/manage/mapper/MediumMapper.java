@@ -45,5 +45,5 @@ public interface MediumMapper {
     @Select("select  *  from alipay_medium where code = #{mediumType} and attr = #{code} and isDeal = 2 and status = 1")
 	List<Medium> findMediumByType(@Param("mediumType")String mediumType,@Param("code") String code);
     @Select("select  *  from alipay_medium where code = #{mediumType}  and isDeal = 2 and status = 1")
-	List<Medium> findMediumByType(@Param("mediumType")String mediumType);
+	List<Medium> findMediumByType1(@Param("mediumType")String mediumType);
 }
