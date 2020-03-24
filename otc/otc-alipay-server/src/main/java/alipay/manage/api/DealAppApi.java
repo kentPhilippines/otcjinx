@@ -61,7 +61,8 @@ public class DealAppApi {
 		String clientIP = HttpUtil.getClientIP(request);
 		if(StrUtil.isNotBlank(clientIP))
 			mapToBean.setIp(clientIP);
-		String passcode = mapToBean.getPasscode(); //通道支付编码
+		log.info("【当前请求交易实体类："+mapToBean.toString()+"】");
+		String passcode = mapToBean.getPassCode(); //通道支付编码
 		if(StrUtil.isBlank(passcode))
 			return Result.buildFailMessage("通道编码为空");
 		log.info("【当前通道编码："+passcode+"】");
@@ -133,12 +134,12 @@ public class DealAppApi {
 
 	DealOrderApp createDealAppOrder(DealBean dealBean){
 		DealOrderApp dealApp = new DealOrderApp ();
-		dealApp.setAppOrderId(dealBean.getOrderid());
+		dealApp.setAppOrderId(dealBean.getOrderId());
 		dealApp.setOrderId(Number.getAppOreder()); 
-		dealApp.setNotify(dealBean.getNotifyurl());
+		dealApp.setNotify(dealBean.getNotifyUrl());
 		dealApp.setOrderAmount(new BigDecimal(dealBean.getAmount()));
-		String userId = dealBean.getUserid();
-		String passcode = dealBean.getPasscode();
+		String userId = dealBean.getAppId();
+		String passcode = dealBean.getPassCode();
 		UserRate userRate = accountApiServiceImpl.findUserRateByUserId(userId, passcode);
 		dealApp.setFeeId(userRate.getId());
 		dealApp.setOrderAccount(userId);

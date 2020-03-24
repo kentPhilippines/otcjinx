@@ -11,6 +11,7 @@ import alipay.manage.bean.UserInfo;
 import alipay.manage.bean.UserInfoExample;
 import alipay.manage.bean.UserRate;
 import alipay.manage.mapper.FileListMapper;
+import alipay.manage.mapper.UserFundMapper;
 import alipay.manage.mapper.UserInfoMapper;
 import alipay.manage.mapper.UserRateMapper;
 import alipay.manage.service.MediumService;
@@ -37,6 +38,7 @@ public class UserInfoServiceImpl implements UserInfoService{
 	@Autowired MediumService mediumService;
 	@Autowired FileListMapper fileListMapper;
 	@Autowired UserRateMapper userRateDao;
+	@Autowired UserFundMapper userFundDao;
 	@Override
 	public List<UserInfo> findSunAccount(UserInfo user) {
 		return null;
@@ -71,9 +73,7 @@ public class UserInfoServiceImpl implements UserInfoService{
 
 	@Override
 	public UserInfo findUserInfoByUserId(String userId) {
-		System.out.println("获取用户id " + userId);
-		UserInfo selectByAccountId = userInfoMapper.selectByUserId(userId);
-		System.out.println("获取用户信息"+selectByAccountId);
+		UserInfo selectByAccountId = userInfoMapper.findUserByUserId(userId);
 		return selectByAccountId;
 	}
 
@@ -166,7 +166,7 @@ public class UserInfoServiceImpl implements UserInfoService{
 
 	@Override
 	public List<UserFund> findUserByAmount(BigDecimal amount) {
-		return null;
+		return userFundDao.findUserByAmount(amount);
 	}
 
 	@Override

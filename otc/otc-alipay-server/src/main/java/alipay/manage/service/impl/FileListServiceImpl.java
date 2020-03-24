@@ -156,7 +156,7 @@ public class FileListServiceImpl implements FileListService {
 
     @Override
     public List<FileList> findQrByAmount(BigDecimal amount) {
-        return null;
+        return fileListMapper.findQrByAmount(amount);
     }
 
     @Override

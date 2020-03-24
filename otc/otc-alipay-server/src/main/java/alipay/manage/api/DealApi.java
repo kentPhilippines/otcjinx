@@ -23,6 +23,7 @@ import alipay.manage.service.OrderService;
 import alipay.manage.service.UserInfoService;
 import alipay.manage.util.QrUtil;
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import otc.api.alipay.Common;
 import otc.bean.alipay.FileList;
@@ -54,12 +55,14 @@ public class DealApi {
 		return "pay";
 	}
 	private boolean addOrder(DealOrderApp orderApp, HttpServletRequest request) {
-		if(!orderApp.getOrderStatus().equals(Common.Order.ORDER_STATUS_DISPOSE))
+		if(!orderApp.getOrderStatus().toString().equals(Common.Order.ORDER_STATUS_DISPOSE.toString()))
 			return false;
 		DealOrder order = new DealOrder();
 		String orderAccount = orderApp.getOrderAccount();//交易商户号
 		UserInfo accountInfo = userInfoServiceImpl.findUserInfoByUserId(orderAccount);//这里有为商户配置的 供应队列属性
-		String[] split = accountInfo.getQueueList().split(",");//队列供应标识数组
+		String[] split = {};
+		if(StrUtil.isNotBlank(accountInfo.getQueueList()))
+			split  = accountInfo.getQueueList().split(",");//队列供应标识数组
 		order.setAssociatedId(orderApp.getOrderId());
 		order.setDealDescribe("正常交易订单");
 		order.setActualAmount(orderApp.getOrderAmount());
@@ -73,6 +76,7 @@ public class DealApi {
 		try {
 			findQr = qrUtil.findQr(orderApp.getOrderId(), orderApp.getOrderAmount(), split);
 		} catch (ParseException e) {
+			log.info("【选码出现异常】");
 		}
 		order.setOrderQrUser(findQr.getFileholder());
 		order.setOrderQr(findQr.getFileId());

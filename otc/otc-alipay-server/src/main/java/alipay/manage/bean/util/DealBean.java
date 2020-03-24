@@ -18,17 +18,17 @@ public class DealBean {
 		subject 	否	否	124	商品名称	
 		applydate	是	是	-	请求时间，时间格式：yyyyMMddHHmmss	【时间格式错误会产生异常】
 	 */
-	private String appid;
-	private String orderid;
-	private String notifyurl;
+	private String appId;
+	private String orderId;
+	private String notifyUrl;
 	private String pageUrl;
 	private String amount;
-	private String passcode;
+	private String passCode;
 	private String rsasign;
-	private String userid;
+	private String userId;
 	private String bankCode;
 	private String subject;
-	private String applydate;
+	private String applyDate;
 	
 	
 	private String ip;
@@ -38,24 +38,6 @@ public class DealBean {
 	}
 	public void setIp(String ip) {
 		this.ip = ip;
-	}
-	public String getAppid() {
-		return appid;
-	}
-	public void setAppid(String appid) {
-		this.appid = appid;
-	}
-	public String getOrderid() {
-		return orderid;
-	}
-	public void setOrderid(String orderid) {
-		this.orderid = orderid;
-	}
-	public String getNotifyurl() {
-		return notifyurl;
-	}
-	public void setNotifyurl(String notifyurl) {
-		this.notifyurl = notifyurl;
 	}
 	public String getPageUrl() {
 		return pageUrl;
@@ -69,23 +51,11 @@ public class DealBean {
 	public void setAmount(String amount) {
 		this.amount = amount;
 	}
-	public String getPasscode() {
-		return passcode;
-	}
-	public void setPasscode(String passcode) {
-		this.passcode = passcode;
-	}
 	public String getRsasign() {
 		return rsasign;
 	}
 	public void setRsasign(String rsasign) {
 		this.rsasign = rsasign;
-	}
-	public String getUserid() {
-		return userid;
-	}
-	public void setUserid(String userid) {
-		this.userid = userid;
 	}
 	public String getBankCode() {
 		return bankCode;
@@ -99,16 +69,46 @@ public class DealBean {
 	public void setSubject(String subject) {
 		this.subject = subject;
 	}
-	public String getApplydate() {
-		return applydate;
+	public String getAppId() {
+		return appId;
 	}
-	public void setApplydate(String applydate) {
-		this.applydate = applydate;
+	public void setAppId(String appId) {
+		this.appId = appId;
+	}
+	public String getOrderId() {
+		return orderId;
+	}
+	public void setOrderId(String orderId) {
+		this.orderId = orderId;
+	}
+	public String getNotifyUrl() {
+		return notifyUrl;
+	}
+	public void setNotifyUrl(String notifyUrl) {
+		this.notifyUrl = notifyUrl;
+	}
+	public String getPassCode() {
+		return passCode;
+	}
+	public void setPassCode(String passCode) {
+		this.passCode = passCode;
+	}
+	public String getUserId() {
+		return userId;
+	}
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+	public String getApplyDate() {
+		return applyDate;
+	}
+	public void setApplyDate(String applyDate) {
+		this.applyDate = applyDate;
 	}
 	@Override
 	public String toString() {
-		return "DealBean [appid=" + appid + ", orderid=" + orderid + ", notifyurl=" + notifyurl + ", pageUrl=" + pageUrl
-				+ ", amount=" + amount + ", passcode=" + passcode + ", rsasign=" + rsasign + ", userid=" + userid
-				+ ", bankCode=" + bankCode + ", subject=" + subject + ", applydate=" + applydate + "]";
+		return "DealBean [appId=" + appId + ", orderId=" + orderId + ", notifyUrl=" + notifyUrl + ", pageUrl=" + pageUrl
+				+ ", amount=" + amount + ", passCode=" + passCode + ", rsasign=" + rsasign + ", userId=" + userId
+				+ ", bankCode=" + bankCode + ", subject=" + subject + ", applyDate=" + applyDate + ", ip=" + ip + "]";
 	}
 }

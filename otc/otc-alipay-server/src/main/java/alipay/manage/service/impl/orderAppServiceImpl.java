@@ -1,19 +1,24 @@
 package alipay.manage.service.impl;
 
 import alipay.manage.bean.DealOrderApp;
+import alipay.manage.mapper.DealOrderAppMapper;
 import alipay.manage.service.OrderAppService;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class orderAppServiceImpl implements OrderAppService {
+	@Autowired DealOrderAppMapper dealOrderAppDao;
     @Override
     public boolean add(DealOrderApp dealApp) {
-        return false;
+    	int insertSelective = dealOrderAppDao.insertSelective(dealApp);
+        return insertSelective >0 && insertSelective < 2;
     }
 
 	@Override
 	public DealOrderApp findOrderByOrderId(String orderId) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return dealOrderAppDao.findOrderByOrderId(orderId);
 	}
 }

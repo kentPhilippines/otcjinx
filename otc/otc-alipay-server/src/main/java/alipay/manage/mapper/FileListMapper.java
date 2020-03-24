@@ -1,6 +1,8 @@
 package alipay.manage.mapper;
 
 import alipay.manage.bean.FileListExample;
+
+import java.math.BigDecimal;
 import java.util.List;
 
 import alipay.manage.bean.UserInfo;
@@ -47,4 +49,6 @@ public interface FileListMapper {
     FileList findConcealId(@Param("concealId")String mediumId);
 
     List<String> selectQrAmountList(String concealId);
+    @Select("select * from alipay_file_list")
+	List<FileList> findQrByAmount(BigDecimal amount);
 }

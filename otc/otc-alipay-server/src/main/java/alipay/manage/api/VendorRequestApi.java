@@ -78,7 +78,7 @@ public class VendorRequestApi {
             return result;
         //验证商户是否配置费率
         Integer remitOrderState = userInfo.getReceiveOrderState();// 1 接单 2 暂停接单
-        if (Common.Order.DEAL_OPEN.equals(remitOrderState)) {
+        if (Common.Order.DEAL_OFF.equals(remitOrderState)) {
             log.info("【当前账户交易权限未开通】");
             return Result.buildFailMessage("当前账户交易权限未开通");
         }

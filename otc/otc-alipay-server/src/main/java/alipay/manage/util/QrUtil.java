@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import otc.api.alipay.Common;
 import otc.bean.alipay.FileList;
+import otc.result.Result;
+
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -51,6 +53,7 @@ public class QrUtil {
 		 * qrLi.add(qc); } }
 		 */
 		// 根据金额获取符合条件的用户
+		List<String> queue = queueServiceClienFeignImpl.getQueue(code);
 		List<UserFund> userList = userInfoServiceImpl.findUserByAmount(amount);
 		List<FileList>  qcList = fileListServiceImpl.findQrByAmount(amount);
 		if (CollUtil.isEmpty(userList) || CollUtil.isEmpty(qcList))
@@ -59,8 +62,7 @@ public class QrUtil {
 				.toConcurrentMap(FileList::getConcealId, Function.identity(), (o1, o2) -> o1, ConcurrentHashMap::new));
 		ConcurrentHashMap<String, UserFund> usercollect = userList.stream().collect(Collectors.toConcurrentMap(
 				UserFund::getUserId, Function.identity(), (o1, o2) -> o1, ConcurrentHashMap::new));
-		Set set = (Set) queueServiceClienFeignImpl.getQueue(code);
-		for (Object obj : set) {
+		for (Object obj : queue) {
 			String alipayAccount = obj.toString();
 			if (StrUtil.isBlank(alipayAccount))
 				continue;
