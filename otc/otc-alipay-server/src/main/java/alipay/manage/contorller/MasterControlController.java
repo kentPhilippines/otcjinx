@@ -1,7 +1,6 @@
 package alipay.manage.contorller;
 
 import alipay.config.redis.RedisUtil;
-import alipay.manage.api.Feign.ConfigServiceClientFeign;
 import alipay.manage.bean.UserInfo;
 import alipay.manage.bean.util.OnlineVO;
 import alipay.manage.service.UserInfoService;
@@ -18,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import alipay.manage.bean.util.RegisterSetting;
+import otc.api.ConfigServiceClientFeign;
 import otc.bean.config.ConfigFile;
 import otc.common.RedisConstant;
 import otc.exception.user.UserException;
@@ -33,14 +33,10 @@ import static java.util.stream.Collectors.toList;
 @RequestMapping("/masterControl")
 public class MasterControlController {
    private static Logger log= LoggerFactory.getLogger(MasterControlController.class);
-	@Resource
-	ConfigServiceClientFeign configServiceClientFeignImpl;
-	@Autowired
-	SessionUtil sessionUtil;
-	@Autowired
-	RedisUtil redisUtil;
-	@Autowired
-	UserInfoService userInfoService;
+	@Resource ConfigServiceClientFeign configServiceClientFeignImpl;
+	@Autowired SessionUtil sessionUtil;
+	@Autowired RedisUtil redisUtil;
+	@Autowired UserInfoService userInfoService;
 	/**
 	 * <p>获取网站标题</p>
 	 * @return

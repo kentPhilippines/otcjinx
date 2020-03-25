@@ -1,7 +1,6 @@
 package alipay.manage.api;
 
 import alipay.config.redis.RedisUtil;
-import alipay.manage.api.Feign.FileServiceClienFeign;
 import alipay.manage.util.FtpImgUtil;
 import alipay.manage.util.StorageUtil;
 import cn.hutool.core.util.ObjectUtil;
@@ -20,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import otc.api.FileServiceClienFeign;
 import otc.result.Result;
 import sun.misc.BASE64Encoder;
 
@@ -32,8 +32,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import javax.imageio.ImageIO;
 
+@SuppressWarnings({ "unused", "restriction" })
 @Controller
 @RequestMapping("/storage")
 public class StorageApi {
@@ -41,8 +41,7 @@ public class StorageApi {
     @Autowired  StorageUtil storageUtil;
     @Autowired FileServiceClienFeign fileServiceClienFeignImpl;
     @Autowired RedisUtil redisUtil;
-    @SuppressWarnings("restriction")
-	@PostMapping("/uploadPic")
+    @PostMapping("/uploadPic")
     @ResponseBody
     public Result uploadPic(@RequestParam("file_data") MultipartFile[] files) throws IOException {
         log.info("上传图片");
@@ -51,29 +50,11 @@ public class StorageApi {
         }
         List<String> storageIds = new ArrayList<>();
         for (MultipartFile file : files) {
-        	InputStream inputStream = file.getInputStream(); 
-    		long size = file.getSize();
-    		String contentType = file.getContentType(); 
-    		String originalFilename = file.getOriginalFilename();
-    		 byte[] data = null;
-    		  log.info("【文件流："+inputStream+"】");
-    		  log.info("【文件长度："+size+"】");
-    		  log.info("【文件类型："+contentType+"】");
-    		  log.info("【文件名字："+originalFilename+"】");
-    		  data = new byte[inputStream.available()];
-    		  inputStream.read(data);
-    		  inputStream.close();
-    		BASE64Encoder encoder = new BASE64Encoder();
-    		String encode = encoder.encode(Objects.requireNonNull(data));
-    		redisUtil.set(originalFilename, encode);
-            String storageId = fileServiceClienFeignImpl.addFile(originalFilename) ;
-            log.info("storageId ::: " + storageId);
-            storageIds.add(storageId);
+        	String addFile = addFile(file);
+            storageIds.add(addFile);
         }
         return Result.buildSuccessResult(storageIds);
     }
-    
-    
     
     /**
 	 * <p>查看图片接口</p>
@@ -96,7 +77,30 @@ public class StorageApi {
     
     
     
-    
+	String addFile(MultipartFile file) {
+	    try {
+	    	InputStream inputStream = file.getInputStream(); 
+			long size = file.getSize();
+			String contentType = file.getContentType(); 
+			String originalFilename = file.getOriginalFilename();
+			byte[] data = null;
+			log.info("【文件流："+inputStream+"】");
+			log.info("【文件长度："+size+"】");
+			log.info("【文件类型："+contentType+"】");
+			log.info("【文件名字："+originalFilename+"】");
+			data = new byte[inputStream.available()];
+			inputStream.read(data);
+			inputStream.close();
+			BASE64Encoder encoder = new BASE64Encoder();
+			String encode = encoder.encode(Objects.requireNonNull(data));
+			redisUtil.set(originalFilename, encode);
+	        String storageId = fileServiceClienFeignImpl.addFile(originalFilename) ;
+	        log.info("storageId ::: " + storageId);
+	        return storageId;
+		    } catch (IOException e) {
+		    	return "失败";
+			}
+    }
     
     
 }
