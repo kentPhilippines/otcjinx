@@ -45,8 +45,14 @@ public class OrderServiceImpl implements OrderService{
 		return selectByExample;
 	}
 	@Override
-	public DealOrder getOrderByAssociatedId(String orderId) {
-		return null;
+	public List<DealOrder> getOrderByAssociatedId(String orderId) {
+		DealOrderExample example = new DealOrderExample();
+		DealOrderExample.Criteria criteria = example.createCriteria();
+		criteria.andAssociatedIdEqualTo(orderId);
+		List<DealOrder> selectByExample = dealOrderMapper.selectByExample(example);
+		if(CollUtil.isEmpty(selectByExample))
+			return null;
+		return selectByExample;
 	}
 
 	@Override
@@ -247,5 +253,34 @@ public class OrderServiceImpl implements OrderService{
 	public boolean addOrder(DealOrder orderApp) {
 		int insertSelective = dealOrderMapper.insertSelective(orderApp);
 		return insertSelective > 0 && insertSelective < 2;
+	}
+
+	@Override
+	public boolean updataOrderStatusByOrderId(String orderId, String status) {
+         log.info("=======【根据订单编号修改交易订单为成功,捕获订单编号:"+orderId+"】======");
+         DealOrder record=new DealOrder();
+         DealOrderExample example=new DealOrderExample();
+         DealOrderExample.Criteria criteriaDealOrder=example.createCriteria();
+         criteriaDealOrder.andOrderIdEqualTo(orderId);
+         record.setOrderStatus(status);
+         record.setCreateTime(null);
+		int updateByExampleSelective = dealOrderMapper.updateByExampleSelective(record, example);
+        boolean flag=updateByExampleSelective>0 && updateByExampleSelective<2;
+		return flag;
+	}
+
+	@Override
+	public boolean updataOrderisNotifyByOrderId(String orderId, String isNotify) {
+		log.info("=======【根据订单编号修改交易订单是否发送通知为YES,捕获订单编号:"+orderId+"】=======");
+		DealOrder record=new DealOrder();
+		DealOrderExample example=new DealOrderExample();
+		DealOrderExample.Criteria criteriaDealOrder=example.createCriteria();
+		criteriaDealOrder.andOrderIdEqualTo(orderId);
+		record.setIsNotify(isNotify);
+		record.setCreateTime(null);
+		int updateByExampleSelective = dealOrderMapper.updateByExampleSelective(record, example);
+		boolean flag=updateByExampleSelective>0 && updateByExampleSelective<2;
+		log.info("=======【修改订单通知状态完毕:修改结果为:"+flag+"】=======");
+		return flag;
 	}
 }

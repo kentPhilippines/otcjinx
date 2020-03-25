@@ -103,6 +103,11 @@ public class Result {
 	public Result() {
 		super();
 	}
+
+	public static Result buildSuccessMessageCode(String msg, Object o, int i) {
+			return new Result(true, msg, o,i);
+	}
+
 	public boolean isSuccess() {
 		return success;
 	}

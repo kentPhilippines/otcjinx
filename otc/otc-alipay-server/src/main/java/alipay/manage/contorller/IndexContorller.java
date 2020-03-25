@@ -1,6 +1,8 @@
 package alipay.manage.contorller;
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import alipay.config.annotion.LogMonitor;
 @Controller
 public class IndexContorller {
+	Logger log= LoggerFactory.getLogger(IndexContorller.class);
 	/**
 	 *	 首页
 	 * @return
@@ -229,16 +232,19 @@ public class IndexContorller {
 	public String lowerLevelWithdrawDetails() {
 		return "lower-level-withdraw-details";
 	}
+
 	@GetMapping("/pay")
 	public String pay() {
+		log.info("访问付款页面----------->");
 		return "pay";
 	}
+
 	@GetMapping("/payEr")
 	public String payEr() {
 		return "payEr";
 	}
 	@ResponseBody
-	@GetMapping("/paySuccessNotice")
+		@GetMapping("/paySuccessNotice")
 	public String paySuccessNotice() {
 		return "success";
 	}

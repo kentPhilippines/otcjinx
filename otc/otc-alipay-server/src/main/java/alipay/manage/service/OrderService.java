@@ -24,7 +24,7 @@ public interface OrderService {
 	 * @param orderId
 	 * @return
 	 */
-	DealOrder getOrderByAssociatedId(String orderId);
+	List<DealOrder> getOrderByAssociatedId(String orderId);
 
 	
 	
@@ -91,4 +91,7 @@ public interface OrderService {
 	 */
 	boolean addOrder(DealOrder orderApp);
 
+	boolean updataOrderStatusByOrderId(String orderId, String s);
+
+	boolean updataOrderisNotifyByOrderId(String orderId, String isNotify);
 }
