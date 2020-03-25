@@ -70,4 +70,13 @@ public interface AccountApiService {
 	 * @return
 	 */
 	UserFund findUserFundByUserId(String userId);
+
+	/**
+	 *	根据商户的userId修改状态
+	 * @param userId        商户账号
+	 * @param paramKey        字段名
+	 * @param paramValue    状态值
+	 * @return				返回结果
+	 */
+    Result auditMerchantStatusByUserId(String userId, String paramKey, String paramValue);
 }

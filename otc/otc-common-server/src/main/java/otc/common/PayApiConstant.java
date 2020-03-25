@@ -29,6 +29,7 @@ public class PayApiConstant {
 		public static final String FREEZE_AMOUNT = "freeze_amount";//账户冻结接口【账户资金冻结】
 		public static final String MEDIUM_API = "/medium";									//媒介处理公共接口
 		public static final String FIND_MEDIUM_IS_DEAL = "/find-medium-is-deal";			//查询当前可以交易的媒介
+		public static final String AUDIT_MERCHANT_STATUS = "/audit-merchant-status"; //修改商户的状态
 	}
 	
 	public class File{

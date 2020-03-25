@@ -202,4 +202,27 @@ public class CheckUtils {
             return (now.after(newBegin) && now.before(end)) || (now.after(begin) && now.before(newEnd));
         }
     }
+
+    /**
+     * 将字符串参数转成Map集合
+     * @param paramStr
+     * @return
+     */
+    public Map<String,Object> paramToMap(String paramStr){
+        //将字符串参数转成数据组
+        String[] params = paramStr.split("&");
+        Map<String, Object> resMap = Maps.newHashMap();
+        for (int i = 0; i < params.length; i++) {
+            String[] param = params[i].split("=");
+            if (param.length >= 2) {
+                String key = param[0];
+                String value = param[1];
+                for (int j = 2; j < param.length; j++) {
+                    value += "=" + param[j];
+                }
+                resMap.put(key, value);
+            }
+        }
+        return resMap;
+    }
 }
