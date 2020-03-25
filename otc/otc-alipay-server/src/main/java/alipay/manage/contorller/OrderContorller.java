@@ -109,26 +109,7 @@ public class OrderContorller {
 	@ResponseBody
 	@Transactional
 	public Result userConfirmToPaid(HttpServletRequest request,String orderId) {
-		UserInfo user = sessionUtil.getUser(request);
-		if (ObjectUtil.isNull(user)) {
-	        log.info("当前用户未登陆");
-	        return Result.buildFailMessage("当前用户未登陆");
-	    }
-		log.info("订单号收到款项,状态变更为成功："+orderId);
-		log.info("【码商手动置订单为成功："+user.getUserId()+"，订单号："+orderId+"】");
-		DealOrder order = orderServiceImpl.getOrderByAssociatedId(orderId);
-		Date createTime = order.getCreateTime();
-		String msg = "码商手动置交易订单为成功，当前交易订单为："+order.getOrderId()+"，当前订单金额为："+order.getDealAmount();
-		logUtil.addLog(request, msg, user.getUserId());
-		boolean expired = DateUtil.isExpired(createTime,DateField.SECOND,1200,new Date());
-		if(!expired)
-			return Result.buildFailResult("无权限，请联系客服人员操作");
-	//	Result updataOrder = orderUtil.updataOrder(orderId,Common.User.RUN_TYPE_ARTIFICIAL);//成功状态，人工操作
-	//	if(updataOrder.isSuccess()) {
-	//		return updataOrder;
-	//	}
-		return Result.buildFailResult("无权限，请联系客服人员操作");
-	}
+		return null; }
 	@GetMapping("/findMyReceiveOrderRecordByPage")
 	@ResponseBody
 	@Transactional
