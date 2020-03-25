@@ -2,7 +2,6 @@ package alipay.manage.api;
 
 import alipay.config.redis.RedisUtil;
 import alipay.manage.util.FtpImgUtil;
-import alipay.manage.util.StorageUtil;
 import cn.hutool.core.util.ObjectUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +37,6 @@ import java.util.Objects;
 @RequestMapping("/storage")
 public class StorageApi {
     Logger log = LoggerFactory.getLogger(StorageApi.class);
-    @Autowired  StorageUtil storageUtil;
     @Autowired FileServiceClienFeign fileServiceClienFeignImpl;
     @Autowired RedisUtil redisUtil;
     @PostMapping("/uploadPic")
