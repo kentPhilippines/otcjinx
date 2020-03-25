@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import cn.hutool.core.util.StrUtil;
 import otc.bean.alipay.FileList;
 import otc.bean.alipay.Medium;
 import otc.common.PayApiConstant;
@@ -41,7 +40,7 @@ public class QueueApi {
 		queueList.updataNode(mediumNumber, file, file.getAttr());
 	}
 	
-	@PostMapping(PayApiConstant.Queue.UPDATA_QR)
+	@PostMapping(PayApiConstant.Queue.ADD_QR)
 	public Result addQueue(Medium medium) {
 		boolean addNode = queueList.addNode(medium.getMediumHolder(), medium.getAttr());
 		if(addNode)

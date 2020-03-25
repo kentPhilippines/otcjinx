@@ -34,6 +34,8 @@ public class PayApiConstant {
 	
 	public class File{
 		public static final String FILE_API = "/file-api";//文件服务api
+		public static final String ADD_FILE = "/add-file";//新增文件
+		public static final String FIND_FILE = "/find-file";//新增文件
 	}
 	
 	public class Queue{

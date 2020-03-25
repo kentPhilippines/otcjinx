@@ -36,7 +36,6 @@ import otc.bean.alipay.FileList;
 import otc.common.SystemConstants;
 import otc.result.Result;
 import otc.util.RSAUtils;
-import alipay.manage.util.SendUtil;
 @Controller
 @RequestMapping("/pay")
 public class DealApi {

@@ -194,8 +194,6 @@ public class PaymentCodeContorller {
         if (ObjectUtil.isNull(user))
             throw new UserException("未获取到登录用户",null);
         medium.setQrcodeId(user.getUserId());
-        if (queueQrcodeUtil.getList().contains(medium.getMediumNumber()))
-            return Result.buildFailResult("当前收款媒介正在接单排队，禁止操作");
         boolean flag = mediumServicel.addMedium(medium);
      /*
         if (!redisUtil.hasKey(medium.getMediumNumber() + RedisConstant.User.QUEUEQRNODE)) {

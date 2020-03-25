@@ -23,27 +23,25 @@ import java.util.List;
 @Service
 public class MediumServiceImpl implements MediumService {
     Logger log = LoggerFactory.getLogger(MediumServiceImpl.class);
-    @Resource
-    MediumMapper mediumDao;
-    @Autowired
-    UserInfoMapper userInfoMapper;
-    @Autowired
-    CorrelationService correlationService;
-    @Autowired
-    RedisUtil redisUtil;
+    @Resource  MediumMapper mediumDao;
+    @Autowired UserInfoMapper userInfoMapper;
+    @Autowired CorrelationService correlationService;
+    @Autowired RedisUtil redisUtil;
     @Override
     public boolean addMedium(Medium medium) {
         MediumExample example =  new MediumExample();
         MediumExample.Criteria criteria = example.createCriteria();
         if(StrUtil.isNotBlank(medium.getMediumNumber()))
             criteria.andMediumNumberEqualTo(medium.getMediumNumber());
-        criteria.andIsDealEqualTo(Common.Order.QR_IS_DEAL_ON);
+        criteria.andIsDealEqualTo(Common.Medium.QR_IS_DEAL_ON);
         if(CollUtil.isNotEmpty(mediumDao.selectByExample(example)))
             return false;
         String medium2 = Number.getMedium();
         medium.setMediumId(medium2);
-        medium.setIsDeal(Common.Order.QR_IS_DEAL_ON);
+        medium.setIsDeal(Common.Medium.QR_IS_DEAL_ON);
         medium.setStatus(Integer.valueOf(Common.STATUS_IS_NOT_OK));
+        String agentId = correlationService.findAgent(medium.getQrcodeId());
+        medium.setAttr(agentId);//顶代标识
         int insertSelective =mediumDao.insertSelective(medium);
         Medium medium1 = mediumDao.findMediumBy(medium2);
         UserInfo user = userInfoMapper.findUserByUserId(medium1.getQrcodeId());
@@ -69,7 +67,7 @@ public class MediumServiceImpl implements MediumService {
             criteria.andMediumPhoneEqualTo(medium.getMediumPhone());
         if(StrUtil.isNotBlank(medium.getQrcodeId()))
             criteria.andQrcodeIdEqualTo(medium.getQrcodeId());
-        criteria.andIsDealEqualTo(Common.Order.QR_IS_DEAL_ON);
+        criteria.andIsDealEqualTo(Common.Medium.QR_IS_DEAL_ON);
         List<Medium> selectByExample = mediumDao.selectByExample(example);
         return selectByExample;
     }
@@ -79,7 +77,7 @@ public class MediumServiceImpl implements MediumService {
         MediumExample example =  new MediumExample();
         MediumExample.Criteria criteria = example.createCriteria();
         criteria.andMediumIdEqualTo(mediumId);
-        criteria.andIsDealEqualTo(Common.Order.QR_IS_DEAL_ON);
+        criteria.andIsDealEqualTo(Common.Medium.QR_IS_DEAL_ON);
         List<Medium> selectByExample = mediumDao.selectByExample(example);
         return CollUtil.getFirst(selectByExample);
     }
@@ -99,7 +97,7 @@ public class MediumServiceImpl implements MediumService {
         MediumExample example =  new MediumExample();
         MediumExample.Criteria criteria = example.createCriteria();
         criteria.andCodeEqualTo(mediumAlipay);
-        criteria.andIsDealEqualTo(Common.Order.QR_IS_DEAL_ON);
+        criteria.andIsDealEqualTo(Common.Medium.QR_IS_DEAL_ON);
         criteria.andStatusEqualTo(Integer.valueOf(Common.STATUS_IS_OK));
         List<Medium> selectByExample = mediumDao.selectByExample(example);
         return selectByExample;

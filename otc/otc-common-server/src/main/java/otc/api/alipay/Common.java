@@ -85,9 +85,6 @@ public class Common {
 		public static final Integer ORDER_STATUS_OVERTIME = 5;//订单超时
 
 
-		public static final String QR_IS_DEAL_OFF = "1";//二维码不可用
-
-		public static final String QR_IS_DEAL_ON = "2";//二维码可用
 		public static final String DATE_TYPE = "yyyyMMddHHmmss";
 	}
 
@@ -124,7 +121,10 @@ public class Common {
 	
 	
 	public static class Medium{
+		public static final String QR_IS_DEAL_OFF = "1";//二维码不可用
+		public static final String QR_IS_DEAL_ON = "2";//二维码可用
 		public static final String MEDIUM_ALIPAY = "alipay";
+		public static final String IMG_NUMBER = "IMG";//图片标签
 	}
 	
 }

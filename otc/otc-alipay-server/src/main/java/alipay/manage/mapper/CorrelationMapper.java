@@ -93,4 +93,8 @@ public interface CorrelationMapper {
 			+ " parentId  = #{id} AND distance > 0  " + 
 			"  ")
 	int findMyUserCount(@Param("id")Integer id);
+
+	@Select("select parentName from alipay_correlation WHERE childrenName = #{qrcodeId}  ORDER BY distance DESC LIMIT 1")
+	String findAgent(@Param("qrcodeId")String qrcodeId);
+
 }

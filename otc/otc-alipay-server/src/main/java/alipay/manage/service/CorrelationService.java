@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import org.apache.ibatis.annotations.Select;
+
 import alipay.manage.bean.Correlation;
 import alipay.manage.bean.CorrelationData;
 import alipay.manage.bean.util.UserCountBean;
@@ -89,5 +91,6 @@ public interface CorrelationService {
 	 */
 	int[][] findOnline(Integer id);
 
+	String findAgent(String qrcodeId);
 
 }

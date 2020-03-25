@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.locks.ReentrantLock;
 
+import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import otc.api.alipay.Common;
@@ -100,6 +101,12 @@ public class Number {
 		  return orderId;
 	  }
   }
+
+
+	public static String getImg() {
+		 String objectId = IdUtil.objectId();
+		return Common.Medium.IMG_NUMBER+objectId;	
+	}
   
     
     

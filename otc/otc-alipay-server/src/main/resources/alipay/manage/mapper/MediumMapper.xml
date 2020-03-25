@@ -8,6 +8,7 @@
     <result column="mediumHolder" property="mediumHolder" jdbcType="VARCHAR" />
     <result column="mediumPhone" property="mediumPhone" jdbcType="VARCHAR" />
     <result column="qrcodeId" property="qrcodeId" jdbcType="VARCHAR" />
+    <result column="attr" property="attr" jdbcType="VARCHAR" />
     <result column="code" property="code" jdbcType="CHAR" />
     <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
     <result column="submitTime" property="submitTime" jdbcType="TIMESTAMP" />
@@ -78,7 +79,7 @@
 
   <sql id="Base_Column_List" >
     id, mediumNumber, mediumId, mediumHolder,mediumNote, mediumPhone, qrcodeId, code, createTime,
-    submitTime, status, isDeal
+    submitTime, status, isDeal,attr
   </sql>
   <sql id="Blob_Column_List" >
     mediumNote
@@ -124,14 +125,10 @@
     <include refid="Blob_Column_List" />
     from alipay_medium
     where id = #{id,jdbcType=INTEGER}
-    and mediumNumber = #{mediumNumber,jdbcType=VARCHAR}
-    and mediumId = #{mediumId,jdbcType=VARCHAR}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="map" >
     delete from alipay_medium
     where id = #{id,jdbcType=INTEGER}
-      and mediumNumber = #{mediumNumber,jdbcType=VARCHAR}
-      and mediumId = #{mediumId,jdbcType=VARCHAR}
   </delete>
   <delete id="deleteByExample" parameterType="alipay.manage.bean.MediumExample" >
     delete from alipay_medium
@@ -143,11 +140,11 @@
     insert into alipay_medium (mediumNumber, mediumId, mediumHolder, 
       mediumPhone, qrcodeId, code, 
       createTime, submitTime, status, 
-      isDeal, mediumNote)
+      isDeal, mediumNote,attr)
     values (#{mediumNumber,jdbcType=VARCHAR}, #{mediumId,jdbcType=VARCHAR}, #{mediumHolder,jdbcType=VARCHAR}, 
       #{mediumPhone,jdbcType=VARCHAR}, #{qrcodeId,jdbcType=VARCHAR}, #{code,jdbcType=CHAR}, 
       #{createTime,jdbcType=TIMESTAMP}, #{submitTime,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, 
-      #{isDeal,jdbcType=CHAR}, #{mediumNote,jdbcType=LONGVARCHAR})
+      #{isDeal,jdbcType=CHAR}, #{mediumNote,jdbcType=LONGVARCHAR},#{attr})
   </insert>
   <insert id="insertSelective" parameterType="otc.bean.alipay.Medium" useGeneratedKeys="true" keyProperty="id" >
     insert into alipay_medium
@@ -185,6 +182,9 @@
       <if test="mediumNote != null" >
         mediumNote,
       </if>
+      <if test="attr != null" >
+        attr,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="mediumNumber != null" >
@@ -219,6 +219,9 @@
       </if>
       <if test="mediumNote != null" >
         #{mediumNote,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attr != null" >
+        #{attr},
       </if>
     </trim>
   </insert>
@@ -267,6 +270,9 @@
       <if test="record.mediumNote != null" >
         mediumNote = #{record.mediumNote,jdbcType=LONGVARCHAR},
       </if>
+      <if test="record.attr != null" >
+        mediumNote = #{record.attr},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -280,6 +286,7 @@
     mediumHolder = #{record.mediumHolder,jdbcType=VARCHAR},
     mediumPhone = #{record.mediumPhone,jdbcType=VARCHAR},
     qrcodeId = #{record.qrcodeId,jdbcType=VARCHAR},
+    attr = #{record.attr,jdbcType=VARCHAR},
     code = #{record.code,jdbcType=CHAR},
     createTime = #{record.createTime,jdbcType=TIMESTAMP},
     submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
@@ -298,6 +305,7 @@
     mediumHolder = #{record.mediumHolder,jdbcType=VARCHAR},
     mediumPhone = #{record.mediumPhone,jdbcType=VARCHAR},
     qrcodeId = #{record.qrcodeId,jdbcType=VARCHAR},
+    attr = #{record.attr,jdbcType=VARCHAR},
     code = #{record.code,jdbcType=CHAR},
     createTime = #{record.createTime,jdbcType=TIMESTAMP},
     submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
@@ -319,6 +327,9 @@
       <if test="qrcodeId != null" >
         qrcodeId = #{qrcodeId,jdbcType=VARCHAR},
       </if>
+      <if test="attr != null" >
+        qrcodeId = #{attr,jdbcType=VARCHAR},
+      </if>
       <if test="code != null" >
         code = #{code,jdbcType=CHAR},
       </if>
@@ -339,37 +350,35 @@
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
-    and mediumNumber = #{mediumNumber,jdbcType=VARCHAR}
-    and mediumId = #{mediumId,jdbcType=VARCHAR}
   </update>
   <update id="updateByPrimaryKeyWithBLOBs" parameterType="otc.bean.alipay.Medium" >
     update alipay_medium
     set mediumHolder = #{mediumHolder,jdbcType=VARCHAR},
       mediumPhone = #{mediumPhone,jdbcType=VARCHAR},
       qrcodeId = #{qrcodeId,jdbcType=VARCHAR},
+      attr = #{attr,jdbcType=VARCHAR},
       code = #{code,jdbcType=CHAR},
       createTime = #{createTime,jdbcType=TIMESTAMP},
       submitTime = #{submitTime,jdbcType=TIMESTAMP},
       status = #{status,jdbcType=INTEGER},
       isDeal = #{isDeal,jdbcType=CHAR},
-      mediumNote = #{mediumNote,jdbcType=LONGVARCHAR}
+      mediumNote = #{mediumNote,jdbcType=LONGVARCHAR},
+      mediumNumber = #{mediumNumber,jdbcType=VARCHAR},
     where id = #{id,jdbcType=INTEGER}
-      and mediumNumber = #{mediumNumber,jdbcType=VARCHAR}
-      and mediumId = #{mediumId,jdbcType=VARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="otc.bean.alipay.Medium" >
     update alipay_medium
     set mediumHolder = #{mediumHolder,jdbcType=VARCHAR},
       mediumPhone = #{mediumPhone,jdbcType=VARCHAR},
       qrcodeId = #{qrcodeId,jdbcType=VARCHAR},
+      attr = #{attr,jdbcType=VARCHAR},
       code = #{code,jdbcType=CHAR},
       createTime = #{createTime,jdbcType=TIMESTAMP},
       submitTime = #{submitTime,jdbcType=TIMESTAMP},
       status = #{status,jdbcType=INTEGER},
-      isDeal = #{isDeal,jdbcType=CHAR}
+      isDeal = #{isDeal,jdbcType=CHAR},
+      mediumNumber = #{mediumNumber,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
-      and mediumNumber = #{mediumNumber,jdbcType=VARCHAR}
-      and mediumId = #{mediumId,jdbcType=VARCHAR}
   </update>
 
   <select id="findIsMyMediumPage" parameterType="String" resultType="otc.bean.alipay.Medium">

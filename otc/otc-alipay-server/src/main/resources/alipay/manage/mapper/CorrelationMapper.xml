@@ -369,7 +369,7 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
     <insert id="insertCorrlationList" parameterType="List"   >
-       insert into product_correlation 
+       insert into alipay_correlation 
       	( 
       		parentId, 
       		parentName, 

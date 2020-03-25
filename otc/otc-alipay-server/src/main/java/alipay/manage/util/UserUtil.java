@@ -38,12 +38,12 @@ public class UserUtil {
 	    		myType = MEMBER;
 	    	if(ObjectUtil.isNull(user4)) {
 	    		parentId = user3.getUserId();
-	    		parentName = user3.getUserName();
+	    		parentName = user3.getUserId();
 	    	}else {
 	    		parentId = user4.getUserId();
 	    		parentName = user4.getUserName();
 	    	};
-	    	boolean openAccount = correlationServiceImpl.openAccount(user3.getUserId(), user3.getUserName(), myType, parentId , parentName);
+	    	boolean openAccount = correlationServiceImpl.openAccount(user3.getUserId(),user3.getUserId(), myType, parentId , parentName);
 	    	if(openAccount)
 	    		return Result.buildSuccessResult();
 	    	return Result.buildFail();

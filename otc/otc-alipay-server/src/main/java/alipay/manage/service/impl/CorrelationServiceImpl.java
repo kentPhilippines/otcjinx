@@ -167,4 +167,9 @@ public class CorrelationServiceImpl  implements CorrelationService {
 		a[2][0] = count;
 		return a;
 	}
+
+	@Override
+	public String findAgent(String qrcodeId) {
+		return correlationDao.findAgent(qrcodeId);
+	}
 }
