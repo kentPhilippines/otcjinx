@@ -23,7 +23,34 @@ public class FileList {
     private String retain1;
     private String retain2;
     private String fileNote;						//备注
-    public Integer getId() {
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    private String phone;							//二维码手机号
+    private String attr;							//媒介顶代code
+    public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	public String getAttr() {
+		return attr;
+	}
+
+	public void setAttr(String attr) {
+		this.attr = attr;
+	}
+
+	public Integer getId() {
         return id;
     }
 

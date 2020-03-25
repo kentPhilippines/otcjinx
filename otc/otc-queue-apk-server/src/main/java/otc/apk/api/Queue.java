@@ -66,21 +66,6 @@ public class Queue {
         return zRange;
     }
     /**
-     * <p>获取队列尾列下标</p>
-     * @return
-     */
-    public Integer getRear() {
-        return Double.valueOf(redisUtil.zSize(REDISKEY_QUEUE) - 1).intValue();
-    }
-    /**
-     * <p>获取index所对应的元素，这种随机访问队列相对于普通队列的最重要的作用</p>
-     * @param index 需要访问的元素序号（从队首到队尾的序号，队首序号为0）
-     * @return index所对应的元素，index超出队列的长度则返回null
-     */
-    public Object get(int index) {
-        return CollUtil.getFirst(redisUtil.zRange(REDISKEY_QUEUE, index, index++));
-    }
-    /**
      * <p>出列</p>
      *
      * @return K
@@ -102,19 +87,14 @@ public class Queue {
             return false;
         return true;
     }
-    private void clear() {
-        redisUtil.del(REDISKEY_QUEUE);
-    }
-    private boolean isEmpty() {
-        return redisUtil.hasKey(REDISKEY_QUEUE);
-    }
     /**
      * <p>删除队列元素</p>
      * @param alipayAccount
+     * @param code 
      * @return
      */
-    public boolean deleteNode(Object alipayAccount) {
-        return redisUtil.zRemove(REDISKEY_QUEUE, alipayAccount) > 0;
+    public boolean deleteNode(Object alipayAccount, String code) {
+        return redisUtil.zRemove(REDISKEY_QUEUE+code, alipayAccount) > 0;
     }
     /**
      * <p>更新队列</p>
@@ -123,13 +103,13 @@ public class Queue {
      * @return
      */
     public boolean updataNode(Object alipayAccount, FileList qr,String code) {
-        if (deleteNode(alipayAccount))
+        if (deleteNode(alipayAccount,code))
             if (addNode(alipayAccount,qr,code))
                 return true;
         return false;
     }
     public boolean updataNode(Object alipayAccount,String code) {
-        if (deleteNode(alipayAccount))
+        if (deleteNode(alipayAccount,code))
             if (addNode(alipayAccount,code))
                 return true;
         return false;

@@ -37,7 +37,9 @@ public class PayApiConstant {
 	
 	public class Queue{
 		public static final String QUEUE_API = "/queue-api";
-		public static final String FIND_QR = "/find-qr";
+		public static final String FIND_QR = "/find-queue-qr";
+		public static final String UPDATA_QR = "/updata-queue-qr";
+		public static final String ADD_QR = "/add-queue-qr";
 		
 	}
 }

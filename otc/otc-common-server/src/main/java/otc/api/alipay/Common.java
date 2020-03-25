@@ -88,6 +88,7 @@ public class Common {
 		public static final String QR_IS_DEAL_OFF = "1";//二维码不可用
 
 		public static final String QR_IS_DEAL_ON = "2";//二维码可用
+		public static final String DATE_TYPE = "yyyyMMddHHmmss";
 	}
 
 	public static class Deals{

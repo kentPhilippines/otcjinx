@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import cn.hutool.core.util.StrUtil;
+import otc.bean.alipay.FileList;
+import otc.bean.alipay.Medium;
 import otc.common.PayApiConstant;
 import otc.result.Result;
 
@@ -32,4 +34,19 @@ public class QueueApi {
 			log.info("【队列值为："+obj+"】");
 		return array;
 	}
+	
+	@PostMapping(PayApiConstant.Queue.UPDATA_QR)
+	public void updata(String mediumNumber , FileList file) {
+		log.info("【远程调用队列处理方法-更改队列顺序,当前队列标志："+file.getAttr()+"】");
+		queueList.updataNode(mediumNumber, file, file.getAttr());
+	}
+	
+	@PostMapping(PayApiConstant.Queue.UPDATA_QR)
+	public Result addQueue(Medium medium) {
+		boolean addNode = queueList.addNode(medium.getMediumHolder(), medium.getAttr());
+		if(addNode)
+			return Result.buildSuccess();
+		return Result.buildFail();
+	} 
+	
 }
