@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import alipay.manage.api.Feign.QueueServiceClienFeign;
 import alipay.manage.bean.DealOrder;
 import alipay.manage.bean.DealOrderApp;
 import alipay.manage.bean.UserInfo;
@@ -37,7 +36,7 @@ import otc.bean.alipay.FileList;
 import otc.common.SystemConstants;
 import otc.result.Result;
 import otc.util.RSAUtils;
-
+import alipay.manage.util.SendUtil;
 @Controller
 @RequestMapping("/pay")
 public class DealApi {

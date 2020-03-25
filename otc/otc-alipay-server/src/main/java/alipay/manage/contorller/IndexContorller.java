@@ -47,6 +47,7 @@ public class IndexContorller {
 	@LogMonitor(required = true)
 	@GetMapping("/my-home-page")
 	public String myHomePage() {
+		log.info("我的主页面****************");
 		return "my-home-page";
 	}
 

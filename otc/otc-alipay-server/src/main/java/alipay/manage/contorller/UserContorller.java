@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import alipay.manage.api.AccountApiService;
 import alipay.manage.bean.BankList;
 import alipay.manage.bean.InviteCode;
-import alipay.manage.bean.UserFund;
 import alipay.manage.bean.UserInfo;
 import alipay.manage.service.BankListService;
 import alipay.manage.service.InviteCodeService;

@@ -27,4 +27,7 @@ public interface UserFundMapper {
     
     @Select("select * from alipay_user_fund where userType = 2 and accountBalance > #{amount}  ")
 	List<UserFund> findUserByAmount(BigDecimal amount);
+
+    @Select("select * from alipay_user_fund where userId=#{userId}")
+    UserFund findUserFundByUserId(@Param("userId") String userId);
 }

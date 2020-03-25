@@ -57,6 +57,7 @@ public class OrderServiceImpl implements OrderService{
 
 	@Override
 	public List<RunOrder> findOrderRunByPage(RunOrder order) {
+		log.info("获取订单账户 " + order.getOrderAccount());
 		RunOrderExample example = new RunOrderExample();
 		RunOrderExample.Criteria criteria = example.createCriteria();
 		if(StrUtil.isNotBlank(order.getOrderAccount()))
@@ -97,7 +98,39 @@ public class OrderServiceImpl implements OrderService{
 	}
 	@Override
 	public List<DealOrder> findOrderByPage(DealOrder order) {
-		return null;
+		DealOrderExample example=new DealOrderExample();
+		DealOrderExample.Criteria criteria = example.createCriteria();
+		if (StrUtil.isNotBlank(order.getOrderQrUser()))
+			criteria.andOrderQrUserEqualTo(order.getOrderQrUser());
+		if (CollUtil.isNotEmpty(order.getOrderQrUserList()))
+			criteria.andOrderQrUserListEqualTo(order.getOrderQrUserList());
+		if(StrUtil.isNotBlank(order.getTime())) {
+			Date date = getDate(order.getTime());
+			Calendar calendar = new GregorianCalendar();
+			calendar.setTime(date);
+			calendar.set(Calendar.HOUR,0);
+			calendar.set(Calendar.MINUTE,0);
+			calendar.set(Calendar.SECOND,0);
+			calendar.set(Calendar.MILLISECOND,0);
+			System.out.println("开始时间："+calendar.getTime());
+			Date time = calendar.getTime();
+			calendar.set(Calendar.HOUR,23);
+			calendar.set(Calendar.MINUTE,59);
+			calendar.set(Calendar.SECOND,59);
+			calendar.set(Calendar.MILLISECOND,999);
+			System.out.println("结束时间："+calendar.getTime());
+			criteria.andCreateTimeBetween(time, calendar.getTime());
+		}
+		if(StrUtil.isNotBlank(order.getAssociatedId()))
+			criteria.andAssociatedIdEqualTo(order.getAssociatedId());
+		if(StrUtil.isNotBlank(order.getOrderAccount()))
+			criteria.andOrderAccountEqualTo(order.getOrderAccount());
+		if(StrUtil.isNotBlank(order.getOrderStatus()))
+			criteria.andOrderStatusEqualTo(order.getOrderStatus());
+		if(StrUtil.isNotBlank(order.getOrderId()))
+			criteria.andOrderIdEqualTo(order.getOrderId());
+		example.setOrderByClause("createTime desc");
+		return dealOrderMapper.selectByExample(example);
 	}
 
 	@Override

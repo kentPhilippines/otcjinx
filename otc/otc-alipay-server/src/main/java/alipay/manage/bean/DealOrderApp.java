@@ -1,5 +1,6 @@
 package alipay.manage.bean;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -8,7 +9,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * <p>下游商户交易订单</p>
  * @author K
  */
-public class DealOrderApp {
+public class DealOrderApp implements Serializable {
     private Integer id;								//数据id
     private String orderId;							//订单号	
     private Integer orderType;						//订单类型:1交易,5代付

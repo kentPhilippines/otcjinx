@@ -145,7 +145,10 @@ public class DealOrderExample {
             addCriterion("id <=", value, "id");
             return (Criteria) this;
         }
-
+        public Criteria andOrderQrUserListEqualTo(List value) {
+            addCriterion("orderQrUser in", value, "orderQrUser");
+            return (Criteria) this;
+        }
         public Criteria andIdIn(List<Integer> values) {
             addCriterion("id in", values, "id");
             return (Criteria) this;
@@ -316,7 +319,7 @@ public class DealOrderExample {
             return (Criteria) this;
         }
 
-        public Criteria andOrderStatusEqualTo(Boolean value) {
+        public Criteria andOrderStatusEqualTo(String value) {
             addCriterion("orderStatus =", value, "orderStatus");
             return (Criteria) this;
         }

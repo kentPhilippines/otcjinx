@@ -18,6 +18,8 @@ import alipay.manage.service.MediumService;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -38,9 +40,25 @@ public class UserInfoServiceImpl implements UserInfoService{
 	@Autowired FileListMapper fileListMapper;
 	@Autowired UserRateMapper userRateDao;
 	@Autowired UserFundMapper userFundDao;
+    Logger log= LoggerFactory.getLogger(UserInfoServiceImpl.class);
+
+	/**
+	 * <p>查询自己的子账户</p>
+	 * @param user
+	 * @return
+	 */
 	@Override
 	public List<UserInfo> findSunAccount(UserInfo user) {
-		return null;
+		log.info("userId " + user.getUserId());
+		log.info("Agent " + user.getAgent());
+		UserInfoExample example = new UserInfoExample();
+		UserInfoExample.Criteria criteria = example.createCriteria();
+		if (StrUtil.isNotBlank(user.getUserId()))
+			criteria.andAccountIdEqualTo(user.getUserId());
+		if (StrUtil.isNotBlank(user.getAgent()))
+			criteria.andAgentEqualTo(user.getAgent());
+		List<UserInfo> userInfos = userInfoMapper.selectByExample(example);
+		return userInfos;
 	}
 
 	@Override
@@ -133,7 +151,8 @@ public class UserInfoServiceImpl implements UserInfoService{
 
 	@Override
 	public UserFund findUserFundByAccount(String userId) {
-		return null;
+		UserFund userFund=userFundDao.findUserFundByUserId(userId);
+		return userFund;
 	}
 	/**
 	 * 修改登录密码

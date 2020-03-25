@@ -785,7 +785,10 @@ public class UserInfoExample {
             addCriterion("agent is not null");
             return (Criteria) this;
         }
-
+        public Criteria andAccountIdEqualTo(String value) {
+            addCriterion("accountId =", value, "accountId");
+            return (Criteria) this;
+        }
         public Criteria andAgentEqualTo(String value) {
             addCriterion("agent =", value, "agent");
             return (Criteria) this;

@@ -2,11 +2,13 @@ package alipay.manage.contorller;
 
 import alipay.config.exception.OtherErrors;
 import alipay.config.redis.RedisUtil;
+import alipay.manage.bean.UserFund;
 import alipay.manage.bean.UserInfo;
 import alipay.manage.bean.util.OnlineVO;
 import alipay.manage.bean.util.PageResult;
 import alipay.manage.service.FileListService;
 import alipay.manage.service.MediumService;
+import alipay.manage.service.UserFundService;
 import alipay.manage.service.UserInfoService;
 import alipay.manage.service.impl.CorrelationServiceImpl;
 import alipay.manage.util.QueueQrcodeUtil;
@@ -54,7 +56,16 @@ public class PaymentCodeContorller {
     RedisUtil redisUtil;
     @Autowired
     CorrelationServiceImpl correlationService;
-
+    @Autowired
+    UserFundService userFundService;
+    /**
+     * 分页查询媒介
+     * @param medium
+     * @param request
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
     @GetMapping("/findMediumsByPage")
     @ResponseBody
     public Result findMediumsByPage(Medium medium, HttpServletRequest request, String pageNum, String pageSize) {
@@ -72,7 +83,21 @@ public class PaymentCodeContorller {
         pageR.setTotalPage(pageInfo.getPages());
         return Result.buildFailResult(pageR);
     }
-
+    /**
+     * <p>今日接单情况</p>
+     *
+     * @return
+     */
+    @GetMapping("/findMyTotalReceiveOrderSituation")
+    @ResponseBody
+    public Result showTodayReceiveOrderSituation(HttpServletRequest request) {
+        UserInfo user = sessionUtil.getUser(request);
+        if (ObjectUtil.isNull(user)) {
+           return Result.buildFailMessage("未获取到登录用户");
+        }
+        UserFund bean = userFundService.showTodayReceiveOrderSituation(user.getUserId());
+        return Result.buildSuccessResult("数据获取成功", bean);
+    }
     /**
      * <p>获取与当前登录用户相关的二维码图片账号</p>
      *

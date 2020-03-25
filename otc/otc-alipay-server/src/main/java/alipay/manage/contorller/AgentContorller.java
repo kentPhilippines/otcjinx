@@ -6,6 +6,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 
+import alipay.config.exception.OtherErrors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,7 @@ import otc.result.Result;
 @Controller
 @RequestMapping("/agent")
 public class AgentContorller {
-	 Logger log = LoggerFactory.getLogger(AgentContorller.class);
+	    Logger log = LoggerFactory.getLogger(AgentContorller.class);
 	    @Autowired SessionUtil sessionUtil;
 	    @Autowired InviteCodeService inviteCodeServiceImpl;
 	    @Autowired UserInfoService userInfoServiceImpl;
@@ -120,12 +121,9 @@ public class AgentContorller {
 	     */
 	    @GetMapping("/findLowerLevelAccountDetailsInfoByPage")
 	    @ResponseBody
-	    public Result findLowerLevelAccountDetailsInfoByPage(
-	            String pageSize,
-	            String pageNum,
-	            String userName,
-	            HttpServletRequest request) {
+	    public Result findLowerLevelAccountDetailsInfoByPage(String pageSize,String pageNum,String userName,HttpServletRequest request) {
 	    	UserInfo user2 = sessionUtil.getUser(request);
+	    	log.info("获取用户 " + user2);
 	        if (StrUtil.isBlank(user2.getUserId()))
 	            return Result.buildFail();
 	        UserInfo user = new UserInfo();
@@ -134,6 +132,7 @@ public class AgentContorller {
 	        user.setAgent(user2.getUserId());
 	        PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
 	        List<UserInfo> userList = userInfoServiceImpl.findSunAccount(user);
+	        log.info("获取用户信息" + userList);
 	        for (UserInfo qrUser : userList)
 	            findOnline(qrUser);
 	        PageInfo<UserInfo> pageInfo = new PageInfo<UserInfo>(userList);
@@ -144,13 +143,15 @@ public class AgentContorller {
 	        pageR.setTotalPage(pageInfo.getPages());
 	        return Result.buildSuccessResult(pageR);
 	    }
-	    @GetMapping("/findAgentCount")
+	    @GetMapping("/findAgentCounts")
 	    @ResponseBody
 	    public Result findAgentCount(HttpServletRequest request) {
 	    	UserInfo user2 = sessionUtil.getUser(request);
-	        if (StrUtil.isBlank(user2.getUserId()))
-	            return Result.buildFail();
+	    	log.info("user2.getUserId"+user2.getUserId());
+			if (ObjectUtil.isNull(user2))
+				throw new OtherErrors("当前用户未登录");
 	        UserFund findUserByAccount = userInfoServiceImpl.findUserFundByAccount(user2.getUserId());
+	        log.info("通过id获取资金账户表::"+ findUserByAccount);
 	        UserCountBean findMoreCount = findMyDate(findUserByAccount.getId());
 	        findMoreCount.setMoreDealProfit(findUserByAccount.getTodayAgentProfit().toString());
 	        return Result.buildSuccessResult(findMoreCount);
@@ -160,6 +161,7 @@ public class AgentContorller {
 	     * @param id
 	     */
 	    private UserCountBean findMyDate(@NotNull Integer id) {
+	    	log.info("获取id "+ id);
 	    	UserCountBean bean = correlationServiceImpl.findMyDateAgen(id);
 	    	UserCountBean bean1 = correlationServiceImpl.findDealDate(id);
 	    	if(ObjectUtil.isNotNull(bean1)) {
