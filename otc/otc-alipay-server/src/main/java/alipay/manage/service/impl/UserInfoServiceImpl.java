@@ -15,6 +15,7 @@ import alipay.manage.mapper.UserFundMapper;
 import alipay.manage.mapper.UserInfoMapper;
 import alipay.manage.mapper.UserRateMapper;
 import alipay.manage.service.MediumService;
+import alipay.manage.util.AttributeUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
@@ -40,6 +41,7 @@ public class UserInfoServiceImpl implements UserInfoService{
 	@Autowired FileListMapper fileListMapper;
 	@Autowired UserRateMapper userRateDao;
 	@Autowired UserFundMapper userFundDao;
+	@Autowired AttributeUtil attributeUtil;
     Logger log= LoggerFactory.getLogger(UserInfoServiceImpl.class);
 
 	/**
@@ -191,5 +193,27 @@ public class UserInfoServiceImpl implements UserInfoService{
 	public UserRate findUserRate(String userId, String productAlipayScan) {
 		UserRate rate = userRateDao.findUserRate(userId,productAlipayScan);
 		return rate;
+	}
+	@Override
+	public UserInfo getQrCodeUser(UserInfo qruser) {
+		UserInfo selectByExample = userInfoMapper.selectByUserId(qruser.getUserId());
+		log.info("获取用户信息---》" +selectByExample);
+		return selectByExample;
+	}
+
+	@Override
+	public boolean addQrcodeUserInfo(UserInfo entity) {
+		int insertSelective = userInfoMapper.insertSelective(entity);
+		if (insertSelective>0 && insertSelective<2)
+			attributeUtil.deleteRedis();
+		return insertSelective>0 && insertSelective<2;
+	}
+
+	@Override
+	public boolean addQrcodeUser(UserInfo user) {
+		int selective = userInfoMapper.insertSelective(user);
+		if (selective>0 && selective<2)
+			attributeUtil.deleteRedis();
+		return selective>0 && selective<2;
 	}
 }

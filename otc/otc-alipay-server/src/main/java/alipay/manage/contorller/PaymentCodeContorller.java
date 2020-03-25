@@ -83,6 +83,23 @@ public class PaymentCodeContorller {
         pageR.setTotalPage(pageInfo.getPages());
         return Result.buildFailResult(pageR);
     }
+
+    /**
+     * <p>累计接单情况</p>
+     *
+     * @return
+     */
+    @GetMapping("/findMyTodayReceiveOrderSituation")
+    @ResponseBody
+    public Result findMyTodayReceiveOrderSituation(HttpServletRequest request) {
+        UserInfo user = sessionUtil.getUser(request);
+        if (ObjectUtil.isNull(user))
+          return Result.buildFailMessage("未获取到登录用户");
+        UserFund bean = userFundService.showTodayReceiveOrderSituation(user.getUserId());
+        log.info("获取累计结果::: " + bean);
+        return Result.buildSuccessResult("数据获取成功", bean);
+    }
+
     /**
      * <p>今日接单情况</p>
      *
@@ -92,12 +109,14 @@ public class PaymentCodeContorller {
     @ResponseBody
     public Result showTodayReceiveOrderSituation(HttpServletRequest request) {
         UserInfo user = sessionUtil.getUser(request);
-        if (ObjectUtil.isNull(user)) {
-           return Result.buildFailMessage("未获取到登录用户");
-        }
+        if (ObjectUtil.isNull(user))
+            return Result.buildFailMessage("未获取到登录用户");
         UserFund bean = userFundService.showTodayReceiveOrderSituation(user.getUserId());
+        log.info("获取今日结果::: " + bean);
         return Result.buildSuccessResult("数据获取成功", bean);
     }
+
+
     /**
      * <p>获取与当前登录用户相关的二维码图片账号</p>
      *

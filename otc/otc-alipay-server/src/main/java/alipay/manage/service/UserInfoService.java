@@ -118,9 +118,25 @@ public interface UserInfoService {
 
 	/**
 	 * <P>根据用户id和产品类型查询用户交易费率</P>
-	 * @param fileholder
+	 * @param userId
 	 * @param productAlipayScan
 	 * @return
 	 */
 	UserRate findUserRate(String userId, String productAlipayScan);
+
+    UserInfo getQrCodeUser(UserInfo qruser);
+
+	/**
+	 * 添加代理用户
+	 * @param entity
+	 * @return
+	 */
+	boolean addQrcodeUserInfo(UserInfo entity);
+
+	/**
+	 * 新增码商代理商数据
+	 * @param user
+	 * @return
+	 */
+	boolean addQrcodeUser(UserInfo user);
 }

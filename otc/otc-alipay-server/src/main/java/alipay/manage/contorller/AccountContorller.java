@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import alipay.manage.util.AgentApi;
+import alipay.manage.util.UserUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,9 +44,12 @@ public class AccountContorller {
     InviteCodeService inviteCodeServiceImpl;
     @Autowired
     UserInfoService accountServiceImpl;
-
+    @Autowired
+    AgentApi agentApi;
     @Autowired
     RedisUtil redisUtil;
+    @Autowired
+    UserUtil userUtil;
     /**
      * <p>代理商开户</p>
      * 手机端专用
@@ -54,6 +59,13 @@ public class AccountContorller {
     @ResponseBody
     public Result agentOpenAnAccount(@RequestBody UserInfo user, HttpServletRequest request) {
         UserInfo user2 = sessionUtil.getUser(request);
+        if (ObjectUtil.isNull(user))
+            return Result.buildFailMessage("未获取到登录用户");
+        user.setIsAgent("1");
+        user.setAgent(user2.getAgent());
+        Result result = agentApi.openAgentAccount(user);
+        if (result.isSuccess())
+            userUtil.openAccountCorrlation(user.getUserId());
         return Result.buildFail();
     }
     /**

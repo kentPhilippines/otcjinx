@@ -7,11 +7,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 
 import alipay.config.exception.OtherErrors;
+import alipay.manage.util.AgentApi;
+import alipay.manage.util.UserUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -44,17 +45,24 @@ public class AgentContorller {
 	    @Autowired InviteCodeService inviteCodeServiceImpl;
 	    @Autowired UserInfoService userInfoServiceImpl;
 	    @Autowired CorrelationService correlationServiceImpl;
+	    @Autowired AgentApi agentApi;
+	    @Autowired UserUtil userUtil;
 	    /**
 	     * <p>代理商开户</p>
 	     *	 手机端专用
 	     * @return
 	     */
-	    @PostMapping("/agentOpenAnAccount")
+	    @GetMapping("/agentOpenAnAccount")
 	    @ResponseBody
-	    public Result agentOpenAnAccount(@RequestBody UserInfo user, HttpServletRequest request) {
+	    public Result agentOpenAnAccount(UserInfo user, HttpServletRequest request) {
 	    	UserInfo user2 = sessionUtil.getUser(request);
+			if (ObjectUtil.isNull(user))
+				return Result.buildFailMessage("未获取到登录用户");
 	        user.setAgent(user2.getUserId());
 	        user.setIsAgent(Common.User.USER_IS_AGENT);
+			Result result = agentApi.openAgentAccount(user);
+			if (result.isSuccess())
+				userUtil.openAccountCorrlation(user.getUserId());
 	        return Result.buildFailMessage("开户失败");
 	    }
 	    /**

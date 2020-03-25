@@ -34,7 +34,6 @@ import cn.hutool.http.HttpUtil;
 import otc.api.alipay.Common;
 import otc.bean.alipay.FileList;
 import otc.common.SystemConstants;
-import otc.result.Result;
 import otc.util.RSAUtils;
 @Controller
 @RequestMapping("/pay")
