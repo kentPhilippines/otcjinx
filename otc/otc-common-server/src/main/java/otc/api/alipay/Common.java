@@ -125,6 +125,7 @@ public class Common {
 		public static final String QR_IS_DEAL_ON = "2";//二维码可用
 		public static final String MEDIUM_ALIPAY = "alipay";
 		public static final String IMG_NUMBER = "IMG";//图片标签
+		public static final String MM_NUMBER = "MM";//图片标签
 		public static final String BANK_NUMBER = "BK";//媒介标签
 	}
 	

@@ -156,6 +156,10 @@ public class FileListServiceImpl implements FileListService {
 
     @Override
     public List<FileList> findQrByAmount(BigDecimal amount) {
+    	/**
+    	 * ####################################
+    	 * 这里暂时先采取原来的方案，换粗这里肯定是要加的
+    	 */
         return fileListMapper.findQrByAmount(amount);
     }
 

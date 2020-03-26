@@ -49,6 +49,21 @@ public interface FileListMapper {
     FileList findConcealId(@Param("concealId")String mediumId);
 
     List<String> selectQrAmountList(String concealId);
-    @Select("select * from alipay_file_list")
-	List<FileList> findQrByAmount(BigDecimal amount);
+    @Select(" select " + 
+    		"		 l.id AS id,	" + 
+    		"		 l.`fileId` AS fileId ," + 
+    		"		 m.`mediumHolder` AS qrcodeNumber," + 
+    		"		 m.`mediumPhone` AS phone," + 
+    		"		 l.code AS `code`," + 
+    		"		 l.`fixationAmount` AS fixationAmount," + 
+    		"		 l.`createTime` ," + 
+    		"		 l.`concealId`  , m.attr as attr" + 
+    		"      from alipay_file_list l" + 
+    		"      left join alipay_medium m    on l.concealId = m.mediumId" + 
+    		"      where " + 
+    		"	m.`isDeal` = '2'" + 
+    		"	and m.`status` = 1" + 
+    		"	and l.`isDeal` = 2 " + 
+    		"    and l.`fixationAmount` = #{amount}")
+	List<FileList> findQrByAmount(@Param("amount")BigDecimal amount);
 }

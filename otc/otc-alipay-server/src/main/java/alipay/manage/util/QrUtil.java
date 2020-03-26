@@ -1,6 +1,7 @@
 package alipay.manage.util;
 
 import alipay.config.redis.RedisUtil;
+import alipay.manage.api.feign.QueueServiceClien;
 import alipay.manage.bean.UserFund;
 import alipay.manage.service.FileListService;
 import alipay.manage.service.UserInfoService;
@@ -14,10 +15,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import otc.api.QueueServiceClienFeign;
 import otc.api.alipay.Common;
 import otc.bean.alipay.FileList;
-import otc.result.Result;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -38,7 +37,7 @@ public class QrUtil {
 	@Autowired SettingFile settingFile;
 	@Resource  RedisUtil redisUtil;
 	@Autowired UserInfoService userInfoServiceImpl;
-	@Autowired QueueServiceClienFeign queueServiceClienFeignImpl;
+	@Autowired QueueServiceClien queueServiceClienFeignImpl;
 	@Autowired FileListService fileListServiceImpl;
 
 	public FileList findQr(String orderNo, BigDecimal amount, String[] code) throws ParseException {
