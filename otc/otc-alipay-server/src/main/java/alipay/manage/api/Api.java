@@ -54,7 +54,9 @@ public class Api {
 	}
 	
 	/**
-	 * <p>人工加款接口</p>
+	 * <p>人工加扣款接口</p>
+	 * @param amount					加扣款订单
+	 * @param request					请求
 	 * @return
 	 */
 	@PostMapping(PayApiConstant.Alipay.ACCOUNT_API+PayApiConstant.Alipay.AMOUNT)
