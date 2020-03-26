@@ -11,7 +11,6 @@ import alipay.manage.service.MediumService;
 import alipay.manage.service.UserFundService;
 import alipay.manage.service.UserInfoService;
 import alipay.manage.service.impl.CorrelationServiceImpl;
-import alipay.manage.util.QueueQrcodeUtil;
 import alipay.manage.util.SessionUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
@@ -50,8 +49,6 @@ public class PaymentCodeContorller {
     FileListService fileListService;
     @Autowired
     UserInfoService userInfoService;
-    @Autowired
-    QueueQrcodeUtil queueQrcodeUtil;
     @Autowired
     RedisUtil redisUtil;
     @Autowired
@@ -190,8 +187,6 @@ public class PaymentCodeContorller {
        Medium oldMedium=mediumServicel.findMediumById(medium.getMediumId());
        if(ObjectUtil.isNull(oldMedium))
            throw new UserException("获取用户信息为null",null);
-       if(queueQrcodeUtil.getList().contains(oldMedium.getMediumNumber()))
-          return Result.buildFailResult("当前收款媒介正在接单排队，禁止操作");
        if (oldMedium.getMediumNumber().equals(medium.getMediumNumber())&&ObjectUtil.isNotNull(mediumServicel.findMediumByMediumNumber(medium.getMediumNumber())))
            return Result.buildFailResult("修改账号重复");
         Boolean mediumBean = mediumServicel.updataMediumById(medium);
@@ -239,8 +234,6 @@ public class PaymentCodeContorller {
             throw new UserException("当前用户未登录",null);
         log.info("当前删除二维码编号："+mediumId);
         Medium findMediumById = mediumServicel.findMediumById(mediumId);
-        if (queueQrcodeUtil.getList().contains(findMediumById.getMediumNumber()))
-            return Result.buildFailResult("当前收款媒介正在接单排队，禁止操作");
         /**逻辑   1,删除媒介  2,删除二维码  */
         Boolean mFlag = mediumServicel.deleteMedium(mediumId);
         Boolean qflag = fileListService.deleteQrByMediumId(mediumId);

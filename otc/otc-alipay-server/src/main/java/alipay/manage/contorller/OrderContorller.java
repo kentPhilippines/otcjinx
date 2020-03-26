@@ -46,16 +46,11 @@ import otc.result.Result;
 @RequestMapping("/order")
 public class OrderContorller {
 	Logger log = LoggerFactory.getLogger(OrderContorller.class);
-	@Autowired
-	SessionUtil sessionUtil;
-	@Autowired
-	OrderService orderServiceImpl;
-	@Autowired
-	OrderUtil orderUtil;
-	@Autowired
-	LogUtil logUtil;
-	@Autowired
-	UserInfoService accountServiceImpl;
+	@Autowired SessionUtil sessionUtil;
+	@Autowired OrderService orderServiceImpl;
+	@Autowired OrderUtil orderUtil;
+	@Autowired LogUtil logUtil;
+	@Autowired UserInfoService accountServiceImpl;
 	
 	private Lock lock = new ReentrantLock();
 	/**

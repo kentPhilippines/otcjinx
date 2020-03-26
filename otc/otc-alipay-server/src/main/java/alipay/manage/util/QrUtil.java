@@ -60,7 +60,7 @@ public class QrUtil {
 		if (CollUtil.isEmpty(userList) || CollUtil.isEmpty(qcList))
 			return null;
 		ConcurrentHashMap<String, FileList> qrCollect = qcList.stream().collect(Collectors
-				.toConcurrentMap(FileList::getConcealId, Function.identity(), (o1, o2) -> o1, ConcurrentHashMap::new));
+				.toConcurrentMap(FileList::getMediumNumber, Function.identity(), (o1, o2) -> o1, ConcurrentHashMap::new));
 		ConcurrentHashMap<String, UserFund> usercollect = userList.stream().collect(Collectors
 				.toConcurrentMap(UserFund::getUserId, Function.identity(), (o1, o2) -> o1, ConcurrentHashMap::new));
 		for (Object obj : queue) {

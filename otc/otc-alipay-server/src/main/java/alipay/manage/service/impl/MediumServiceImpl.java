@@ -7,7 +7,6 @@ import alipay.manage.mapper.MediumMapper;
 import alipay.manage.mapper.UserInfoMapper;
 import alipay.manage.service.CorrelationService;
 import alipay.manage.service.MediumService;
-import alipay.manage.util.Number;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import org.slf4j.Logger;
@@ -16,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import otc.api.alipay.Common;
 import otc.bean.alipay.Medium;
+import otc.util.number.Number;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -36,7 +36,7 @@ public class MediumServiceImpl implements MediumService {
         criteria.andIsDealEqualTo(Common.Medium.QR_IS_DEAL_ON);
         if(CollUtil.isNotEmpty(mediumDao.selectByExample(example)))
             return false;
-        String medium2 = Number.getMedium();
+        String medium2 = Number.getMedum();
         medium.setMediumId(medium2);
         medium.setIsDeal(Common.Medium.QR_IS_DEAL_ON);
         medium.setStatus(Integer.valueOf(Common.STATUS_IS_NOT_OK));

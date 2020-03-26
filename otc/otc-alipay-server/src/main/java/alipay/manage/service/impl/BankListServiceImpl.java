@@ -1,7 +1,6 @@
 package alipay.manage.service.impl;
 
 import java.util.List;
-import alipay.manage.util.Number;
 import alipay.manage.bean.BankListExample;
 import alipay.manage.mapper.BankListMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 import alipay.manage.bean.BankList;
 import alipay.manage.service.BankListService;
-import otc.api.alipay.Common;
+import otc.util.number.Number;
 
 @Component
 public class BankListServiceImpl implements BankListService{
@@ -29,7 +28,8 @@ public class BankListServiceImpl implements BankListService{
 	public boolean addBankcard(BankList bank) {
 		BankListExample example = new BankListExample();
 		BankListExample.Criteria criteria = example.createCriteria();
-		bank.setBankcardId(Number.getbankNo());
+		String bank2 = Number.getBank();
+		bank.setBankcardId(bank2);
 		BankList bank1 = new BankList();
 		bank1.setAccount(bank.getAccount());
 		bank1.setIsDeal(1); //数据逻辑删除

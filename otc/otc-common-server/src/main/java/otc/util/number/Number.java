@@ -107,6 +107,18 @@ public class Number {
 		 String objectId = IdUtil.objectId();
 		return Common.Medium.IMG_NUMBER+objectId;	
 	}
+
+
+	public static String getMedum() {
+		String objectId = IdUtil.objectId();
+		return Common.Medium.MM_NUMBER+objectId;	
+	}
+
+
+	public static String getBank() {
+		String objectId = IdUtil.objectId();
+		return Common.Medium.BANK_NUMBER+objectId;	
+	}
   
     
     

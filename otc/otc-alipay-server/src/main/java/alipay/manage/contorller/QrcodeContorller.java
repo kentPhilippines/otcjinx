@@ -4,7 +4,6 @@ import alipay.config.redis.RedisUtil;
 import alipay.manage.bean.UserInfo;
 import alipay.manage.bean.util.PageResult;
 import alipay.manage.service.MediumService;
-import alipay.manage.util.QueueQrcodeUtil;
 import alipay.manage.util.SessionUtil;
 import alipay.manage.util.SettingFile;
 import cn.hutool.core.util.ObjectUtil;
@@ -25,18 +24,10 @@ import java.util.List;
 @Controller
 @RequestMapping("/qrcode")
 public class QrcodeContorller {
-    @Autowired
-    SessionUtil sessionUtil;
-    @Autowired
-    MediumService mediumServiceImpl;
-    @Autowired
-    RedisUtil redisUtil;
-    @Autowired
-    QueueQrcodeUtil queueQrcodeUtil;
-    @Autowired
-    SettingFile settingFile;
-
-
+    @Autowired SessionUtil sessionUtil;
+    @Autowired MediumService mediumServiceImpl;
+    @Autowired RedisUtil redisUtil;
+    @Autowired SettingFile settingFile;
     @GetMapping("/findIsMyQrcodePage")
     @ResponseBody
     public Result findIsMyQrcodePage(HttpServletRequest request, String pageNum, String pageSize ) {

@@ -31,18 +31,12 @@ import otc.result.Result;
 @RequestMapping("/userAccount")
 public class UserContorller {
 	Logger log = LoggerFactory.getLogger(UserContorller.class);
-	@Autowired
-	UserInfoService  userInfoServiceImpl;
-	@Autowired
-	SessionUtil sessionUtil;
-	@Autowired
-	BankListService bankListServiceImpl;
-	@Autowired
-	InviteCodeService inviteCodeServiceImpl;
-	@Autowired
-	AccountApiService accountApiServiceImpl;
-	@Resource
-	QrUtil qrUtil;
+	@Autowired UserInfoService  userInfoServiceImpl;
+	@Autowired SessionUtil sessionUtil;
+	@Autowired BankListService bankListServiceImpl;
+	@Autowired InviteCodeService inviteCodeServiceImpl;
+	@Autowired AccountApiService accountApiServiceImpl;
+	@Autowired QrUtil qrUtil;
 	/**
 	 * <p>获取账号登录情况</p>
 	 * @return

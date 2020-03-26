@@ -24,12 +24,9 @@ import java.util.Map;
 @RequestMapping("/recharge")
 public class RechargeContorller {
     Logger log = LoggerFactory.getLogger(RechargeContorller.class);
-    @Autowired
-    SessionUtil sessionUtil;
-    @Autowired
-    OrderService orderFacade;
-    @Autowired
-    LogUtil logUtil;
+    @Autowired SessionUtil sessionUtil;
+    @Autowired OrderService orderFacade;
+    @Autowired LogUtil logUtil;
 
     /**
      * <p>获取可用的充值渠道</p>
