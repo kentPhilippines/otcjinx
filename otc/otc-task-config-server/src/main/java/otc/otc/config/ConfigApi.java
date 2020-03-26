@@ -1,11 +1,14 @@
 package otc.otc.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import feign.Param;
@@ -17,8 +20,8 @@ import otc.result.Result;
 @RestController
 @RequestMapping(PayApiConstant.Config.CONFIG_API)
 public class ConfigApi {
-	@Autowired
-	CacheConfigUtil cacheConfigUtil;
+	Logger log= LoggerFactory.getLogger(ConfigApi.class);
+	@Autowired CacheConfigUtil cacheConfigUtil;
 	/**
 	 * <p>后台获取接口配置的接口</p>
 	 * @param key			接口键
@@ -42,7 +45,11 @@ public class ConfigApi {
 	public Result getconfig(String system , String key) {
 		if(StrUtil.isBlank(system) || StrUtil.isBlank(key))
 			return Result.buildFailMessage("必传参数为空");
-		return cacheConfigUtil.getconfig(system, key);
+		Result getconfig = cacheConfigUtil.getconfig(system, key);
+		ThreadUtil.execAsync(()->{
+			log.info("【远程调用获取全局配置，当前获取配置服务："+system+"，当前获取配置键："+key+"，获取全局配置值为："+getconfig.getResult()+"】");
+		});
+		return getconfig;
 	}
 	
 	

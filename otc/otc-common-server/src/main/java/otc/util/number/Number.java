@@ -119,6 +119,12 @@ public class Number {
 		String objectId = IdUtil.objectId();
 		return Common.Medium.BANK_NUMBER+objectId;	
 	}
+
+
+	public static String getOrderQr() {
+		String objectId = IdUtil.objectId();
+		return Common.Deals.ORDERDEAL+objectId;	
+	}
   
     
     

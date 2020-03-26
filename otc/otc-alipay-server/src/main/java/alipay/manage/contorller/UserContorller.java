@@ -49,9 +49,7 @@ public class UserContorller {
 	        log.info("当前用户未登陆");
 	        return Result.buildFailMessage("当前用户未登陆");
 	    }
-		log.info("当前用户 "+user.toString());
 		UserInfo user2 = userInfoServiceImpl.findUserInfoByUserId(user.getUserId());
-		log.info("获取user2  " + user2);
 		return Result.buildSuccessResult(user2);
 	}
 	

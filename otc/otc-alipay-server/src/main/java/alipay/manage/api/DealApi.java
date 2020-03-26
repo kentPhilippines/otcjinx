@@ -80,7 +80,7 @@ public class DealApi {
 		order.setExternalOrderId(orderApp.getAppOrderId());
 		order.setGenerationIp(HttpUtil.getClientIP(request));
 		order.setOrderAccount(orderApp.getOrderAccount());
-		order.setIsNotify(orderApp.getNotify());
+		order.setNotify(orderApp.getNotify());
 		FileList findQr = null ;
 		try {
 			findQr = qrUtil.findQr(orderApp.getOrderId(), orderApp.getOrderAmount(), split);

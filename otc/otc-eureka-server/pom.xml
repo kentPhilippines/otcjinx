@@ -17,5 +17,15 @@
         	<artifactId>otc-common-server</artifactId>
         	<version>0.0.1-SNAPSHOT</version>
         </dependency>
+		<dependency>
+		    <groupId>com.google.guava</groupId>
+		    <artifactId>guava</artifactId>
+		    <version>25.1-jre</version>
+		</dependency>
+		<dependency>
+		    <groupId>com.diffplug.guava</groupId>
+		    <artifactId>guava-cache</artifactId>
+		    <version>19.0.0</version>
+		</dependency>
     </dependencies>
 </project>

@@ -52,10 +52,11 @@ public interface FileListMapper {
     @Select(" select " + 
     		"		 l.id AS id,	" + 
     		"		 l.`fileId` AS fileId ," + 
-    		"		 m.`mediumHolder` AS qrcodeNumber," + 
+    		"		 m.`mediumNumber` AS mediumNumber," + 
     		"		 m.`mediumPhone` AS phone," + 
     		"		 l.code AS `code`," + 
-    		"		 l.`fixationAmount` AS fixationAmount," + 
+    		"		 l.`fixationAmount` AS fixationAmount,"
+    		+ " l.fileholder as fileholder ," + 
     		"		 l.`createTime` ," + 
     		"		 l.`concealId`  , m.attr as attr" + 
     		"      from alipay_file_list l" + 

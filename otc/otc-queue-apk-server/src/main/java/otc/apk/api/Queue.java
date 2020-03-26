@@ -37,7 +37,7 @@ public class Queue {
     @Autowired RedisUtil redisUtil;
     private static final String REDISKEY_QUEUE = RedisConstant.Queue.QUEUE_REDIS;
     public Set<Object> getList(String[] codes) {
-    	if(ObjectUtil.isNull(codes)) {
+    	if( codes.length == 0) {
     		if (!redisUtil.hasKey(REDISKEY_QUEUE)) {
     			List<Medium> findIsDealMedium = alipayServiceClienFeignImpl.findIsDealMedium(Common.Medium.MEDIUM_ALIPAY);
     			log.info("findIsDealMedium 获取的值是：" +findIsDealMedium);

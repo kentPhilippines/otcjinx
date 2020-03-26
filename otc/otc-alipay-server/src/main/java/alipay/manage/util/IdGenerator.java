@@ -95,6 +95,7 @@ public enum IdGenerator {
     public static void id() {
         for(int i=0 ;i<10 ;i++) {
             String orderId = IdGenerator.INSTANCE.orderSnoCreate();
+            System.out.println(orderId);
         }
     }
 

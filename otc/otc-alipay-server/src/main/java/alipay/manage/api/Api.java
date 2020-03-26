@@ -2,6 +2,8 @@ package alipay.manage.api;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,6 +17,7 @@ import otc.result.Result;
 @RestController
 public class Api {
 	@Autowired MediumService mediumServiceImpl;
+	Logger log = LoggerFactory.getLogger(Api.class);
 	@PostMapping(PayApiConstant.Alipay.MEDIUM_API+PayApiConstant.Alipay.FIND_MEDIUM_IS_DEAL)
 	public List<Medium> findIsDealMedium(String mediumType, String code) {
 		/**
@@ -22,7 +25,9 @@ public class Api {
 		 * 1，根据code值获取对应的所有支付媒介  code值即为自己的顶级代理账号
 		 * 2，如果code值为空 则获取所有的支付媒介
 		 */
-		if(StrUtil.isBlank(code)) {//获取所有的支付媒介
+		log.info("【远程调用获取初始化数据，传递参数为："+mediumType+"，code  = "+code+"】");
+		if(StrUtil.isBlank(code)) {
+			//获取所有的支付媒介
 			List<Medium> mediumList = mediumServiceImpl.findMediumByType(mediumType);
 			return mediumList;
 		}else {

@@ -1,6 +1,7 @@
 package alipay.manage.util;
 
 import alipay.config.redis.RedisUtil;
+import alipay.manage.api.feign.ConfigServiceClient;
 import alipay.manage.api.feign.QueueServiceClien;
 import alipay.manage.bean.UserFund;
 import alipay.manage.service.FileListService;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import otc.api.alipay.Common;
 import otc.bean.alipay.FileList;
+import otc.bean.config.ConfigFile;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -39,6 +41,7 @@ public class QrUtil {
 	@Autowired UserInfoService userInfoServiceImpl;
 	@Autowired QueueServiceClien queueServiceClienFeignImpl;
 	@Autowired FileListService fileListServiceImpl;
+	@Autowired ConfigServiceClient configServiceClientImpl;
 
 	public FileList findQr(String orderNo, BigDecimal amount, String[] code) throws ParseException {
 		/**
@@ -56,12 +59,11 @@ public class QrUtil {
 		List<String> queue = queueServiceClienFeignImpl.getQueue(code);
 		List<UserFund> userList = userInfoServiceImpl.findUserByAmount(amount);
 		List<FileList> qcList = fileListServiceImpl.findQrByAmount(amount);
+		log.info("【二维码个数："+qcList.size()+"】");
 		if (CollUtil.isEmpty(userList) || CollUtil.isEmpty(qcList))
 			return null;
-		ConcurrentHashMap<String, FileList> qrCollect = qcList.stream().collect(Collectors
-				.toConcurrentMap(FileList::getMediumNumber, Function.identity(), (o1, o2) -> o1, ConcurrentHashMap::new));
-		ConcurrentHashMap<String, UserFund> usercollect = userList.stream().collect(Collectors
-				.toConcurrentMap(UserFund::getUserId, Function.identity(), (o1, o2) -> o1, ConcurrentHashMap::new));
+		ConcurrentHashMap<String, FileList> qrCollect = qcList.stream().collect(Collectors .toConcurrentMap(FileList::getMediumNumber, Function.identity(), (o1, o2) -> o1, ConcurrentHashMap::new));
+		ConcurrentHashMap<String, UserFund> usercollect = userList.stream().collect(Collectors.toConcurrentMap(UserFund::getUserId, Function.identity(), (o1, o2) -> o1, ConcurrentHashMap::new));
 		for (Object obj : queue) {
 			String alipayAccount = obj.toString();
 			if (StrUtil.isBlank(alipayAccount))
@@ -77,12 +79,13 @@ public class QrUtil {
 			Object object = redisUtil.get(qr.getPhone());
 			boolean clickAmount = isClickAmount(qr, amount, usercollect);
 			if (ObjectUtil.isNull(object2) && clickAmount) {
-				redisUtil.set(qr.getPhone() + amount.toString(), orderNo,Integer.valueOf(settingFile.getName(settingFile.QR_OUT_TIME)) ); // 核心回调数据
-				redisUtil.set(qr.getPhone(), qr.getPhone() + amount.toString(), Integer.valueOf(settingFile.getName(settingFile.QR_OUT_TIME)) );
+				redisUtil.set(qr.getPhone() + amount.toString(), orderNo,Integer.valueOf( configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.QR_OUT_TIME).getResult().toString()) ); // 核心回调数据
+				redisUtil.set(qr.getPhone(), qr.getPhone() + amount.toString(), Integer.valueOf( configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.QR_OUT_TIME).getResult().toString() ));
 				redisUtil.hset(qr.getFileholder(), qr.getFileholder() + DateUtil.format(new Date(), Common.Order.DATE_TYPE),
 						amount.toString());
-				redisUtil.hset(qr.getFileId(), qr.getFileId() + orderNo, orderNo, Integer.valueOf(settingFile.getName(settingFile.QR_IS_CLICK)));
+				redisUtil.hset(qr.getFileId(), qr.getFileId() + orderNo, orderNo, Integer.valueOf( configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.QR_IS_CLICK).getResult().toString()));
 				queueServiceClienFeignImpl.updataNode(alipayAccount, qr);
+				log.info("【获取二维码数据："+qr.toString()+"】");
 				return qr;
 			}
 		}
@@ -137,7 +140,7 @@ public class QrUtil {
 			Date parse = formatter.parse(subSuf);
 			Object object = hmget.get(obj.toString());// 当前金额
 			if (!DateUtil.isExpired(parse, DateField.SECOND,
-					Integer.valueOf(settingFile.getName(settingFile.FREEZE_PLAIN_VIRTUAL)), new Date()))
+					Integer.valueOf( configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.FREEZE_PLAIN_VIRTUAL).getResult().toString()), new Date()))
 				redisUtil.hdel(user.getUserId(), obj.toString());
 		}
 		// }
@@ -155,9 +158,9 @@ public class QrUtil {
 			amount = amount.add(bigDecimal);
 		}
 		UserFund user2 = usercollect.get(user.getFileholder());
-		return amount.compareTo(user2.getRechargeNumber()) == -1;
+		return amount.compareTo(user2.getAccountBalance()) == -1;
 	}
-
+	DateFormat formatter = new SimpleDateFormat(Common.Order.DATE_TYPE);
 	/**
 	 * <p>
 	 * 输入用户id，查询用户的虚拟冻结金额
@@ -178,7 +181,7 @@ public class QrUtil {
 				Date parse = formatter.parse(subSuf);
 				Object object = hmget.get(obj.toString());// 当前金额
 				if (!DateUtil.isExpired(parse, DateField.SECOND,
-						Integer.valueOf(settingFile.getName(settingFile.FREEZE_PLAIN_VIRTUAL)), new Date()))
+						Integer.valueOf( configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.FREEZE_PLAIN_VIRTUAL).getResult().toString()), new Date()))
 					redisUtil.hdel(userId, obj.toString());
 			}
 			Map<Object, Object> hmget2 = redisUtil.hmget(userId);
@@ -194,5 +197,4 @@ public class QrUtil {
 		return amount;
 	}
 
-	DateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss"); // 账户未登录错误
 }

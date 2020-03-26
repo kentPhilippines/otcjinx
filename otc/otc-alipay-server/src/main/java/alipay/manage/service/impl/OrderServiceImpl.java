@@ -14,6 +14,7 @@ import alipay.manage.util.SettingFile;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import otc.api.alipay.Common;
+import otc.util.number.Number;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -284,6 +285,7 @@ public class OrderServiceImpl implements OrderService{
 
 	@Override
 	public boolean addOrder(DealOrder orderApp) {
+		orderApp.setOrderId(Number.getOrderQr());
 		int insertSelective = dealOrderMapper.insertSelective(orderApp);
 		return insertSelective > 0 && insertSelective < 2;
 	}
