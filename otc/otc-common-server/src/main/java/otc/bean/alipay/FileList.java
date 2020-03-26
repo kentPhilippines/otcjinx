@@ -1,5 +1,6 @@
 package otc.bean.alipay;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -7,7 +8,8 @@ import java.util.Date;
  * <p>文件列表</p>
  * @author K
  */
-public class FileList {
+public class FileList implements Serializable{
+	private static final long serialVersionUID = 1L;
     private Integer id;								//数据id
     private String fileId;							//文件id
     private String fileholder;						//文件所属人

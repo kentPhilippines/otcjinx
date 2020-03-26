@@ -127,10 +127,9 @@ public class UserInfoServiceImpl implements UserInfoService{
 		if(ObjectUtil.isNull(medium))
 			return Result.buildFailResult("无此收款媒介");
 		FileList qrcode = new FileList();
-		qrcode.setFileId(UUID.randomUUID().toString());
+		qrcode.setFileId(qrcodeId);
 		qrcode.setConcealId(mediumId);
 		qrcode.setCode(medium.getCode()+"_qr");
-		qrcode.setConcealId(qrcodeId);
 		qrcode.setStatus(1);
 		if("false".equals(flag)){
 			qrcode.setFixationAmount(new BigDecimal(9999.0000));

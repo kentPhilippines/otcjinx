@@ -1,5 +1,6 @@
 package alipay.manage.bean;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -9,7 +10,8 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * <p>银行卡列表</p>
  * @author K
  */
-public class BankList {
+public class BankList implements Serializable{
+	private static final long serialVersionUID = 1L;
     private Integer id;					//数据id
     private String bankcardId;			//银行卡系统id
     private String bankcardAccount;		//银行卡号

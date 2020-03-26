@@ -1,5 +1,6 @@
 package alipay.manage.bean;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -11,7 +12,8 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * <p>流水订单实体</p>
  * @author K
  */
-public class RunOrder {
+public class RunOrder implements Serializable{
+	private static final long serialVersionUID = 1L;
 	private Integer id;					//数据id
 	private String orderId;				//订单号
 	private String associatedId;		//关联订单号

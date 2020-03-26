@@ -6,7 +6,9 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 public class Correlation implements Serializable {
-    private Integer id;
+	private static final long serialVersionUID = 1L;
+
+	private Integer id;
 
     private String parentId;
 

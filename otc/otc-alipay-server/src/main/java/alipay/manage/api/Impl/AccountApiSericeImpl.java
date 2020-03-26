@@ -99,7 +99,7 @@ public class AccountApiSericeImpl implements AccountApiService {
         Result password = HashKit.encodePassword(user.getUserId(), user.getPassword(), first.getSalt());
         if (!password.isSuccess())
             return Result.buildFailMessage("当前用户错误，联系技术人员处理"); //password.getResult().toString()
-        if (first.getPayPasword().equals("68645cb7c595c76daa1f43b69cdf9750"))
+        if (first.getPayPasword().equals(password.getResult().toString()))
             return Result.buildSuccess();
         return Result.buildFailMessage("密码错误，请检查");
     }

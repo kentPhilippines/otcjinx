@@ -1,11 +1,13 @@
 package alipay.manage.bean;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-public class CorrelationData {
+public class CorrelationData implements Serializable{
+	private static final long serialVersionUID = 1L;
     private Integer id;
 
     private String orderId;

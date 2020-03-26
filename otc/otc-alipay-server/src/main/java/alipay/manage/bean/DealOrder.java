@@ -11,7 +11,8 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * <p>码商交易订单</p>
  * @author K
  */
-public class DealOrder implements Serializable {
+public class DealOrder implements Serializable{
+	private static final long serialVersionUID = 1L;
     private Integer id;						//数据id
     private String orderId;					//订单id
     private String associatedId;			//关联订单id

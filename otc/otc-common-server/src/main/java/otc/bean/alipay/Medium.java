@@ -1,13 +1,15 @@
 package otc.bean.alipay;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * <p>收款媒介</p>
  * @author K
  */
-public class Medium {
-    private Integer id;							//数据id
+public class Medium implements Serializable{
+	private static final long serialVersionUID = 1L;
+	private Integer id;							//数据id
     private String mediumNumber;				//媒介账号
     private String mediumId;					//系统媒介编号
     private String mediumHolder;				//媒介所属人

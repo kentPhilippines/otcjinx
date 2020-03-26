@@ -9,7 +9,8 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * <p>下游商户交易订单</p>
  * @author K
  */
-public class DealOrderApp implements Serializable {
+public class DealOrderApp implements Serializable{
+	private static final long serialVersionUID = 1L;
     private Integer id;								//数据id
     private String orderId;							//订单号	
     private Integer orderType;						//订单类型:1交易,5代付

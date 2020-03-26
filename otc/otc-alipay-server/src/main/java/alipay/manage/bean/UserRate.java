@@ -1,5 +1,6 @@
 package alipay.manage.bean;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -8,7 +9,8 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * <p>码商费率表</p>
  * @author K
  */
-public class UserRate {
+public class UserRate implements Serializable{
+	private static final long serialVersionUID = 1L;
     private Integer id;						//数据id
     private String userId;					//用户id
     private Integer userType;				//用户类型,商户1 码商2

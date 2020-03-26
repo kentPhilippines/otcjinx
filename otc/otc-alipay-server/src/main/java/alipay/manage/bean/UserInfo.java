@@ -11,7 +11,8 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * <p>用户详情表</p>
  * @author K
  */
-public class UserInfo implements Serializable {
+public class UserInfo implements Serializable{
+	private static final long serialVersionUID = 1L;
     private Integer id;					//数据id
     private String userId;				//用户id
     private String userName;			//用户姓名

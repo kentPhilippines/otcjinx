@@ -1,5 +1,6 @@
 package alipay.manage.bean;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -9,7 +10,8 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * <p>提现订单记录</p>
  * @author K
  */
-public class Withdraw {
+public class Withdraw implements Serializable{
+	private static final long serialVersionUID = 1L;
     private Integer id;				//数据id
     private String orderId;			//订单号
     private String userId;			//用户id
