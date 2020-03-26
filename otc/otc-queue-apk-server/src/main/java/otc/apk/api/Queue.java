@@ -20,9 +20,9 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateBetween;
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.util.ObjectUtil;
-import otc.api.AlipayServiceClienFeign;
-import otc.api.ConfigServiceClientFeign;
 import otc.api.alipay.Common;
+import otc.apk.feign.AlipayServiceClien;
+import otc.apk.feign.ConfigServiceClient;
 import otc.apk.redis.RedisUtil;
 import otc.bean.alipay.FileList;
 import otc.bean.alipay.Medium;
@@ -32,8 +32,8 @@ import otc.result.Result;
 @Component
 public class Queue {
 	Logger log= LoggerFactory.getLogger(Queue.class);
-    @Autowired AlipayServiceClienFeign alipayServiceClienFeignImpl;
-    @Autowired ConfigServiceClientFeign configServiceClientFeignImpl;
+    @Autowired AlipayServiceClien alipayServiceClienFeignImpl;
+    @Autowired ConfigServiceClient configServiceClientFeignImpl;
     @Autowired RedisUtil redisUtil;
     private static final String REDISKEY_QUEUE = RedisConstant.Queue.QUEUE_REDIS;
     public Set<Object> getList(String[] codes) {
