@@ -85,6 +85,15 @@ public class AmountUtil {
 		return deleteAmountBalance(userFund, balance, DELETE_WITHDRAW);
 	}
 	/**
+	 * <p>人工扣款接口</p>
+	 * @param userFund
+	 * @param balance
+	 * @return
+	 */
+	public Result deleteAmount(UserFund userFund , BigDecimal balance) {
+		return deleteAmountBalance(userFund, balance, DELETE_AMOUNT);
+	}
+	/**
 	 * <p><strong>人工冻结</strong></p>
 	 * @param userFund					当前账户实体【必传字段为userId】
 	 * @param balance					当前操作金额

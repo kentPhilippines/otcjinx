@@ -4,6 +4,7 @@ import alipay.manage.bean.Amount;
 import alipay.manage.bean.AmountExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 public interface AmountMapper {
     int countByExample(AmountExample example);
@@ -33,4 +34,7 @@ public interface AmountMapper {
     int updateByPrimaryKeyWithBLOBs(Amount record);
 
     int updateByPrimaryKey(Amount record);
+
+    @Select("select * from alipay_amount where orderId = #{orderId}")
+	Amount findOrder(@Param("orderId")String orderId);
 }

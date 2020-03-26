@@ -115,6 +115,8 @@ public class Common {
 		public static final String  PRODUCT_ALIPAY_H5  = "ALIPAY_H5";//支付宝H5
 		public static final String  WITHDRAW_MY  = "WITHDRAW_MY";//系统出款
 		public static final String  WITHDRAW_DEAL  = "WITHDRAW_DEAL";//三方代付
+		public static final Integer AMOUNT_ORDER_ADD = 1;//资金订单  加款类型
+		public static final Integer AMOUNT_ORDER_DELETE = 2;//资金订单  扣款款类型
 		
 	}
 	

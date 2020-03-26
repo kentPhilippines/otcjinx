@@ -81,30 +81,6 @@ public class AccountApi {
         return accountApiServiceImpl.editAccount(user);
     }
 
-    /**
-     * <p>增加充值点数</p>
-     *
-     * @param userFund 账户名
-     * @param note     加款理由
-     * @return
-     * @param    rechargeNumber        充值点数
-     * @param    user                用户名
-     */
-    @PostMapping(PayApiConstant.Alipay.ADD_AMOUNT)
-    @Transactional
-    public Result addAmount(HttpServletRequest request, UserFund userFund, String user, String note) {
-        log.info("【远程调用修改用户的方法】");
-        if (StrUtil.isBlank(user))
-            return Result.buildFailMessage("加款人不详");
-        if (StrUtil.isBlank(note))
-            return Result.buildFailMessage("请填写加款理由");
-        logUtil.addLog(request, "【加钱】	当前账户人工处理为加钱，加款金额：" + userFund.getRechargeNumber() + "，加款理由：" + note + "，加款人：" + user + "", user);
-        if (ObjectUtil.isNull(userFund))
-            return Result.buildFailMessage("实体类为空，请检查传递方法是否正确");
-        if (StrUtil.isBlank(userFund.getUserId()) || StrUtil.isBlank(userFund.getRechargeNumber().toString()))
-            return Result.buildFailMessage("必传参数为空");
-        return accountApiServiceImpl.addAmount(userFund);
-    }
 
     /*下面是商户的处理逻辑接口*/
 
