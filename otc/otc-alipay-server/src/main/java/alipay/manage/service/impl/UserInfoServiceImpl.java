@@ -43,7 +43,6 @@ public class UserInfoServiceImpl implements UserInfoService{
 	@Autowired UserRateMapper userRateDao;
 	@Autowired UserFundMapper userFundDao;
 	@Autowired AttributeUtil attributeUtil;
-    Logger log= LoggerFactory.getLogger(UserInfoServiceImpl.class);
 
 	/**
 	 * <p>查询自己的子账户</p>
@@ -52,8 +51,6 @@ public class UserInfoServiceImpl implements UserInfoService{
 	 */
 	@Override
 	public List<UserInfo> findSunAccount(UserInfo user) {
-		log.info("userId " + user.getUserId());
-		log.info("Agent " + user.getAgent());
 		UserInfoExample example = new UserInfoExample();
 		UserInfoExample.Criteria criteria = example.createCriteria();
 		if (StrUtil.isNotBlank(user.getUserId()))
@@ -168,7 +165,6 @@ public class UserInfoServiceImpl implements UserInfoService{
 		UserInfoExample.Criteria createCriteria = example.createCriteria();
 		createCriteria.andUserNameEqualTo(user.getUserName());
 		int updateByExample = userInfoMapper.updateByExampleSelective(user,example);
-		System.out.println("结果为 ::: "+ updateByExample);
 		return updateByExample > 0 && updateByExample < 2;
 	}
 
@@ -197,7 +193,6 @@ public class UserInfoServiceImpl implements UserInfoService{
 	@Override
 	public UserInfo getQrCodeUser(UserInfo qruser) {
 		UserInfo selectByExample = userInfoMapper.selectByUserId(qruser.getUserId());
-		log.info("获取用户信息---》" +selectByExample);
 		return selectByExample;
 	}
 
@@ -215,5 +210,16 @@ public class UserInfoServiceImpl implements UserInfoService{
 		if (selective>0 && selective<2)
 			attributeUtil.deleteRedis();
 		return selective>0 && selective<2;
+	}
+
+	@Override
+	public boolean updateproxyByUser(UserInfo user) {
+		System.out.println("Id--->"+user.getId());
+		System.out.println("userId--->"+user.getUserId());
+		System.out.println("isAgant--->"+user.getAgent());
+		System.out.println("isAgant--->"+user.getIsAgent());
+		int results=userInfoMapper.updateproxyByUser(user);
+		System.out.println("results--->" + results);
+		return results>0 && results<2?true:false;
 	}
 }

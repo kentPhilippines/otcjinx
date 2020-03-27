@@ -16,6 +16,8 @@ import alipay.manage.util.LogUtil;
 import cn.hutool.core.util.StrUtil;
 import otc.result.Result;
 
+import java.io.UnsupportedEncodingException;
+
 @Controller
 public class LoginContorller {
 	Logger log = LoggerFactory.getLogger(LoginContorller.class);
@@ -26,7 +28,7 @@ public class LoginContorller {
 	/**
 	 * <p>登录</p>
 	 * @return
-	 * @throws UnsupportedEncodingException 
+	 * @throws UnsupportedEncodingException
 	 * @throws NumberFormatException 
 	 */
 	@PostMapping("/login")

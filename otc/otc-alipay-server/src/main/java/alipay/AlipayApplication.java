@@ -25,8 +25,8 @@ import cn.hutool.core.util.NumberUtil;
 @SpringBootApplication
 @EnableEurekaClient		//服务注册
 @EnableFeignClients		//远程调用
-@ServletComponentScan 
-@ComponentScan 
+@ServletComponentScan(basePackages = "alipay.*")
+@ComponentScan(basePackages = "alipay.*") //注入扫描
 @EnableTransactionManagement //事务
 @EnableRedisHttpSession //redis   session 共享
 public class AlipayApplication {

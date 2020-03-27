@@ -1,8 +1,10 @@
 package alipay.manage.contorller;
 
+import alipay.manage.bean.Product;
 import alipay.manage.bean.Recharge;
 import alipay.manage.bean.UserInfo;
 import alipay.manage.service.OrderService;
+import alipay.manage.service.ProductService;
 import alipay.manage.util.LogUtil;
 import alipay.manage.util.SessionUtil;
 import cn.hutool.core.util.ObjectUtil;
@@ -17,6 +19,7 @@ import otc.result.Result;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -27,7 +30,7 @@ public class RechargeContorller {
     @Autowired SessionUtil sessionUtil;
     @Autowired OrderService orderFacade;
     @Autowired LogUtil logUtil;
-
+    @Autowired ProductService productService;
     /**
      * <p>获取可用的充值渠道</p>
      * <p>这里的渠道就是自营产品</p>
@@ -36,8 +39,8 @@ public class RechargeContorller {
     @RequestMapping("/findEnabledPayType")
     @ResponseBody
     public Result findEnabledPayType() {
-//        List<Paytype> list = payTypeServiceImpl.findPayTypeAll();
-        return Result.buildSuccessMessage(null);
+       List<Product> list = productService.findAllProduct();
+        return Result.buildSuccessResult("发送成功",list);
     }
 
     /**

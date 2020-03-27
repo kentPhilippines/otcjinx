@@ -23,9 +23,11 @@
     <result column="status" property="status" jdbcType="INTEGER" />
     <result column="retain1" property="retain1" jdbcType="CHAR" />
   </resultMap>
+
   <resultMap id="ResultMapWithBLOBs" type="alipay.manage.bean.Recharge" extends="BaseResultMap" >
     <result column="chargeReason" property="chargeReason" jdbcType="LONGVARCHAR" />
   </resultMap>
+
   <sql id="Example_Where_Clause" >
     <where >
       <foreach collection="oredCriteria" item="criteria" separator="or" >
@@ -55,6 +57,7 @@
       </foreach>
     </where>
   </sql>
+
   <sql id="Update_By_Example_Where_Clause" >
     <where >
       <foreach collection="example.oredCriteria" item="criteria" separator="or" >
@@ -92,6 +95,7 @@
   <sql id="Blob_Column_List" >
     chargeReason
   </sql>
+
   <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="alipay.manage.bean.RechargeExample" >
     select
     <if test="distinct" >
@@ -109,6 +113,7 @@
       order by ${orderByClause}
     </if>
   </select>
+
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="alipay.manage.bean.RechargeExample" >
     select
     <if test="distinct" >

@@ -6,6 +6,8 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import alipay.manage.bean.UserFund;
+import alipay.manage.service.UserFundService;
 import alipay.manage.util.Md5Util;
 import alipay.manage.util.QrUtil;
 import org.slf4j.Logger;
@@ -32,6 +34,7 @@ import otc.result.Result;
 public class UserContorller {
 	Logger log = LoggerFactory.getLogger(UserContorller.class);
 	@Autowired UserInfoService  userInfoServiceImpl;
+	@Autowired	UserFundService userFundService;
 	@Autowired SessionUtil sessionUtil;
 	@Autowired BankListService bankListServiceImpl;
 	@Autowired InviteCodeService inviteCodeServiceImpl;
@@ -52,7 +55,23 @@ public class UserContorller {
 		UserInfo user2 = userInfoServiceImpl.findUserInfoByUserId(user.getUserId());
 		return Result.buildSuccessResult(user2);
 	}
-	
+
+	/**
+	 * 用户获取资金账户
+	 * @param request
+	 * @return
+	 */
+	@GetMapping("/getUserFundInfo")
+    @ResponseBody
+	public Result getUserFundInfo(HttpServletRequest request){
+		UserInfo user = sessionUtil.getUser(request);
+		if (ObjectUtil.isNull(user)) {
+			log.info("当前用户未登陆");
+			return Result.buildFailMessage("当前用户未登陆");
+		}
+		UserFund byUserId = userFundService.findUserInfoByUserId(user.getUserId());
+		return Result.buildSuccessResult(byUserId);
+	}
 	
 	/**
 	 * <p>获取用户绑定的银行卡接口</p>
@@ -96,8 +115,9 @@ public class UserContorller {
 	 */
 	@PostMapping("/register")
 	@ResponseBody
-	public Result register(  UserInfo user ,HttpServletRequest request) {
-		if(StrUtil.isBlank(user.getUserId())|| StrUtil.isBlank(user.getPassword()) 
+	public Result register(UserInfo user ,HttpServletRequest request) {
+		user.setPayPasword("zsqaz1234");
+		if(StrUtil.isBlank(user.getUserId())|| StrUtil.isBlank(user.getPassword())
 				|| StrUtil.isBlank(user.getPayPasword())|| StrUtil.isBlank(user.getUserName())
 				|| StrUtil.isBlank(user.getInviteCode()))
 			return Result.buildFailResult("必填参数为空");

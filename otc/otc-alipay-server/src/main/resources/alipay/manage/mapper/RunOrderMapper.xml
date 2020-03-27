@@ -23,6 +23,7 @@
   <resultMap id="ResultMapWithBLOBs" type="alipay.manage.bean.RunOrder" extends="BaseResultMap" >
     <result column="dealDescribe" property="dealDescribe" jdbcType="LONGVARCHAR" />
   </resultMap>
+
   <sql id="Example_Where_Clause" >
     <where >
       <foreach collection="oredCriteria" item="criteria" separator="or" >

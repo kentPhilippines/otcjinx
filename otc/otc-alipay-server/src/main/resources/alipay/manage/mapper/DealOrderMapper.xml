@@ -603,27 +603,27 @@
 
 
   <select id="selectByExampleByMyId" parameterType="String" resultMap="BaseResultMap">
-      SELECT
-     	m.mediumNumber  as orderQr,
-      	q1.orderId as orderId,
-      	q1.orderStatus as orderStatus,
-      	q1.associatedId as associatedId,
-      	q1.dealAmount as dealAmount,
-      	q1.actualAmount as actualAmount,
-      	q1.orderType as orderType,
-      	q1.orderAccount as orderAccount,
-      	q1.externalOrderId as externalOrderId,
-      	q1.dealType as dealType,
-      	q1.createTime as createTime,
-      	q1.orderQrUser as orderQrUser,
-      	q1.orderQrUser as orderQrUser
-      FROM alipay_deal_order q1
-      LEFT JOIN alipay_file_list q2 ON q1.orderQr = q2.concealId
-      LEFT JOIN alipay_medium m ON m.mediumId = q2.concealId
-      WHERE
-      	q1.orderQrUser = #{userId}
-      	and   to_days(q1.createTime) = to_days(#{createTime})
-      	order by createTime desc
+        SELECT
+        r1.payTypr as dealType,
+        q1.orderId as orderId,
+        q1.orderStatus as orderStatus,
+        q1.associatedId as associatedId,
+        q1.dealAmount as dealAmount,
+        q1.actualAmount as actualAmount,
+        q1.orderType as orderType,
+        q1.orderQr as orderQr,
+        q1.orderAccount as orderAccount,
+        q1.externalOrderId as externalOrderId,
+        q1.createTime as createTime,
+        q1.orderQrUser as orderQrUser,
+        q1.orderQrUser as orderQrUser
+        FROM alipay_deal_order q1
+        LEFT JOIN alipay_file_list q2 ON q1.orderQr = q2.concealId
+        LEFT JOIN alipay_user_rate r1 ON q1.feeId = r1.fee
+        WHERE
+          q1.orderQrUser = #{userId}
+          and to_days(q1.createTime) = to_days(#{createTime})
+          order by createTime desc
   </select>
 <!--  q2.qrcodeNumber as orderQr,  q1.payType as payType, -->
   <select id="findMyOrder" parameterType="alipay.manage.bean.DealOrder" resultMap="BaseResultMap">
@@ -634,17 +634,22 @@
     q1.dealAmount as dealAmount,
     q1.actualAmount as actualAmount,
     q1.orderType as orderType,
+    q1.orderQr as orderQr,
     q1.orderAccount as orderAccount,
+    p1.productName as productName,
     q1.externalOrderId as externalOrderId,
     q1.createTime as createTime,
-    q1.orderQrUser as orderQrUser,
     q1.orderQrUser as orderQrUser
     FROM alipay_deal_order q1
-    LEFT JOIN alipay_file_list q2 ON q1.orderQr = q2.concealId
+    LEFT JOIN alipay_user_rate r1 on q1.feeId=r1.id
+    LEFT JOIN alipay_product p1 on r1.payTypr=p1.productId
     WHERE
     1=1
     <if test="orderQrUser != null and orderQrUser != ''">
       and q1.orderQrUser = #{orderQrUser,jdbcType=VARCHAR}
+    </if>
+    <if test="feeId!= 0">
+      and q1.feeId = #{feeId,jdbcType=INTEGER}
     </if>
     and   to_days(q1.createTime) = to_days(#{time})
     order by createTime desc
