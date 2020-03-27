@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -71,7 +72,7 @@ public class Api {
 	 */
 	@Transactional
 	@PostMapping(PayApiConstant.Alipay.ACCOUNT_API+PayApiConstant.Alipay.AMOUNT+"/{param:.+}")
-	public Result addAmount(String param,HttpServletRequest request) {
+	public Result addAmount(@PathVariable("param") String param, HttpServletRequest request) {
 		log.info("【请求交易的终端用户交易请求参数为："+param+"】");
 		Map<String, Object> stringObjectMap = RSAUtils.retMapDecode(param, SystemConstants.INNER_PLATFORM_PRIVATE_KEY);
 		if(CollUtil.isEmpty(stringObjectMap)) {
@@ -84,6 +85,12 @@ public class Api {
 		Object orderStatus = stringObjectMap.get("orderStatus");
 		if(ObjectUtil.isNull(orderStatus))
 			return Result.buildFailMessage("订单状态为空");
+		Object approval = stringObjectMap.get("approval");
+		if(ObjectUtil.isNull(approval))
+			return Result.buildFailMessage("审核人为空");
+		Object comment = stringObjectMap.get("comment");
+		if(ObjectUtil.isNull(comment))
+			return Result.buildFailMessage("审核意见为空");
 		Amount amount =  amountDao.findOrder(orderId.toString());
 		if(ObjectUtil.isNull(amount))
 			return Result.buildFailMessage("当前订单不存在");
@@ -95,7 +102,7 @@ public class Api {
 		switch (amountType) {
 		case Common.Deal.AMOUNT_ORDER_ADD :
 			if(orderStatus.equals(Common.Deal.AMOUNT_ORDER_SU)) {//加款订单成功，
-				int a = amountDao.updataOrder( orderId.toString() ,  orderStatus.toString());
+				int a = amountDao.updataOrder( orderId.toString() ,  orderStatus.toString(), approval.toString(), comment.toString());
 				if(a > 0 && a< 2) {
 					Result addAmount = amountRunUtil.addAmount(amount, clientIP);
 					if(addAmount.isSuccess()) {
@@ -108,7 +115,7 @@ public class Api {
 					}
 				}
 			}else if(orderStatus.equals(Common.Deal.AMOUNT_ORDER_ER)) {//加款失败
-				int a = amountDao.updataOrder( orderId.toString() ,  orderStatus.toString());
+				int a = amountDao.updataOrder( orderId.toString() ,  orderStatus.toString(), approval.toString(), comment.toString());
 				if(a > 0 && a< 2) {
 					logUtil.addLog(request, "当前发起订单修改操作，加款订单号："+amount.getOrderId()+"，加款订单置为失败，加款用户："+amount.getUserId()+"，操作人："+amount.getAccname()+"", amount.getAccname());
 					return Result.buildSuccessMessage("操作成功");
@@ -117,13 +124,13 @@ public class Api {
 			return Result.buildFailMessage("人工处理加扣款失败");
 		case Common.Deal.AMOUNT_ORDER_DELETE :
 			if(orderStatus.equals(Common.Deal.AMOUNT_ORDER_SU)) {//减款订单成功，
-				int a = amountDao.updataOrder( orderId.toString() ,  orderStatus.toString());
+				int a = amountDao.updataOrder( orderId.toString() ,  orderStatus.toString(), approval.toString(), comment.toString());
 				if(a > 0 && a< 2) {
 					logUtil.addLog(request, "当前发起订单修改操作，减款订单号："+amount.getOrderId()+"，减款订单置为成功，减款用户："+amount.getUserId()+"，操作人："+amount.getAccname()+"", amount.getAccname());
 					return Result.buildSuccessMessage("操作成功");
 				} 
 			}else if(orderStatus.equals(Common.Deal.AMOUNT_ORDER_ER)) {//减款失败，资金退回
-				int a = amountDao.updataOrder( orderId.toString() ,  orderStatus.toString());
+				int a = amountDao.updataOrder( orderId.toString() ,  orderStatus.toString(), approval.toString(), comment.toString());
 				if(a > 0 && a< 2) {
 					Result deleteAmount = amountRunUtil.addAmount(amount, clientIP,"扣款失败，资金退回退回");
 					if(deleteAmount.isSuccess()) {
@@ -136,7 +143,7 @@ public class Api {
 					}
 				}
 			}else if(orderStatus.equals(Common.Deal.AMOUNT_ORDER_HE)) {
-				int a = amountDao.updataOrder( orderId.toString() ,  orderStatus.toString());
+				int a = amountDao.updataOrder( orderId.toString() ,  orderStatus.toString(), approval.toString(), comment.toString());
 				if(a > 0 &&  a < 2) {
 					Result deleteAmount = amountRunUtil.deleteAmount(amount, clientIP);
 					if(deleteAmount.isSuccess()) {
