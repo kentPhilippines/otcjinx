@@ -287,6 +287,7 @@
   <update id="updateByExampleSelective" parameterType="map" >
     update alipay_user_fund
     <set >
+     version = version+1,
       <if test="record.id != null" >
         id = #{record.id,jdbcType=INTEGER},
       </if>
@@ -364,6 +365,7 @@
   <update id="updateByExample" parameterType="map" >
     update alipay_user_fund
     set id = #{record.id,jdbcType=INTEGER},
+     version = version+1,
       userId = #{record.userId,jdbcType=VARCHAR},
       userName = #{record.userName,jdbcType=VARCHAR},
       cashBalance = #{record.cashBalance,jdbcType=DECIMAL},
@@ -385,7 +387,7 @@
       createTime = #{record.createTime,jdbcType=TIMESTAMP},
       submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
       status = #{record.status,jdbcType=INTEGER},
-      version = #{record.version,jdbcType=INTEGER}
+      version = #{record.version,jdbcType=INTEGER} and version = #{version,jdbcType=INTEGER}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -393,6 +395,7 @@
   <update id="updateByPrimaryKeySelective" parameterType="alipay.manage.bean.UserFund" >
     update alipay_user_fund
     <set >
+     version = version+1,
       <if test="userId != null" >
         userId = #{userId,jdbcType=VARCHAR},
       </if>
@@ -460,11 +463,12 @@
         version = #{version,jdbcType=INTEGER},
       </if>
     </set>
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER} and version = #{version,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="alipay.manage.bean.UserFund" >
     update alipay_user_fund
     set userId = #{userId,jdbcType=VARCHAR},
+     version = version+1,
       userName = #{userName,jdbcType=VARCHAR},
       cashBalance = #{cashBalance,jdbcType=DECIMAL},
       rechargeNumber = #{rechargeNumber,jdbcType=DECIMAL},
@@ -486,6 +490,6 @@
       submitTime = #{submitTime,jdbcType=TIMESTAMP},
       status = #{status,jdbcType=INTEGER},
       version = #{version,jdbcType=INTEGER}
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER} and version = #{version,jdbcType=INTEGER}
   </update>
 </mapper>

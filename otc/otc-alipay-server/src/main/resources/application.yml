@@ -63,4 +63,4 @@ spring:
 feign.hystrix.enabled: true  
 logging:
   level:
-      aliapay.*: debug   
+      alipay.*: debug   

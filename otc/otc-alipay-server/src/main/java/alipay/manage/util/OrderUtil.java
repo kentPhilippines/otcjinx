@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import alipay.manage.api.OrderApi;
 import alipay.manage.bean.DealOrder;
@@ -33,7 +34,7 @@ public class OrderUtil {
 	 * @return
 	 */
 	public Result orderDealSu(String orderId ,String ip) {
-		return orderDealSu(orderId, ip,true ,null);
+		return orderDealSu(orderId, ip,false ,null);
 	}
 	/**
 	 * <p>【码商交易订单】人工成功调用方法</p>
@@ -45,7 +46,7 @@ public class OrderUtil {
 	public Result orderDealSu(String orderId ,String ip ,String userId) {
 		if(StrUtil.isBlank(userId))
 			return Result.buildFailMessage("当前必传参数为空，请传递操作人ID");
-		return orderDealSu(orderId, ip,false ,userId);
+		return orderDealSu(orderId, ip,true ,userId);
 	}
 	/**
 	 * <p>【码商交易订单】人工调用失败的方法</p>
@@ -94,6 +95,7 @@ public class OrderUtil {
 	 * 5，订单修改完毕
 	 */
 	@SuppressWarnings("unused")
+	@Transactional
 	private  Result updataDealOrderSu(String orderId,String mag , String ip ,Boolean flag) {
 		if(StrUtil.isBlank(orderId) || StrUtil.isBlank(ip)) 
 			return Result.buildFailMessage("必传参数为空");
@@ -109,6 +111,7 @@ public class OrderUtil {
 	}
 	
 	@SuppressWarnings("unused")
+	@Transactional
 	private Result updateDealOrderEr(String orderId,String mag ,String ip) {
 		if(StrUtil.isBlank(orderId) || StrUtil.isBlank(ip)) 
 			return Result.buildFailMessage("必传参数为空");

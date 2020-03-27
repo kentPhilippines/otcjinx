@@ -125,6 +125,12 @@ public class Number {
 		String objectId = IdUtil.objectId().toUpperCase();
 		return Common.Deals.ORDERDEAL+objectId;	
 	}
+
+
+	public static String getRunOrderId() {
+		String objectId = IdUtil.objectId().toUpperCase();
+		return Common.Deals.ORDERRUN+objectId;	
+	}
   
     
     

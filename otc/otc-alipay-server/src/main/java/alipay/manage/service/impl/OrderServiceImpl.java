@@ -192,11 +192,12 @@ public class OrderServiceImpl implements OrderService{
 
 	@Override
 	public DealOrder findOrderByOrderId(String orderId) {
-		return null;
+		return dealOrderMapper.findOrderByOrderId(orderId);
 	}
 	@Override
 	public boolean updateOrderStatus(String orderId, String status, String mag) {
-		return false;
+		int a = dealOrderMapper.updateOrderStatus(orderId,status,mag);
+		return a > 0 && a < 2; 
 	}
 
 	/**

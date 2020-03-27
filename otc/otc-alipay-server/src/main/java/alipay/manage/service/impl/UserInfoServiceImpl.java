@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import alipay.config.redis.RedisUtil;
 import alipay.manage.bean.UserFund;
+import alipay.manage.bean.UserFundExample;
 import alipay.manage.bean.UserInfo;
 import alipay.manage.bean.UserInfoExample;
 import alipay.manage.bean.UserRate;
@@ -69,7 +70,6 @@ public class UserInfoServiceImpl implements UserInfoService{
 	}
 
 	@Override
-	@Cacheable(cacheNames= {RedisConstant.User.USER} ,  unless="#result == null")
 	public UserInfo getUser(String username) {
 		UserInfo selectByAccountId = userInfoMapper.selectByUserName(username);
 		return selectByAccountId;
@@ -87,7 +87,8 @@ public class UserInfoServiceImpl implements UserInfoService{
 
 	@Override
 	public Boolean updataStatusEr(String userId) {
-		return null;
+		int a = userInfoMapper.updataStatusEr(userId);
+		return a > 0 && a < 2;
 	}
 
 	@Override
@@ -95,18 +96,22 @@ public class UserInfoServiceImpl implements UserInfoService{
 		UserInfo selectByAccountId = userInfoMapper.findUserByUserId(userId);
 		return selectByAccountId;
 	}
-
 	@Override
 	public Boolean updataAmount(UserFund userFund) {
-		return null;
+		UserFundExample example = new UserFundExample();
+		UserFundExample.Criteria criteria = example.createCriteria();
+		criteria.andUserIdEqualTo(userFund.getUserId());
+		criteria.andVersionEqualTo(userFund.getVersion());
+		userFund.setVersion(null);
+		int updateByExampleSelective = userFundDao.updateByExampleSelective(userFund , example );
+		return updateByExampleSelective > 0 && updateByExampleSelective   < 2;
 	}
 
 	@Override
 	public UserRate findUserRateById(Integer feeId) {
-		return null;
+		return userRateDao.selectByPrimaryKey(feeId);
 	}
 
-	@Cacheable(cacheNames= {RedisConstant.User.USERPARENT},  unless="#result == null")
 	@Override
 	public List<String> findSubLevelMembers(String accountId) {
 		List<String> childAgentList = userInfoMapper.selectChildAgentListById(accountId);
@@ -117,10 +122,6 @@ public class UserInfoServiceImpl implements UserInfoService{
 		return childAgentList;
 	}
 
-	/**
-	 * <p>根据二维码编号，媒介编号，交易金额生成二位码数据</p>
-	 */
-	@CacheEvict(value=QR_CODE, allEntries=true)
 	@Override
 	public Result addQrByMedium(String qrcodeId, String mediumId, String amount,String userId, String flag) {
 		Medium medium = mediumService.findMediumById(mediumId);

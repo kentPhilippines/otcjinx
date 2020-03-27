@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
 import alipay.manage.bean.UserFund;
 import alipay.manage.bean.UserInfo;
 import alipay.manage.service.RunOrderService;
@@ -435,7 +437,7 @@ public class AmountUtil {
 		BigDecimal cashBalance = userFund.getCashBalance();//当前现金账户
 		BigDecimal freezeBalance = userFund.getFreezeBalance();//当前冻结账户
 		BigDecimal rechargeNumber = userFund.getRechargeNumber();//当前充值点数
-		if(cashBalance.add(rechargeNumber).subtract(freezeBalance).compareTo(accountBalance) == 0) { //关闭资金流动的功能  
+		if(cashBalance.add(rechargeNumber).subtract(freezeBalance).compareTo(accountBalance) != 0) { //关闭资金流动的功能  
 			log.info("【===========【经过系统核对后，当前用户账户存在问题，请重点关照该用户的账号，检查问题出现原因】===========】");
 			if(userInfoServiceImpl.updataStatusEr(userFund.getUserId()))
 				return Result.buildFail();

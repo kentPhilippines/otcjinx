@@ -21,6 +21,7 @@ import cn.hutool.core.util.StrUtil;
 import org.springframework.transaction.annotation.Transactional;
 import otc.api.alipay.Common;
 import otc.exception.BusinessException;
+import otc.exception.user.UserException;
 import otc.result.Result;
 
 /**
@@ -116,7 +117,7 @@ public class AmountRunUtil {
 		Result delete = delete(WITHDRAY_AMOUNT_FEE, userFund, withdraw.getOrderId(), withdraw.getFee(), generationIp, "账户代付手续费冻结",  flag?RUNTYPE_ARTIFICIAL:RUNTYPE_NATURAL);
 		if(delete.isSuccess())
 			return delete;
-		return Result.buildFailMessage("流水生成失败");
+		throw new UserException("账户流水异常", null);
 	}
 	/**
 	 * <p>充值</p>
@@ -130,7 +131,7 @@ public class AmountRunUtil {
 		Result add = add(RECHANGE_AMOUNT, userFund, recharge.getOrderId(), recharge.getActualAmount(), generationIp, "码商充值",  flag?RUNTYPE_ARTIFICIAL:RUNTYPE_NATURAL);
 		if(add.isSuccess())
 			return add;
-		return Result.buildFailMessage("流水生成失败");
+		throw new UserException("账户流水异常", null);
 	}
 	/**
 	 * <p>代理商分润计算</p>
@@ -188,7 +189,7 @@ public class AmountRunUtil {
 		Result add = add(PROFIT_AMOUNT_DEAL, userFund, order.getOrderId(), amount, generationIp, "商正常接单分润", flag?RUNTYPE_ARTIFICIAL:RUNTYPE_NATURAL);
 		if(add.isSuccess())
 			return add;
-		return Result.buildFailMessage("流水生成失败");
+		throw new UserException("账户流水异常", null);
 	}
 	/**
 	 * <p>人工加钱</p>
@@ -196,14 +197,13 @@ public class AmountRunUtil {
 	 * @param generationIp		操作ip
 	 * @return
 	 */
-	@Transactional
 	public Result addAmount(Amount amount , String generationIp) {
 		UserFund userFund = userInfoServiceImpl.findUserFundByAccount(amount.getUserId());
 		Result add = add(ADD_AMOUNT, userFund, amount.getOrderId(), amount.getActualAmount(),
 				generationIp, amount.getDealDescribe(), RUNTYPE_ARTIFICIAL);
 		if(add.isSuccess())
 			return add;
-		return Result.buildFailMessage("流水生成失败");
+		throw new UserException("账户流水异常", null);
 	}
 	
 	public Result addAmount(Amount amount, String clientIP, String descr) {
@@ -212,7 +212,7 @@ public class AmountRunUtil {
 				clientIP, descr, RUNTYPE_ARTIFICIAL);
 		if(add.isSuccess())
 			return add;
-		return Result.buildFailMessage("流水生成失败");
+		throw new UserException("账户流水异常", null);
 	}
 	
 	
@@ -228,9 +228,10 @@ public class AmountRunUtil {
 		UserFund userFund = userInfoServiceImpl.findUserFundByAccount(order.getOrderQrUser());
 		Result delete = delete(DEAL_AMOUNT_DETETE, userFund, order.getOrderId(), order.getDealAmount(), generationIp, 
 				"交易流水,扣除用户交易点数", flag?RUNTYPE_ARTIFICIAL:RUNTYPE_NATURAL);
-		if(delete.isSuccess()) 
+		if(delete.isSuccess()) {
 			return delete;
-		return Result.buildFailMessage("流水生成失败");
+		}
+		throw new UserException("账户流水异常", null);
 	}
 	/**
 	 * <p>人工扣款</p>
@@ -244,7 +245,7 @@ public class AmountRunUtil {
 				generationIp, amount.getDealDescribe(), RUNTYPE_ARTIFICIAL);
 		if(delete.isSuccess())
 			return delete;
-		return Result.buildFailMessage("流水生成失败");
+		throw new UserException("账户流水异常", null);
 	}
 	
 	/**
@@ -281,6 +282,7 @@ public class AmountRunUtil {
 	 * @param amount
 	 * @return
 	 */
+	@Transactional(rollbackFor = Exception.class)
 	private Result delete(String orderType , UserFund userFund ,String associatedId , BigDecimal amount,String generationIp,String dealDescribe,String runType) {
 		String orderAccount,amountType,acountR ,accountW;
 		Integer runOrderType = null;
@@ -290,11 +292,11 @@ public class AmountRunUtil {
 		acountR =  SYSTEM_APP;
 		accountW = orderAccount ; 
 		runOrderType = getRunOrderType(orderType);
-		amountNow = userFund .getAccountBalance();
+		amountNow = userFund .getAccountBalance().add(amount);
 		Result amountRun = amountRun(associatedId, orderAccount, runOrderType, amount, generationIp, acountR, accountW, runType, amountType, dealDescribe, amountNow);
 		if(amountRun.isSuccess())
 			return amountRun;
-		return Result.buildFailMessage("流水生成失败");
+		throw new UserException("账户流水异常", null);
 	}
 	/**
 	 * <p>创建流水总类</p>	
@@ -333,10 +335,11 @@ public class AmountRunUtil {
 		run.setRunOrderType(runOrderType);
 		run.setRunType(runType);
 		run.setAmountNow(amountNow);
+		run.setAmount(amount);
 		boolean addOrder = runOrderServiceImpl.addOrder(run);
 		if(addOrder)
 			return Result.buildSuccessMessage("流水订单生成成功");
-		return Result.buildFailMessage("流水订单生成失败");
+		  throw new UserException("账户流水异常", null);
 	}
 	
 	/**

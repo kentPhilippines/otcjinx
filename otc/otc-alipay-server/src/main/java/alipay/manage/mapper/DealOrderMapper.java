@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.cache.annotation.Cacheable;
 
 @Mapper
@@ -53,4 +55,17 @@ public interface DealOrderMapper {
      */
     @Cacheable(cacheNames= {ORDER_INFO_QR} ,  unless="#result == null")
     List<DealOrder> findMyOrder(DealOrder order);
+
+    @Select("select * from alipay_deal_order where orderId = #{orderId}")
+	DealOrder findOrderByOrderId(@Param("orderId")String orderId);
+
+    /**
+     * 修改订单状态
+     * @param orderId				订单号
+     * @param status				订单状态
+     * @param mag					修改备注
+     * @return
+     */
+    @Update("update alipay_deal_order set orderStatus  = #{status} , dealDescribe   = #{mag}  where  orderId = #{orderId}")
+	int updateOrderStatus(@Param("orderId")String orderId, @Param("status")String status, @Param("mag")String mag);
 }

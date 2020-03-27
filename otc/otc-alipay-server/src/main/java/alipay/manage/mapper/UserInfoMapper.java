@@ -74,4 +74,13 @@ public interface UserInfoMapper {
 
     @Update("update alipay_user_rate set switchs = #{status} where userId = #{userId} and userType = 1 ")
     void closeMerchantRateChannel(@Param("userId") String userId, @Param("status") Integer status);
+
+    @Update("update alipay_user_info set switchs = 0 where userId = #{userId}")
+	int updataStatusEr(@Param("userId")String userId);
+    /**
+     * 更新用户代理
+     * @param user
+     * @return
+     */
+    int updateproxyByUser(UserInfo user);
 }
