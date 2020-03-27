@@ -18,7 +18,9 @@ import alipay.manage.service.RunOrderService;
 import alipay.manage.service.UserInfoService;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import org.springframework.transaction.annotation.Transactional;
 import otc.api.alipay.Common;
+import otc.exception.BusinessException;
 import otc.result.Result;
 
 /**
@@ -194,6 +196,7 @@ public class AmountRunUtil {
 	 * @param generationIp		操作ip
 	 * @return
 	 */
+	@Transactional
 	public Result addAmount(Amount amount , String generationIp) {
 		UserFund userFund = userInfoServiceImpl.findUserFundByAccount(amount.getUserId());
 		Result add = add(ADD_AMOUNT, userFund, amount.getOrderId(), amount.getActualAmount(),
@@ -252,7 +255,8 @@ public class AmountRunUtil {
 	 * @return
 	 */
 	@SuppressWarnings("unused")
-	private Result add(String orderType , UserFund userFund ,String associatedId , BigDecimal amount,String generationIp,String dealDescribe,String runType) {
+	@Transactional(rollbackFor = Exception.class)
+	public Result add(String orderType, UserFund userFund, String associatedId, BigDecimal amount, String generationIp, String dealDescribe, String runType) {
 		String orderAccount,amountType,acountR ,accountW;
 		Integer runOrderType = null;
 		BigDecimal amountNow ;
@@ -265,7 +269,9 @@ public class AmountRunUtil {
 		Result amountRun = amountRun(associatedId, orderAccount, runOrderType, amount, generationIp, acountR, accountW, runType, amountType, dealDescribe, amountNow);
 		if(amountRun.isSuccess())
 			return amountRun;
-		return Result.buildFailMessage("流水生成失败");
+		else
+			throw new BusinessException("生成流水失败");
+		//return Result.buildFailMessage("流水生成失败");
 	}
 	
 	/**
