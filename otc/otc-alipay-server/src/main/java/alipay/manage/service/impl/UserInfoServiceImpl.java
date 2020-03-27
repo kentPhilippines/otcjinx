@@ -11,6 +11,7 @@ import alipay.manage.bean.UserFundExample;
 import alipay.manage.bean.UserInfo;
 import alipay.manage.bean.UserInfoExample;
 import alipay.manage.bean.UserRate;
+import alipay.manage.bean.*;
 import alipay.manage.mapper.FileListMapper;
 import alipay.manage.mapper.UserFundMapper;
 import alipay.manage.mapper.UserInfoMapper;
@@ -43,6 +44,7 @@ public class UserInfoServiceImpl implements UserInfoService{
 	@Autowired UserRateMapper userRateDao;
 	@Autowired UserFundMapper userFundDao;
 	@Autowired AttributeUtil attributeUtil;
+    Logger log= LoggerFactory.getLogger(UserInfoServiceImpl.class);
 
 	/**
 	 * <p>查询自己的子账户</p>
@@ -221,5 +223,15 @@ public class UserInfoServiceImpl implements UserInfoService{
 		int results=userInfoMapper.updateproxyByUser(user);
 		System.out.println("results--->" + results);
 		return results>0 && results<2?true:false;
+	}
+
+    @Override
+    public int updateBalanceById(Integer id, BigDecimal deduct, Integer version) {
+		return userFundDao.updateBalanceById(id, deduct, version);
+    }
+
+	@Override
+	public int insertAmountEntitys(Amount amount) {
+		return userFundDao.insetAmountEntity(amount);
 	}
 }

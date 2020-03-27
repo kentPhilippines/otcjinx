@@ -1,14 +1,14 @@
 package alipay.manage.mapper;
 
+import alipay.manage.bean.Amount;
 import alipay.manage.bean.UserFund;
 import alipay.manage.bean.UserFundExample;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
+
 @Mapper
 public interface UserFundMapper {
     int countByExample(UserFundExample example);
@@ -30,4 +30,12 @@ public interface UserFundMapper {
 
     @Select("select * from alipay_user_fund where userId=#{userId}")
     UserFund findUserFundByUserId(@Param("userId") String userId);
+
+    @Update("update alipay_user_fund set rechargeNumber = rechargeNumber + #{deduct}, freezeBalance = freezeBalance - #{deduct}, " +
+            "accountBalance = accountBalance - #{deduct}, version = version + 1 where id = #{id} and version = #{version} ")
+    int updateBalanceById(@Param("id") Integer id, @Param("deduct") BigDecimal deduct, @Param("version") Integer version);
+
+    @Insert("insert into alipay_amount (orderId, userId, amountType, accname, orderStatus, amount, actualAmount, dealDescribe) " +
+            "values (#{orderId}, #{userId},#{amountType},#{accname},#{orderStatus},#{amount},#{amount},#{dealDescribe} )")
+    int insetAmountEntity(Amount amount);
 }

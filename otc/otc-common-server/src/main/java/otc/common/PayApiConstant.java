@@ -27,6 +27,7 @@ public class PayApiConstant {
 		public static final String AMOUNT = "/amount";//账户加钱接口 【充值点数】
 		public static final String DELETE_AMOUNT ="/delete_amount";//账户减钱接口【账户金额扣除】
 		public static final String FREEZE_AMOUNT = "/freeze_amount";//账户冻结接口【账户资金冻结】
+		public static final String GENERATE_ORDER_DEDUCT = "/deduct_order"; //生成扣款订单【扣款订单】
 	
 		
 		public static final String ORDER_API = "/order-api";//订单处理接口

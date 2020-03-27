@@ -2,6 +2,7 @@ package alipay.manage.service;
 import java.math.BigDecimal;
 import java.util.List;
 
+import alipay.manage.bean.Amount;
 import alipay.manage.bean.UserFund;
 import alipay.manage.bean.UserInfo;
 import alipay.manage.bean.UserRate;
@@ -146,4 +147,14 @@ public interface UserInfoService {
 	 * @return
 	 */
 	boolean updateproxyByUser(UserInfo user);
+
+
+	/**
+	 * 根据主键ID 更新账户余额
+	 * @param id
+	 * @return
+	 */
+	int updateBalanceById(Integer id, BigDecimal deduct, Integer version);
+
+	int insertAmountEntitys(Amount amount);
 }
