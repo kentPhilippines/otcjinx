@@ -202,6 +202,18 @@ public class AmountRunUtil {
 			return add;
 		return Result.buildFailMessage("流水生成失败");
 	}
+	
+	public Result addAmount(Amount amount, String clientIP, String descr) {
+		UserFund userFund = userInfoServiceImpl.findUserFundByAccount(amount.getUserId());
+		Result add = add(ADD_AMOUNT, userFund, amount.getOrderId(), amount.getActualAmount(),
+				clientIP, descr, RUNTYPE_ARTIFICIAL);
+		if(add.isSuccess())
+			return add;
+		return Result.buildFailMessage("流水生成失败");
+	}
+	
+	
+	
 	/**
 	 *<p>交易扣除交易点数【订单置为成功时调用该方法扣除点数】</p>
 	 * @param order					交易订单

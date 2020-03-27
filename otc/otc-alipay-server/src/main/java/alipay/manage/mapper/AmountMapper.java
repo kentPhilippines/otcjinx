@@ -5,6 +5,7 @@ import alipay.manage.bean.AmountExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 public interface AmountMapper {
     int countByExample(AmountExample example);
@@ -37,4 +38,7 @@ public interface AmountMapper {
 
     @Select("select * from alipay_amount where orderId = #{orderId}")
 	Amount findOrder(@Param("orderId")String orderId);
+
+    @Update("update alipay_amount set orderStatus  = #{orderStatus} where orderId = #{orderId}")
+	int updataOrder(@Param("orderId")String orderId, @Param("orderStatus")String orderStatus);
 }

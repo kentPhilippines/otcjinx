@@ -104,25 +104,25 @@ public class Number {
 
 
 	public static String getImg() {
-		 String objectId = IdUtil.objectId();
+		 String objectId = IdUtil.objectId().toUpperCase();
 		return Common.Medium.IMG_NUMBER+objectId;	
 	}
 
 
 	public static String getMedum() {
-		String objectId = IdUtil.objectId();
+		String objectId = IdUtil.objectId().toUpperCase();
 		return Common.Medium.MM_NUMBER+objectId;	
 	}
 
 
 	public static String getBank() {
-		String objectId = IdUtil.objectId();
+		String objectId = IdUtil.objectId().toUpperCase();
 		return Common.Medium.BANK_NUMBER+objectId;	
 	}
 
 
 	public static String getOrderQr() {
-		String objectId = IdUtil.objectId();
+		String objectId = IdUtil.objectId().toUpperCase();
 		return Common.Deals.ORDERDEAL+objectId;	
 	}
   
