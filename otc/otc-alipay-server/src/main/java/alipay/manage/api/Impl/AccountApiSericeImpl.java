@@ -56,11 +56,10 @@ public class AccountApiSericeImpl implements AccountApiService {
         UserInfo user1 = userInfoDao.findUserId(user.getUserId(), user.getUserName());
         if (ObjectUtil.isNotNull(user1))
             return Result.buildFailMessage("当前账户、当前用户名已经被占用，请重新选择");
-        if (!user.getUserType().toString().equals(Common.User.USER_TYPE_QR))
-            return Result.buildFailMessage("开户账户类型不符合");
         String salt = HashKit.randomSalt();
         Result password = HashKit.encodePassword(user.getUserId(), user.getPassword(), salt);
         Result payPasword = HashKit.encodePassword(user.getUserId(), user.getPayPasword(), salt);
+        log.info("payPasword " + payPasword.isSuccess());
         if (!password.isSuccess())
             return Result.buildFailMessage("生成密钥失败");
         if (!payPasword.isSuccess())
@@ -99,9 +98,9 @@ public class AccountApiSericeImpl implements AccountApiService {
         Result password = HashKit.encodePassword(user.getUserId(), user.getPassword(), first.getSalt());
         if (!password.isSuccess())
             return Result.buildFailMessage("当前用户错误，联系技术人员处理"); //password.getResult().toString()
-        if (first.getPayPasword().equals(password.getResult().toString()))
+        if (first.getPassword().equals(password.getResult().toString()))
             return Result.buildSuccess();
-        return Result.buildFailMessage("密码错误，请检查");
+        return Result.buildFailMessage("密码错误，请检查!");
     }
 
     /**

@@ -14,4 +14,9 @@ public class UserFundServiceImpl  implements UserFundService{
 		return userFundDao.findUserFundByUserId(userId);
 	}
 
+	@Override
+	public UserFund findUserInfoByUserId(String userId) {
+		return userFundDao.findUserFundByUserId(userId);
+	}
+
 }

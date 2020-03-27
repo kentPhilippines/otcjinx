@@ -12,7 +12,8 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * @author K
  */
 public class UserInfo implements Serializable{
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID =-3774809486372838018L;
+
     private Integer id;					//数据id
     private String userId;				//用户id
     private String userName;			//用户姓名

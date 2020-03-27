@@ -206,7 +206,6 @@ public class OrderServiceImpl implements OrderService{
 	 */
 	@Override
 	public List<DealOrder> findMyOrder(DealOrder order) {
-		System.out.println("order  ->" +order.getOrderQrUser());
 		return dealOrderMapper.findMyOrder(order);
 	}
 	/**

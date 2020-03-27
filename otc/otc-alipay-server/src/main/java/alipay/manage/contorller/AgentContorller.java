@@ -13,11 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -50,20 +46,22 @@ public class AgentContorller {
 	    /**
 	     * <p>代理商开户</p>
 	     *	 手机端专用
-	     * @return
 	     */
-	    @GetMapping("/agentOpenAnAccount")
+	    @RequestMapping(value = "/agentOpenAnAccount",method = RequestMethod.POST)
 	    @ResponseBody
-	    public Result agentOpenAnAccount(UserInfo user, HttpServletRequest request) {
+	    public Result agentOpenAnAccount(@RequestBody UserInfo user, HttpServletRequest request) {
+	    	user.setPayPasword("zssqaz1234");
 	    	UserInfo user2 = sessionUtil.getUser(request);
-			if (ObjectUtil.isNull(user))
-				return Result.buildFailMessage("未获取到登录用户");
+	    	log.info("user2-----"+user2.getUserId());
+			if (ObjectUtil.isNull(user2.getUserId()))
+				throw new OtherErrors("未获取到登录用户");
 	        user.setAgent(user2.getUserId());
-	        user.setIsAgent(Common.User.USER_IS_AGENT);
+			user.setIsAgent("1");
 			Result result = agentApi.openAgentAccount(user);
+			log.info("获取开户结果 " + result.isSuccess());
 			if (result.isSuccess())
 				userUtil.openAccountCorrlation(user.getUserId());
-	        return Result.buildFailMessage("开户失败");
+	        return Result.buildSuccessMessage("开户成功!!");
 	    }
 	    /**
 	     * <p>密码修改</p>

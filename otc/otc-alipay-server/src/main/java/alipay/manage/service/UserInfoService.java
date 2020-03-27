@@ -139,4 +139,11 @@ public interface UserInfoService {
 	 * @return
 	 */
 	boolean addQrcodeUser(UserInfo user);
+
+	/**
+	 * 更新代理商
+	 * @param user
+	 * @return
+	 */
+	boolean updateproxyByUser(UserInfo user);
 }

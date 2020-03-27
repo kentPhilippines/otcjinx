@@ -42,4 +42,12 @@ public interface UserRateMapper {
 
     @Select("select * from alipay_user_rate where feeType = 1 and userId = #{userId} and switchs = 1 and payTypr = #{productAlipayScan} and status  = 1")
 	UserRate findUserRate(@Param("userId")String userId,@Param("productAlipayScan") String productAlipayScan);
+
+    /**
+     * 通过用户查询产品的费率
+     * @param userId
+     * @param productCode
+     * @return
+     */
+    UserRate findProductFeeBy(String userId, String productCode);
 }

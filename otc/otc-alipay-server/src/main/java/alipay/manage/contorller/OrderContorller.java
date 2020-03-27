@@ -11,6 +11,8 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import javax.servlet.http.HttpServletRequest;
 
+import alipay.manage.bean.*;
+import alipay.manage.service.UserRateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,11 +25,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
-import alipay.manage.bean.DealOrder;
-import alipay.manage.bean.Recharge;
-import alipay.manage.bean.RunOrder;
-import alipay.manage.bean.UserInfo;
-import alipay.manage.bean.Withdraw;
 import alipay.manage.bean.util.PageResult;
 import alipay.manage.service.OrderService;
 import alipay.manage.service.UserInfoService;
@@ -41,6 +38,7 @@ import cn.hutool.core.util.StrUtil;
 import otc.api.alipay.Common;
 import otc.exception.user.UserException;
 import otc.result.Result;
+import otc.util.StringUtils;
 
 @Controller
 @RequestMapping("/order")
@@ -51,7 +49,7 @@ public class OrderContorller {
 	@Autowired OrderUtil orderUtil;
 	@Autowired LogUtil logUtil;
 	@Autowired UserInfoService accountServiceImpl;
-	
+	@Autowired UserRateService userRateService;
 	private Lock lock = new ReentrantLock();
 	/**
 	 * <p>获取当前我，正在交易的订单</p>
@@ -88,6 +86,7 @@ public class OrderContorller {
 	        log.info("当前用户未登陆");
 	        return Result.buildFailMessage("当前用户未登陆");
 	    }
+		log.info("获取当前用户----->" + user2.getUserId());
 		PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
 		List<DealOrder> listOrder = orderServiceImpl.findOrderByUser(user2.getUserId(),createTime);
 		log.info("获取的集合:"+ listOrder);
@@ -105,19 +104,23 @@ public class OrderContorller {
 	@Transactional
 	public Result userConfirmToPaid(HttpServletRequest request,String orderId) {
 		return null; }
+
 	@GetMapping("/findMyReceiveOrderRecordByPage")
 	@ResponseBody
 	@Transactional
-	public Result findMyReceiveOrderRecordByPage(HttpServletRequest request,String receiveOrderTime,String pageNum,String pageSize,String gatheringChannelCode) {
+	public Result findMyReceiveOrderRecordByPage(HttpServletRequest request,String receiveOrderTime,String pageNum,String pageSize,String productCode) {
+		log.info("获取code " + productCode);
 		UserInfo user = sessionUtil.getUser(request);
-		DealOrder order = new DealOrder();
 		if(ObjectUtil.isNull(user))
 			throw new UserException("当前用户未登录",null);
+		//通过产品的code费率产品信息
+		UserRate userRate=userRateService.findProductFeeBy(user.getUserId(),productCode);
+		DealOrder order = new DealOrder();
+		if (StringUtils.isNotEmpty(userRate.toString()))
+		order.setFeeId(userRate.getId());
 		order.setOrderQrUser(user.getUserId());
 		if(StrUtil.isNotBlank(receiveOrderTime))
 			order.setTime(receiveOrderTime);
-//		if(StrUtil.isNotBlank(gatheringChannelCode))
-//			order.setOrderType(gatheringChannelCode);
 		PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
 		List<DealOrder> orderList = orderServiceImpl.findMyOrder(order);
 		PageInfo<DealOrder> pageInfo = new PageInfo<DealOrder>(orderList);

@@ -5,6 +5,7 @@ import alipay.manage.bean.UserInfo;
 import alipay.manage.bean.util.OnlineVO;
 import alipay.manage.service.UserInfoService;
 import alipay.manage.util.SessionUtil;
+import alipay.manage.util.SettingFile;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -37,6 +38,7 @@ public class MasterControlController {
 	@Autowired SessionUtil sessionUtil;
 	@Autowired RedisUtil redisUtil;
 	@Autowired UserInfoService userInfoService;
+	@Autowired SettingFile settingFile;
 	/**
 	 * <p>获取网站标题</p>
 	 * @return
@@ -61,7 +63,7 @@ public class MasterControlController {
 		bean.setInviteCodeEffectiveDuration(50000000); 
 		Result config = configServiceClientFeignImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.REGISTER_ENABLED);
 		log.info("获取的参数：： " + config);
-		bean.setRegisterEnabled(config.getResult()!=null?true:false);//是否开放注册功能 config.getResult().toString().equals("1")?true:false
+		bean.setRegisterEnabled(settingFile.getName(settingFile.REGISTER_ENABLED)!=null?true:false);//是否开放注册功能 config.getResult().toString().equals("1")?true:false
 		bean.setInviteRegisterEnabled(false); 
 		bean.setRegitserDefaultRebate(0.01);
 		return Result.buildSuccessResult(bean);

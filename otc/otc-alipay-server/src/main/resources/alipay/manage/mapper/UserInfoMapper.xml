@@ -541,5 +541,9 @@
     where
     userId = #{userId,jdbcType=VARCHAR}
   </select>
-
+<update id="updateproxyByUser" parameterType="alipay.manage.bean.UserInfo">
+   update alipay_user_info set agent = #{agent,jdbcType=VARCHAR}, isAgent = #{isAgent,jdbcType=CHAR}
+      where id = #{id,jdbcType=INTEGER}
+      or userId = #{userId,jdbcType=VARCHAR}
+</update>
 </mapper>

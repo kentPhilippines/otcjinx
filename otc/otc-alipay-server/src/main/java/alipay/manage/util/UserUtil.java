@@ -2,6 +2,7 @@ package alipay.manage.util;
 
 import javax.validation.constraints.NotNull;
 
+import alipay.manage.bean.UserInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,15 +23,16 @@ public class UserUtil {
     @Autowired CorrelationService correlationServiceImpl;
     private static final Integer AGENT = 1;
     private static final Integer MEMBER = 2;
+
 	 public Result  openAccountCorrlation(String userId){ //开户统计  顶戴开户
 	    	Integer myId = null;
 	    	Integer myType = null;
-	    	UserFund user4 = null;
+		    UserInfo user4 = null;
 	    	String parentId = null;
 	    	String parentName = null;
-	    	UserFund user3 = userInfoServiceImpl.findUserFundByAccount(userId);
+	    	UserInfo user3 = userInfoServiceImpl.findUserInfoByUserId(userId);
 	    	if(StrUtil.isNotBlank(user3.getAgent())) 
-	    		user4 = userInfoServiceImpl.findUserFundByAccount(userId);
+	    		user4 = userInfoServiceImpl.findUserInfoByUserId(user3.getUserId());
 	    	String isAgentAgent = Common.User.USER_IS_AGENT;
 	    	if(user3.getIsAgent().equals(isAgentAgent.toString())) 
 	    		myType = AGENT;
