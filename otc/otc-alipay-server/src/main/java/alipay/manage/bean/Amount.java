@@ -3,15 +3,13 @@ package alipay.manage.bean;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-public class Amount implements Serializable{
-	private static final long serialVersionUID = 1L;
-	
-	
-	
-	
+public class Amount implements Serializable {
+
+    private static final long serialVersionUID = 1L;
     private Integer id;
     private String orderId;
     private String userId;
@@ -24,9 +22,10 @@ public class Amount implements Serializable{
     private Date createTime;
     private Date submitTime;
     private Integer status;
-    private String retain1;
-    private String retain2;
+    private String approval;
+    private String comment;
     private String dealDescribe;
+
     public Integer getId() {
         return id;
     }
@@ -123,20 +122,20 @@ public class Amount implements Serializable{
         this.status = status;
     }
 
-    public String getRetain1() {
-        return retain1;
+    public String getApproval() {
+        return approval;
     }
 
-    public void setRetain1(String retain1) {
-        this.retain1 = retain1 == null ? null : retain1.trim();
+    public void setApproval(String approval) {
+        this.approval = approval;
     }
 
-    public String getRetain2() {
-        return retain2;
+    public String getComment() {
+        return comment;
     }
 
-    public void setRetain2(String retain2) {
-        this.retain2 = retain2 == null ? null : retain2.trim();
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
     public String getDealDescribe() {
