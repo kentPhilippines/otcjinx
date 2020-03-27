@@ -164,7 +164,6 @@ public class UserInfoServiceImpl implements UserInfoService{
 		UserInfoExample.Criteria createCriteria = example.createCriteria();
 		createCriteria.andUserNameEqualTo(user.getUserName());
 		int updateByExample = userInfoMapper.updateByExampleSelective(user,example);
-		System.out.println("结果为 ::: "+ updateByExample);
 		return updateByExample > 0 && updateByExample < 2;
 	}
 
