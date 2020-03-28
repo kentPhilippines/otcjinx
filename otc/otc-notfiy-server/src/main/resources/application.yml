@@ -1,0 +1,37 @@
+spring:
+   application:
+    name: otc-notfiy-server
+   thymeleaf:
+    cache: false
+    prefix: classpath:/templates/
+    suffix: .html
+    encoding: UTF-8
+    content-type: text/html
+    mode: HTML5   
+   cloud:
+    config:
+      label: master
+      profile: dev
+      discovery:
+        enabled:  true
+        serviceId:  notfiy-server
+    bus:
+      enabled: true
+      trace:
+        enabled: true
+   client:
+    serviceUrl:
+      defaultZone:  http://localhost:8761/eureka/
+   redis:
+    port: 6379
+    host: 127.0.0.1
+    timeout : 5000
+    pool :
+        max-idle : 100
+        min-idle : 10
+        max-active : 1000
+        max-wait : -1
+feign.hystrix.enabled: true  
+logging:
+  level:
+      otc.*: debug  

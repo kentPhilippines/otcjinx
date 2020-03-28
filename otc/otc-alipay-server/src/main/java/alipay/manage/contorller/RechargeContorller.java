@@ -100,7 +100,7 @@ public class RechargeContorller {
 	   order.setAmount(param.getAmount());
 	   order.setRechargeType(param.getRechargeType());
 	   order.setFee(new BigDecimal("0"));
-	   order.setOrderStatus(Common.Order.ORDER_STATUS_DISPOSE.toString());
+	   order.setOrderStatus(Common.Order.DealOrder.ORDER_STATUS_DISPOSE.toString());
 	   order.setNotfiy("127.0.0.1:3212/otc/rechaege-notfiy");
 	   order.setUserId(param.getUserId());
 	   order.setRetain1(param.getRetain1());

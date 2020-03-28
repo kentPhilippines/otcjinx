@@ -203,15 +203,15 @@ public class Api {
 			return Result.buildFailMessage("当前使用代理服务器 或是操作ip识别出错，不允许操作");
 		if(ObjectUtil.isNull(order))
 			return Result.buildFailMessage("当前订单不存在");
-		if(order.getOrderStatus().equals(Common.Order.ORDER_STATUS_ER.toString()) || order.getOrderStatus().equals(Common.Order.ORDER_STATUS_SU.toString()))
+		if(order.getOrderStatus().equals(Common.Order.DealOrder.ORDER_STATUS_ER.toString()) || order.getOrderStatus().equals(Common.Order.DealOrder.ORDER_STATUS_SU.toString()))
 			return Result.buildFailMessage("当前订单状态不允许操作");
-		if(orderstatus.equals(Common.Order.ORDER_STATUS_ER.toString())) {
+		if(orderstatus.equals(Common.Order.DealOrder.ORDER_STATUS_ER.toString())) {
 			Result orderDealEr = orderUtil.orderDealEr(orderId, "后台人员置交易订单失败，操作人："+userop+"", clientIP);
 			if(orderDealEr.isSuccess())
 				return Result.buildSuccessMessage("操作成功");
 			else
 				return orderDealEr;
-		} else if (orderstatus.equals(Common.Order.ORDER_STATUS_SU.toString())) {
+		} else if (orderstatus.equals(Common.Order.DealOrder.ORDER_STATUS_SU.toString())) {
 			Result orderDealSu = orderUtil.orderDealSu(orderId, clientIP, userop);
 			if(orderDealSu.isSuccess())
 				return Result.buildSuccessMessage("操作成功");

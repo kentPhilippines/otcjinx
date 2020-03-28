@@ -9,7 +9,6 @@ import alipay.manage.mapper.DealOrderMapper;
 import alipay.manage.mapper.RechargeMapper;
 import alipay.manage.mapper.RunOrderMapper;
 import alipay.manage.mapper.WithdrawMapper;
-import alipay.manage.util.IdGenerator;
 import alipay.manage.util.SettingFile;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
@@ -41,7 +40,7 @@ public class OrderServiceImpl implements OrderService{
 		return selectByExample;
 	}
 	@Override
-	public DealOrder getOrderByAssociatedId(String orderId) {
+	public DealOrder findOrderByAssociatedId(String orderId) {
 		DealOrder  order = dealOrderMapper.findOrderByAssociatedId(orderId);
 		return order;
 	}

@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import alipay.manage.util.AgentApi;
 import alipay.manage.util.UserUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,8 +44,6 @@ public class AccountContorller {
     @Autowired
     UserInfoService accountServiceImpl;
     @Autowired
-    AgentApi agentApi;
-    @Autowired
     RedisUtil redisUtil;
     @Autowired
     UserUtil userUtil;
@@ -58,15 +55,7 @@ public class AccountContorller {
     @PostMapping("/agentOpenAnAccount")
     @ResponseBody
     public Result agentOpenAnAccount(@RequestBody UserInfo user, HttpServletRequest request) {
-        UserInfo user2 = sessionUtil.getUser(request);
-        if (ObjectUtil.isNull(user))
-            return Result.buildFailMessage("未获取到登录用户");
-        user.setIsAgent("1");
-        user.setAgent(user2.getAgent());
-        Result result = agentApi.openAgentAccount(user);
-        if (result.isSuccess())
-            userUtil.openAccountCorrlation(user.getUserId());
-        return Result.buildFail();
+		return null;
     }
     /**
      * <p>密码修改</p>

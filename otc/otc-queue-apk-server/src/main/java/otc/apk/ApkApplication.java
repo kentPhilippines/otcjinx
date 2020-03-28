@@ -5,7 +5,10 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
-
+/**
+ * <p>队列数据独立服务</p>
+ * @author K
+ */
 @SpringBootApplication
 @EnableEurekaClient
 @EnableFeignClients

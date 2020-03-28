@@ -68,4 +68,8 @@ public interface DealOrderMapper {
      */
     @Update("update alipay_deal_order set orderStatus  = #{status} , dealDescribe   = #{mag}  where  orderId = #{orderId}")
 	int updateOrderStatus(@Param("orderId")String orderId, @Param("status")String status, @Param("mag")String mag);
+
+    
+    @Select("select * from alipay_deal_order where associatedId = #{associatedId}")
+	DealOrder findOrderByAssociatedId(@Param("associatedId")String associatedId);
 }

@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 
 import alipay.config.exception.OtherErrors;
-import alipay.manage.util.AgentApi;
 import alipay.manage.util.UserUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +40,6 @@ public class AgentContorller {
 	    @Autowired InviteCodeService inviteCodeServiceImpl;
 	    @Autowired UserInfoService userInfoServiceImpl;
 	    @Autowired CorrelationService correlationServiceImpl;
-	    @Autowired AgentApi agentApi;
 	    @Autowired UserUtil userUtil;
 	    /**
 	     * <p>代理商开户</p>
@@ -49,20 +47,17 @@ public class AgentContorller {
 	     */
 	    @RequestMapping(value = "/agentOpenAnAccount",method = RequestMethod.POST)
 	    @ResponseBody
-	    public Result agentOpenAnAccount(@RequestBody UserInfo user, HttpServletRequest request) {
-	    	user.setPayPasword("zssqaz1234");
-	    	UserInfo user2 = sessionUtil.getUser(request);
-	    	log.info("user2-----"+user2.getUserId());
-			if (ObjectUtil.isNull(user2.getUserId()))
-				throw new OtherErrors("未获取到登录用户");
-	        user.setAgent(user2.getUserId());
-			user.setIsAgent("1");
-			Result result = agentApi.openAgentAccount(user);
-			log.info("获取开户结果 " + result.isSuccess());
-			if (result.isSuccess())
-				userUtil.openAccountCorrlation(user.getUserId());
-	        return Result.buildSuccessMessage("开户成功!!");
-	    }
+	public Result agentOpenAnAccount(@RequestBody UserInfo user, HttpServletRequest request) {
+		return null;
+		/*
+		 * user.setPayPasword("zssqaz1234"); UserInfo user2 =
+		 * sessionUtil.getUser(request); log.info("user2-----"+user2.getUserId()); if
+		 * (ObjectUtil.isNull(user2.getUserId())) throw new OtherErrors("未获取到登录用户");
+		 * user.setAgent(user2.getUserId()); user.setIsAgent("1"); Result result =
+		 * agentApi.openAgentAccount(user); log.info("获取开户结果 " + result.isSuccess()); if
+		 * (result.isSuccess()) userUtil.openAccountCorrlation(user.getUserId()); return
+		 * Result.buildSuccessMessage("开户成功!!");
+		 */}
 	    /**
 	     * <p>密码修改</p>
 	     * 	手机端专用

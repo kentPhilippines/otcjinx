@@ -16,7 +16,10 @@ public class RedisConstant {
 	 * <p>关于队列操作Redis缓存的键【缓存分区】</p>
 	 */
 	public class Queue {
-		public final static String QUEUE_REDIS = "QUEUE:REDIS:ONE";
+		public final static String QUEUE_REDIS = "QUEUE:REDIS:";
+		public static final String HEARTBEAT="HEARTBEAT_";
+		
+		
 	}
 
 	/**
@@ -31,5 +34,9 @@ public class RedisConstant {
 		public static final String USERPARENT = "USERPARENT:";
 		public static final String USER = "USER:";
 	}
+	
+	
+	
+	
 
 }

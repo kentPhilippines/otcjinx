@@ -64,7 +64,7 @@ public class DealApi {
 		return "pay";
 	}
 	private boolean addOrder(DealOrderApp orderApp, HttpServletRequest request) {
-		if(!orderApp.getOrderStatus().toString().equals(Common.Order.ORDER_STATUS_DISPOSE.toString()))
+		if(!orderApp.getOrderStatus().toString().equals(Common.Order.DealOrder.ORDER_STATUS_DISPOSE.toString()))
 			return false;
 		DealOrder order = new DealOrder();
 		String orderAccount = orderApp.getOrderAccount();//交易商户号
@@ -89,7 +89,7 @@ public class DealApi {
 		}
 		order.setOrderQrUser(findQr.getFileholder());
 		order.setOrderQr(findQr.getFileId());
-		order.setOrderStatus(Common.Order.ORDER_STATUS_DISPOSE.toString());
+		order.setOrderStatus(Common.Order.DealOrder.ORDER_STATUS_DISPOSE.toString());
 		order.setOrderType(Common.Order.ORDER_TYPE_DEAL.toString());
 		UserRate rate = userInfoServiceImpl.findUserRate(findQr.getFileholder(),Common.Deal.PRODUCT_ALIPAY_SCAN);
 		order.setFeeId(rate.getId());

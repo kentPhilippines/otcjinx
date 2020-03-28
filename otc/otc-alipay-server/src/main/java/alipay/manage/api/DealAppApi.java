@@ -122,7 +122,7 @@ public class DealAppApi {
 		witb.setBankName(wit.getAcctname());
 		witb.setWithdrawType(Common.Order.WIT_APP.toString());
 		witb.setOrderId(Number.getWitOrder());
-		witb.setOrderStatus(Common.Order.ORDER_STATUS_DISPOSE.toString());
+		witb.setOrderStatus(Common.Order.DealOrder.ORDER_STATUS_DISPOSE.toString());
 		witb.setNotify(wit.getNotifyurl());
 		witb.setRetain2(wit.getIp());//代付ip
 		witb.setWitType(userRate.getPayTypr());//代付类型
@@ -146,7 +146,7 @@ public class DealAppApi {
 		if(StrUtil.isNotBlank(dealBean.getIp()))
 			dealApp.setOrderIp(dealBean.getIp());
 		dealApp.setBack(dealBean.getPageUrl());
-		dealApp.setOrderStatus(Common.Order.ORDER_STATUS_DISPOSE.toString());
+		dealApp.setOrderStatus(Common.Order.DealOrder.ORDER_STATUS_DISPOSE.toString());
 		dealApp.setOrderType(Common.Order.ORDER_TYPE_DEAL);
 		dealApp.setDealDescribe("下游商户发起充值交易");
 		boolean add = orderAppServiceImpl.add(dealApp);

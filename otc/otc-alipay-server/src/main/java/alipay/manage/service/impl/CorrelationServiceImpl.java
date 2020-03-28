@@ -60,7 +60,7 @@ public class CorrelationServiceImpl  implements CorrelationService {
 	}
 	@Override
 	public void updateCorrelationDate(String orderId) {
-		Integer orderStatusSu = Common.Order.ORDER_STATUS_SU	;
+		Integer orderStatusSu = Integer.valueOf(Common.Order.DealOrder.ORDER_STATUS_SU)	;
 		CorrelationDataExample example = new CorrelationDataExample();
 		alipay.manage.bean.CorrelationDataExample.Criteria criteria = example.createCriteria();
 		criteria.andOrderIdEqualTo(orderId);

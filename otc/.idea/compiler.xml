@@ -8,11 +8,14 @@
         <outputRelativeToContentRoot value="true" />
         <module name="otc-admin-server" />
         <module name="otc-alipay-server" />
+        <module name="otc-file-server" />
         <module name="otc-common-server" />
         <module name="otc-dealpay-server" />
+        <module name="otc-notfiy-server" />
         <module name="otc-zuul-server" />
         <module name="otc-task-config-server" />
         <module name="otc-eureka-server" />
+        <module name="otc-queue-apk-server" />
         <module name="otc-pay-server" />
       </profile>
     </annotationProcessing>
@@ -23,7 +26,10 @@
       <module name="otc-common-server" target="1.8" />
       <module name="otc-dealpay-server" target="1.8" />
       <module name="otc-eureka-server" target="1.8" />
+      <module name="otc-file-server" target="1.8" />
+      <module name="otc-notfiy-server" target="1.8" />
       <module name="otc-pay-server" target="1.8" />
+      <module name="otc-queue-apk-server" target="1.8" />
       <module name="otc-task-config-server" target="1.8" />
       <module name="otc-zuul-server" target="1.8" />
     </bytecodeTargetLevel>
@@ -35,7 +41,10 @@
       <module name="otc-common-server" options="-parameters" />
       <module name="otc-dealpay-server" options="-parameters" />
       <module name="otc-eureka-server" options="-parameters" />
+      <module name="otc-file-server" options="-parameters" />
+      <module name="otc-notfiy-server" options="-parameters" />
       <module name="otc-pay-server" options="-parameters" />
+      <module name="otc-queue-apk-server" options="-parameters" />
       <module name="otc-task-config-server" options="-parameters" />
       <module name="otc-zuul-server" options="-parameters" />
     </option>

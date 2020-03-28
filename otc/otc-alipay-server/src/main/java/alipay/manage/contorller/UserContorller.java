@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import alipay.manage.bean.UserFund;
 import alipay.manage.service.UserFundService;
-import alipay.manage.util.Md5Util;
 import alipay.manage.util.QrUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

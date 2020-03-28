@@ -1,7 +1,6 @@
 package alipay.manage.api;
 
 import alipay.config.redis.RedisUtil;
-import alipay.manage.util.FtpImgUtil;
 import cn.hutool.core.util.ObjectUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
