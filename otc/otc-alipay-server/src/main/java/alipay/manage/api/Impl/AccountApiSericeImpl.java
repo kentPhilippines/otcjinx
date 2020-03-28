@@ -31,16 +31,11 @@ import otc.util.enums.UserStatusEnum;
 @Component
 public class AccountApiSericeImpl implements AccountApiService {
     Logger log = LoggerFactory.getLogger(AccountApiSericeImpl.class);
-    @Autowired
-    UserRateMapper userRateDao;
-    @Autowired
-    UserInfoMapper userInfoDao;
-    @Autowired
-    UserFundMapper userFundDao;
-    @Autowired
-    UserInfoService userInfoService;
-    @Autowired
-    AmountUtil amountUtil;
+    @Autowired UserRateMapper userRateDao;
+    @Autowired UserInfoMapper userInfoDao;
+    @Autowired UserFundMapper userFundDao;
+    @Autowired UserInfoService userInfoService;
+    @Autowired AmountUtil amountUtil;
 
     @Override
     public Result addAccount(UserInfo user) {

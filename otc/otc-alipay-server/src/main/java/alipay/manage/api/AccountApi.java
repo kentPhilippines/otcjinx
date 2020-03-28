@@ -29,17 +29,10 @@ import java.util.Map;
 @RestController
 public class AccountApi {
     Logger log = LoggerFactory.getLogger(AccountApi.class);
-
-    @Autowired
-    AccountApiService accountApiServiceImpl;
-    @Autowired
-    LogUtil logUtil;
-    @Autowired
-    UserUtil userUtil;
-    @Autowired
-	CheckUtils checkUtils;
-
-
+    @Autowired AccountApiService accountApiServiceImpl;
+    @Autowired LogUtil logUtil;
+    @Autowired UserUtil userUtil;
+    @Autowired CheckUtils checkUtils;
     /**
      * <p>开户接口</p>
      * <P>当前开户接口只接受代理商开始，且该商户只能为码商</P>
