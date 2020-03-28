@@ -12,6 +12,7 @@ import alipay.manage.api.OrderApi;
 import alipay.manage.bean.DealOrder;
 import alipay.manage.bean.Recharge;
 import alipay.manage.bean.UserFund;
+import alipay.manage.bean.UserInfo;
 import alipay.manage.bean.UserRate;
 import alipay.manage.bean.Withdraw;
 import alipay.manage.mapper.RechargeMapper;
@@ -246,13 +247,6 @@ public class OrderUtil {
 		log.info("【金额修改完毕，流水生成成功】");
 		return Result.buildSuccessResult();
 	}
-	
-	
-	
-	
-	
-	
-	
 	/**
 	 * <p>充值成功</p>
 	 * @return
@@ -326,4 +320,38 @@ public class OrderUtil {
 			return addAmountW;
 		return Result.buildSuccessMessage("代付金额解冻成功");
 	}
+	
+	/**
+	 * <p>新建代付订单时候账户扣款</p>
+	 * @param orderId				代付订单号
+	 * @return
+	 */
+	private Result withrawOrder(String orderId,String ip,Boolean flag) {
+		if(StrUtil.isBlank(orderId))
+			return Result.buildFailMessage("必传参数为空");
+		Withdraw wit = withdrawDao.findWitOrder(orderId);
+		UserFund userFund = new UserFund();
+		userFund.setUserId(wit.getUserId());
+		Result withdraw = amountUtil.deleteWithdraw(userFund,wit.getAmount());
+		if(!withdraw.isSuccess())
+			return withdraw;
+		Result deleteAmount = amountRunUtil.deleteAmount(wit, ip, flag);
+		if(!deleteAmount.isSuccess())
+			return deleteAmount;
+		Result withdraws = amountUtil.deleteWithdraw(userFund,wit.getFee());
+		if(!withdraws.isSuccess())
+			return withdraws;
+		Result deleteAmountFee = amountRunUtil.deleteAmountFee(wit, ip, flag);
+		if(!deleteAmountFee.isSuccess())
+			return deleteAmountFee;
+	return Result.buildSuccess();
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 }
