@@ -29,6 +29,7 @@ import otc.common.SystemConstants;
 import otc.exception.BusinessException;
 import otc.result.Result;
 import otc.util.RSAUtils;
+import otc.util.enums.DeductStatusEnum;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
@@ -104,6 +105,10 @@ public class Api {
 		if(StrUtil.isBlank(clientIP))
 			return Result.buildFailMessage("当前使用代理服务器 或是操作ip识别出错，不允许操作");
 		String amountType = amount.getAmountType();
+		String oldStatus = amount.getOrderStatus();//订单原始状态
+		if(!DeductStatusEnum.DEDUCT_STATUS_PROCESS.matches(Integer.parseInt(oldStatus))){//状态不相等，说明订单已经被处理
+			return Result.buildFailMessage("订单已被处理，不允许重复操作");
+		}
 		switch (amountType) {
 		case Common.Deal.AMOUNT_ORDER_ADD :
 			if(orderStatus.equals(Common.Deal.AMOUNT_ORDER_SU)) {//加款订单成功，
