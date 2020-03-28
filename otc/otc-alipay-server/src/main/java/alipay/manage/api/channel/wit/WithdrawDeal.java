@@ -7,6 +7,10 @@ import alipay.manage.api.config.PayOrderService;
 import alipay.manage.bean.Withdraw;
 import otc.api.alipay.Common;
 import otc.result.Result;
+/**
+ * <p>对接上游代付渠道</p>
+ * @author K
+ */
 @Component(Common.Deal.WITHDRAW_DEAL)
 public class WithdrawDeal extends PayOrderService{
 	@Override

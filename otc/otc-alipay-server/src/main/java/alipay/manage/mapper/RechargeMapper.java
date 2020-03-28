@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 @Mapper
 public interface RechargeMapper {
     int countByExample(RechargeExample example);
@@ -35,4 +37,16 @@ public interface RechargeMapper {
     int updateByPrimaryKeyWithBLOBs(Recharge record);
 
     int updateByPrimaryKey(Recharge record);
+
+    /**
+     * <p>修改充值订单状态</p>
+     * @param orderId						订单号
+     * @param orderStatus					订单状态
+     * @return
+     */
+    @Update("update alipay_recharge set orderStatus = #{orderStatus} where orderId = #{orderId}")
+	int updateOrderStatus(@Param("orderId")String orderId, @Param("orderStatus")String orderStatus);
+
+    @Select("select * from alipay_recharge where orderId = #{orderId}")
+	Recharge findRechargeOrder(@Param("orderId")String orderId);
 }

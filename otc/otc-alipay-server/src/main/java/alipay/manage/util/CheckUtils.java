@@ -155,6 +155,17 @@ public class CheckUtils {
         }
         return true;
     }
+    
+     public String getSign(Map<String, Object> map, String key) {
+    	 String paramStr = MapUtil.createParam(map);
+    	 log.info("【签名前的参数为："+paramStr.toString()+"】");
+    	 String md5 = RSAUtils.md5(paramStr+key);
+		return md5;
+     }
+    
+    
+    
+    
 
     /**
      * 判断时间是否在某个时间段内 一天时间

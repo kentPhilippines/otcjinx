@@ -24,7 +24,7 @@ public interface OrderService {
 	 * @param orderId
 	 * @return
 	 */
-	List<DealOrder> getOrderByAssociatedId(String orderId);
+	DealOrder findOrderByAssociatedId(String orderId);
 
 	
 	
@@ -79,12 +79,6 @@ public interface OrderService {
 	 */
 	List<DealOrder> findMyOrder(DealOrder order);
 	/**
-	 * 创建充值订单
-	 * @param param
-	 */
-	public Map<String, Object> createRechangeOrder(Map<String, String> param);
-
-	/**
 	 * <p>根据商户订单生成码商交易订单</p>
 	 * @param orderApp
 	 * @return
@@ -94,4 +88,11 @@ public interface OrderService {
 	boolean updataOrderStatusByOrderId(String orderId, String s);
 
 	boolean updataOrderisNotifyByOrderId(String orderId, String isNotify);
+
+	/**
+	 * <p>创建充值订单</p>
+	 * @param order
+	 * @return
+	 */
+	boolean addRechargeOrder(Recharge order);
 }

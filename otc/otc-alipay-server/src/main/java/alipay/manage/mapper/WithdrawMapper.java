@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 @Mapper
 public interface WithdrawMapper {
     int countByExample(WithdrawExample example);
@@ -29,4 +31,10 @@ public interface WithdrawMapper {
     int updateByPrimaryKeySelective(Withdraw record);
 
     int updateByPrimaryKey(Withdraw record);
+
+    @Update("update alipay_withdraw set orderStatus = #{orderStatus} where orderId = #{orderId}")
+	int updataOrderStatus(@Param("orderId")String orderId, @Param("orderStatus")String orderStatus);
+
+    @Select("select * from alipay_withdraw where orderId = #{orderId}")
+	Withdraw findWitOrder(@Param("orderId")String orderId);
 }

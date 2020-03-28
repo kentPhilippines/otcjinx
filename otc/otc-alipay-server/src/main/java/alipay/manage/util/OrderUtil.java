@@ -10,11 +10,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import alipay.manage.api.OrderApi;
 import alipay.manage.bean.DealOrder;
+import alipay.manage.bean.Recharge;
 import alipay.manage.bean.UserFund;
 import alipay.manage.bean.UserRate;
+import alipay.manage.bean.Withdraw;
+import alipay.manage.mapper.RechargeMapper;
+import alipay.manage.mapper.WithdrawMapper;
 import alipay.manage.service.OrderService;
 import alipay.manage.service.UserInfoService;
 import cn.hutool.core.util.StrUtil;
+import otc.api.alipay.Common;
 import otc.bean.alipay.OrderDealStatus;
 import otc.result.Result;
 @Component
@@ -24,6 +29,89 @@ public class OrderUtil {
 	@Autowired AmountUtil amountUtil;
 	@Autowired AmountRunUtil amountRunUtil;
 	@Autowired UserInfoService userInfoServiceImpl;
+	@Autowired RechargeMapper rechargeDao;
+	@Autowired WithdrawMapper withdrawDao;
+	/**
+	 * <p>充值订单置为成功</p>
+	 * @param orderId			订单号
+	 * @return
+	 */
+	public Result rechargeOrderEr(String orderId) {
+		if(StrUtil.isBlank(orderId))
+			return Result.buildFailMessage("必传参数为空");
+		Recharge order = rechargeDao.findRechargeOrder(orderId);
+		return rechargeOrderEr(order);
+	}
+	
+	/**
+	 * <p>充值充值订单成功【自动回调】</p>
+	 * @param orderIds			订单号
+	 * @return
+	 */
+	public Result rechargeOrderSu(String orderIds) {
+		if(StrUtil.isBlank(orderIds))
+			return Result.buildFailMessage("必传参数为空");
+		return rechargeOrderSu(orderIds,false);
+	}
+	
+	/**
+	 * <p>充值订单人工置为成功</p>
+	 * @param orderIds
+	 * @return
+	 */
+	public Result rechargeSu(String orderIds) {
+		if(StrUtil.isBlank(orderIds))
+			return Result.buildFailMessage("必传参数为空");
+		return rechargeOrderSu(orderIds,true);
+	}
+	/**
+	 * <p>代付订单置为成功</p>
+	 * @param orderId
+	 * @return
+	 */
+	public Result withrawOrderSu(String orderId) {
+		if(StrUtil.isBlank(orderId))
+			return Result.buildFailMessage("订单号为空");
+		Withdraw order = withdrawDao.findWitOrder(orderId);
+		return withrawOrderSu(order);
+	}
+	
+	
+	/**
+	 * <p>代付订单置为失败【这里只能是人工操作】</p>
+	 * @param orderId			这里只能是人工操作
+	 * @param ip				操作 ip
+	 * @return
+	 */
+	public Result withrawOrderEr(String orderId , String ip) {
+		if(StrUtil.isBlank(orderId) || StrUtil.isBlank(ip))
+			return Result.buildFailMessage("必传参数为空");
+		Withdraw order = withdrawDao.findWitOrder(orderId);
+		return withrawOrderEr(order,ip);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * <p>码商充值订单置为成功</p>
+	 * @param orderId
+	 * @param flag
+	 * @return
+	 */
+	private Result rechargeOrderSu(String orderId ,boolean flag) {
+		if(StrUtil.isBlank(orderId))
+			return Result.buildFailMessage("必传参数为空");
+		Recharge order = rechargeDao.findRechargeOrder(orderId);
+		return rechargeOrderSu(order,flag);
+	}
+	
+	
+	
 	
 	
 	
@@ -157,5 +245,85 @@ public class OrderUtil {
 			return addDealAmount;
 		log.info("【金额修改完毕，流水生成成功】");
 		return Result.buildSuccessResult();
+	}
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * <p>充值成功</p>
+	 * @return
+	 */
+	private Result rechargeOrderSu( Recharge rechaege,boolean flag  ){
+		/**
+		 * ###########################
+		 * 充值成功给该账户加钱
+		 */
+		int a = rechargeDao.updateOrderStatus(rechaege.getOrderId(),Common.Order.Recharge.ORDER_STATUS_SU);
+		if(a == 0  || a > 2)
+			return Result.buildFailMessage("订单状态修改失败");
+		UserFund userFund = new UserFund();
+		userFund.setUserId(rechaege.getUserId());
+		Result addAmounRecharge = amountUtil.addAmounRecharge(userFund, rechaege.getAmount());
+		if(!addAmounRecharge.isSuccess())
+			return addAmounRecharge;
+		Result addAmount = amountRunUtil.addAmount(rechaege, rechaege.getRetain1(), flag);
+		if(!addAmount.isSuccess())
+			return addAmount;
+		return Result.buildSuccessMessage("充值成功");
+	}
+	/**
+	 * <p>充值失败</p>
+	 * @param rechaege
+	 * @return
+	 */
+	private Result rechargeOrderEr( Recharge rechaege ){
+		/**
+		 * ######################
+		 * 充值失败修改订单状态什么都不管
+		 */
+		int a = rechargeDao.updateOrderStatus(rechaege.getOrderId(),Common.Order.Recharge.ORDER_STATUS_ER);
+		if(a > 0  && a < 2)
+			return Result.buildSuccessMessage("充值失败，可能原因，暂无充值渠道");
+		return Result.buildFail();
+	}
+	/**
+	 * <p>代付成功</p>
+	 * @return
+	 */
+	private Result withrawOrderSu(Withdraw wit) {
+		/**
+		 * #########################
+		 * 代付成功修改订单状态
+		 */
+		int a = withdrawDao.updataOrderStatus(wit.getOrderId(),Common.Order.Wit.ORDER_STATUS_SU);
+		if(a == 0  || a > 2)
+			return Result.buildFailMessage("订单状态修改失败");
+		return Result.buildSuccessMessage("代付成功");
+	}
+	/**
+	 * <p>代付失败</p>
+	 * @return
+	 */
+	private Result withrawOrderEr(Withdraw wit,String ip) {
+		/**
+		 * ###########################
+		 * 代付失败给该用户退钱
+		 */
+		int a = withdrawDao.updataOrderStatus(wit.getOrderId(),Common.Order.Wit.ORDER_STATUS_ER);
+		if(a == 0  || a > 2)
+			return Result.buildFailMessage("订单状态修改失败");
+		UserFund userFund = new UserFund();
+		userFund.setUserId(wit.getUserId());
+		Result addAmountAdd = amountUtil.addAmountAdd(userFund, wit.getAmount());
+		if(!addAmountAdd.isSuccess())
+			return addAmountAdd;
+		Result addAmountW = amountRunUtil.addAmountW(wit, ip);
+		if(!addAmountW.isSuccess())
+			return addAmountW;
+		return Result.buildSuccessMessage("代付金额解冻成功");
 	}
 }

@@ -34,7 +34,21 @@ public class Recharge implements Serializable{
     private Integer status;
     private String retain1;
     private String Time;
-    public String getTime() {
+    private String async_url;				//异步回调地址
+    private String sync_url;				//同步跳转地址
+    public String getAsync_url() {
+		return async_url;
+	}
+	public void setAsync_url(String async_url) {
+		this.async_url = async_url;
+	}
+	public String getSync_url() {
+		return sync_url;
+	}
+	public void setSync_url(String sync_url) {
+		this.sync_url = sync_url;
+	}
+	public String getTime() {
 		return Time;
 	}
 	public void setTime(String time) {

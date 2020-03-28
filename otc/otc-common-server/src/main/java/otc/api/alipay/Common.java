@@ -51,38 +51,50 @@ public class Common {
 
 
 	public static class Order{
+		public static class Recharge{
+			public static final String ORDER_STATUS_SU = "2";//订单成功
+			public static final String ORDER_STATUS_ER = "3";//订单失败
+			public static final String ORDER_STATUS_YU = "1";//订单处理中
+		}
+		public static class Wit{
+			public static final String ORDER_STATUS_SU = "2";//订单成功
+			public static final String ORDER_STATUS_ER = "3";//订单失败
+			public static final String ORDER_STATUS_YU = "1";//订单处理中
+		}
+		
 		public static final Integer ORDER_TYPE_DEAL = 1;//交易订单
 		public static final Integer ORDER_TYPE_WIT = 5;//代付充值
-		
-		
 		public static final Integer DAPY_OPEN = 1;//代付开启
 		public static final Integer DAPY_OFF = 2;//代付关闭
-		
 		public static final Integer DEAL_OPEN = 1;//交易开启
 		public static final Integer DEAL_OFF = 2;//交易关闭
-		
 		public static final Integer WIT_APP = 1;//商户提现
 		public static final Integer WIT_QR = 2 ; //码商提现
-		/**
-		 * <p>订单处理中</p>
-		 */
-		public static final Integer ORDER_STATUS_DISPOSE = 1;//订单处理中
-		/**
-		 * <p>订单成功</p>
-		 */
-		public static final Integer ORDER_STATUS_SU = 2;//订单成功
-		/**
-		 * <p>订单未收到回调</p>
-		 */
-		public static final Integer ORDER_STATUS_NO_CALLBACK= 3;//订单未收到回调
-		/**
-		 * <p>订单失败</p>
-		 */
-		public static final Integer ORDER_STATUS_ER= 4;//订单失败
-		/**
-		 * <p>订单超时</p>
-		 */
-		public static final Integer ORDER_STATUS_OVERTIME = 5;//订单超时
+		
+		
+		public static class DealOrder{
+			/**
+			 * <p>订单处理中</p>
+			 */
+			public static final String ORDER_STATUS_DISPOSE = "1";//订单处理中
+			/**
+			 * <p>订单成功</p>
+			 */
+			public static final String ORDER_STATUS_SU = "2";//订单成功
+			/**
+			 * <p>订单未收到回调</p>
+			 */
+			public static final String ORDER_STATUS_NO_CALLBACK= "3";//订单未收到回调
+			/**
+			 * <p>订单失败</p>
+			 */
+			public static final String ORDER_STATUS_ER= "4";//订单失败
+			/**
+			 * <p>订单超时</p>
+			 */
+			public static final String ORDER_STATUS_OVERTIME = "5";//订单超时
+		}
+		
 
 
 		public static final String DATE_TYPE = "yyyyMMddHHmmss";
