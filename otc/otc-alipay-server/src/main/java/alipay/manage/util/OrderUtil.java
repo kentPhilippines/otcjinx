@@ -1,28 +1,45 @@
 package alipay.manage.util;
 
 import java.math.BigDecimal;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
 
+import alipay.config.thread.ThreadConnection;
+import alipay.config.thread.TransactionBusiness;
+import alipay.config.thread.TransactionBusinessManager;
 import alipay.manage.api.OrderApi;
 import alipay.manage.bean.DealOrder;
+import alipay.manage.bean.DealOrderApp;
 import alipay.manage.bean.Recharge;
 import alipay.manage.bean.UserFund;
 import alipay.manage.bean.UserInfo;
 import alipay.manage.bean.UserRate;
 import alipay.manage.bean.Withdraw;
+import alipay.manage.mapper.DealOrderAppMapper;
 import alipay.manage.mapper.RechargeMapper;
+import alipay.manage.mapper.UserRateMapper;
 import alipay.manage.mapper.WithdrawMapper;
 import alipay.manage.service.OrderService;
 import alipay.manage.service.UserInfoService;
+import cn.hutool.core.thread.ThreadUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import otc.api.alipay.Common;
 import otc.bean.alipay.OrderDealStatus;
+import otc.exception.order.OrderException;
+import otc.exception.user.UserException;
 import otc.result.Result;
+import otc.util.number.Number;
 @Component
 public class OrderUtil {
 	Logger log = LoggerFactory.getLogger(OrderApi.class);
@@ -32,6 +49,9 @@ public class OrderUtil {
 	@Autowired UserInfoService userInfoServiceImpl;
 	@Autowired RechargeMapper rechargeDao;
 	@Autowired WithdrawMapper withdrawDao;
+	@Autowired DealOrderAppMapper dealOrderAppDao;
+	@Autowired UserRateMapper userRateDao;
+	
 	/**
 	 * <p>充值订单置为成功</p>
 	 * @param orderId			订单号
@@ -104,7 +124,7 @@ public class OrderUtil {
 	 * @param flag
 	 * @return
 	 */
-	private Result rechargeOrderSu(String orderId ,boolean flag) {
+	public Result rechargeOrderSu(String orderId ,boolean flag) {
 		if(StrUtil.isBlank(orderId))
 			return Result.buildFailMessage("必传参数为空");
 		Recharge order = rechargeDao.findRechargeOrder(orderId);
@@ -123,7 +143,8 @@ public class OrderUtil {
 	 * @return
 	 */
 	public Result orderDealSu(String orderId ,String ip) {
-		return orderDealSu(orderId, ip,false ,null);
+		Result orderDealSu = orderDealSu(orderId, ip,false ,null);
+		return orderDealSu;
 	}
 	/**
 	 * <p>【码商交易订单】人工成功调用方法</p>
@@ -168,7 +189,7 @@ public class OrderUtil {
 	 * @param flag					true 自然流水     false  人工流水
 	 * @return
 	 */
-	private Result orderDealSu(String orderId ,String ip ,boolean flag ,String userId) {
+	public Result orderDealSu(String orderId ,String ip ,boolean flag ,String userId) {
 		log.info("【调用码商交易订单为成功的方法】");
 		Result updataDealOrderSu = updataDealOrderSu(orderId, flag?"人工置交易订单为成功，操作人为："+userId+"":"系统置交易订单为成功", ip, flag);
 		log.info("【返回结果："+updataDealOrderSu.toString()+"】");
@@ -183,9 +204,11 @@ public class OrderUtil {
 	 * 4，根据不同的类型处理不同资金的流水类型
 	 * 5，订单修改完毕
 	 */
+	
+    @Resource(name = "platformTransactionManager")
+    private PlatformTransactionManager platformTransactionManager;
 	@SuppressWarnings("unused")
-	@Transactional
-	private  Result updataDealOrderSu(String orderId,String mag , String ip ,Boolean flag) {
+	public  Result updataDealOrderSu(String orderId,String msg , String ip ,Boolean flag) {
 		if(StrUtil.isBlank(orderId) || StrUtil.isBlank(ip)) 
 			return Result.buildFailMessage("必传参数为空");
 		DealOrder order = orderServiceImpl.findOrderByOrderId(orderId);
@@ -193,15 +216,72 @@ public class OrderUtil {
 			return Result.buildFailMessage("当前订单不支持修改");
 		if(order.getOrderStatus().toString().equals(OrderDealStatus.失败.getIndex().toString()))
 			return Result.buildFailMessage("当前订单不支持修改");
-		if(!orderServiceImpl.updateOrderStatus(orderId,OrderDealStatus.成功.getIndex().toString(),mag))
-			return Result.buildFailMessage("订单修改失败，请重新发起成功");
-		Result dealAmount = dealAmount(order, ip, flag);
-		return dealAmount;
+		 /**管理线程连接*/
+        ThreadConnection threadConnection = new ThreadConnection();
+        /**事务业务管理*/
+        TransactionBusinessManager tbm = new TransactionBusinessManager();
+        ExecutorService es = Executors.newFixedThreadPool(2); //这里的线程池需要优化
+        es.execute(()->{
+        	try{
+        	Result rs = tbm.execute(new TransactionBusiness<Result>() {
+  				@Override
+  				public PlatformTransactionManager getPlatformTransactionManager() { return platformTransactionManager; }
+  				@Override
+  				public ThreadConnection getThreadConnection() { return threadConnection; }
+  				/**
+  				 * 业务执行
+  				 * @return
+  				 */
+  				@Override
+  				public Result doInTransaction() {
+  					 Result dealAmount = dealAmount(order, ip, flag,msg);
+  					 if(!dealAmount.isSuccess())
+   						throw new OrderException("订单修改异常", null);
+  					 return dealAmount;
+  				}
+  				});
+        	   } catch (Exception e) {
+        		   threadConnection.rollback();
+        	   }
+        	});
+        es.execute(()->{
+        	  	try{
+        	Result rs = tbm.execute(new TransactionBusiness<Result>() {
+  				@Override
+  				public PlatformTransactionManager getPlatformTransactionManager() { return platformTransactionManager; }
+  				@Override
+  				public ThreadConnection getThreadConnection() { return threadConnection; }
+  				/**
+  				 * 业务执行
+  				 * @return
+  				 */
+  				@Override
+  				public Result doInTransaction() {
+  					 Result dealAmount = enterOrderApp(order.getAssociatedId(), ip, flag);
+  					 if(!dealAmount.isSuccess())
+  						throw new OrderException("订单修改异常", null);
+  					return dealAmount;
+  				}
+  				});
+        	    } catch (Exception e) {
+         		   threadConnection.rollback();
+          }
+        });
+        es.shutdown();
+        /**等待所有线程池执行完毕*/
+        for(;;) {
+            if(es.isTerminated()) {
+                break;
+            }
+        }
+        /**事务提交  注意：事务执行回滚操作就不会执行事务提交操作，反之执行事务提交*/
+        threadConnection.commit();
+		return Result.buildSuccess();
 	}
 	
 	@SuppressWarnings("unused")
 	@Transactional
-	private Result updateDealOrderEr(String orderId,String mag ,String ip) {
+	public Result updateDealOrderEr(String orderId,String mag ,String ip) {
 		if(StrUtil.isBlank(orderId) || StrUtil.isBlank(ip)) 
 			return Result.buildFailMessage("必传参数为空");
 		DealOrder order = orderServiceImpl.findOrderByOrderId(orderId);
@@ -222,7 +302,9 @@ public class OrderUtil {
 	 * @param flag					true 自然流水     false  人工流水
 	 * @return
 	 */
-	private Result dealAmount(DealOrder order,String ip ,Boolean flag){
+	public Result dealAmount(DealOrder order,String ip ,Boolean flag,String msg){
+		if(!orderServiceImpl.updateOrderStatus(order.getOrderId(),OrderDealStatus.成功.getIndex().toString(),msg))
+			return Result.buildFailMessage("订单修改失败，请重新发起成功");
 		UserFund userFund = new UserFund();
 		userFund.setUserId(order.getOrderQrUser());
 		Result deleteDeal = amountUtil.deleteDeal(userFund, order.getDealAmount());//扣除交易点数账户变动
@@ -251,7 +333,7 @@ public class OrderUtil {
 	 * <p>充值成功</p>
 	 * @return
 	 */
-	private Result rechargeOrderSu( Recharge rechaege,boolean flag  ){
+	public Result rechargeOrderSu( Recharge rechaege,boolean flag  ){
 		/**
 		 * ###########################
 		 * 充值成功给该账户加钱
@@ -274,7 +356,7 @@ public class OrderUtil {
 	 * @param rechaege
 	 * @return
 	 */
-	private Result rechargeOrderEr( Recharge rechaege ){
+	public Result rechargeOrderEr( Recharge rechaege ){
 		/**
 		 * ######################
 		 * 充值失败修改订单状态什么都不管
@@ -288,7 +370,7 @@ public class OrderUtil {
 	 * <p>代付成功</p>
 	 * @return
 	 */
-	private Result withrawOrderSu(Withdraw wit) {
+	public Result withrawOrderSu(Withdraw wit) {
 		/**
 		 * #########################
 		 * 代付成功修改订单状态
@@ -302,7 +384,7 @@ public class OrderUtil {
 	 * <p>代付失败</p>
 	 * @return
 	 */
-	private Result withrawOrderEr(Withdraw wit,String ip) {
+	public Result withrawOrderEr(Withdraw wit,String ip) {
 		/**
 		 * ###########################
 		 * 代付失败给该用户退钱
@@ -326,28 +408,66 @@ public class OrderUtil {
 	 * @param orderId				代付订单号
 	 * @return
 	 */
-	private Result withrawOrder(String orderId,String ip,Boolean flag) {
+	public Result withrawOrder(String orderId,String ip,Boolean flag) {
 		if(StrUtil.isBlank(orderId))
 			return Result.buildFailMessage("必传参数为空");
 		Withdraw wit = withdrawDao.findWitOrder(orderId);
 		UserFund userFund = new UserFund();
 		userFund.setUserId(wit.getUserId());
-		Result withdraw = amountUtil.deleteWithdraw(userFund,wit.getAmount());
-		if(!withdraw.isSuccess())
-			return withdraw;
 		Result deleteAmount = amountRunUtil.deleteAmount(wit, ip, flag);
 		if(!deleteAmount.isSuccess())
 			return deleteAmount;
-		Result withdraws = amountUtil.deleteWithdraw(userFund,wit.getFee());
-		if(!withdraws.isSuccess())
-			return withdraws;
+		Result withdraw = amountUtil.deleteWithdraw(userFund,wit.getAmount());
+		if(!withdraw.isSuccess())
+			return withdraw;
 		Result deleteAmountFee = amountRunUtil.deleteAmountFee(wit, ip, flag);
 		if(!deleteAmountFee.isSuccess())
 			return deleteAmountFee;
+		Result withdraws = amountUtil.deleteWithdraw(userFund,wit.getFee());
+		if(!withdraws.isSuccess())
+			return withdraws;
 	return Result.buildSuccess();
 	}
 	
-	
+	/**
+	 * <p>商户订单结算</p>
+	 * @param orderId
+	 * @return
+	 */
+	public Result enterOrderApp(String orderId,String ip , Boolean flag ) {
+		log.info("【进入商户订单结算方法】");
+		if(StrUtil.isBlank(orderId))
+			return Result.buildFailMessage("必传参数为空");
+		DealOrderApp orderApp = dealOrderAppDao.findOrderByOrderId(orderId);
+		if(ObjectUtil.isNull(orderApp))
+			return Result.buildFailMessage("当前订单号不存在");	
+		if(!orderApp.getOrderStatus().toString().equals(Common.Order.DealOrderApp.ORDER_STATUS_DISPOSE))
+			return Result.buildFailMessage("当前订单状态不允许操作");
+		boolean status = dealOrderAppDao.updateOrderSu(orderId,Common.Order.DealOrderApp.ORDER_STATUS_SU);
+		if(!status)
+			return Result.buildFail();
+		Integer feeId = orderApp.getFeeId();
+		String appId = orderApp.getOrderAccount();
+		UserFund userFund = userInfoServiceImpl.findUserFundByAccount(appId);
+		Result addDealApp = amountUtil.addDealApp(userFund, orderApp.getOrderAmount());
+		if(!addDealApp.isSuccess()) 
+			return Result.buildFail();
+		Result addDealAmountApp = amountRunUtil.addDealAmountApp(orderApp, ip, flag);
+		if(!addDealAmountApp.isSuccess())
+			return Result.buildFail();
+		UserRate findFeeById = userRateDao.findFeeById(feeId);
+		BigDecimal fee = findFeeById.getFee();
+		BigDecimal multiply = orderApp.getOrderAmount().multiply(fee);
+		log.info("【当前商户结算费率："+fee+"，当前商户交易金额："+orderApp.getOrderAmount()+"，当前商户收取交易手续费："+multiply+"】");
+		Result deleteDeal = amountUtil.deleteDeal(userFund, multiply);
+		if(!deleteDeal.isSuccess())
+			 throw new OrderException("订单修改异常", null);
+		Result feeApp = amountRunUtil.deleteDealAmountFeeApp(orderApp, ip, flag, multiply);
+	//	throw new OrderException("订单修改异常", null);
+		if(feeApp.isSuccess())
+			return feeApp;
+		return Result.buildFail();
+	}
 	
 	
 	

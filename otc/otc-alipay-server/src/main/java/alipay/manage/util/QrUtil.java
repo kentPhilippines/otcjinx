@@ -101,11 +101,12 @@ public class QrUtil {
 	 * @param bankPhone
 	 * @return
 	 */
-	public String findOrderBy(BigDecimal bigDecimal, String bankPhone) {
-		Object object = redisUtil.get(bankPhone + bigDecimal.toString());
+	public String findOrderBy(BigDecimal amount, String phone) {
+		log.info("【当前寻找回调参数为：amount = "+amount+"，phone = "+phone+"】");
+		Object object = redisUtil.get(phone + amount.toString());
 		if (ObjectUtil.isNull(object))
 			return null;
-		redisUtil.deleteKey(bankPhone + bigDecimal.toString());
+		redisUtil.deleteKey(phone + amount.toString());
 		/**
 		 * <p>
 		 * 对IP解禁

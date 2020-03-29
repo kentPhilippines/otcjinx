@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 @Mapper
 public interface DealOrderAppMapper {
     int countByExample(DealOrderAppExample example);
@@ -38,4 +39,7 @@ public interface DealOrderAppMapper {
     int updateByPrimaryKey(DealOrderApp record);
     @Select("select * from alipay_deal_order_app where orderId = #{orderId}")
 	DealOrderApp findOrderByOrderId(@Param("orderId")String orderId);
+
+    @Update("update alipay_deal_order_app set orderStatus = #{orderStatusSu} where orderId = #{orderId}")
+	boolean updateOrderSu(@Param("orderId")String orderId, @Param("orderStatusSu")String orderStatusSu);
 }

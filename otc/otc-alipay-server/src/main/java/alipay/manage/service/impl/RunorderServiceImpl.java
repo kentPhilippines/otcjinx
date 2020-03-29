@@ -1,8 +1,9 @@
 package alipay.manage.service.impl;
 
+import javax.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
+import org.springframework.transaction.PlatformTransactionManager;
 import alipay.manage.bean.RunOrder;
 import alipay.manage.mapper.RunOrderMapper;
 import alipay.manage.service.RunOrderService;
@@ -13,7 +14,7 @@ public class RunorderServiceImpl implements RunOrderService{
 	@Override
 	public boolean addOrder(RunOrder run) {
 		run.setOrderId(Number.getRunOrderId());
-		int insertSelective = runOrderDao.insertSelective(run);
-		return insertSelective > 0 && insertSelective < 2;
+		int integer = runOrderDao.insertSelective(run);
+		return integer > 0 && integer < 2;
 	}
 }

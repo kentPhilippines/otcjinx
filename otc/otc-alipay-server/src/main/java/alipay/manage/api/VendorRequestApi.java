@@ -104,7 +104,7 @@ public class VendorRequestApi {
             }
         }
         log.info("--------------【验证单笔交易金额】----------------");
-        Double orderAmount =Double.valueOf(paramMap.get("amount").toString()) ;//商户请求单笔金额
+        Double orderAmount = Double.valueOf(paramMap.get("amount").toString()) ;//商户请求单笔金额
         if(StringUtils.isNotEmpty(userInfo.getMinAmount()) && StringUtils.isNotEmpty(userInfo.getMaxAmount())){
             if(orderAmount <= Double.parseDouble(userInfo.getMinAmount()) || orderAmount >= Double.parseDouble(userInfo.getMaxAmount())){
                 return Result.buildFailResult("单笔交易金额不在区间范围内");

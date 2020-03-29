@@ -1,6 +1,8 @@
 package alipay.manage.util;
 
 import java.math.BigDecimal;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,10 +18,12 @@ import alipay.manage.bean.UserRate;
 import alipay.manage.bean.Withdraw;
 import alipay.manage.service.RunOrderService;
 import alipay.manage.service.UserInfoService;
+import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import org.springframework.transaction.annotation.Transactional;
 import otc.api.alipay.Common;
+import otc.api.alipay.Common.Order.DealOrderApp;
 import otc.exception.BusinessException;
 import otc.exception.user.UserException;
 import otc.result.Result;
@@ -67,8 +71,10 @@ public class AmountRunUtil {
 	private static final String WITHDRAY_AMOUNT_OPEN = "WITHDRAY_AMOUNT_OPEN";//代付失败解冻
 	private static final Integer WITHDRAY_AMOUNT_OPEN_NUMBER = 8;//代付失败解冻
 	
-	
-	
+	private static final String ADD_DEAL_AMOUNT_APP = "ADD_DEAL_AMOUNT_APP";//下游商户交易加款
+	private static final String DELETE_DEAL_FEE_AMOUNT_APP = "ADD_DEAL_FEE_AMOUNT_APP";//下游商户交易手续费扣款
+	private static final Integer ADD_DEAL_AMOUNT_APP_NUMBER = 20;// 下游商户交易加款编号
+	private static final Integer DELETE_DEAL_FEE_AMOUNT_APP_NUMBER = 21;// 下游商户交易手续费扣款编号
 	
 	
 	
@@ -172,6 +178,29 @@ public class AmountRunUtil {
 		else
 			return Result.buildFailMessage("代理商分润结算失败");
 	}
+	
+	/**
+	 * <p>增加商户交易流水</p>
+	 * @param order				商户交易订单
+	 * @param generationIp		商户ip
+	 * @param flag				是否为人工操作
+	 * @return
+	 */
+	public Result addDealAmountApp( alipay.manage.bean.DealOrderApp order  , String generationIp ,Boolean flag ) {
+		UserFund userFund = userInfoServiceImpl.findUserFundByAccount(order.getOrderAccount());
+		Result add = add(ADD_DEAL_AMOUNT_APP, userFund, order.getOrderId(), order.getOrderAmount(), generationIp, "下游商户交易加款", flag?RUNTYPE_ARTIFICIAL:RUNTYPE_NATURAL);
+		if(add.isSuccess())
+			return add;
+		return Result.buildFailMessage("流水生成失败");
+	}
+	public Result deleteDealAmountFeeApp( alipay.manage.bean.DealOrderApp order  , String generationIp ,Boolean flag , BigDecimal fee ) {
+		UserFund userFund = userInfoServiceImpl.findUserFundByAccount(order.getOrderAccount());
+		Result delete = delete(DELETE_DEAL_FEE_AMOUNT_APP, userFund, order.getOrderId(), fee, generationIp, "下游商户交易手续费扣除", flag?RUNTYPE_ARTIFICIAL:RUNTYPE_NATURAL);
+		if(delete.isSuccess())
+			return delete;
+		return Result.buildFailMessage("流水生成失败");
+	}
+	
 	/**
 	 * <p>码商会员正常交易分润流水</p>
 	 * @param order					交易订单
@@ -189,7 +218,7 @@ public class AmountRunUtil {
 		Result add = add(PROFIT_AMOUNT_DEAL, userFund, order.getOrderId(), amount, generationIp, "商正常接单分润", flag?RUNTYPE_ARTIFICIAL:RUNTYPE_NATURAL);
 		if(add.isSuccess())
 			return add;
-		throw new UserException("账户流水异常", null);
+		return Result.buildFailMessage("流水生成失败");
 	}
 	/**
 	 * <p>人工加钱</p>
@@ -203,7 +232,7 @@ public class AmountRunUtil {
 				generationIp, amount.getDealDescribe(), RUNTYPE_ARTIFICIAL);
 		if(add.isSuccess())
 			return add;
-		throw new UserException("账户流水异常", null);
+		return Result.buildFailMessage("流水生成失败");
 	}
 	
 	public Result addAmount(Amount amount, String clientIP, String descr) {
@@ -212,7 +241,7 @@ public class AmountRunUtil {
 				clientIP, descr, RUNTYPE_ARTIFICIAL);
 		if(add.isSuccess())
 			return add;
-		throw new UserException("账户流水异常", null);
+		return Result.buildFailMessage("流水生成失败");
 	}
 	
 	
@@ -231,7 +260,7 @@ public class AmountRunUtil {
 		if(delete.isSuccess()) {
 			return delete;
 		}
-		throw new UserException("账户流水异常", null);
+		return Result.buildFailMessage("流水生成失败");
 	}
 	/**
 	 * <p>人工扣款</p>
@@ -245,7 +274,7 @@ public class AmountRunUtil {
 				generationIp, amount.getDealDescribe(), RUNTYPE_ARTIFICIAL);
 		if(delete.isSuccess())
 			return delete;
-		throw new UserException("账户流水异常", null);
+		return Result.buildFailMessage("流水生成失败");
 	}
 	
 	/**
@@ -256,7 +285,6 @@ public class AmountRunUtil {
 	 * @return
 	 */
 	@SuppressWarnings("unused")
-	@Transactional(rollbackFor = Exception.class)
 	public Result add(String orderType, UserFund userFund, String associatedId, BigDecimal amount, String generationIp, String dealDescribe, String runType) {
 		String orderAccount,amountType,acountR ,accountW;
 		Integer runOrderType = null;
@@ -270,9 +298,7 @@ public class AmountRunUtil {
 		Result amountRun = amountRun(associatedId, orderAccount, runOrderType, amount, generationIp, acountR, accountW, runType, amountType, dealDescribe, amountNow);
 		if(amountRun.isSuccess())
 			return amountRun;
-		else
-			throw new BusinessException("生成流水失败");
-		//return Result.buildFailMessage("流水生成失败");
+		return Result.buildFailMessage("流水生成失败");
 	}
 	
 	/**
@@ -282,8 +308,7 @@ public class AmountRunUtil {
 	 * @param amount
 	 * @return
 	 */
-	@Transactional(rollbackFor = Exception.class)
-	private Result delete(String orderType , UserFund userFund ,String associatedId , BigDecimal amount,String generationIp,String dealDescribe,String runType) {
+	public Result delete(String orderType , UserFund userFund ,String associatedId , BigDecimal amount,String generationIp,String dealDescribe,String runType) {
 		String orderAccount,amountType,acountR ,accountW;
 		Integer runOrderType = null;
 		BigDecimal amountNow ;
@@ -292,11 +317,11 @@ public class AmountRunUtil {
 		acountR =  SYSTEM_APP;
 		accountW = orderAccount ; 
 		runOrderType = getRunOrderType(orderType);
-		amountNow = userFund .getAccountBalance().add(amount);
+		amountNow = userFund .getAccountBalance();
 		Result amountRun = amountRun(associatedId, orderAccount, runOrderType, amount, generationIp, acountR, accountW, runType, amountType, dealDescribe, amountNow);
 		if(amountRun.isSuccess())
 			return amountRun;
-		throw new UserException("账户流水异常", null);
+		return Result.buildFail();
 	}
 	/**
 	 * <p>创建流水总类</p>	
@@ -313,7 +338,7 @@ public class AmountRunUtil {
 	 * @return
 	 */
 	@SuppressWarnings("unused")
-	private Result amountRun(String associatedId,String orderAccount,
+	public Result amountRun(String associatedId,String orderAccount,
 			Integer runOrderType,BigDecimal amount,String generationIp,
 			String acountR , String accountW,String runType ,String amountType 
 			,String dealDescribe,BigDecimal amountNow) {
@@ -324,22 +349,22 @@ public class AmountRunUtil {
 				|| StrUtil.isBlank(dealDescribe)
 				)
 			return Result.buildFailMessage("必传参数为空");
-		RunOrder run = new RunOrder();
-		run.setAssociatedId(associatedId);
-		run.setAccountW(accountW);
-		run.setAcountR(acountR);
-		run.setGenerationIp(generationIp);
-		run.setOrderAccount(orderAccount);
-		run.setAmountType(amountType);
-		run.setDealDescribe(dealDescribe);
-		run.setRunOrderType(runOrderType);
-		run.setRunType(runType);
-		run.setAmountNow(amountNow);
-		run.setAmount(amount);
-		boolean addOrder = runOrderServiceImpl.addOrder(run);
-		if(addOrder)
-			return Result.buildSuccessMessage("流水订单生成成功");
-		  throw new UserException("账户流水异常", null);
+			RunOrder run = new RunOrder();
+			run.setAssociatedId(associatedId);
+			run.setAccountW(accountW);
+			run.setAcountR(acountR);
+			run.setGenerationIp(generationIp);
+			run.setOrderAccount(orderAccount);
+			run.setAmountType(amountType);
+			run.setDealDescribe(dealDescribe);
+			run.setRunOrderType(runOrderType);
+			run.setRunType(runType);
+			run.setAmountNow(amountNow);
+			run.setAmount(amount);
+		    boolean addOrder = runOrderServiceImpl.addOrder(run);
+			if(addOrder)
+				return Result.buildSuccess();
+			return Result.buildFail();
 	}
 	
 	/**
@@ -347,7 +372,7 @@ public class AmountRunUtil {
 	 * @param orderType			流水订单标识
 	 * @return
 	 */
-	Integer getRunOrderType(String orderType){
+	public Integer getRunOrderType(String orderType){
 		Integer runOrderType = null;
 		switch (orderType) {
 		case ADD_AMOUNT:
@@ -373,6 +398,15 @@ public class AmountRunUtil {
 			break;
 		case PROFIT_AMOUNT_AGENT:
 			runOrderType = PROFIT_AMOUNT_AGENT_NUMBER;
+			break;
+		case ADD_DEAL_AMOUNT_APP:
+			runOrderType = ADD_DEAL_AMOUNT_APP_NUMBER;
+			break;
+		case DELETE_DEAL_FEE_AMOUNT_APP:
+			runOrderType = DELETE_DEAL_FEE_AMOUNT_APP_NUMBER;
+			break;
+		case WITHDRAY_AMOUNT_OPEN:
+			runOrderType = WITHDRAY_AMOUNT_OPEN_NUMBER;
 			break;
 		default:
 			break;

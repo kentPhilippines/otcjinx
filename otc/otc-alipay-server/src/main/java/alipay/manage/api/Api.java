@@ -10,8 +10,12 @@ import alipay.manage.service.UserInfoService;
 import alipay.manage.util.AmountRunUtil;
 import alipay.manage.util.AmountUtil;
 import alipay.manage.util.LogUtil;
+import alipay.manage.util.NotifyUtil;
 import alipay.manage.util.OrderUtil;
+import alipay.manage.util.QrUtil;
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.map.MapUtil;
+import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
@@ -47,6 +51,72 @@ public class Api {
 	Logger log = LoggerFactory.getLogger(Api.class);
 	@Autowired OrderUtil orderUtil;
 	@Autowired DealOrderMapper dealOrderDao;
+	@Autowired QrUtil qrUtil;
+	@Autowired NotifyUtil notifyUtil;
+	/**
+	 * <p>系统回调订单成功资金处理</p>
+	 * @param param
+	 * @param request
+	 * @return
+	 */
+	@PostMapping(PayApiConstant.Alipay.ORDER_API+PayApiConstant.Alipay.ORDER_ENTER_ORDER_SYSTEM+"/{param:.+}")
+	public Result enterOrderSystem(@PathVariable("param") String param, HttpServletRequest request) {
+		log.info("【接收到系统回调的方法，参数为："+param+"】");
+		Map<String, Object> stringObjectMap = RSAUtils.retMapDecode(param, SystemConstants.INNER_PLATFORM_PRIVATE_KEY);
+		log.info("【接受系统回调参数为："+stringObjectMap.toString()+"】");
+		if(MapUtil.isEmpty(stringObjectMap)) {
+			log.info("【当前系统订单成功回调参数为空】");
+			return Result.buildFailMessage("必传参数为空");
+		}
+		Object obja = stringObjectMap.get(Common.Notfiy.ORDER_AMOUNT);
+		Object objp = stringObjectMap.get(Common.Notfiy.ORDER_PHONE);
+		Object obji = stringObjectMap.get(Common.Notfiy.ORDER_ENTER_IP);
+		if(ObjectUtil.isNull(objp)||ObjectUtil.isNull(obja))
+			return  Result.buildFailMessage("回调设备号或者金额 为空");
+		String amount = obja.toString();
+		String phone = objp.toString();
+		String ip = HttpUtil.getClientIP(request);
+		if(ObjectUtil.isNotNull(obji))
+			ip = obji.toString();
+		/**
+		 * ###################################
+		 * 1,通过回调参数拿到商户预订单号
+		 * 2,通过预订单参数修改码商交易订单并生成流水
+		 * 3,通过码商交易订单拿到商户订单并生成流水
+		 * 4,发送回调数据
+		 */
+		 /**
+		  * 如果金额是100.1 或者是  100.20  等
+		  * 就会被转换为      100    10       100     20
+		  */
+		String[] split = amount.split("\\.");
+		String startAmount = split[0];
+		String endAmount = split[1];
+		int length = endAmount.length();
+		if(length == 1) //当交易金额为整小数的时候        补充0
+			endAmount += "0";
+		amount = startAmount + "." + endAmount;//得到正确的金额
+		log.info("=============【当前回调金额："+amount+"】============");
+		String associatedId = qrUtil.findOrderBy(new BigDecimal(amount), phone);
+		if(StrUtil.isBlank(associatedId)) {
+			log.info("【商户交易订单失效，或订单匹配不正确】");	
+			return Result.buildFailMessage("商户交易订单失效，或订单匹配不正确");
+		}
+		DealOrder order = dealOrderDao.findOrderByAssociatedId(associatedId);
+		if(ObjectUtil.isNull(order)) {
+			log.info("【通过商户订单号无法查询到码商交易订单号，当前交易订单号："+associatedId+"】");	
+			return Result.buildFailMessage("通过商户订单号无法查询到码商交易订单号，当前交易订单号："+associatedId+"");
+		}
+		Result orderDealSu = orderUtil.orderDealSu(order.getOrderId(), ip);
+		ThreadUtil.execute(()->{
+			if(orderDealSu.isSuccess()) {
+				notifyUtil.sendMsg(order.getOrderId());
+			}
+		});
+		if(!orderDealSu.isSuccess()) 
+			Result.buildFailMessage("回调失败,订单修改失败");
+		return Result.buildSuccessResult("回调成功", order.getOrderId());
+	}
 	@PostMapping(PayApiConstant.Alipay.MEDIUM_API+PayApiConstant.Alipay.FIND_MEDIUM_IS_DEAL)
 	public List<Medium> findIsDealMedium(String mediumType, String code) {
 		/**
@@ -114,11 +184,11 @@ public class Api {
 			if(orderStatus.equals(Common.Deal.AMOUNT_ORDER_SU)) {//加款订单成功，
 				int a = amountDao.updataOrder( orderId.toString() ,  orderStatus.toString(), approval.toString(), comment.toString());
 				if(a > 0 && a< 2) {
-					Result addAmount = amountRunUtil.addAmount(amount, clientIP);
-					if(addAmount.isSuccess()) {
-						UserFund userFund = userInfoServiceImpl.findUserFundByAccount(amount.getUserId());
-						Result addAmountAdd = amountUtil.addAmountAdd(userFund, amount.getAmount());
-						if(addAmountAdd.isSuccess()) {
+					UserFund userFund = userInfoServiceImpl.findUserFundByAccount(amount.getUserId());
+					Result addAmountAdd = amountUtil.addAmountAdd(userFund, amount.getAmount());
+					if(addAmountAdd.isSuccess()) {
+							Result addAmount = amountRunUtil.addAmount(amount, clientIP);
+							if(addAmount.isSuccess()) {
 							logUtil.addLog(request, "当前发起加钱操作，加款订单号："+amount.getOrderId()+"，加款成功，加款用户："+amount.getUserId()+"，操作人："+amount.getAccname()+"", amount.getAccname());
 							return Result.buildSuccessMessage("操作成功");
 						}
@@ -142,11 +212,11 @@ public class Api {
 			}else if(orderStatus.equals(Common.Deal.AMOUNT_ORDER_ER)) {//减款失败，资金退回
 				int a = amountDao.updataOrder( orderId.toString() ,  orderStatus.toString(), approval.toString(), comment.toString());
 				if(a > 0 && a< 2) {
-					Result deleteAmount = amountRunUtil.addAmount(amount, clientIP,"扣款失败，资金退回退回");
-					if(deleteAmount.isSuccess()) {
-						UserFund userFund = userInfoServiceImpl.findUserFundByAccount(amount.getUserId());
-						Result addAmountAdd = amountUtil.addAmountAdd(userFund, amount.getAmount());
-						if(addAmountAdd.isSuccess()) {
+					UserFund userFund = userInfoServiceImpl.findUserFundByAccount(amount.getUserId());
+					Result addAmountAdd = amountUtil.addAmountAdd(userFund, amount.getAmount());
+					if(addAmountAdd.isSuccess()) {
+						Result deleteAmount = amountRunUtil.addAmount(amount, clientIP,"扣款失败，资金退回退回");
+						if(deleteAmount.isSuccess()) {
 							logUtil.addLog(request, "当前扣款订单置为失败，资金原路退回，扣款订单号："+amount.getOrderId()+"，扣款用户："+amount.getUserId()+"，操作人："+amount.getAccname()+"", amount.getAccname());
 							return Result.buildSuccessMessage("操作成功");
 						}
@@ -155,11 +225,11 @@ public class Api {
 			}else if(orderStatus.equals(Common.Deal.AMOUNT_ORDER_HE)) {
 				int a = amountDao.updataOrder( orderId.toString() ,  orderStatus.toString(), approval.toString(), comment.toString());
 				if(a > 0 &&  a < 2) {
-					Result deleteAmount = amountRunUtil.deleteAmount(amount, clientIP);
-					if(deleteAmount.isSuccess()) {
-						UserFund userFund = userInfoServiceImpl.findUserFundByAccount(amount.getUserId());
-						Result deleteAmount2 = amountUtil.deleteAmount(userFund, amount.getAmount());
-						if(deleteAmount2.isSuccess()) {
+					UserFund userFund = userInfoServiceImpl.findUserFundByAccount(amount.getUserId());
+					Result deleteAmount2 = amountUtil.deleteAmount(userFund, amount.getAmount());
+					if(deleteAmount2.isSuccess()) {
+						Result deleteAmount = amountRunUtil.deleteAmount(amount, clientIP);
+						if(deleteAmount.isSuccess()) {
 							logUtil.addLog(request, "当前发起扣款操作，扣款订单号："+amount.getOrderId()+"，扣款成功，扣款用户："+amount.getUserId()+"，操作人："+amount.getAccname()+"", amount.getAccname());
 							return Result.buildSuccessMessage("操作成功");
 						}
@@ -176,7 +246,6 @@ public class Api {
 
 
 	@PostMapping(PayApiConstant.Alipay.ORDER_API+PayApiConstant.Alipay.ORDER_ENTER_ORDER+"/{param:.+}")
-	@Transactional
 	public Result enterOrder(@PathVariable("param") String param, HttpServletRequest request) {
 		log.info("【请求交易的终端用户交易请求参数为："+param+"】");
 		Map<String, Object> stringObjectMap = RSAUtils.retMapDecode(param, SystemConstants.INNER_PLATFORM_PRIVATE_KEY);
@@ -283,11 +352,10 @@ public class Api {
 //			if (i == 1){//生成流水
 //
 //			}
-			Result deleteAmount = amountRunUtil.deleteAmount(alipayAmount, clientIP);
-			if(deleteAmount.isSuccess()) {
-				Result deleteAmount2 = amountUtil.deleteAmount(userFund, deduct);
-				if(deleteAmount2.isSuccess()) {//扣款成功并生成流水
-					//生成订单
+			Result deleteAmount2 = amountUtil.deleteAmount(userFund, deduct);
+			if(deleteAmount2.isSuccess()) {
+				Result deleteAmount = amountRunUtil.deleteAmount(alipayAmount, clientIP);
+				if(deleteAmount.isSuccess()) {
 					int i = userInfoServiceImpl.insertAmountEntitys(alipayAmount);
 					if (i == 1)
 						return Result.buildSuccessMessage("创建订单成功");

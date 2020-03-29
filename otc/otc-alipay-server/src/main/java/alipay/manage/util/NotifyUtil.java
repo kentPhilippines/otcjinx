@@ -74,7 +74,7 @@ public class NotifyUtil {
      * @param msg  发送通知的内容
      */
     private void send(String url,String orderId,Map<String,Object> msg){
-        String result = HttpUtil.post(url, msg);
+        String result = HttpUtil.post(url, msg,-1);
         log.info("服务器返回结果为: " + result.toString());
         String isNotify="NO";
         if ("seccess".equalsIgnoreCase(result)) {

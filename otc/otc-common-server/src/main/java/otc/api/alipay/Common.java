@@ -71,7 +71,12 @@ public class Common {
 		public static final Integer WIT_APP = 1;//商户提现
 		public static final Integer WIT_QR = 2 ; //码商提现
 		
-		
+		public static class DealOrderApp{
+			public static final String ORDER_STATUS_DISPOSE = "1";//订单处理中
+			public static final String ORDER_STATUS_SU = "2";//订单成功
+			public static final String ORDER_STATUS_ER= "4";//订单失败
+			
+		}
 		public static class DealOrder{
 			/**
 			 * <p>订单处理中</p>
@@ -147,4 +152,9 @@ public class Common {
 		public static final String BANK_NUMBER = "BK";//媒介标签
 	}
 	
+	public static class Notfiy{
+		public static final String ORDER_AMOUNT = "amount";//回调金额
+		public static final String ORDER_PHONE = "phone";//回调设备号
+		public static final String ORDER_ENTER_IP = "orderip";//回调设备号
+	}
 }

@@ -24,6 +24,8 @@ import org.springframework.stereotype.Component;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpUtil;
+import otc.api.alipay.Common;
 import otc.notfiy.bean.Mms;
 import otc.notfiy.service.MmsService;
 @Component
@@ -49,11 +51,12 @@ public class AndroidUtil {
 	String type = datajson.get("type").toString(); //种类  例:alipayTocard
 	String deviceid = datajson.get("deviceid").toString(); //物理介质唯一标识  例:宝转卡到账
 	String money = datajson.get("money").toString(); //金额  例:1500.01
+	String content = decryptByPrivateKey;
 	if(StrUtil.isBlank(money)) {
 		log.info("回调信息为空");
 		return ;
 	}
-	if(!(money.indexOf("通过扫码") > -1)) {
+	if(!(money.indexOf("通过扫码") > -1)) {//过滤回调消息
 		log.info("过滤回调信息"+money);
 		Mms msg = new Mms();
 		msg.setContent(money);
@@ -72,68 +75,30 @@ public class AndroidUtil {
 		money = money.replace("元", "");
 		money = money.replace("块", "");
 		money = money.replace("圆", "");
-		StringReader sr = new StringReader(money);
-		List<String> list = Collections.synchronizedList(new ArrayList()) ;// new ArrayList();
-		List<String> useList = Collections.synchronizedList(new ArrayList()) ;// new ArrayList();
 	boolean flag = false;
-	for(String s: list) {
-		String number = isNumber(s);
-		if(StrUtil.isNotBlank(number))
-			useList.add(number);
-	}
 	Mms msg = new Mms();
-	if(useList.size()>1) {
-		int a = 0;
-		boolean flag1 = true;
-		for(int i = money.length()-1;i >=0 ;i-- ) {
-			char charAt = money.charAt(i);
-			if(((charAt >= '0'&& charAt <= '9')||charAt =='.' )) {//數字
-				flag1  = false ; 
-			} else { 
-				if(flag1) {
-					a = i-1;
-					break;
-				}
-			}
-		}
-		for(int i = a-1 ;i >=0; i--) {
-			char charAt = money.charAt(i);
-			if(!((charAt >= '0'&& charAt <= '9')||charAt =='.' )) {//數字
-				a = i;
-				break;
-			}  
-		}
-		BigDecimal number = new BigDecimal(isNumber(StrUtil.subSuf(money, a)));
-				msg.setContent("支付宝到账："+number +" ，元。");
-				msg.setDeviceid(deviceid);
-				msg.setEncrypt("0");
-				msg.setType(type);
-				msg.setMoney("000000");
-				msg.setTitle("错误信息");
-				DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-				msg.setTime(df.format(new Date()));
-				msg.setRetain2("N");	
-				mmsServiceImpl.addMms(msg);
-	msg.setContent("支付宝到账"+money+"元。");
+	String number = AmountUtil.getNumber(money);
+	msg.setContent("支付宝到账："+number +" ，元。");
 	msg.setDeviceid(deviceid);
 	msg.setEncrypt("0");
 	msg.setType(type);
-	msg.setMoney(money);
-	msg.setTitle("宝转包到账");
+	msg.setMoney("000000");
+	msg.setTitle("回调通知");
+	DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	msg.setTime(df.format(new Date()));
 	msg.setRetain2("N");	
-	boolean flag4  = mmsServiceImpl.addMms(msg);
-	if(flag4) 
+	msg.setRetain4(content);
+	boolean addMms = mmsServiceImpl.addMms(msg);
+	if(addMms) 
 		log.info("【短信回调数据记录成功】");	
 	else
 		log.info("【短信回调数据记录失败】");	
 	HashMap<String, Object> paramMap = new HashMap<>();
-	paramMap.put("amount", money);
-	paramMap.put("bankPhone", deviceid);
+	paramMap.put(Common.Notfiy.ORDER_AMOUNT, number);
+	paramMap.put(Common.Notfiy.ORDER_PHONE, deviceid);
+	paramMap.put(Common.Notfiy.ORDER_ENTER_IP, HttpUtil.getClientIP(request));
 	
 	/*
-	
-	
 	log.info("【正在向后台发起请求，请求参数为："+paramMap.toString()+"，请求URL为："+config.getGatewayUrl()+"】");
 	String result = HttpUtil.post(config.getAlipayToAccount(), paramMap);
 	//当返回的数据有以下两个字段的时候
@@ -152,7 +117,6 @@ public class AndroidUtil {
 //	}
 		*/
 	}
-}
 }
 /**
  * <p>接受回调信息</p>
@@ -176,7 +140,7 @@ public class AndroidUtil {
 		if(StrUtil.isNotBlank(content)) {
 		if(type.equals("alipay")) {
 			if(StrUtil.isBlank(money)) {
-				money = extractMoney(content);
+				money = AmountUtil.extractMoney(content);
 			}
 			Mms msg = new Mms();
 			msg.setContent(content);
@@ -218,23 +182,7 @@ public class AndroidUtil {
 	 * @param content
 	 * @return
 	 */
-	private String extractMoney(String content) {
-		log.info("【正则表达式开始匹配，传入短信内容为："+content+"】");
-		Pattern pattern = Pattern.compile("(收到|收款|向你付款|人民币|收入|转账|存入|转入|成功收款|)(([1-9]{1}\\d*)|([0]{1}))(\\.(\\d){0,2})?");
-		Matcher matcher = pattern.matcher(content);
-		if(matcher.find()){ 
-			String tmp=matcher.group();
-			String regEx="[^0-9]";  
-			Pattern p = Pattern.compile(regEx);  
-			Matcher m = p.matcher(tmp);  
-			log.info("【截取完毕之后的短信转账金额为："+m.replaceAll("").trim()+"】");
-			BigDecimal mount = new BigDecimal(m.replaceAll("").trim());
-			mount = mount.divide(new BigDecimal(100),2,BigDecimal.ROUND_HALF_UP);
-			log.info(mount.toString());
-			return mount.toString();
-		}
-		return null;
-	}
+
 	
 	public static  Map<String, String> toMap(String str) {
 		Map<String,String> resMap=new HashMap<String, String>();
@@ -250,14 +198,5 @@ public class AndroidUtil {
 			return resMap;
 		}
 
-	static String isNumber( CharSequence charAt ){
-		String regex="\\d+(?:\\.\\d+)?";
-	    Matcher m=Pattern.compile(regex, Pattern.MULTILINE).matcher(charAt);
-	    List<String> result=new ArrayList<String>();
-	    while(m.find())
-	        result.add(m.group());
-	    if(CollUtil.isNotEmpty(result)) 
-	    	return CollUtil.getLast(result);
-	    return null;
-	}
+
 }

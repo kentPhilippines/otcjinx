@@ -122,7 +122,7 @@ public class DealAppApi {
 		witb.setBankName(wit.getAcctname());
 		witb.setWithdrawType(Common.Order.WIT_APP.toString());
 		witb.setOrderId(Number.getWitOrder());
-		witb.setOrderStatus(Common.Order.DealOrder.ORDER_STATUS_DISPOSE.toString());
+		witb.setOrderStatus(Common.Order.DealOrderApp.ORDER_STATUS_DISPOSE.toString());
 		witb.setNotify(wit.getNotifyurl());
 		witb.setRetain2(wit.getIp());//代付ip
 		witb.setWitType(userRate.getPayTypr());//代付类型

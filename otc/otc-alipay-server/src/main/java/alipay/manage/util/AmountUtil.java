@@ -1,5 +1,8 @@
 package alipay.manage.util;
 import java.math.BigDecimal;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +13,7 @@ import alipay.manage.bean.UserFund;
 import alipay.manage.bean.UserInfo;
 import alipay.manage.service.RunOrderService;
 import alipay.manage.service.UserInfoService;
+import cn.hutool.core.thread.ThreadUtil;
 import otc.api.alipay.Common;
 import otc.exception.user.UserException;
 import otc.result.Result;
@@ -26,6 +30,7 @@ public class AmountUtil {
 	public static final String ADD_AMOUNT_PROFIT = "ADD_AMOUNT_PROFIT";//代理利润分成
 	public static final String ADD_AMOUNT = "ADD_AMOUNT";//人工加钱
 	public static final String ADD_AMOUNT_DEAL = "ADD_AMOUNT_DEAL";//交易利润加钱
+	public static final String ADD_AMOUNT_DEAL_APP = "ADD_AMOUNT_DEAL_APP";//交易账户加款
 	public static final String DELETE_DEAL = "DELETE_DEAL";//交易减充值点数
 	public static final String DELETE_AMOUNT = "DELETE_AMOUNT";//人工减钱
 	public static final String DELETE_WITHDRAW = "DELETE_WITHDRAW";//提现withdraw
@@ -67,6 +72,15 @@ public class AmountUtil {
 	 */
 	public Result addDeal(UserFund userFund , BigDecimal balance, BigDecimal dealAmount) {
 		return addAmountBalance(userFund, balance, ADD_AMOUNT_DEAL,dealAmount);
+	}
+	/**
+	 * <p>下游商户交易时，增加下游商户商户余额</p>
+	 * @param userFund
+	 * @param balance
+	 * @return
+	 */
+	public Result addDealApp(UserFund userFund , BigDecimal balance) {
+		return addAmountBalance(userFund, balance, ADD_AMOUNT_DEAL_APP,new BigDecimal("0"));
 	}
 	/**
 	 * <p><strong>减少交易点数【交易订单置为成功调用这个方法】</strong></p>
@@ -113,36 +127,85 @@ public class AmountUtil {
 	 * <p>增加余额</p>
 	 * @return
 	 */
-	private Result addAmountBalance(UserFund userFund , BigDecimal balance , String addType  , BigDecimal dealAmount) {
-		userFund = userInfoServiceImpl.findUserFundByAccount(userFund.getUserId());
-		if(!clickUserFund(userFund).isSuccess())
-			return Result.buildFailMessage("【资金账户存在问题】");
-		if(ADD_AMOUNT_RECHARGE.equals(addType)) {//资金充值【加充值点数】
-			Result addAmountRecharge = addAmountRecharge(userFund,  balance);
-			if(addAmountRecharge.isSuccess()) 
-				return addAmountRecharge;
-			log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
-			return 	Result.buildFailMessage("【账户余额添加失败，请联系技术人员查看当前服务异常】");
-		}else if(ADD_AMOUNT_PROFIT.equals(addType)) {//代理利润分成
-			Result profit = addAmountAgentProfit(userFund,balance);
-			if(profit.isSuccess()) 
-				return profit;
-			log.info("【账户代理商分润增加失败，请查询当前时间范围内的异常情况】");
-			return 	Result.buildFailMessage("【账户代理商分润增加失败，请查询当前时间范围内的异常情况，请联系技术人员查询情况】");
-		}else if (ADD_AMOUNT.equals(addType)) {//手动加钱
-			Result addAmountRecharge = addAmountRecharge(userFund,  balance);
-			if(addAmountRecharge.isSuccess()) 
-				return addAmountRecharge;
-			log.info("【手动加钱失败，请联系技术人员处理");
-			return 	Result.buildFailMessage("【手动加钱失败，请联系技术人员处理】");
-		}else if(ADD_AMOUNT_DEAL.equals(addType)) {//交易利润分成 ,统计交易笔数
-			Result addAmountDeal = addAmountDeal(userFund,  balance,dealAmount);
-			if(addAmountDeal.isSuccess()) 
-				return addAmountDeal;
-			log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
-			return 	Result.buildFailMessage("【当前账户分润分润增加和利润统计失败，请联系技术人员查询情况】");
+	public Result addAmountBalance(UserFund userFund1 , BigDecimal balance , String addType  , BigDecimal dealAmount) {
+		UserFund userFund = userInfoServiceImpl.findUserFundByAccount(userFund1.getUserId());
+			if(!clickUserFund(userFund).isSuccess())
+				return Result.buildFailMessage("【资金账户存在问题】");
+			if(ADD_AMOUNT_RECHARGE.equals(addType)) {//资金充值【加充值点数】
+				Result addAmountRecharge = addAmountRecharge(userFund,  balance);
+				if(addAmountRecharge.isSuccess()) 
+					return addAmountRecharge;
+				log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
+				return 	Result.buildFailMessage("【账户余额添加失败，请联系技术人员查看当前服务异常】");
+			}else if(ADD_AMOUNT_PROFIT.equals(addType)) {//代理利润分成
+				Result profit = addAmountAgentProfit(userFund,balance);
+				if(profit.isSuccess()) 
+					return profit;
+				log.info("【账户代理商分润增加失败，请查询当前时间范围内的异常情况】");
+				return 	Result.buildFailMessage("【账户代理商分润增加失败，请查询当前时间范围内的异常情况，请联系技术人员查询情况】");
+			}else if (ADD_AMOUNT.equals(addType)) {//手动加钱
+				Result addAmountRecharge = addAmountRecharge(userFund,  balance);
+				if(addAmountRecharge.isSuccess()) 
+					return addAmountRecharge;
+				log.info("【手动加钱失败，请联系技术人员处理");
+				return 	Result.buildFailMessage("【手动加钱失败，请联系技术人员处理】");
+			}else if(ADD_AMOUNT_DEAL.equals(addType)) {//交易利润分成 ,统计交易笔数
+				Result addAmountDeal = addAmountDeal(userFund,  balance,dealAmount);
+				if(addAmountDeal.isSuccess()) 
+					return addAmountDeal;
+				log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
+				return 	Result.buildFailMessage("【当前账户分润分润增加和利润统计失败，请联系技术人员查询情况】");
+			}else if(ADD_AMOUNT_DEAL_APP.equals(addType)) {
+				Result addAmountDeal = addAmountDealApp(userFund,  balance);
+				if(addAmountDeal.isSuccess()) 
+					return addAmountDeal;
+				log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
+				return 	Result.buildFailMessage("【当前账户更新失败，请联系技术人员查询情况】");
+			}
+			return Result.buildFailMessage("传参异常");
+	}
+	public Result addAmountDealApp(UserFund userFund, BigDecimal balance) {
+		BigDecimal accountBalance = userFund.getAccountBalance();//当前账户比较金额
+		BigDecimal cashBalance = userFund.getCashBalance();//当前利润账户
+		BigDecimal freezeBalance = userFund.getFreezeBalance();//当前冻结账户
+		BigDecimal rechargeNumber = userFund.getRechargeNumber();//当前充值点数
+	//	BigDecimal sumAgentProfit = userFund.getSumAgentProfit();//当前代理商分润  【当前订单为自己接单，不需要该字段】
+		BigDecimal sumDealAmount = userFund.getSumDealAmount();//当前交易分润	
+	//	BigDecimal sumProfit = userFund.getSumProfit();//当前当前总的利润
+	//	BigDecimal todayAgentProfit = userFund.getTodayAgentProfit();//今日代理分润  【当前订单为自己接单，无需统计该字段】
+		BigDecimal todayDealAmount = userFund.getTodayDealAmount();//今日交易金额
+		Integer sumOrderCount = userFund.getSumOrderCount();//总订单笔数
+		Integer todayOrderCount = userFund.getTodayOrderCount();//今日订单笔数
+	//	BigDecimal todayProfit = userFund.getTodayProfit();//今日总利润  =  今日代理分润 + 今日接单分润
+		log.info("【金额修改后账户情况：当前账户总比较金额："+accountBalance+"，当前账户充值点数："+rechargeNumber+"，当前账户利润金额："+cashBalance+"，当前账户冻结金额："+freezeBalance+"，当前账户："+userFund.getUserId()+"】");
+	//以上为当前账户情况	
+		rechargeNumber = rechargeNumber.add(balance);
+		accountBalance = rechargeNumber.add(cashBalance).subtract(freezeBalance);
+		sumDealAmount = sumDealAmount.add(balance);
+		todayDealAmount = todayDealAmount.add(balance);
+		sumOrderCount+=1;
+		todayOrderCount+=1;
+		userFund.setAccountBalance(accountBalance);
+		userFund.setCashBalance(cashBalance);
+		userFund.setFreezeBalance(freezeBalance);
+		userFund.setRechargeNumber(rechargeNumber);
+		userFund.setSumDealAmount(sumDealAmount);
+		userFund.setSumOrderCount(sumOrderCount);
+		userFund.setTodayDealAmount(todayDealAmount);
+		userFund.setTodayOrderCount(todayOrderCount);
+		Boolean updataAmount = userInfoServiceImpl.updataAmount(userFund);
+		if(updataAmount) 
+			log.info("【金额修改后账户情况：当前账户总比较金额："+accountBalance+"，当前账户充值点数："+rechargeNumber+"，当前账户利润金额："+cashBalance+"，当前账户冻结金额："+freezeBalance+"，当前账户："+userFund.getUserId()+"】");
+		else {
+			log.info("【账户修改失败】");
+			Boolean updataStatusEr = userInfoServiceImpl.updataStatusEr(userFund.getUserId());
+			if(updataStatusEr)
+				log.info("【账户已修改为不可使用，当前账号为："+userFund.getUserId()+"】");
+			else
+				throw new UserException("账户修改异常", null);
+			return Result.buildFail();
 		}
-		return Result.buildFailMessage("传参异常");
+		return Result.buildSuccessResult();
 	}
 	/**
 	 * <p>账户减少</p>
@@ -151,7 +214,7 @@ public class AmountUtil {
 	 * @param addType
 	 * @return
 	 */
-	private Result deleteAmountBalance(UserFund userFund , BigDecimal balance , String addType ) {
+	public Result deleteAmountBalance(UserFund userFund , BigDecimal balance , String addType ) {
 		userFund = userInfoServiceImpl.findUserFundByAccount(userFund.getUserId());
 		if(!clickUserFund(userFund).isSuccess())
 			return Result.buildFailMessage("【资金账户存在问题】");
@@ -206,7 +269,7 @@ public class AmountUtil {
 	 * @param amount
 	 * @return
 	 */
-	private Result freezeBalance(UserFund userFund, BigDecimal amount) {
+	public Result freezeBalance(UserFund userFund, BigDecimal amount) {
 		log.info("【当前方法为 【码商或者商户资金冻结】 ，当前操作金额为："+amount+"】");
 		BigDecimal accountBalance = userFund.getAccountBalance();
 		BigDecimal rechargeNumber = userFund.getRechargeNumber();
@@ -230,7 +293,7 @@ public class AmountUtil {
 	 * <p>取款</p>
 	 * @return
 	 */
-	private Result withdrawBalance(UserFund userFund, BigDecimal amount) {
+	public Result withdrawBalance(UserFund userFund, BigDecimal amount) {
 		log.info("【当前方法为 【码商或者商户发起提现】 ，当前操作金额为："+amount+"】");
 		BigDecimal accountBalance = userFund.getAccountBalance();
 		BigDecimal rechargeNumber = userFund.getRechargeNumber();
@@ -260,7 +323,7 @@ public class AmountUtil {
 	 * @return
 	 * 当前扣款为系统或者后台人员操作扣款，所以针对账户详情的资金开关，针对后台和系统管理人员无效
 	 */
-	private Result deductBalance(UserFund userFund , BigDecimal amount) {
+	public Result deductBalance(UserFund userFund , BigDecimal amount) {
 		log.info("【当前方法为 【人工扣除账户金额方法】 ，当前操作金额为："+amount+"】");
 		BigDecimal accountBalance = userFund.getAccountBalance();
 		BigDecimal rechargeNumber = userFund.getRechargeNumber();
@@ -289,7 +352,7 @@ public class AmountUtil {
 	 * @param amount
 	 * @return
 	 */
-	private Result deductRecharge(UserFund userFund , BigDecimal amount) {
+	public Result deductRecharge(UserFund userFund , BigDecimal amount) {
 		log.info("【当前方法为 【交易扣除充值点数】 ，当前操作金额为："+amount+"】");
 		BigDecimal accountBalance = userFund.getAccountBalance();
 		BigDecimal rechargeNumber = userFund.getRechargeNumber();
@@ -323,7 +386,7 @@ public class AmountUtil {
 	 * <p>交易利润加钱需要怎加交易利润字段</p>
 	 */
 	@SuppressWarnings("unlikely-arg-type")
-	private Result addAmountDeal(UserFund userFund, BigDecimal balance, BigDecimal dealAmount) {
+	public Result addAmountDeal(UserFund userFund, BigDecimal balance, BigDecimal dealAmount) {
 		log.info("【当前方法为 【交易利润加钱】，当前交易金额为："+dealAmount+"，当前操作金额为："+balance+"】");
 		UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(userFund.getUserId());
 		if(Common.User.USER_INFO_OFF.equals(userInfo.getSwitchs())) {
@@ -368,16 +431,17 @@ public class AmountUtil {
 			log.info("【金额修改后账户情况：当前账户总比较金额："+accountBalance+"，当前账户充值点数："+rechargeNumber+"，当前账户利润金额："+cashBalance+"，当前账户冻结金额："+freezeBalance+"，当前账户："+userFund.getUserId()+"】");
 		else {
 			log.info("【账户修改失败】");
-			Boolean updataStatusEr = userInfoServiceImpl.updataStatusEr(userFund.getUserId());
-			if(updataStatusEr)
+			ThreadUtil.execute( ()->{
+				//TODO 新建线程提交，该线程不受主线程事务控制
+				Boolean updataStatusEr = userInfoServiceImpl.updataStatusEr(userFund.getUserId());
+				if(updataStatusEr)
 				log.info("【账户已修改为不可使用，当前账号为："+userFund.getUserId()+"】");
-			else
-				throw new UserException("账户修改异常", null);
-			return Result.buildFail();
+			});
+			throw new UserException("账户修改异常", null);
 		}
 		return Result.buildSuccessResult();
 	}
-	private Result addAmountAgentProfit(UserFund userFund, BigDecimal balance) {
+	public Result addAmountAgentProfit(UserFund userFund, BigDecimal balance) {
 		log.info("【当前方法为 【增加代理商点数】 ，当前操作金额为："+balance+"】");
 		UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(userFund.getUserId());
 		if(Common.User.USER_INFO_OFF.equals(userInfo.getSwitchs())) {
@@ -416,12 +480,13 @@ public class AmountUtil {
 			log.info("【金额修改后账户情况：当前账户总比较金额："+accountBalance+"，当前账户充值点数："+rechargeNumber+"，当前账户利润金额："+cashBalance+"，当前账户冻结金额："+freezeBalance+"，当前账户："+userFund.getUserId()+"】");
 		else {
 			log.info("【账户修改失败】");
-			Boolean updataStatusEr = userInfoServiceImpl.updataStatusEr(userFund.getUserId());
-			if(updataStatusEr)
+			ThreadUtil.execute( ()->{
+				//TODO 新建线程提交，该线程不受主线程事务控制
+				Boolean updataStatusEr = userInfoServiceImpl.updataStatusEr(userFund.getUserId());
+				if(updataStatusEr)
 				log.info("【账户已修改为不可使用，当前账号为："+userFund.getUserId()+"】");
-			else
-				throw new UserException("账户修改异常", null);
-			return Result.buildFail();
+			});
+			throw new UserException("账户修改异常", null);
 		}
 		return Result.buildSuccessResult();
 	}
@@ -431,7 +496,7 @@ public class AmountUtil {
 	 * @param userFund				用户实时资金数据
 	 * @return
 	 */
-	Result clickUserFund(UserFund userFund){
+	private Result clickUserFund(UserFund userFund){
 		log.info("进入当前账户金额检查方法");
 		BigDecimal accountBalance = userFund.getAccountBalance();//当前账户可操作余额【当前现金账户 +当前冻结账户+当前充值点数】
 		BigDecimal cashBalance = userFund.getCashBalance();//当前现金账户
@@ -439,8 +504,11 @@ public class AmountUtil {
 		BigDecimal rechargeNumber = userFund.getRechargeNumber();//当前充值点数
 		if(cashBalance.add(rechargeNumber).subtract(freezeBalance).compareTo(accountBalance) != 0) { //关闭资金流动的功能  
 			log.info("【===========【经过系统核对后，当前用户账户存在问题，请重点关照该用户的账号，检查问题出现原因】===========】");
-			if(userInfoServiceImpl.updataStatusEr(userFund.getUserId()))
-				return Result.buildFail();
+			ThreadUtil.execute( ()->{
+				//TODO 新建线程提交，该线程不受主线程事务控制
+				userInfoServiceImpl.updataStatusEr(userFund.getUserId());
+			});
+			return Result.buildFail();
 		}
 		log.info("【===========【经过系统核对后，当前用户账户不存在问题，请放心交易】===========】");
 		return Result.buildSuccess();
@@ -453,7 +521,7 @@ public class AmountUtil {
 	 * @return
 	 */
 	@SuppressWarnings("unlikely-arg-type")
-	private Result addAmountRecharge(UserFund userFund , BigDecimal balance) {
+	public Result addAmountRecharge(UserFund userFund , BigDecimal balance) {
 		UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(userFund.getUserId());
 		if(Common.User.USER_INFO_OFF.equals(userInfo.getSwitchs())) {
 			log.info("【===========【当前账户被标记为禁止使用资金账户功能，请检查该账户存在的交易异常，当前账户为："+userInfo.getUserId()+"】===========】");
