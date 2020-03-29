@@ -49,8 +49,6 @@ public class ThreadConnection {
                    } catch (SQLException e) {
                        e.printStackTrace();
                    }
-                   connections = Collections.synchronizedList(new ArrayList<Connection>());
-                   
                }
            }
        }
