@@ -52,6 +52,7 @@ public class QrcodeContorller {
      * @return
      */
     @GetMapping("/updataMediumStatusSu")
+    @ResponseBody
     public Result updataMediumStatusSu(HttpServletRequest request,String id ) {
     	 UserInfo user = sessionUtil.getUser(request);
          if(ObjectUtil.isNull(user))
@@ -71,6 +72,7 @@ public class QrcodeContorller {
      * @return
      */
     @GetMapping("/updataMediumStatusEr")
+    @ResponseBody
     public Result updataMediumStatusEr(HttpServletRequest request,String id ) {
     	 UserInfo user = sessionUtil.getUser(request);
          if(ObjectUtil.isNull(user))

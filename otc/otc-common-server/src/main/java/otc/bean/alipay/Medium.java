@@ -22,7 +22,17 @@ public class Medium implements Serializable{
     private String isDeal;
     private String mediumNote;					//媒介备注
     private String attr;   						//收款媒介供应链标识
-    public String getAttr() {
+    private String fixation;				//当前媒介下所有金额
+    
+    public String getFixation() {
+		return fixation;
+	}
+
+	public void setFixation(String fixation) {
+		this.fixation = fixation;
+	}
+
+	public String getAttr() {
 		return attr;
 	}
 

@@ -19,7 +19,10 @@ import cn.hutool.log.LogFactory;
 import otc.bean.alipay.Medium;
 import otc.common.RedisConstant;
 import otc.result.Result;
-
+/**<p>远程队列操作</p>
+ * @author hx070
+ *
+ */
 @Component
 public class QueueUtil {
 	private static final Log log = LogFactory.get();
