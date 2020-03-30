@@ -29,4 +29,10 @@ public class QueueServiceClienFeignHystrix implements QueueServiceClienFeign {
 		return null;
 	}
 
+	@Override
+	public Result deleteNode(Medium medium) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

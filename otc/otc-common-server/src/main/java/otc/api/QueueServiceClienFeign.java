@@ -41,4 +41,9 @@ public interface QueueServiceClienFeign {
 	@PostMapping(PayApiConstant.Queue.QUEUE_API+PayApiConstant.Queue.ADD_QR)
 	public Result addNode(@RequestParam("medium")Medium medium);
 	
+	
+	@PostMapping(PayApiConstant.Queue.QUEUE_API+PayApiConstant.Queue.DELETE_QR)
+	public Result deleteNode(@RequestParam("medium")Medium medium);
+	
+	
 }

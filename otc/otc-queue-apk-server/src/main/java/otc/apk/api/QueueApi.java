@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import otc.apk.util.Queue;
 import otc.bean.alipay.FileList;
 import otc.bean.alipay.Medium;
 import otc.common.PayApiConstant;
@@ -47,5 +48,13 @@ public class QueueApi {
 			return Result.buildSuccess();
 		return Result.buildFail();
 	} 
+	
+	@PostMapping(PayApiConstant.Queue.DELETE_QR)
+	public Result deleteNode(Medium medium) {
+		boolean deleteNode = queueList.deleteNode(medium.getMediumNumber(),medium.getAttr());
+		if(deleteNode)
+			return Result.buildSuccess();
+		return Result.buildFail();
+	}
 	
 }

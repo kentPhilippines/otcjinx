@@ -35,12 +35,6 @@ public class QueueUtil {
 	 */
 	public Result addNode(Medium medium) {
 		log.info("【进入支付媒介入列操作】");
-		/**
-		 * ####################
-		 *  1,开启本地数据库
-		 * 	2,放入本地队列标记
-		 *	3,添加到远程队列
-		 */
 		Future<Result> execAsync = ThreadUtil.execAsync(()->{
 			Result addNode  = Result.buildFail();
 			try {
@@ -51,7 +45,7 @@ public class QueueUtil {
 				Medium mediumId = mediumServiceImpl.findMediumId(medium.getId().toString());
 				String mediumNo = mediumId.getMediumId();
 				log.info("【当前操作的媒介id为："+mediumNo+"】");
-				if(redisUtil.hasKey(RedisConstant.MEDIUM_QUEUE+mediumNo)) 
+				if(redisUtil.hasKey(MEDIUM_QUEUE+mediumNo)) 
 					return Result.buildFailMessage("本地标记已存在");
 				redisUtil.set(MEDIUM_QUEUE+mediumNo, mediumNo);
 				addNode = queueServiceClienImpl.addNode(mediumId);				// addNode - queue

@@ -4,6 +4,7 @@ import alipay.config.redis.RedisUtil;
 import alipay.manage.bean.UserInfo;
 import alipay.manage.bean.util.PageResult;
 import alipay.manage.service.MediumService;
+import alipay.manage.util.QueueUtil;
 import alipay.manage.util.SessionUtil;
 import alipay.manage.util.SettingFile;
 import cn.hutool.core.util.ObjectUtil;
@@ -26,8 +27,7 @@ import java.util.List;
 public class QrcodeContorller {
     @Autowired SessionUtil sessionUtil;
     @Autowired MediumService mediumServiceImpl;
-    @Autowired RedisUtil redisUtil;
-    @Autowired SettingFile settingFile;
+    @Autowired QueueUtil queueUtil;
     @GetMapping("/findIsMyQrcodePage")
     @ResponseBody
     public Result findIsMyQrcodePage(HttpServletRequest request, String pageNum, String pageSize ) {
@@ -44,5 +44,40 @@ public class QrcodeContorller {
         pageR.setTotal(pageInfo.getTotal());
         pageR.setTotalPage(pageInfo.getPages());
         return Result.buildSuccessResult(pageR);
+    }
+    /**
+     * <p>远程队列入列</p>
+     * @param request
+     * @param id
+     * @return
+     */
+    @GetMapping("/updataMediumStatusSu")
+    public Result updataMediumStatusSu(HttpServletRequest request,String id ) {
+    	 UserInfo user = sessionUtil.getUser(request);
+         if(ObjectUtil.isNull(user))
+             return Result.buildFailResult("用户未登录");
+         Medium med = new Medium();
+         med.setId(Integer.valueOf(id));
+    	Result addNode = queueUtil.addNode(med);
+    	return addNode;
+    }
+    
+    
+    
+    /**
+     * <p>远程队列出列</p>
+     * @param request
+     * @param id
+     * @return
+     */
+    @GetMapping("/updataMediumStatusEr")
+    public Result updataMediumStatusEr(HttpServletRequest request,String id ) {
+    	 UserInfo user = sessionUtil.getUser(request);
+         if(ObjectUtil.isNull(user))
+             return Result.buildFailResult("用户未登录");
+         Medium med = new Medium();
+         med.setId(Integer.valueOf(id));
+    	Result addNode = queueUtil.pop(med);
+    	return addNode;
     }
 }

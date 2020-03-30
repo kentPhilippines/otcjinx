@@ -51,6 +51,7 @@ public class PayApiConstant {
 		public static final String FIND_QR = "/find-queue-qr";
 		public static final String UPDATA_QR = "/updata-queue-qr";
 		public static final String ADD_QR = "/add-queue-qr";
+		public static final String DELETE_QR = "/delete-queue-qr";
 	}
 	public class Notfiy{
 		public static final String NOTFIY_API = "/notfiy-api";
