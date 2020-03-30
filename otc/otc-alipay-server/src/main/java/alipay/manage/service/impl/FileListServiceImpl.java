@@ -22,7 +22,6 @@ import java.util.List;
 
 @Service
 public class FileListServiceImpl implements FileListService {
-    static final String QR_CODE = "QR:CODE";
     @Autowired
     FileListMapper fileListMapper;
     @Autowired
@@ -45,7 +44,6 @@ public class FileListServiceImpl implements FileListService {
     /**
      * <p>分页查询</p>
      */
-    @Cacheable(cacheNames= {QR_CODE},  unless="#result == null")
     @Override
     public List<FileList> findQrPage(FileList qr) {
         FileListExample example = new FileListExample();
@@ -172,7 +170,6 @@ public class FileListServiceImpl implements FileListService {
     public List<FileList> findQrEr() {
         return null;
     }
-    @Cacheable(cacheNames= {QR_CODE},  unless="#result == null")
     @Override
     public List<FileList> findQrByMediumId(String mediumId) {
         log.info("mediumId :::->"+ mediumId);
@@ -187,7 +184,6 @@ public class FileListServiceImpl implements FileListService {
     /**
      * <p>根据二维码编号，媒介编号，交易金额生成二位码数据</p>
      */
-    @CacheEvict(value=QR_CODE, allEntries=true)
     @Override
     public Result addQrByMedium(String qrcodeId, String mediumId, String amount, String userId, String flag) {
         Medium medium = mediumServiceImpl.findMediumById(mediumId);
@@ -209,8 +205,6 @@ public class FileListServiceImpl implements FileListService {
             return Result.buildSuccessResult();
         return Result.buildFail();
     }
-
-    @CacheEvict(value=QR_CODE, allEntries=true)
     @Override
     public Boolean deleteQrByQrcodeId(String qrcodeId) {
         FileListExample example = new FileListExample();
@@ -223,15 +217,12 @@ public class FileListServiceImpl implements FileListService {
         int updateByExampleSelective = fileListMapper.updateByExampleSelective(bean, example);
         return updateByExampleSelective > 0 && updateByExampleSelective < 2;
     }
-
-    @Cacheable(cacheNames= {QR_CODE},  unless="#result == null")
     @Override
     public List<Medium> findIsDealMedium(String code) {
         List<Medium> mediumList = mediumServiceImpl.findIsDealMedium(code);
         return mediumList;
     }
 
-    @CacheEvict(value=QR_CODE, allEntries=true)
     @Override
     public Boolean deleteQrByMediumId(String mediumId) {
         FileList qr = fileListMapper.findConcealId(mediumId);
@@ -247,7 +238,6 @@ public class FileListServiceImpl implements FileListService {
         int updateByExampleSelective = fileListMapper.updateByExampleSelective(bean, example);
         return updateByExampleSelective > 0 && updateByExampleSelective < 2;
     }
-    @CacheEvict(value=QR_CODE, allEntries=true)
     @Override
     public void updataConcealId(String qrcodeholder, String qrcodeNumber, String mediumId) {
         FileListExample example = new FileListExample();
@@ -262,7 +252,6 @@ public class FileListServiceImpl implements FileListService {
         fileListMapper.updateByExampleSelective(bean, example);
     }
 
-    @Cacheable(cacheNames= {QR_CODE},  unless="#result == null")
     @Override
     public List<String> findQrAmountList(String concealId) {
         return fileListMapper.selectQrAmountList(concealId);

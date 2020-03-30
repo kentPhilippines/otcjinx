@@ -153,7 +153,6 @@ public class MediumServiceImpl implements MediumService {
     public boolean selectOpenAlipayAccount(String accountId) {
         return false;
     }
-
     @Override
     public Medium findMediumByMediumNumber(String mediumNumber) {
         MediumExample example =  new MediumExample();
