@@ -18,6 +18,7 @@ public class RedisConstant {
 	public class Queue {
 		public final static String QUEUE_REDIS = "QUEUE:REDIS:";
 		public static final String HEARTBEAT="HEARTBEAT_";
+		public static final String MEDIUM_QUEUE = "MEDIUM:QUEUE";
 		
 		
 	}
