@@ -136,12 +136,17 @@ public class MediumServiceImpl implements MediumService {
 
     @Override
     public Medium findMediumId(String id) {
-        return null;
+    	Medium medium=mediumDao.selectByPrimaryKey(Integer.valueOf(id));
+        return medium;
     }
 
     @Override
     public boolean updataMediumStatusSu(String id) {
-        return false;
+    	Medium record=new Medium();
+    	record.setId(Integer.parseInt(id));
+    	record.setStatus(1);
+    	int flag=mediumDao.updateByPrimaryKey(record);
+        return flag>0 && flag<2;
     }
 
     @Override

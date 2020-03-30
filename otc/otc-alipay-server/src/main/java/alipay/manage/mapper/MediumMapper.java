@@ -24,7 +24,7 @@ public interface MediumMapper {
 
     List<Medium> selectByExample(MediumExample example);
 
-    Medium selectByPrimaryKey(@Param("id") Integer id, @Param("mediumNumber") String mediumNumber, @Param("mediumId") String mediumId);
+    Medium selectByPrimaryKey(@Param("id") Integer id);
 
     int updateByExampleSelective(@Param("record") Medium record, @Param("example") MediumExample example);
 

@@ -33,7 +33,7 @@ public class QueueUtil {
 	static Lock lock = new  ReentrantLock();
 	/**
 	 * <p>收款媒介入列操作</p>
-	 * @param medium			必传参数<strong>收款媒介数据id</strong>
+	 * @param medium	必传参数<strong>收款媒介数据id</strong>
 	 * @return
 	 */
 	public Result addNode(Medium medium) {
@@ -51,7 +51,7 @@ public class QueueUtil {
 				if(redisUtil.hasKey(MEDIUM_QUEUE+mediumNo)) 
 					return Result.buildFailMessage("本地标记已存在");
 				redisUtil.set(MEDIUM_QUEUE+mediumNo, mediumNo);
-				addNode = queueServiceClienImpl.addNode(mediumId);				// addNode - queue
+				addNode = queueServiceClienImpl.addNode(mediumId);	// addNode - queue
 			 }finally {
 				 lock.unlock();
 			}
