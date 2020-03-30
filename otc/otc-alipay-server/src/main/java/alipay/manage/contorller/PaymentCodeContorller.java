@@ -70,8 +70,13 @@ public class PaymentCodeContorller {
         PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
         if (ObjectUtil.isNull(user))
             throw new OtherErrors("当前用户未登录");
-        medium.setQrcodeId(user.getUserId());
-        List<Medium> list = mediumServicel.findMedium(medium);
+        List<Medium> list =null;
+         medium.setQrcodeId(user.getUserId());
+        if(StrUtil.isBlank(String.valueOf(medium.getStatus()))||StrUtil.isBlank(medium.getCode())) {
+        	list =mediumServicel.findAllMedium(medium.getQrcodeId());
+        }else {
+        	list = mediumServicel.findMedium(medium);
+        }
         PageInfo<Medium> pageInfo = new PageInfo<Medium>(list);
         PageResult<Medium> pageR = new PageResult<Medium>();
         pageR.setContent(pageInfo.getList());

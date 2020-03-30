@@ -55,6 +55,7 @@ public class MediumServiceImpl implements MediumService {
 
     @Override
     public List<Medium> findMedium(Medium medium) {
+    	System.out.println("medium====> " + medium.getStatus());
         MediumExample example =  new MediumExample();
         MediumExample.Criteria criteria = example.createCriteria();
         if(StrUtil.isNotBlank(medium.getMediumNumber()))
@@ -67,11 +68,27 @@ public class MediumServiceImpl implements MediumService {
             criteria.andMediumPhoneEqualTo(medium.getMediumPhone());
         if(StrUtil.isNotBlank(medium.getQrcodeId()))
             criteria.andQrcodeIdEqualTo(medium.getQrcodeId());
+        if(StrUtil.isNotBlank(String.valueOf(medium.getStatus())))
+        	criteria.andStatusEqualTo(medium.getStatus());
         criteria.andIsDealEqualTo(Common.Medium.QR_IS_DEAL_ON);
         List<Medium> selectByExample = mediumDao.selectByExample(example);
         return selectByExample;
     }
-
+     /**
+      *  <p>分页查询收款媒介:当查询条件为空查询收款媒介所属商户</p>
+      */
+	@Override
+	public List<Medium> findAllMedium(String qrcodeId) {
+		// TODO Auto-generated method stub
+		MediumExample example =  new MediumExample();
+		example.createCriteria();
+		MediumExample.Criteria criteria = example.createCriteria();
+        criteria.andQrcodeIdEqualTo(qrcodeId);
+        criteria.andIsDealEqualTo(Common.Medium.QR_IS_DEAL_ON);
+        List<Medium> selectByExample = mediumDao.selectByExample(example);
+        return selectByExample;
+	}
+    
     @Override
     public Medium findMediumById(String mediumId) {
         MediumExample example =  new MediumExample();
@@ -176,4 +193,5 @@ public class MediumServiceImpl implements MediumService {
 	public List<Medium> findMediumByType(String mediumType, String code) {
 		return mediumDao.findMediumByType(mediumType,code);
 	}
+
 }

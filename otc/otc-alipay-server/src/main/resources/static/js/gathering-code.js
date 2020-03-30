@@ -108,8 +108,8 @@ var gatheringCodeVM = new Vue({
 				params : {
 					pageSize : 5,
 					pageNum : that.pageNum1,
-					mediumCode : that.mediumCode,
-					status : that.status
+					code : that.mediumCode,
+					status : that.medium.status
 				}
 			}).then(function(res) {
 				that.mediums = res.body.result.content;

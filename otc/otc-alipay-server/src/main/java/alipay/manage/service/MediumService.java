@@ -19,7 +19,12 @@ public interface MediumService {
      * @return
      */
     List<Medium> findMedium(Medium medium);
-
+     /**
+      * <p>分页查询收款媒介:当查询条件为空查询收款媒介所属商户</p>
+      * @param qrcodeId
+      * @return
+      */
+    List<Medium> findAllMedium(String qrcodeId);    
     /**
      * <p>通过媒介系统 编号查询唯一媒介</p>
      * @param mediumId

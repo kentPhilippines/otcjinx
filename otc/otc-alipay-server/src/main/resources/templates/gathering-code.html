@@ -62,12 +62,12 @@
 		<div class="page-body" style="background: #f2f2f2;" v-show="mediumShow">
 			<button type="button" style="margin-top: 0.3rem;" class="btn btn-outline-info btn-lg btn-block" v-on:click="showEditMediumPage()">添加收款媒介</button> 
 			<div class="input-group" style="padding-bottom: 0.3rem; padding-top: 0.3rem;">
-				<select class="form-control" style="width: 2.2rem; height: 3rem;" v-model="status">
+				<select class="form-control" style="width: 2.2rem; height: 3rem;" v-model="medium.status" v-on:click="loadMediumsByPage">
 					<option value="">状态</option>
 					<option :value="1">开启</option>
 					<option :value="0">关闭</option>
 				</select> 
-				<select class="form-control" style="width: 6.2rem; height: 3rem;" v-model="mediumCode">
+				<select class="form-control" style="width: 6.2rem; height: 3rem;" v-model="mediumCode" v-on:click="loadMediumsByPage">
 					<option value="">收款媒介</option>
 					<option v-for="dictItem in mediumDictItems" :value="dictItem.mediumCode">{{dictItem.mediumName}}</option>
 				</select>
