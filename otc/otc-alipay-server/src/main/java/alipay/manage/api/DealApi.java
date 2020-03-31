@@ -21,20 +21,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import alipay.manage.bean.CorrelationData;
 import alipay.manage.bean.DealOrder;
 import alipay.manage.bean.DealOrderApp;
 import alipay.manage.bean.UserInfo;
 import alipay.manage.bean.UserRate;
+import alipay.manage.service.CorrelationService;
+import alipay.manage.service.FileListService;
+import alipay.manage.service.MediumService;
 import alipay.manage.service.OrderAppService;
 import alipay.manage.service.OrderService;
 import alipay.manage.service.UserInfoService;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
+import cn.hutool.log.Log;
+import cn.hutool.log.LogFactory;
 import otc.api.alipay.Common;
 import otc.bean.alipay.FileList;
+import otc.bean.alipay.Medium;
 import otc.common.SystemConstants;
 import otc.util.RSAUtils;
+import otc.util.number.Number;
 @Controller
 @RequestMapping("/pay")
 public class DealApi {
@@ -45,9 +53,12 @@ public class DealApi {
 	@Autowired QrUtil  qrUtil;
 	@Autowired LogUtil logUtil;
 	@Autowired NotifyUtil notifyUtil;
+	@Autowired FileListService fileListServiceImpl;
+	@Autowired MediumService mediumServiceImpl;
+	@Autowired CorrelationService correlationServiceImpl;
 	static Lock lock = new ReentrantLock();
 	private static final String tinyurl =  "http://tinyurl.com/api-create.php";
-	Logger log = LoggerFactory.getLogger(DealApi.class);
+	private static final Log log = LogFactory.get();
 
 	@RequestMapping("/alipayScan/{param:.+}")
 	public String alipayScan(@PathVariable String param,HttpServletRequest request) {
@@ -59,8 +70,10 @@ public class DealApi {
 		log.info("【当前请求交易订单号为："+orderId+"】");
 		DealOrderApp orderApp = orderAppServiceImpl.findOrderByOrderId(orderId);
 		boolean flag = addOrder(orderApp,request);
-		if(!flag)
+		if(!flag) {
 			log.info("【订单生成有误】");
+			return "payEr";
+		}
 		return "pay";
 	}
 	private boolean addOrder(DealOrderApp orderApp, HttpServletRequest request) {
@@ -87,13 +100,41 @@ public class DealApi {
 		} catch (ParseException e) {
 			log.info("【选码出现异常】");
 		}
+		if(ObjectUtil.isNull(findQr))
+			return false;
 		order.setOrderQrUser(findQr.getFileholder());
 		order.setOrderQr(findQr.getFileId());
 		order.setOrderStatus(Common.Order.DealOrder.ORDER_STATUS_DISPOSE.toString());
 		order.setOrderType(Common.Order.ORDER_TYPE_DEAL.toString());
 		UserRate rate = userInfoServiceImpl.findUserRate(findQr.getFileholder(),Common.Deal.PRODUCT_ALIPAY_SCAN);
+		orderApp.setOrderId(Number.getOrderQr());
 		order.setFeeId(rate.getId());
 		boolean addOrder = orderServiceImpl.addOrder(order);
+		if(addOrder)
+			corr(orderApp.getOrderId());
 		return addOrder;
+	}
+	/**
+	 * <p>数据数据统计</p>
+	 */
+	void corr(String orderId){
+		ThreadUtil.execute(()->{
+			DealOrder order = orderServiceImpl.findOrderByOrderId(orderId);
+			FileList findQrByNo = fileListServiceImpl.findQrByNo(order.getOrderQr());
+			Medium medium = mediumServiceImpl.findMediumById(findQrByNo.getConcealId());
+			CorrelationData corr = new CorrelationData();
+			corr.setAmount(order.getDealAmount());
+			corr.setMediumId(medium.getId());
+			corr.setOrderId(order.getOrderId());
+			corr.setQrId(findQrByNo.getId().toString());
+			corr.setOrderStatus(Integer.valueOf(order.getOrderStatus()));
+			corr.setUserId(order.getOrderQrUser());
+			corr.setAppId(order.getOrderAccount());
+			boolean addCorrelationDate = correlationServiceImpl.addCorrelationDate(corr);
+			if(addCorrelationDate) 
+				log.info("【订单号："+order.getOrderId()+"，添加数据统计成功】");
+			else
+				log.info("【订单号："+order.getOrderId()+"，添加数据统计失败】");
+		});
 	}
 }

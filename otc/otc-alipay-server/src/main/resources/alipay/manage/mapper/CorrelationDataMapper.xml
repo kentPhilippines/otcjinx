@@ -5,6 +5,7 @@
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="orderId" property="orderId" jdbcType="CHAR" />
     <result column="userId" property="userId" jdbcType="CHAR" />
+    <result column="appId" property="appId" jdbcType="VARCHAR" />
     <result column="mediumId" property="mediumId" jdbcType="INTEGER" />
     <result column="qrId" property="qrId" jdbcType="CHAR" />
     <result column="amount" property="amount" jdbcType="DECIMAL" />
@@ -72,7 +73,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, orderId, userId, mediumId, qrId, amount, orderStatus, status, createTime, submitTime
+    id, orderId, userId, mediumId, qrId, amount, orderStatus, status, createTime, submitTime,appId
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="alipay.manage.bean.CorrelationDataExample" >
     select
@@ -108,11 +109,11 @@
   <insert id="insert" parameterType="alipay.manage.bean.CorrelationData" useGeneratedKeys="true" keyProperty="id" >
     insert into alipay_correlation_data (orderId, userId, mediumId, 
       qrId, amount, orderStatus, 
-      status, createTime, submitTime
+      status, createTime, submitTime,appId
       )
     values (#{orderId,jdbcType=CHAR}, #{userId,jdbcType=CHAR}, #{mediumId,jdbcType=INTEGER}, 
       #{qrId,jdbcType=CHAR}, #{amount,jdbcType=DECIMAL}, #{orderStatus,jdbcType=INTEGER}, 
-      #{status,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{submitTime,jdbcType=TIMESTAMP}
+      #{status,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{submitTime,jdbcType=TIMESTAMP},#{appId}
       )
   </insert>
   <insert id="insertSelective" parameterType="alipay.manage.bean.CorrelationData" useGeneratedKeys="true" keyProperty="id" >
@@ -123,6 +124,9 @@
       </if>
       <if test="userId != null" >
         userId,
+      </if>
+      <if test="appId != null" >
+        appId,
       </if>
       <if test="mediumId != null" >
         mediumId,
@@ -152,6 +156,9 @@
       </if>
       <if test="userId != null" >
         #{userId,jdbcType=CHAR},
+      </if>
+      <if test="appId != null" >
+        #{appId},
       </if>
       <if test="mediumId != null" >
         #{mediumId,jdbcType=INTEGER},
@@ -194,6 +201,9 @@
       <if test="record.userId != null" >
         userId = #{record.userId,jdbcType=CHAR},
       </if>
+      <if test="record.appId != null" >
+        appId = #{record.appId},
+      </if>
       <if test="record.mediumId != null" >
         mediumId = #{record.mediumId,jdbcType=INTEGER},
       </if>
@@ -225,6 +235,7 @@
     set id = #{record.id,jdbcType=INTEGER},
       orderId = #{record.orderId,jdbcType=CHAR},
       userId = #{record.userId,jdbcType=CHAR},
+      appId = #{appId},
       mediumId = #{record.mediumId,jdbcType=INTEGER},
       qrId = #{record.qrId,jdbcType=CHAR},
       amount = #{record.amount,jdbcType=DECIMAL},
@@ -244,6 +255,9 @@
       </if>
       <if test="userId != null" >
         userId = #{userId,jdbcType=CHAR},
+      </if>
+      <if test="appId != null" >
+        appId = #{appId},
       </if>
       <if test="mediumId != null" >
         mediumId = #{mediumId,jdbcType=INTEGER},
@@ -273,6 +287,7 @@
     update alipay_correlation_data
     set orderId = #{orderId,jdbcType=CHAR},
       userId = #{userId,jdbcType=CHAR},
+      appId = #{appId},
       mediumId = #{mediumId,jdbcType=INTEGER},
       qrId = #{qrId,jdbcType=CHAR},
       amount = #{amount,jdbcType=DECIMAL},
