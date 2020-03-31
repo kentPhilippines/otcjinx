@@ -31,4 +31,16 @@
 			<artifactId>spring-boot-starter-data-redis</artifactId>
 		</dependency>
   </dependencies>
+	<properties>
+        <java.version>1.8</java.version>
+    </properties>
+	<build>
+		<plugins>
+			<!-- <plugin>
+				<groupId>org.springframework.boot</groupId>   打包依赖插件
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin> -->
+		</plugins>
+		<finalName>alipay</finalName>
+	</build>
 </project>

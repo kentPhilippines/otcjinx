@@ -13,6 +13,7 @@ public class CorrelationData implements Serializable{
     private String orderId;
 
     private String userId;
+    private String appId;
 
     private Integer mediumId;
 
@@ -28,7 +29,15 @@ public class CorrelationData implements Serializable{
 
     private Date submitTime;
 
-    public Integer getId() {
+    public String getAppId() {
+		return appId;
+	}
+
+	public void setAppId(String appId) {
+		this.appId = appId;
+	}
+
+	public Integer getId() {
         return id;
     }
 

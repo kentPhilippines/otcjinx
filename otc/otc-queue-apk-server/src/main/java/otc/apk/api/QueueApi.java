@@ -9,17 +9,24 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import cn.hutool.log.Log;
+import cn.hutool.log.LogFactory;
+import otc.apk.redis.RedisUtil;
 import otc.apk.util.Queue;
 import otc.bean.alipay.FileList;
 import otc.bean.alipay.Medium;
 import otc.common.PayApiConstant;
+import otc.common.RedisConstant;
 import otc.result.Result;
+import otc.util.RSAUtils;
 
 @RestController
 @RequestMapping(PayApiConstant.Queue.QUEUE_API)
 public class QueueApi {
-	Logger log = LoggerFactory.getLogger(QueueApi.class);
+	private static final Log log = LogFactory.get();
+	private static final String DATA_QUEUE_HASH = RedisConstant.Queue.MEDIUM_HASH;
 	@Autowired Queue queueList;
+	@Autowired RedisUtil	redisUtil;
 	/**
 	 * <p>获取队列</p>
 	 * @param code				某个订单的队列标识
@@ -44,8 +51,12 @@ public class QueueApi {
 	@PostMapping(PayApiConstant.Queue.ADD_QR)
 	public Result addQueue(Medium medium) {
 		boolean addNode = queueList.addNode(medium.getMediumHolder(), medium.getAttr());
-		if(addNode)
+		if(addNode) {
+			log.info("【添加收款媒介本地缓存数据储存，当前添加收款媒介数据id："+medium.getMediumId()+"，队列相关元素："+medium.getMediumNumber()+"】");
+			String md5 = RSAUtils.md5(DATA_QUEUE_HASH+medium.getMediumNumber());
+			redisUtil.hset(DATA_QUEUE_HASH, md5, medium, 259200);//本地收款媒介缓存数据会缓存三天
 			return Result.buildSuccess();
+		}
 		return Result.buildFail();
 	} 
 	

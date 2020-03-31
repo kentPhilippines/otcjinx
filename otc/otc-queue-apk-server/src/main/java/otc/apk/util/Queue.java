@@ -20,6 +20,8 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateBetween;
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.log.Log;
+import cn.hutool.log.LogFactory;
 import otc.api.alipay.Common;
 import otc.apk.feign.AlipayServiceClien;
 import otc.apk.feign.ConfigServiceClient;
@@ -31,7 +33,7 @@ import otc.common.RedisConstant;
 import otc.result.Result;
 @Component
 public class Queue {
-	Logger log= LoggerFactory.getLogger(Queue.class);
+	private static final Log log = LogFactory.get();
     @Autowired AlipayServiceClien alipayServiceClienFeignImpl;
     @Autowired ConfigServiceClient configServiceClientFeignImpl;
     @Autowired RedisUtil redisUtil;
@@ -153,11 +155,12 @@ public class Queue {
      * @return
      */
     public boolean addNode(Object alipayAccount, FileList qr,String code) {
+    	log.info("【当前元素入列操作，元素标签："+alipayAccount+"，添加的第二维码编号："+qr.getFileId()+"，添加元素code："+code+"】");
         if (!checkNotNull(alipayAccount))
             return false;
         LinkedHashSet<TypedTuple<Object>> zRangeWithScores = redisUtil.zRangeWithScores(REDISKEY_QUEUE+code, 0, -1);//linkedhashset 保证set集合查询最快
-        if (CollUtil.isEmpty(zRangeWithScores))
-            redisUtil.zAdd(REDISKEY_QUEUE+code, alipayAccount.toString(), 10);
+        if (CollUtil.isEmpty(zRangeWithScores)) 
+        	redisUtil.zAdd(REDISKEY_QUEUE+code, alipayAccount.toString(), 10);
         Optional<TypedTuple<Object>> reduce = zRangeWithScores.stream().reduce((first, second) -> second);
         TypedTuple<Object> typedTuple = null;
         if (reduce.isPresent())
@@ -178,6 +181,7 @@ public class Queue {
                 score-=0.1;
             }
         }
-        return redisUtil.zAdd(REDISKEY_QUEUE + code, alipayAccount.toString(), score);
+        Boolean zAdd = redisUtil.zAdd(REDISKEY_QUEUE + code, alipayAccount.toString(), score);
+        return zAdd;
     }
 }

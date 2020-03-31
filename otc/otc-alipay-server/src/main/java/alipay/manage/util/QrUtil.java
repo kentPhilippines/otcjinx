@@ -42,7 +42,7 @@ public class QrUtil {
 	@Autowired QueueServiceClien queueServiceClienFeignImpl;
 	@Autowired FileListService fileListServiceImpl;
 	@Autowired ConfigServiceClient configServiceClientImpl;
-
+	@Autowired RiskUtil riskUtil;
 	public FileList findQr(String orderNo, BigDecimal amount, String[] code) throws ParseException {
 		/**
 		 * ######################################## 二维码回调逻辑,以及应该要注意的几个问题
@@ -74,13 +74,13 @@ public class QrUtil {
 			UserFund qrcodeUser = usercollect.get(qr.getFileholder());// 所属
 			if (ObjectUtil.isNull(qrcodeUser))
 				continue;
-			updataUserAmountRedis(qrcodeUser);
+			riskUtil.updataUserAmountRedis(qrcodeUser);
 			Object object2 = redisUtil.get(qr.getPhone() + amount.toString());
-			Object object = redisUtil.get(qr.getPhone());
-			boolean clickAmount = isClickAmount(qr, amount, usercollect);
+		//	Object object = redisUtil.get(qr.getPhone());
+			boolean clickAmount = riskUtil.isClickAmount(qr, amount, usercollect);
 			if (ObjectUtil.isNull(object2) && clickAmount) {
 				redisUtil.set(qr.getPhone() + amount.toString(), orderNo,Integer.valueOf( configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.QR_OUT_TIME).getResult().toString()) ); // 核心回调数据
-				redisUtil.set(qr.getPhone(), qr.getPhone() + amount.toString(), Integer.valueOf( configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.QR_OUT_TIME).getResult().toString() ));
+			//	redisUtil.set(qr.getPhone(), qr.getPhone() + amount.toString(), Integer.valueOf( configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.QR_OUT_TIME).getResult().toString() ));
 				redisUtil.hset(qr.getFileholder(), qr.getFileholder() + DateUtil.format(new Date(), Common.Order.DATE_TYPE),
 						amount.toString());
 				redisUtil.hset(qr.getFileId(), qr.getFileId() + orderNo, orderNo, Integer.valueOf( configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.QR_IS_CLICK).getResult().toString()));
@@ -117,49 +117,6 @@ public class QrUtil {
 		 * redisUtil.setRemove(IP.toString(),next.toString()); }
 		 */
 		return object.toString();
-	}
-
-	/**
-	 * <p>
-	 * 更新缓存中的账户余额
-	 * </p>
-	 * 
-	 * @param usercollect
-	 * @param qrList      二维码集合
-	 * @param amount      金额
-	 * @param userList    用户集合
-	 * @throws ParseException 时间转换异常
-	 */
-	void updataUserAmountRedis(UserFund user) throws ParseException {
-		// for(QrcodeUser user : userList) {
-		Map<Object, Object> hmget = redisUtil.hmget(user.getUserId());
-		Set<Object> keySet = hmget.keySet();
-		for (Object obj : keySet) {
-			String accountId = user.getUserId();
-			int length = accountId.length();
-			String subSuf = StrUtil.subSuf(obj.toString(), length);// 时间戳
-			Date parse = formatter.parse(subSuf);
-			Object object = hmget.get(obj.toString());// 当前金额
-			if (!DateUtil.isExpired(parse, DateField.SECOND,
-					Integer.valueOf( configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.FREEZE_PLAIN_VIRTUAL).getResult().toString()), new Date()))
-				redisUtil.hdel(user.getUserId(), obj.toString());
-		}
-		// }
-	}
-
-	boolean isClickAmount(FileList user, BigDecimal amount2, ConcurrentHashMap<String, UserFund> usercollect) {
-		Map<Object, Object> hmget = redisUtil.hmget(user.getFileholder());
-		Set<Object> keySet = hmget.keySet();
-		BigDecimal amount = amount2;
-		for (Object obj : keySet) {
-			Object object = hmget.get(obj);
-			if (ObjectUtil.isNull(object))
-				object = "0";
-			BigDecimal bigDecimal = new BigDecimal(object.toString());
-			amount = amount.add(bigDecimal);
-		}
-		UserFund user2 = usercollect.get(user.getFileholder());
-		return amount.compareTo(user2.getAccountBalance()) == -1;
 	}
 	DateFormat formatter = new SimpleDateFormat(Common.Order.DATE_TYPE);
 	/**

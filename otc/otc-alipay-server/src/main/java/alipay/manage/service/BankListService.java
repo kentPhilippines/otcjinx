@@ -7,7 +7,7 @@ import alipay.manage.bean.BankList;
 public interface BankListService {
 
 	/**
-	 * <p>查询自己的订单</p>
+	 * <p>查询自己的银行卡</p>
 	 * @param userId
 	 * @return
 	 */

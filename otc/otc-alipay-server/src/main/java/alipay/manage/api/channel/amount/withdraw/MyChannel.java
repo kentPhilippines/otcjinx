@@ -1,9 +1,11 @@
 package alipay.manage.api.channel.amount.withdraw;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import alipay.manage.api.channel.amount.AmountObject;
 import alipay.manage.bean.Withdraw;
+import alipay.manage.util.OrderUtil;
 import otc.result.Result;
 
 /**
@@ -13,8 +15,12 @@ import otc.result.Result;
  */
 @Component("MyChannelWithdraw")
 public class MyChannel extends AmountObject{
+	@Autowired OrderUtil orderUtil;
 	@Override
 	public Result withdraw(Withdraw wit) {
+		Result withrawOrder = orderUtil.withrawOrder(wit.getOrderId(), wit.getRetain2(), false);
+		super.withdraw(wit);
+		
 		// TODO 商户或 码商 代付接口
 		
 			
@@ -41,7 +47,7 @@ public class MyChannel extends AmountObject{
 			async_url	 		[string]			是						异步回调地址	展开
 			sign	 			[string]			是						签名比对	
 		 */
-		return super.withdraw(wit);
+		return withrawOrder;
 	}
 	
 	

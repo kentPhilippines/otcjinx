@@ -51,7 +51,7 @@ public class OrderUtil {
 	@Autowired WithdrawMapper withdrawDao;
 	@Autowired DealOrderAppMapper dealOrderAppDao;
 	@Autowired UserRateMapper userRateDao;
-	
+	@Autowired RiskUtil riskUtil;
 	/**
 	 * <p>充值订单置为成功</p>
 	 * @param orderId			订单号
@@ -276,6 +276,11 @@ public class OrderUtil {
         }
         /**事务提交  注意：事务执行回滚操作就不会执行事务提交操作，反之执行事务提交*/
         threadConnection.commit();
+        ThreadUtil.execute( ()->{//更新风控数据 统计数据等
+        	DealOrder orderSu = orderServiceImpl.findOrderByOrderId(orderId);
+        	if(orderSu.getOrderStatus().toString().equals(OrderDealStatus.成功.getIndex().toString()))
+        		riskUtil.orderSu(order);
+        });
 		return Result.buildSuccess();
 	}
 	
@@ -414,18 +419,18 @@ public class OrderUtil {
 		Withdraw wit = withdrawDao.findWitOrder(orderId);
 		UserFund userFund = new UserFund();
 		userFund.setUserId(wit.getUserId());
-		Result deleteAmount = amountRunUtil.deleteAmount(wit, ip, flag);
-		if(!deleteAmount.isSuccess())
-			return deleteAmount;
 		Result withdraw = amountUtil.deleteWithdraw(userFund,wit.getAmount());
 		if(!withdraw.isSuccess())
 			return withdraw;
-		Result deleteAmountFee = amountRunUtil.deleteAmountFee(wit, ip, flag);
-		if(!deleteAmountFee.isSuccess())
-			return deleteAmountFee;
+		Result deleteAmount = amountRunUtil.deleteAmount(wit, ip, flag);
+		if(!deleteAmount.isSuccess())
+			return deleteAmount;
 		Result withdraws = amountUtil.deleteWithdraw(userFund,wit.getFee());
 		if(!withdraws.isSuccess())
 			return withdraws;
+		Result deleteAmountFee = amountRunUtil.deleteAmountFee(wit, ip, flag);
+		if(!deleteAmountFee.isSuccess())
+			return deleteAmountFee;
 	return Result.buildSuccess();
 	}
 	

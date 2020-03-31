@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import otc.api.AlipayServiceClienFeign;
 import otc.bean.alipay.Medium;
+import otc.result.Result;
 @Component
 public class AlipayServiceClienFeignHystrix implements AlipayServiceClienFeign {
 
@@ -18,6 +19,11 @@ public class AlipayServiceClienFeignHystrix implements AlipayServiceClienFeign {
 	@Override
 	public List<Medium> findIsDealMedium(String mediumAlipay) {
 		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Result offMediumQueue(String mediumNumber) {
 		return null;
 	}
 

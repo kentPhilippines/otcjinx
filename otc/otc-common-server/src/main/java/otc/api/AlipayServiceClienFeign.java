@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import otc.api.impl.AlipayServiceClienFeignHystrix;
 import otc.bean.alipay.Medium;
 import otc.common.PayApiConstant;
+import otc.result.Result;
 
 /**
  * <p>alipay数据服务【接口】</p>
@@ -33,4 +34,15 @@ public interface AlipayServiceClienFeign {
 	 */
 	@PostMapping(PayApiConstant.Alipay.MEDIUM_API+PayApiConstant.Alipay.FIND_MEDIUM_IS_DEAL)
 	List<Medium> findIsDealMedium(@RequestParam("mediumType")String mediumAlipay);
+	
+	
+	
+	
+	
+	@PostMapping(PayApiConstant.Alipay.MEDIUM_API+PayApiConstant.Alipay.OFF_MEDIUM_QR)
+	Result offMediumQueue(@RequestParam("mediumNumber")String mediumNumber);
+	
+	
+	
+	
 }

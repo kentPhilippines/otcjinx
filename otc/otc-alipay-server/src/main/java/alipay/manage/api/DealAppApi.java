@@ -95,7 +95,7 @@ public class DealAppApi {
 		WithdrawalBean wit = MapUtil.mapToBean((Map<String, Object>)result, WithdrawalBean.class);
 		wit.setIp(HttpUtil.getClientIP(request));
 		UserRate userRate = accountApiServiceImpl.findUserRateWitByUserId(wit.getAppid());
-		Withdraw bean = createWit(wit,userRate);
+		Withdraw bean = createWit(wit,userRate,flag);
         Result deal = null;
         if(ObjectUtil.isNull(bean))
         	return Result.buildFailMessage("代付订单生成失败");
@@ -112,19 +112,22 @@ public class DealAppApi {
 	
 	
 	
-	private Withdraw createWit(WithdrawalBean wit, UserRate userRate) {
+	private Withdraw createWit(WithdrawalBean wit, UserRate userRate,Boolean fla ) {
+		String type = "";
+		if(fla)type=Common.Order.Wit.WIT_TYPE_API;else type = Common.Order.Wit.WIT_TYPE_MANAGE;
 		Withdraw witb = new Withdraw();
 		witb.setAmount(new BigDecimal(wit.getAmount()));
 		witb.setFee(userRate.getFee());
-		witb.setActualAmount(new BigDecimal(wit.getAmount()).subtract(userRate.getFee()));
+		witb.setActualAmount(new BigDecimal(wit.getAmount()));
 		witb.setMobile(wit.getMobile());
 		witb.setBankNo(wit.getAcctno());
 		witb.setBankName(wit.getAcctname());
-		witb.setWithdrawType(Common.Order.WIT_APP.toString());
+		witb.setWithdrawType(Common.Order.Wit.WIT_ACC);
 		witb.setOrderId(Number.getWitOrder());
 		witb.setOrderStatus(Common.Order.DealOrderApp.ORDER_STATUS_DISPOSE.toString());
 		witb.setNotify(wit.getNotifyurl());
 		witb.setRetain2(wit.getIp());//代付ip
+		witb.setRetain1(type);
 		witb.setWitType(userRate.getPayTypr());//代付类型
 		boolean flag = withdrawServiceImpl.addOrder(witb);
 		if(flag)

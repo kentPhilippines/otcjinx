@@ -13,9 +13,7 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.crypto.Cipher;
-
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 
@@ -25,14 +23,14 @@ public class XRsa {
     public static final String RSA_ALGORITHM_SIGN = "SHA256WithRSA";
     private RSAPublicKey publicKey;
     private RSAPrivateKey privateKey;
-    public static void main(String[] args) {
+  /*  public static void main(String[] args) {
     	Map<String, String> createKeys = createKeys(512);
     	String publicKey = createKeys.get("publicKey");
     	String privateKey = createKeys.get("privateKey");
     	System.out.println(publicKey);
     	System.out.println(privateKey);
     	
-	}
+	}*/
     public XRsa(String publicKey, String privateKey) {
         try {
             KeyFactory keyFactory = KeyFactory.getInstance(RSA_ALGORITHM);

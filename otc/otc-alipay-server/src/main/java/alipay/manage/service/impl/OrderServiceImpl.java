@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import alipay.manage.service.CorrelationService;
 import alipay.manage.service.OrderService;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +33,7 @@ public class OrderServiceImpl implements OrderService{
     @Autowired RechargeMapper rechargeDao;
     @Autowired WithdrawMapper withdrawMapper;
 	@Autowired SettingFile settingFile;
+	@Autowired CorrelationService correlationServiceImpl;
     Logger log= LoggerFactory.getLogger(OrderServiceImpl.class);
     
 	@Override
@@ -166,7 +168,7 @@ public class OrderServiceImpl implements OrderService{
 		WithdrawExample example = new WithdrawExample();
 	    WithdrawExample.Criteria criteria = example.createCriteria();
 		if(StrUtil.isNotBlank(bean.getUserId()))
-			criteria.andAccnameEqualTo(bean.getUserId());
+			criteria.andUserIdEqualTo(bean.getUserId());
 		if(StrUtil.isNotBlank(bean.getTime())) {
 			Date date = getDate(bean.getTime());
 			Calendar calendar = new GregorianCalendar();
@@ -210,7 +212,6 @@ public class OrderServiceImpl implements OrderService{
 	}
 	@Override
 	public boolean addOrder(DealOrder orderApp) {
-		orderApp.setOrderId(Number.getOrderQr());
 		int insertSelective = dealOrderMapper.insertSelective(orderApp);
 		return insertSelective > 0 && insertSelective < 2;
 	}

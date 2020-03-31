@@ -46,4 +46,12 @@ public interface QueueServiceClienFeign {
 	public Result deleteNode(@RequestParam("medium")Medium medium);
 	
 	
+	/**
+	 * <p>定时任务</p>
+	 * @return
+	 */
+	@PostMapping(PayApiConstant.Queue.QUEUE_API+PayApiConstant.Queue.TASK_MEDIUM)
+	public Result task();
+	
+	
 }

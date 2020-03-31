@@ -60,6 +60,17 @@ public class Common {
 			public static final String ORDER_STATUS_SU = "2";//订单成功
 			public static final String ORDER_STATUS_ER = "3";//订单失败
 			public static final String ORDER_STATUS_YU = "1";//订单处理中
+			
+			public static final String WIT_QR = "2";				//码商提现
+			public static final String WIT_ACC = "1";				//商户提现
+			
+			
+			
+			
+			public static final String WIT_TYPE_API = "1";				//API代付
+			public static final String WIT_TYPE_MANAGE = "2";			//商户提现
+			public static final String WIT_TYPE_CLI = "3";				//码商客户端提现
+			
 		}
 		
 		public static final Integer ORDER_TYPE_DEAL = 1;//交易订单
@@ -68,8 +79,6 @@ public class Common {
 		public static final Integer DAPY_OFF = 2;//代付关闭
 		public static final Integer DEAL_OPEN = 1;//交易开启
 		public static final Integer DEAL_OFF = 2;//交易关闭
-		public static final Integer WIT_APP = 1;//商户提现
-		public static final Integer WIT_QR = 2 ; //码商提现
 		
 		public static class DealOrderApp{
 			public static final String ORDER_STATUS_DISPOSE = "1";//订单处理中
@@ -125,6 +134,15 @@ public class Common {
 	public static final String notOk = "1";//数据逻辑删除
 	public static final String isOk = "2";//数据逻辑可用
 	public static final String MEDIUM_ALIPAY = "alipay";//支付宝收款媒介
+
+	
+	
+	
+	public static class  Bank {
+		public static final Integer BANK_QR = 2;		//码商的卡
+		public static final Integer BANK_SYS = 1;		//系统的卡
+		public static final Integer BANK_APP = 3;		//商户的卡
+	};
 
 	
 	public static class Deal{

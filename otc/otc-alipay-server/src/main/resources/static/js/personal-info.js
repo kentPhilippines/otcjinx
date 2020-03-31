@@ -46,7 +46,7 @@ var personalInfoVM = new Vue({
 			var that = this;
 			that.$http.get('/userAccount/getBankInfo').then(function(res) {
 				console.log("getBankInfo ::: " , res.body)
-				that.bankInfo = res.body.result[0];
+				that.bankInfo = res.body.result;
 			});
 		},
 
