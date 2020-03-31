@@ -13,18 +13,23 @@ import alipay.manage.util.LogUtil;
 import alipay.manage.util.NotifyUtil;
 import alipay.manage.util.OrderUtil;
 import alipay.manage.util.QrUtil;
+import alipay.manage.util.QueueUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
+import cn.hutool.log.Log;
+import cn.hutool.log.LogFactory;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import otc.api.alipay.Common;
 import otc.bean.alipay.Medium;
@@ -48,11 +53,20 @@ public class Api {
 	@Autowired AmountUtil amountUtil;
 	@Autowired UserInfoService userInfoServiceImpl;
 	@Autowired AmountRunUtil amountRunUtil;
-	Logger log = LoggerFactory.getLogger(Api.class);
+	private static final Log log = LogFactory.get();
 	@Autowired OrderUtil orderUtil;
 	@Autowired DealOrderMapper dealOrderDao;
 	@Autowired QrUtil qrUtil;
 	@Autowired NotifyUtil notifyUtil;
+	@Autowired QueueUtil queueUtil;
+	@PostMapping(PayApiConstant.Alipay.MEDIUM_API+PayApiConstant.Alipay.OFF_MEDIUM_QR)
+	Result offMediumQueue(@RequestParam("mediumNumber")String mediumNumber) {
+	if(StrUtil.isBlank(mediumNumber))
+		return Result.buildFailMessage("必传参数为空");
+		Medium medium = mediumServiceImpl.findMediumByMediumNumber(mediumNumber);
+		Result pop = queueUtil.pop(medium);
+		return pop;
+	};
 	/**
 	 * <p>系统回调订单成功资金处理</p>
 	 * @param param

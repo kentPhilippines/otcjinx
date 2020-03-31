@@ -35,4 +35,10 @@ public class QueueServiceClienFeignHystrix implements QueueServiceClienFeign {
 		return null;
 	}
 
+	@Override
+	public Result task() {
+		// TODO 队列操作定时任务
+		return null;
+	}
+
 }
