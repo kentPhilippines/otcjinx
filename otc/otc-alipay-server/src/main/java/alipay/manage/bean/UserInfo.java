@@ -43,11 +43,18 @@ public class UserInfo implements Serializable{
     private String startTime;
     private String endTime;
     private Integer timesTotal;
-
+    private String amount;			//页面展示金额
     private String witip; //代付ip
     private String queueList;//供应队列code  以逗号分隔
     
-    public String getQueueList() {
+    
+    public String getAmount() {
+		return amount;
+	}
+	public void setAmount(String amount) {
+		this.amount = amount;
+	}
+	public String getQueueList() {
 		return queueList;
 	}
 	public void setQueueList(String queueList) {

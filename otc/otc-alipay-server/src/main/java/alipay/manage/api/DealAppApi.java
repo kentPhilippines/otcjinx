@@ -118,7 +118,7 @@ public class DealAppApi {
 		Withdraw witb = new Withdraw();
 		witb.setAmount(new BigDecimal(wit.getAmount()));
 		witb.setFee(userRate.getFee());
-		witb.setActualAmount(new BigDecimal(wit.getAmount()).subtract(userRate.getFee()));
+		witb.setActualAmount(new BigDecimal(wit.getAmount()));
 		witb.setMobile(wit.getMobile());
 		witb.setBankNo(wit.getAcctno());
 		witb.setBankName(wit.getAcctname());

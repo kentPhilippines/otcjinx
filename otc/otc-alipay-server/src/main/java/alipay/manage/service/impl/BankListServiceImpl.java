@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import alipay.manage.bean.BankList;
 import alipay.manage.service.BankListService;
+import otc.api.alipay.Common;
 import otc.util.number.Number;
 
 @Component
@@ -18,7 +19,6 @@ public class BankListServiceImpl implements BankListService{
 	@Override
 	public List<BankList> findBankCardByQr(String userId) {
 		List<BankList> selectByExample = bankListMapper.selectBankCardByQ(userId);
-		System.out.println("获取selectByExample " + selectByExample);
 		return selectByExample;
 	}
 
@@ -37,7 +37,7 @@ public class BankListServiceImpl implements BankListService{
 		bank1.setStatus(0);//数据无效
 		bankListMapper.updateByExampleSelective (bank1, example);
 		bank.setIsDeal(2); //数据逻辑可用
-		bank.setCardType(1);//码商上传的银行卡；
+		bank.setCardType(Common.Bank.BANK_QR);//码商上传的银行卡；
 		int insertSelective = bankListMapper.insertSelective(bank);
 		return insertSelective > 0 && insertSelective < 2;
 	}

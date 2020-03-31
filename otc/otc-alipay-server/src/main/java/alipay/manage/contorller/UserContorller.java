@@ -23,6 +23,7 @@ import alipay.manage.service.BankListService;
 import alipay.manage.service.InviteCodeService;
 import alipay.manage.service.UserInfoService;
 import alipay.manage.util.SessionUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import otc.exception.user.UserException;
@@ -52,6 +53,8 @@ public class UserContorller {
 	        return Result.buildFailMessage("当前用户未登陆");
 	    }
 		UserInfo user2 = userInfoServiceImpl.findUserInfoByUserId(user.getUserId());
+		UserFund userFund = userInfoServiceImpl.findUserFundByAccount(user.getUserId());
+		user2.setAmount(userFund.getAccountBalance().toString());
 		return Result.buildSuccessResult(user2);
 	}
 
@@ -85,7 +88,7 @@ public class UserContorller {
 	        return Result.buildFailMessage("当前用户未登陆");
 	    }
 		List<BankList> bank = bankListServiceImpl.findBankCardByQr(user.getUserId());
-		return Result.buildSuccessResult(bank);
+		return Result.buildSuccessResult(CollUtil.getFirst(bank));
 	}
 	/**
 	 * <p>添加银行卡</p>

@@ -64,6 +64,13 @@ public class Common {
 			public static final String WIT_QR = "2";				//码商提现
 			public static final String WIT_ACC = "1";				//商户提现
 			
+			
+			
+			
+			public static final String WIT_TYPE_API = "1";				//API代付
+			public static final String WIT_TYPE_MANAGE = "2";			//商户提现
+			public static final String WIT_TYPE_CLI = "3";				//码商客户端提现
+			
 		}
 		
 		public static final Integer ORDER_TYPE_DEAL = 1;//交易订单
@@ -127,6 +134,15 @@ public class Common {
 	public static final String notOk = "1";//数据逻辑删除
 	public static final String isOk = "2";//数据逻辑可用
 	public static final String MEDIUM_ALIPAY = "alipay";//支付宝收款媒介
+
+	
+	
+	
+	public static class  Bank {
+		public static final Integer BANK_QR = 2;		//码商的卡
+		public static final Integer BANK_SYS = 1;		//系统的卡
+		public static final Integer BANK_APP = 3;		//商户的卡
+	};
 
 	
 	public static class Deal{

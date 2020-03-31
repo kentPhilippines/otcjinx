@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import otc.api.alipay.Common;
 import otc.result.Result;
 import otc.util.encode.HashKit;
+import otc.util.number.Number;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -126,14 +127,6 @@ public class RechargeContorller {
 		   return Result.buildSuccess();
 	   return Result.buildFail();
     }
-   @PostMapping("/startWithdraw")
-   @ResponseBody
-   public Result startWithdraw(Withdraw  param, HttpServletRequest request) {
-       UserInfo user = sessionUtil.getUser(request);
-       if(ObjectUtil.isNull(user))
-           return Result.buildFailMessage("当前用户未登陆");
-       return Result.buildFail();
-   }
    private static final String USER_ID = "USER_ID";
    private static final String ACC_NAME = "ACC_NAME";
    private static final String BANK_NAME = "BANK_NAME";
@@ -175,14 +168,14 @@ public class RechargeContorller {
 		map.put(MONEY_PWD,moneyPwd);
 		Result clickWithdraw = isClickWithdraw(map);
 		String msg = "码商发起提现操作,当前提现参数：开户名："+accountHolder+"，银行名称："+bankCard+
-				"，关联码商账号："+ user.getUserId()+"，提现类型：1为充值点数2为分润"+type+"，提现手机号："+ mobile+"，提现金额："+withdrawAmount+"，提现验证密码："+clickWithdraw.isSuccess();
+				"，关联码商账号："+ user.getUserId()+"，提现手机号："+ mobile+"，提现金额："+withdrawAmount+"，提现验证密码："+clickWithdraw.isSuccess();
 		boolean addLog = logUtil.addLog(request, msg,user.getUserId());
 		Withdraw createWit = createWit(map,clientIP);
 		if(ObjectUtil.isNull(createWit))
 			return Result.buildFailResult("生成提现订单失败，请联系客服人员");
 		Result withdraw = Result.buildFail();
 		try {
-			 withdraw = factoryForStrategy.getStrategy(MY_WITHDRAW).withdraw(createWit);
+			 withdraw = factoryForStrategy.getAmountChannel(MY_WITHDRAW).withdraw(createWit);
 			if(withdraw.isSuccess())
 				return withdraw;
 		} catch (Exception e) {
@@ -205,7 +198,7 @@ public class RechargeContorller {
 		   return Result.buildFailResult("资金密码错误；");
 	   BigDecimal balance = userFund.getAccountBalance();
 	   BigDecimal amount = new BigDecimal(map.get(AMOUNT).toString());
-		if(balance.compareTo(amount)== -1)
+		if(balance.compareTo(amount.add(new BigDecimal("2")))== -1)
 			return Result.buildFailResult("当前金额不足，请重新");
 		return Result.buildSuccessResult();
 	}
@@ -213,6 +206,7 @@ public class RechargeContorller {
    Withdraw createWit(Map<String, String> map,String ip) {
 	   BigDecimal fee = new BigDecimal("2");
 	   Withdraw wit = new Withdraw();
+	   wit.setOrderId(Number.getWitOrder());
 	   wit.setAccname(map.get(ACC_NAME).toString());
 	   wit.setAmount(new BigDecimal(map.get(AMOUNT).toString()));
 	   wit.setBankName(map.get(BANK_NAME).toString());
@@ -223,7 +217,7 @@ public class RechargeContorller {
 	   wit.setOrderStatus(Common.Order.Wit.ORDER_STATUS_YU);
 	   wit.setUserId(map.get(USER_ID).toString());
 	   wit.setWithdrawType(Common.Order.Wit.WIT_QR);
-	   wit.setActualAmount(new BigDecimal(map.get(AMOUNT).toString()).subtract(fee));
+	   wit.setActualAmount(new BigDecimal(map.get(AMOUNT).toString()));
 	   wit.setRetain2(ip);
 	   wit.setRetain1(Common.Order.Wit.WIT_TYPE_CLI);
 	   boolean addOrder = withdrawServiceImpl.addOrder(wit);

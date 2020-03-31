@@ -156,7 +156,7 @@ public class OrderServiceImpl implements OrderService{
 		WithdrawExample example = new WithdrawExample();
 	    WithdrawExample.Criteria criteria = example.createCriteria();
 		if(StrUtil.isNotBlank(bean.getUserId()))
-			criteria.andAccnameEqualTo(bean.getUserId());
+			criteria.andUserIdEqualTo(bean.getUserId());
 		if(StrUtil.isNotBlank(bean.getTime())) {
 			Date date = getDate(bean.getTime());
 			Calendar calendar = new GregorianCalendar();

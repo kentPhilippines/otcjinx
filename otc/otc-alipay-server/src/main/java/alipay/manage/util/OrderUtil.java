@@ -414,18 +414,18 @@ public class OrderUtil {
 		Withdraw wit = withdrawDao.findWitOrder(orderId);
 		UserFund userFund = new UserFund();
 		userFund.setUserId(wit.getUserId());
-		Result deleteAmount = amountRunUtil.deleteAmount(wit, ip, flag);
-		if(!deleteAmount.isSuccess())
-			return deleteAmount;
 		Result withdraw = amountUtil.deleteWithdraw(userFund,wit.getAmount());
 		if(!withdraw.isSuccess())
 			return withdraw;
-		Result deleteAmountFee = amountRunUtil.deleteAmountFee(wit, ip, flag);
-		if(!deleteAmountFee.isSuccess())
-			return deleteAmountFee;
+		Result deleteAmount = amountRunUtil.deleteAmount(wit, ip, flag);
+		if(!deleteAmount.isSuccess())
+			return deleteAmount;
 		Result withdraws = amountUtil.deleteWithdraw(userFund,wit.getFee());
 		if(!withdraws.isSuccess())
 			return withdraws;
+		Result deleteAmountFee = amountRunUtil.deleteAmountFee(wit, ip, flag);
+		if(!deleteAmountFee.isSuccess())
+			return deleteAmountFee;
 	return Result.buildSuccess();
 	}
 	
