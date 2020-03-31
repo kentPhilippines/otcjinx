@@ -177,7 +177,7 @@ public class RechargeContorller {
 		String msg = "码商发起提现操作,当前提现参数：开户名："+accountHolder+"，银行名称："+bankCard+
 				"，关联码商账号："+ user.getUserId()+"，提现类型：1为充值点数2为分润"+type+"，提现手机号："+ mobile+"，提现金额："+withdrawAmount+"，提现验证密码："+clickWithdraw.isSuccess();
 		boolean addLog = logUtil.addLog(request, msg,user.getUserId());
-		Withdraw createWit = createWit(map);
+		Withdraw createWit = createWit(map,clientIP);
 		if(ObjectUtil.isNull(createWit))
 			return Result.buildFailResult("生成提现订单失败，请联系客服人员");
 		Result withdraw = Result.buildFail();
@@ -210,7 +210,7 @@ public class RechargeContorller {
 		return Result.buildSuccessResult();
 	}
    
-   Withdraw createWit(Map<String, String> map) {
+   Withdraw createWit(Map<String, String> map,String ip) {
 	   BigDecimal fee = new BigDecimal("2");
 	   Withdraw wit = new Withdraw();
 	   wit.setAccname(map.get(ACC_NAME).toString());
@@ -224,6 +224,8 @@ public class RechargeContorller {
 	   wit.setUserId(map.get(USER_ID).toString());
 	   wit.setWithdrawType(Common.Order.Wit.WIT_QR);
 	   wit.setActualAmount(new BigDecimal(map.get(AMOUNT).toString()).subtract(fee));
+	   wit.setRetain2(ip);
+	   wit.setRetain1(Common.Order.Wit.WIT_TYPE_CLI);
 	   boolean addOrder = withdrawServiceImpl.addOrder(wit);
 	   if(addOrder)
 		   return wit;
