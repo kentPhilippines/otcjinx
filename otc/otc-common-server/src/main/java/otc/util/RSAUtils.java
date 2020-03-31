@@ -10,7 +10,6 @@ import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import otc.common.SystemConstants;
 import otc.exception.BusinessException;
-
 import javax.crypto.Cipher;
 import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayOutputStream;
@@ -22,7 +21,6 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.List;
 import java.util.Map;
-
 import static cn.hutool.json.JSONObject.*;
 
 
@@ -323,7 +321,7 @@ public class RSAUtils {
         return MapUtil.paramToMap(urlParam);
     }
 
-    //调用demo
+ /*   //调用demo
     public static void main(String[] args) {
         JSONObject jsonObject = new JSONObject();
         JSON json = new JSONObject();
@@ -345,7 +343,7 @@ public class RSAUtils {
         System.out.println("alipay生成密文传给admin的值=" + encrypt);
         Map<String, Object> stringObjectMap = retMapDecode(encrypt, SystemConstants.INNER_PLATFORM_PRIVATE_KEY);
         System.out.println("admin传过来的密文，解密后的值=" + stringObjectMap.toString());
-
     }
+    */
 
 }

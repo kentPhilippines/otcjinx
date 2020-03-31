@@ -60,6 +60,10 @@ public class Common {
 			public static final String ORDER_STATUS_SU = "2";//订单成功
 			public static final String ORDER_STATUS_ER = "3";//订单失败
 			public static final String ORDER_STATUS_YU = "1";//订单处理中
+			
+			public static final String WIT_QR = "2";				//码商提现
+			public static final String WIT_ACC = "1";				//商户提现
+			
 		}
 		
 		public static final Integer ORDER_TYPE_DEAL = 1;//交易订单
@@ -68,8 +72,6 @@ public class Common {
 		public static final Integer DAPY_OFF = 2;//代付关闭
 		public static final Integer DEAL_OPEN = 1;//交易开启
 		public static final Integer DEAL_OFF = 2;//交易关闭
-		public static final Integer WIT_APP = 1;//商户提现
-		public static final Integer WIT_QR = 2 ; //码商提现
 		
 		public static class DealOrderApp{
 			public static final String ORDER_STATUS_DISPOSE = "1";//订单处理中

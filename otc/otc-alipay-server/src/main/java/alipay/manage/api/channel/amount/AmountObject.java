@@ -22,7 +22,7 @@ public abstract class AmountObject  implements AmountChannel{
 	@Autowired OrderUtil orderUtil;
 		@Override
 		public Result recharge(Recharge rechaege) {
-			// TODO Auto-generated method stub
+			//  返回充值接口
 			return null;
 		}
 	
@@ -32,7 +32,7 @@ public abstract class AmountObject  implements AmountChannel{
 		
 		@Override
 		public Result withdraw(Withdraw wit) {
-		// TODO Auto-generated method stub
+		// 返回代付成功 当找不到代付渠道的时候代付失败
 		return null;
 		}
 		/**

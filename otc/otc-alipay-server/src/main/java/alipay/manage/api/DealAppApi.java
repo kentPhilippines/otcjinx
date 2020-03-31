@@ -120,7 +120,7 @@ public class DealAppApi {
 		witb.setMobile(wit.getMobile());
 		witb.setBankNo(wit.getAcctno());
 		witb.setBankName(wit.getAcctname());
-		witb.setWithdrawType(Common.Order.WIT_APP.toString());
+		witb.setWithdrawType(Common.Order.Wit.WIT_ACC);
 		witb.setOrderId(Number.getWitOrder());
 		witb.setOrderStatus(Common.Order.DealOrderApp.ORDER_STATUS_DISPOSE.toString());
 		witb.setNotify(wit.getNotifyurl());

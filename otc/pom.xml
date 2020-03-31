@@ -1,4 +1,8 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project 
+xmlns="http://maven.apache.org/POM/4.0.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>otc</groupId>
   <artifactId>otc</artifactId>
@@ -40,18 +44,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
-        <!--Lombok-->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
-        </dependency>
-        <!--测试依赖-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
          <dependency><!-- 实时调式   线上发布时 关闭给jar  -->
  		    <groupId>org.springframework.boot</groupId>
  		    <artifactId>spring-boot-devtools</artifactId>
@@ -78,6 +70,18 @@
             <version>20.0</version>
         </dependency>
     </dependencies>
+  <modules>
+  	<module>otc-eureka-server</module>
+  	<module>otc-pay-server</module>
+  	<module>otc-alipay-server</module>
+  	<module>otc-dealpay-server</module>
+  	<module>otc-task-config-server</module>
+  	<module>otc-zuul-server</module>
+  	<module>otc-queue-apk-server</module>
+  	<module>otc-file-server</module>
+  	<module>otc-notfiy-server</module>
+  	<module>otc-common-server</module>
+  </modules>
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -89,17 +93,14 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-  <modules>
-  	<module>otc-eureka-server</module>
-  	<module>otc-common-server</module>
-  	<module>otc-admin-server</module>
-  	<module>otc-pay-server</module>
-  	<module>otc-alipay-server</module>
-  	<module>otc-dealpay-server</module>
-  	<module>otc-task-config-server</module>
-  	<module>otc-zuul-server</module>
-  	<module>otc-queue-apk-server</module>
-  	<module>otc-file-server</module>
-  	<module>otc-notfiy-server</module>
-  </modules>
+    <pluginRepositories>
+		<pluginRepository>
+			<id>spring-snapshots</id>
+			<url>https://repo.spring.io/snapshot</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>spring-milestones</id>
+			<url>https://repo.spring.io/milestone</url>
+		</pluginRepository>
+	</pluginRepositories>
 </project>
