@@ -86,6 +86,16 @@ public class OrderServiceImpl implements OrderService{
 		}
 		return dateTime;
 	}
+	 /**
+	  * 【分页查询流水订单】当条件为null的时候 分页查询所有
+	  */
+	@Override
+	public List<RunOrder> findAllOrderRunByPage(String orderAccount) {
+		// TODO Auto-generated method stub
+		List<RunOrder> listRunOrder=runOrderMapper.selectAllRunOrderByorderAccount(orderAccount);
+		return listRunOrder;
+	}
+	
 	@Override
 	public List<DealOrder> findOrderByPage(DealOrder order) {
 		DealOrderExample example=new DealOrderExample();
@@ -238,4 +248,5 @@ public class OrderServiceImpl implements OrderService{
 		int insertSelective = rechargeDao.insertSelective(order);
 		return insertSelective > 0 && insertSelective < 2;
 	}
+
 }

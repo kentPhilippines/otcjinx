@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 @Mapper
 public interface RunOrderMapper {
     int countByExample(RunOrderExample example);
@@ -35,4 +36,7 @@ public interface RunOrderMapper {
     int updateByPrimaryKeyWithBLOBs(RunOrder record);
 
     int updateByPrimaryKey(RunOrder record);
+      
+    @Select("select * from alipay_run_order where orderAccount=#{orderAccount} and status=1")
+	List<RunOrder> selectAllRunOrderByorderAccount(@Param("orderAccount")String orderAccount);
 }

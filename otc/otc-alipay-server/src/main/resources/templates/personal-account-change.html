@@ -24,7 +24,7 @@
 	<div id="personalAccountChange" v-cloak>
 		<div class="page-body" style="background: #f2f2f2;">
 			<div class="input-group" style="padding-bottom: 0.3rem; padding-top: 0.3rem;">
-				<select class="form-control" style="width: 2.2rem; height: 3rem;" v-model="accountChangeTypeCode">
+				<select class="form-control" style="width: 2.2rem; height: 3rem;" v-model="accountChangeTypeCode" v-on:click="loadByPage">
 					<option value="">帐变类型</option>
 					<option v-for="dictItem in accountChangeTypeDictItems" :value="dictItem.code">{{dictItem.name}}</option>
 				</select><input type="date" class="form-control" style="width: 8rem;" v-model="accountTime">
@@ -158,6 +158,7 @@
 							accountChangeTypeCode : that.accountChangeTypeCode
 						}
 					}).then(function(res) {
+						console.log("findMyAccountChangeLogByPage---> " , res.body.result.content);
 						that.accountChangeLogs = res.body.result.content;
 						that.pageNum = res.body.result.pageNum;
 						that.totalPage = res.body.result.totalPage;

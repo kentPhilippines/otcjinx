@@ -70,7 +70,9 @@ var gatheringCodeVM = new Vue({
 		that.loadGatheringChannelDictItem();
 		that.loadMediumsByPage();
 		$('.gathering-code-pic').on('fileuploaded', function(event, data, previewId, index) {
+			console.log("data --->", that.mediumId);
 			that.qrcodeId = data.response.result.join(',');
+			//that.qrcodeId =that.medium.mediumHolder;
 			that.addQrcodeInfoSu();
 		});
 	},
@@ -223,7 +225,7 @@ var gatheringCodeVM = new Vue({
 				});
 			}
 		},
-		addQrInfo : function(){
+		addQrInfo : function(e){
 			var that = this;
 			if (that.editGatheringCode.fixedGatheringAmount == null) {
 				layer.alert('请选择是否固定收款金额', {
@@ -258,6 +260,7 @@ var gatheringCodeVM = new Vue({
 				$('.gathering-code-pic').fileinput('upload');
 			}
 			var filesCount = $('.gathering-code-pic').fileinput('getFilesCount');
+			console.log("filesCount",filesCount);
 			if (filesCount == 0) {
 				layer.alert('请选择要上传的图片', {
 					title : '提示',
@@ -270,6 +273,8 @@ var gatheringCodeVM = new Vue({
 		addQrcodeInfoSu : function(){
 			var that = this;
 			var qrcodeId = that.qrcodeId;
+			//var qrcodeId=that.mediums[0].qrcodeId;
+			console.log("qrcodeId---->" , that.mediums[0].qrcodeId);
 			var flag = that.editGatheringCode.fixedGatheringAmount;
 			if(qrcodeId == ''  || qrcodeId == null	){
 					layer.alert('请上传二维码', {
@@ -280,6 +285,7 @@ var gatheringCodeVM = new Vue({
 					return;
 			}
 			var mediumId = that.mediumId; 
+			console.log("mediumId--->" ,mediumId);
 			var amount = '';
 			if(that.editGatheringCode.fixedGatheringAmount)
 				 amount = that.editGatheringCode.gatheringAmount;
@@ -290,6 +296,7 @@ var gatheringCodeVM = new Vue({
 					amount : amount,
 					flag : flag
 			}} ).then(function(res) {
+				console.log("*******>" , res.body);
 				if(res.body.success){
 					layer.alert('操作成功!', {
 						icon : 1,
@@ -308,6 +315,7 @@ var gatheringCodeVM = new Vue({
 			});
 		},
 		addQr : function(){//添加收款码
+			console.log("---->" , this);
 			headerVM.showBackFlag = false;
 			headerVM.title = '添加收款码';
 			this.mediumShow = false; 
