@@ -113,16 +113,16 @@ public class OrderContorller {
 		UserInfo user = sessionUtil.getUser(request);
 		if(ObjectUtil.isNull(user))
 			throw new UserException("当前用户未登录",null);
-		//通过产品的code费率产品信息
-		UserRate userRate=userRateService.findProductFeeBy(user.getUserId(),productCode);
-		DealOrder order = new DealOrder();
-		if (StringUtils.isNotEmpty(userRate.toString()))
-		order.setFeeId(userRate.getId());
+		//通过产品的code费率产品信息		
+		DealOrder order = new DealOrder();		
 		order.setOrderQrUser(user.getUserId());
-		if(StrUtil.isNotBlank(receiveOrderTime))
+		if(StrUtil.isNotBlank(receiveOrderTime)) 
 			order.setTime(receiveOrderTime);
-		PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
+		if(StrUtil.isNotBlank(productCode))
+			order.setRetain1(productCode);
 		List<DealOrder> orderList = orderServiceImpl.findMyOrder(order);
+		
+		PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
 		PageInfo<DealOrder> pageInfo = new PageInfo<DealOrder>(orderList);
 		PageResult<DealOrder> pageR = new PageResult<DealOrder>();
 		pageR.setContent(pageInfo.getList());
