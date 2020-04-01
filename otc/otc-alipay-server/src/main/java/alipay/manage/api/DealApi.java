@@ -109,6 +109,7 @@ public class DealApi {
 		UserRate rate = userInfoServiceImpl.findUserRate(findQr.getFileholder(),Common.Deal.PRODUCT_ALIPAY_SCAN);
 		orderApp.setOrderId(Number.getOrderQr());
 		order.setFeeId(rate.getId());
+		order.setRetain1(rate.getPayTypr());
 		boolean addOrder = orderServiceImpl.addOrder(order);
 		if(addOrder)
 			corr(orderApp.getOrderId());

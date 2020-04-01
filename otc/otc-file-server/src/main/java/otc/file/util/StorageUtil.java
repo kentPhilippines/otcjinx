@@ -12,15 +12,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import otc.bean.config.ConfigFile;
+import otc.file.feign.ConfigServiceClient;
 import otc.file.redis.RedisUtil;
-import otc.file.service.ConfigServiceClientFeign;
 import otc.result.Result;
 import otc.util.number.Number;
 
 @Component
 public class StorageUtil {
 	Logger log = LoggerFactory.getLogger(StorageUtil.class);
-	 @Autowired ConfigServiceClientFeign configServiceClientFeignImpl;
+	 @Autowired ConfigServiceClient configServiceClientFeignImpl;
 	 @Autowired Base64Utils base64Utils;
 	 @Autowired RedisUtil redisUtil;
 	 private static final String IMGTYPE = ".jpg";

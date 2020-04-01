@@ -30,6 +30,12 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-redis</artifactId>
 		</dependency>
+				<!--maven引入外部jar包QRCode -->
+		<dependency>
+			<groupId>qr.qrcode</groupId>
+			<artifactId>qrcode</artifactId>
+			<version>1.0.0</version>
+		</dependency>
   </dependencies>
 	<properties>
         <java.version>1.8</java.version>

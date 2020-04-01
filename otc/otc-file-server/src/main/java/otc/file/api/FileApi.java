@@ -19,8 +19,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import otc.bean.config.ConfigFile;
 import otc.common.PayApiConstant;
+import otc.file.feign.ConfigServiceClient;
 import otc.file.redis.RedisUtil;
-import otc.file.service.ConfigServiceClientFeign;
 import otc.file.util.StorageUtil;
 import otc.result.Result;
 
@@ -32,7 +32,7 @@ import otc.result.Result;
 @RequestMapping(PayApiConstant.File.FILE_API)
 public class FileApi {
 	 Logger log = LoggerFactory.getLogger(FileApi.class);
-	 @Autowired ConfigServiceClientFeign configServiceClientFeignImpl;
+	 @Autowired ConfigServiceClient configServiceClientFeignImpl;
 	/**
 	 * #############################################
 	 * 这个地方处理文件的保存和远程读取
