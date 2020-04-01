@@ -126,13 +126,13 @@
                 <div class="cash-deposit" style="margin-left: 1.2rem;">
                     <span>余额:</span><label>{{cashBalance | numFilter }}元</label>
                 </div>
-           <!--       <div class="cash-deposit" style="margin-left: 1.2rem;">
+            <div class="cash-deposit" style="margin-left: 1.2rem;">
                     <span>收益:</span><label>{{cashBalance != null ? cashBalance
                         : 0}}元</label>
-                </div> -->
-        <!--         <div class="cash-deposit">
+                </div> 
+                <div class="cash-deposit">
                     <span>费率:</span><label>{{fee != null ? fee*100: 0 | numFilter }}%</label>
-                </div> -->
+                </div> 
                 <div class="personal-info">
                     <label><i class="fa fa-angle-right" aria-hidden="true"
                               v-on:click="footerVM.goTo('/personal-info')"></i></label>
