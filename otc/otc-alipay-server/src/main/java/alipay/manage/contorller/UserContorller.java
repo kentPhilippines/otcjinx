@@ -19,9 +19,11 @@ import alipay.manage.api.AccountApiService;
 import alipay.manage.bean.BankList;
 import alipay.manage.bean.InviteCode;
 import alipay.manage.bean.UserInfo;
+import alipay.manage.bean.UserRate;
 import alipay.manage.service.BankListService;
 import alipay.manage.service.InviteCodeService;
 import alipay.manage.service.UserInfoService;
+import alipay.manage.service.UserRateService;
 import alipay.manage.util.SessionUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
@@ -35,6 +37,7 @@ public class UserContorller {
 	Logger log = LoggerFactory.getLogger(UserContorller.class);
 	@Autowired UserInfoService  userInfoServiceImpl;
 	@Autowired	UserFundService userFundService;
+	@Autowired	UserRateService userRateService;
 	@Autowired SessionUtil sessionUtil;
 	@Autowired BankListService bankListServiceImpl;
 	@Autowired InviteCodeService inviteCodeServiceImpl;
@@ -75,6 +78,15 @@ public class UserContorller {
 		return Result.buildSuccessResult(byUserId);
 	}
 	
+	@GetMapping("/getUserRateInfo")
+	@ResponseBody
+	public Result getUserRateInfo(HttpServletRequest request) {
+		UserInfo user = sessionUtil.getUser(request);
+		if (ObjectUtil.isNull(user)) 
+			return Result.buildFailMessage("当前用户未登陆");
+		UserRate userRate=userRateService.findUserRateInfoByUserId(user.getUserId());
+		return Result.buildSuccessResult(userRate);
+	}
 	/**
 	 * <p>获取用户绑定的银行卡接口</p>
 	 * @return

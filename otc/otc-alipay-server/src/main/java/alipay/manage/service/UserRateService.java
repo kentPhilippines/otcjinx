@@ -10,4 +10,10 @@ public interface UserRateService {
      * @return
      */
     UserRate findProductFeeBy(String userId, String productCode);
+     /**
+      * 查询当前用户费率值
+      * @param userId
+      * @return
+      */
+	UserRate findUserRateInfoByUserId(String userId);
 }
