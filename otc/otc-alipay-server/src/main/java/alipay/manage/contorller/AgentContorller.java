@@ -1,6 +1,7 @@
 package alipay.manage.contorller;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,11 +21,13 @@ import com.github.pagehelper.PageInfo;
 import alipay.manage.bean.InviteCode;
 import alipay.manage.bean.UserFund;
 import alipay.manage.bean.UserInfo;
+import alipay.manage.bean.UserRate;
 import alipay.manage.bean.util.PageResult;
 import alipay.manage.bean.util.UserCountBean;
 import alipay.manage.service.CorrelationService;
 import alipay.manage.service.InviteCodeService;
 import alipay.manage.service.UserInfoService;
+import alipay.manage.service.UserRateService;
 import alipay.manage.util.SessionUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.RandomUtil;
@@ -38,7 +41,8 @@ public class AgentContorller {
 	    Logger log = LoggerFactory.getLogger(AgentContorller.class);
 	    @Autowired SessionUtil sessionUtil;
 	    @Autowired InviteCodeService inviteCodeServiceImpl;
-	    @Autowired UserInfoService userInfoServiceImpl;
+	    @Autowired UserInfoService userInfoService;
+	    @Autowired UserRateService userRateService;
 	    @Autowired CorrelationService correlationServiceImpl;
 	    @Autowired UserUtil userUtil;
 	    /**
@@ -96,14 +100,28 @@ public class AgentContorller {
 	            @RequestBody InviteCode bean,
 	            HttpServletRequest request
 	    ) {
+	    	log.info("userType=====》"+ bean.getUserType());
 	    	UserInfo user = sessionUtil.getUser(request);
+	    	if(ObjectUtil.isNull(user))
+	    		return Result.buildFailMessage("当前用户未登录");
+	    	if(StrUtil.isBlank(bean.getUserType()))
+	    		return Result.buildFailMessage("参数为空");
+	    	bean.setBelongUser(user.getUserId());
+	    	bean.setCount(0);
 	    	log.info("【生成邀请码的方法，将邀请吗返回给前端】");
 	    	String createinviteCode = createinviteCode();
+	    	bean.setInviteCode(createinviteCode);
+	    	bean.setCreateTime(new Date());
+	    	bean.setSubmitTime(new Date());
+	    	bean.setIsDeal(Common.isOk);
 	        boolean flag = inviteCodeServiceImpl.addinviteCode(bean);
 	        if (flag)
 	            return Result.buildSuccessResult("操作成功","从配置中获取的服务器路径：" + createinviteCode);
 	        return Result.buildFail();
 	    }
+	    
+	    
+	    
 	    /**
 	     * <p>产生随机邀请码</p>
 	     * @return
@@ -122,7 +140,10 @@ public class AgentContorller {
 	     */
 	    @GetMapping("/findLowerLevelAccountDetailsInfoByPage")
 	    @ResponseBody
-	    public Result findLowerLevelAccountDetailsInfoByPage(String pageSize,String pageNum,String userName,HttpServletRequest request) {
+	    public Result findLowerLevelAccountDetailsInfoByPage(@RequestParam(required = false)String pageSize,
+	    		                                              @RequestParam(required = false)String pageNum,
+	    		                                              @RequestParam(required = false)String userName,
+	    		                                              HttpServletRequest request) {
 	    	UserInfo user2 = sessionUtil.getUser(request);
 	    	log.info("获取用户 " + user2);
 	        if (StrUtil.isBlank(user2.getUserId()))
@@ -132,7 +153,7 @@ public class AgentContorller {
 	            user.setUserId(userName);
 	        user.setAgent(user2.getUserId());
 	        PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
-	        List<UserInfo> userList = userInfoServiceImpl.findSunAccount(user);
+	        List<UserInfo> userList = userInfoService.findSunAccount(user);
 	        log.info("获取用户信息" + userList);
 	        for (UserInfo qrUser : userList)
 	            findOnline(qrUser);
@@ -144,14 +165,15 @@ public class AgentContorller {
 	        pageR.setTotalPage(pageInfo.getPages());
 	        return Result.buildSuccessResult(pageR);
 	    }
-	    @GetMapping("/findAgentCounts")
+	    
+	    @GetMapping("/findAgentCount")
 	    @ResponseBody
 	    public Result findAgentCount(HttpServletRequest request) {
 	    	UserInfo user2 = sessionUtil.getUser(request);
 	    	log.info("user2.getUserId"+user2.getUserId());
 			if (ObjectUtil.isNull(user2))
 				throw new OtherErrors("当前用户未登录");
-	        UserFund findUserByAccount = userInfoServiceImpl.findUserFundByAccount(user2.getUserId());
+	        UserFund findUserByAccount = userInfoService.findUserFundByAccount(user2.getUserId());
 	        log.info("通过id获取资金账户表::"+ findUserByAccount);
 	        UserCountBean findMoreCount = findMyDate(findUserByAccount.getId());
 	        findMoreCount.setMoreDealProfit(findUserByAccount.getTodayAgentProfit().toString());

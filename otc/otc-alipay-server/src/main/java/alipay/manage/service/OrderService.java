@@ -36,6 +36,12 @@ public interface OrderService {
 	List<RunOrder> findOrderRunByPage(RunOrder order);
 	
 	/**
+	 * 分页查询流水订单，根据自己的子账号[参数为null]查询所有订单流水
+	 * @param orderRun
+	 * @return
+	 */
+	List<RunOrder> findAllOrderRunByPage(RunOrder order);
+	/**
 	 * <p>分页查询订单，根据自己的所有子账号</p>
 	 * @param order
 	 * @return
@@ -95,5 +101,6 @@ public interface OrderService {
 	 * @return
 	 */
 	boolean addRechargeOrder(Recharge order);
+
 
 }

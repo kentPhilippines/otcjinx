@@ -11,6 +11,7 @@ import alipay.manage.mapper.RunOrderMapper;
 import alipay.manage.mapper.WithdrawMapper;
 import alipay.manage.util.SettingFile;
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import otc.api.alipay.Common;
 import otc.util.number.Number;
@@ -49,14 +50,14 @@ public class OrderServiceImpl implements OrderService{
 
 	@Override
 	public List<RunOrder> findOrderRunByPage(RunOrder order) {
-		log.info("获取订单账户 " + order.getOrderAccount());
+		//遍历子元素查询订单流水
 		RunOrderExample example = new RunOrderExample();
 		RunOrderExample.Criteria criteria = example.createCriteria();
 		if(StrUtil.isNotBlank(order.getOrderAccount()))
 			criteria.andOrderAccountEqualTo(order.getOrderAccount());
 		if(StrUtil.isNotBlank(order.getTime())) {
 			Date date = getDate(order.getTime());
-			order.setCreateTime(date);
+			order.setCreateTime(DateUtil.date(date));
 //			Calendar calendar = new GregorianCalendar();
 //			calendar.setTime(date);
 //			calendar.set(Calendar.HOUR,0);
@@ -75,10 +76,12 @@ public class OrderServiceImpl implements OrderService{
 		}
 		if(CollUtil.isNotEmpty(order.getOrderAccountList()))
 			criteria.andOrderAccountListEqualTo(order.getOrderAccountList());
-		if(StrUtil.isNotBlank(order.getRunType()))
-			criteria.andRunTypeEqualTo(order.getRunType());
+		if(StrUtil.isNotBlank(String.valueOf(order.getRunOrderType())))
+			criteria.andRunOrderTypeEqualTo(order.getRunOrderType());
 		example.setOrderByClause("createTime desc");
-		return runOrderMapper.selectByExample(example);
+		List<RunOrder> listRunOrder=runOrderMapper.selectByExample(example);
+		log.info("============》", listRunOrder);
+		return listRunOrder;
 	}
 	Date getDate(String time){
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -91,6 +94,21 @@ public class OrderServiceImpl implements OrderService{
 		return dateTime;
 	}
 
+	
+	@Override
+	public List<RunOrder> findAllOrderRunByPage(RunOrder order) {
+		// 遍历子元素查询所有的下级订单流水
+		RunOrderExample example = new RunOrderExample();
+		RunOrderExample.Criteria criteria = example.createCriteria();
+		if(StrUtil.isNotBlank(order.getOrderAccount()))
+			criteria.andOrderAccountEqualTo(order.getOrderAccount());
+		if(CollUtil.isNotEmpty(order.getOrderAccountList()))
+			criteria.andOrderAccountListEqualTo(order.getOrderAccountList());
+		List<RunOrder> listRunOrder=runOrderMapper.selectByExample(example);
+		log.info("======****======》", listRunOrder);
+		return listRunOrder;
+	}
+	
 	
 	@Override
 	public List<DealOrder> findOrderByPage(DealOrder order) {
@@ -243,5 +261,6 @@ public class OrderServiceImpl implements OrderService{
 		int insertSelective = rechargeDao.insertSelective(order);
 		return insertSelective > 0 && insertSelective < 2;
 	}
+
 
 }
