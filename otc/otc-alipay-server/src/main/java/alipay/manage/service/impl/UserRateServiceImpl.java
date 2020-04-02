@@ -16,4 +16,10 @@ public class UserRateServiceImpl implements UserRateService {
         System.out.println("获取结果---->" + userRate);
         return userRate;
     }
+	@Override
+	public UserRate findUserRateInfoByUserId(String userId) {
+		// 查询当前用户的费率值
+		UserRate userRate=userRateMapper.findUserRateInfoByUserId(userId);
+		return userRate;
+	}
 }

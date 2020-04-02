@@ -31,10 +31,14 @@ import alipay.manage.service.UserInfoService;
 import alipay.manage.util.LogUtil;
 import alipay.manage.util.OrderUtil;
 import alipay.manage.util.SessionUtil;
+import alipay.manage.util.SettingFile;
 import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpUtil;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import otc.api.alipay.Common;
 import otc.exception.user.UserException;
 import otc.result.Result;
@@ -48,6 +52,7 @@ public class OrderContorller {
 	@Autowired OrderService orderServiceImpl;
 	@Autowired OrderUtil orderUtil;
 	@Autowired LogUtil logUtil;
+	@Autowired SettingFile	settingFile;
 	@Autowired UserInfoService accountServiceImpl;
 	@Autowired UserRateService userRateService;
 	private Lock lock = new ReentrantLock();
@@ -113,16 +118,16 @@ public class OrderContorller {
 		UserInfo user = sessionUtil.getUser(request);
 		if(ObjectUtil.isNull(user))
 			throw new UserException("当前用户未登录",null);
-		//通过产品的code费率产品信息
-		UserRate userRate=userRateService.findProductFeeBy(user.getUserId(),productCode);
-		DealOrder order = new DealOrder();
-		if (StringUtils.isNotEmpty(userRate.toString()))
-		order.setFeeId(userRate.getId());
+		//通过产品的code费率产品信息		
+		DealOrder order = new DealOrder();		
 		order.setOrderQrUser(user.getUserId());
-		if(StrUtil.isNotBlank(receiveOrderTime))
+		if(StrUtil.isNotBlank(receiveOrderTime)) 
 			order.setTime(receiveOrderTime);
-		PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
+		if(StrUtil.isNotBlank(productCode))
+			order.setRetain1(productCode);
 		List<DealOrder> orderList = orderServiceImpl.findMyOrder(order);
+		
+		PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
 		PageInfo<DealOrder> pageInfo = new PageInfo<DealOrder>(orderList);
 		PageResult<DealOrder> pageR = new PageResult<DealOrder>();
 		pageR.setContent(pageInfo.getList());
@@ -151,15 +156,12 @@ public class OrderContorller {
 	        log.info("当前用户未登陆");
 	        return Result.buildFailMessage("当前用户未登陆");
 	    }
-		List<RunOrder> orderList =null;
 		order.setOrderAccount(user.getUserId());
-		if(StringUtils.isEmpty(accountChangeTypeCode) || StringUtils.isEmpty(startTime)) {
-			orderList = orderServiceImpl.findAllOrderRunByPage(order.getOrderAccount());
-		}else {
+		if(StrUtil.isNotBlank(startTime)) 
 			order.setTime(startTime);
+		if(StrUtil.isNotBlank(accountChangeTypeCode))
 			order.setRunType(accountChangeTypeCode);
-			orderList = orderServiceImpl.findOrderRunByPage(order);
-		}
+		List<RunOrder> orderList = orderServiceImpl.findOrderRunByPage(order);
 		PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
 		PageInfo<RunOrder> pageInfo = new PageInfo<RunOrder>(orderList);
 		PageResult<RunOrder> pageR = new PageResult<RunOrder>();
@@ -274,10 +276,6 @@ public class OrderContorller {
 	        log.info("当前用户未登陆");
 	        return Result.buildFailMessage("当前用户未登陆");
 	    }
-		log.info("startTime->"+ startTime);
-		log.info("pageNum->"+ pageNum);
-		log.info("pageSize->"+ pageSize);
-		log.info("orderType->"+ orderType);
 		if(StrUtil.isBlank(orderType))
 			orderType = "1";
 		if(orderType.equals("1")) {//充值
@@ -287,7 +285,6 @@ public class OrderContorller {
 				bean.setTime(startTime);
 			PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
 			List<Recharge> witList = orderServiceImpl.findRechargeOrder(bean);
-			log.info("获取结果集合 " + witList);
 			PageInfo<Recharge> pageInfo = new PageInfo<Recharge>(witList);
 			PageResult<Recharge> pageR = new PageResult<Recharge>();
 			pageR.setContent(pageInfo.getList());
@@ -315,7 +312,7 @@ public class OrderContorller {
 	 * <p>码商确认提现成功</p>
 	 * @param orderId			提现订单号
 	 * @return
-
+     */
 	@GetMapping("/enterOrderSu")
 	@ResponseBody
 	public Result enterOrderSu(String orderId,HttpServletRequest request) {
@@ -325,17 +322,15 @@ public class OrderContorller {
 	        return Result.buildFailMessage("当前用户未登陆");
 	    }
 		if(StrUtil.isBlank(orderId)) 
-			 return Result.buildFailResult("参数为空");
+			return Result.buildFailResult("参数为空");
 		Map<String,Object> paramMap = new HashMap();
 		paramMap.put("orderId", orderId);
 		paramMap.put("userId", user.getUserId());
 		String URL = settingFile.getName(SettingFile.ENTER_ORDER_SU);
-		log.info("码商确认url："+URL);
 		String post = HttpUtil.post(URL, paramMap);
-		log.info("码商收款确认返回：："+post);
 		JSONObject parseObj = JSONUtil.parseObj(post);
-		JsonResult bean = JSONUtil.toBean(parseObj, JsonResult.class);
+		Result bean = JSONUtil.toBean(parseObj, Result.class);
 		return bean;
 	}
-		 */
+		 
 }
