@@ -44,7 +44,12 @@ public class PayApiConstant {
 	public class File{
 		public static final String FILE_API = "/file-api";//文件服务api
 		public static final String ADD_FILE = "/add-file";//新增文件
-		public static final String FIND_FILE = "/find-file";//新增文件
+		public static final String FIND_FILE = "/find-file";//查询文件
+		public static final String FIND_FILE_NOT_CUT = "/find-file-not-cut";//查询未剪裁的图片
+		public static final String OFF_FILE = "/off-file-file";//关闭一个二维码
+		public static final String OPEN_FILE = "/open-file-file";//当前二维码裁剪完成
+		public static final String FILE_TASK = "/file-task";//图片裁剪定时任务
+		
 	}
 	
 	public class Queue{

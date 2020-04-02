@@ -28,5 +28,15 @@ public interface FileServiceClienFeign {
 	 */
 	@PostMapping( PayApiConstant.File.FILE_API+PayApiConstant.File.FIND_FILE)
 	public Resource loadAsResource(@RequestParam("id")String id);
+	
+	
+	
+	/**
+	 * <p>文件剪裁定时任务</p>
+	 * @return
+	 */
+	@PostMapping( PayApiConstant.File.FILE_API+PayApiConstant.File.FILE_TASK)
+	public void task();
+	
 }
 

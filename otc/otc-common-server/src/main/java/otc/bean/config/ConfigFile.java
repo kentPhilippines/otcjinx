@@ -26,6 +26,7 @@ public class ConfigFile {
 		public static final String QR_OUT_TIME = "QR_OUT_TIME";//订单超时时间    300  秒
 		public static final String QR_IS_CLICK = "QR_IS_CLICK";//检查二维码超过三次锁定时间   单位秒
 		public static final String FREEZE_PLAIN_VIRTUAL = "FREEZE_PLAIN_VIRTUAL";//虚拟冻结普通金额时间 单位：秒
+		public static final String LOCAL_STORAGE_PATH_BAK = "LOCAL_STORAGE_PATH_BAK";//剪裁后的图片存放地址
 	}
 	public class Pay{
 		public static final String TEST = "test";

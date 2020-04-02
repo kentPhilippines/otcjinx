@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>修改下级费率</title>
+<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/css/bootstrap.min.css">
+<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdn.staticfile.org/popper.js/1.12.5/umd/popper.min.js"></script>
+<script src="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/js/bootstrap.min.js"></script>
+<script src="https://cdn.staticfile.org/vue/2.4.2/vue.min.js"></script>
+<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+<script src="https://cdn.bootcss.com/layer/2.3/layer.js"></script>
+<script src="/static/js/common/common.js"></script>
+<link href="/static/css/common/common.css" rel="stylesheet" type="text/css">
+<div id="updataAccountFee" v-cloak>
+<div class="form-group">
+	<div class="form-details-item">
+	 <label>账号</label> <input type="text" class="form-control" placeholder="请输入账号" v-model="accountName">
+	</div>
+	<div class="form-details-item">
+	 <label>费率</label>
+	 <span>允许区间   {{agentFee}}   -   {{isfee}}</span>
+	  <input type="text" class="form-control" placeholder="请输入费率" v-model="fee">
+	 </div>
+	 	<button  class="btn btn-outline-info btn-lg"  type="button"   style="margin: 0.2rem 0.2rem 0.2rem 0.2rem;  width: 7rem; height: 3rem;"  v-on:click="updataAgentFee()"><span>确认修改</span>  </button>		
+	 	<button  class="btn btn-outline-info btn-lg"  type="button"   style="margin: 0.2rem 0.2rem 0.2rem 0.2rem;  width: 7rem; height: 3rem;"  v-on:click="closeAll()"><span>关闭</span>  </button>		
+ </div>
+ </div>
+ <script type="text/javascript">
+ var updataAccountFeeVM = new Vue({
+		el : '#updataAccountFee',
+		data : {
+			fee : '',
+			cardFee : '',
+			accountId : '',
+			accountName : '',
+			agentFee : '',
+			isfee:'',
+			feeType : ''
+			},
+		computed : {},
+		created : function() {
+		},
+		mounted : function() {
+			var accountId = getQueryString('accountId');
+			this.feeType = getQueryString('feeType');
+			this.accountId = accountId;
+			this.findUserByAccountId();
+			this.getUserAccountInfo();
+		},
+		methods : {
+			findUserByAccountId : function(){
+				that = this;
+				that.$http.post('/userAccount/findUserByAccountId', { accountId : that.accountId }, { emulateJSON : true })
+				.then(function(res) {
+					that.fee = res.body.result.fee;
+					that.cardFee = res.body.result.cardFee;
+					that.accountName = res.body.result.accountName
+				});
+			},
+			getUserAccountInfo : function() {
+				var that = this;
+				that.$http
+						.get('/userAccount/getUserAccountInfo')
+						.then(
+								function(res) {
+									if (res.body.result != null) {
+										if(that.feeType == 'fee'){
+											that.agentFee = res.body.result.fee;
+											that.isfee = that.fee;
+										}else if(that.feeType == 'cardFee'){
+											that.agentFee = res.body.result.cardFee;
+											that.isfee = that.cardFee;
+											that.fee = that.cardFee;
+										}
+									}
+								});
+			},
+			getQueryString : function(name) {
+				var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+				var r = window.location.search.substr(1).match(reg);
+				if (r != null)
+					return unescape(r[2]);
+				return null;
+			},
+			closeAll : function(){
+				parent.layer.closeAll();
+			},
+			updataAgentFee : function(){
+				var that = this;
+				that.$http.post('/userAccount/updataAgentFee',{ fee : that.fee, accountId : that.accountId,feeType:that.feeType},{ emulateJSON : true })
+				.then(function(res) {
+							if(res.body.success){
+								parent.layer.closeAll();
+							}else{
+								layer.msg(res.body.message)
+							}
+						});
+			}
+		}
+	});
+ </script>

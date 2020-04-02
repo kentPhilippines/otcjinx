@@ -12,6 +12,7 @@ import otc.bean.alipay.FileList;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.cache.annotation.CacheEvict;
 
 @Mapper
@@ -67,4 +68,14 @@ public interface FileListMapper {
     		"	and l.`isDeal` = 2 " + 
     		"    and l.`fixationAmount` = #{amount}")
 	List<FileList> findQrByAmount(@Param("amount")BigDecimal amount);
+
+    @Select("select * from alipay_file_list where isDeal = 2 and isCut is null ")
+	List<FileList> findFileNotCut();
+
+    
+    @Update("update alipay_file_list set isDeal = 1 and status = 0 where fileId = #{fileId}")
+	void deleteFile(@Param("fileId")String fileId);
+
+    @Select("select * from alipay_file_list set isCut = 'Y' where  fileId = #{fileId}")
+	void updataFileIsCut(@Param("fileId")String fileId);
 }

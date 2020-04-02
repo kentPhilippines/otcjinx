@@ -36,6 +36,7 @@ public class CacheConfigUtil {
 		mapAlipay.put(ConfigFile.Alipay.QR_IS_CLICK, "3000");
 		mapAlipay.put(ConfigFile.Alipay.FREEZE_PLAIN_VIRTUAL, "1800");
 		mapAlipay.put(ConfigFile.Alipay.TIBLE_LINK, "跑分");
+		mapAlipay.put(ConfigFile.Alipay.LOCAL_STORAGE_PATH_BAK, "D:/img/bak");
 	}
 	static void dealMap(){
 		mapDeal  = new HashMap<String, String>();

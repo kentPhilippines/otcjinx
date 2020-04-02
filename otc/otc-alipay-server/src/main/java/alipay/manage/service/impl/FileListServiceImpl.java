@@ -29,17 +29,8 @@ public class FileListServiceImpl implements FileListService {
     Logger log= LoggerFactory.getLogger(FileListServiceImpl.class);
     @Override
     public boolean addQr(FileList editGatheringCode) {
-        return false;
-    }
-
-    @Override
-    public List<FileList> queryQrcodeList() {
-        return null;
-    }
-
-    @Override
-    public List<FileList> queryAll(double amount) {
-        return null;
+    	int insertSelective = fileListMapper.insertSelective(editGatheringCode);
+        return insertSelective > 0 && insertSelective < 2;
     }
     /**
      * <p>分页查询</p>
@@ -96,11 +87,6 @@ public class FileListServiceImpl implements FileListService {
     @Override
     public boolean updataQrCut(String qrcodeId) {
         return false;
-    }
-
-    @Override
-    public List<FileList> findQrcodeAllByIsDeal() {
-        return null;
     }
 
     @Override
@@ -256,4 +242,19 @@ public class FileListServiceImpl implements FileListService {
     public List<String> findQrAmountList(String concealId) {
         return fileListMapper.selectQrAmountList(concealId);
     }
+
+	@Override
+	public List<FileList> findFileNotCut() {
+		return fileListMapper.findFileNotCut();
+	}
+
+	@Override
+	public void deleteFile(String fileId) {
+		fileListMapper.deleteFile(fileId);
+	}
+
+	@Override
+	public void updataFileIsCut(String fileId) {
+		fileListMapper.updataFileIsCut(fileId);
+	}
 }

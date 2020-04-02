@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>申诉记录</title>
+<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/css/bootstrap.min.css">
+<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdn.staticfile.org/popper.js/1.12.5/umd/popper.min.js"></script>
+<script src="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/js/bootstrap.min.js"></script>
+<script src="https://cdn.staticfile.org/vue/2.4.2/vue.min.js"></script>
+<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+<script src="https://cdn.bootcss.com/dayjs/1.7.8/dayjs.min.js"></script>
+<script src="https://cdn.bootcss.com/layer/2.3/layer.js"></script>
+<script src="/static/js/common/common.js"></script>
+<link href="/static/css/common/common.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+.suspend-receive-order {
+	padding-top: 6rem;
+}
+
+.suspend-receive-order-tip {
+	text-align: center;
+	font-weight: bold;
+	font-size: 1.4rem;
+	color: red;
+	padding-bottom: 4rem;
+}
+
+.receive-order-action {
+	display: flex;
+	justify-content: center;
+	flex-wrap: wrap;
+}
+
+.receive-order-action-body {
+	border-radius: 50%;
+	background: rgb(255, 255, 255);;
+	text-align: center;
+	height: 12rem;
+	width: 12rem;
+	line-height: 12rem;
+	color: #fff;
+	font-weight: bold;
+	font-size: 1.6rem;
+}
+
+.receive-order {
+	padding-top: 1rem;
+}
+
+.receive-order-tip {
+	text-align: center;
+	font-weight: bold;
+	font-size: 1.4rem;
+	color: #495057;
+	padding-bottom: 1rem;
+}
+
+.suspend-receive-order-action {
+	display: flex;
+	justify-content: center;
+	flex-wrap: wrap;
+	padding-bottom: 1rem;
+}
+
+.suspend-receive-order-action-body {
+	border-radius: 50%;
+	background: linear-gradient(120deg, #fed176, #fd8793);
+	text-align: center;
+	height: 8rem;
+	width: 8rem;
+	line-height: 8rem;
+	color: #e45d5d;
+	font-weight: bold;
+	font-size: 1.4rem;
+}
+
+.platform-order-list-area {
+	
+}
+
+.platform-order-list-area-tip {
+	text-align: center;
+	padding-bottom: 1rem;
+	color: #dc3545;
+	font-weight: bold;
+}
+
+.slide-fade-enter-active {
+	transition: all .3s ease;
+}
+
+.slide-fade-leave-active {
+	transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+
+.slide-fade-enter, .slide-fade-leave-to {
+	transform: translateX(10px);
+	opacity: 0;
+}
+.account-change-body-item label {
+	text-align: end;
+	width: 5rem;
+	margin-right: 0.5rem;
+}
+
+.account-change-body-item span {
+	min-width: 5rem;
+	display: inline-block;
+}
+.platform-order {
+	background: rgb(255, 255, 255);
+	margin-bottom: 1rem;
+	display: flex;
+	padding-left: 1.2rem;
+	padding-right: 0.2rem;
+	padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+.platform-order-body {
+	flex: 4;
+	display: flex;
+	flex-direction: column;
+	margin-top: 0.5rem;
+}
+
+.platform-order-body-item label {
+	text-align: end;
+	width: 5rem;
+	margin-right: 0.5rem;
+}
+.account-change-body-item-highlight {
+	color: #c3606a;
+}
+.platform-order-body-item span {
+	min-width: 5rem;
+	display: inline-block;
+}
+
+.platform-order-body-item button {
+	width: 96%;
+}
+
+.platform-order-body-item-highlight {
+	color: #c3606a;
+}
+</style>
+</head>
+
+<body>
+	<div th:replace="common/header::html"></div>
+	<div id="appeal-record"  >
+		<div class="page-body" style="background: #f2f2f2;">
+			 <div class="platform-order"  >
+				<div class="platform-order-body">
+					<div class="account-change-body-item">
+						<label>账户:</label> <span> {{accountName}}</span>
+						<label>接单费率:</label> <span class="account-change-body-item-highlight"  > {{fee * 100}} % </span>
+					</div>
+					<div class="account-change-body-item">
+						<label>状态:</label> <span class="account-change-body-item-highlight"><strong> {{receiveOrderState == 1 ?'正在接单' : '暂停接单'}}</strong> </span>
+					</div>
+					<div class="account-change-body-item">
+						<label>类型:</label> <span><strong> 入款</strong></span>
+					</div>
+					<div class="platform-order-body-item">
+						<button class="btn btn-outline-info btn-lg" v-show="receiveOrderState != 1"  v-on:click="updataReceiveOrderStateNO"   type="button"  >开始接单</button>
+						<button class="btn btn-outline-danger btn-lg" v-show="receiveOrderState == 1"  v-on:click="updataReceiveOrderStateOFF"   type="button" >暂停接单</button>
+					</div>
+				</div>
+			</div>
+			 <div class="platform-order"  >
+				<div class="platform-order-body">
+					<div class="account-change-body-item">
+						<label>账户:</label> <span> {{accountName}}</span>
+						<label>接单费率:</label> <span class="account-change-body-item-highlight"> {{cardFee * 100}} % </span>
+					</div>
+					<div class="account-change-body-item">
+						<label>状态:</label> <span class="account-change-body-item-highlight" ><strong> {{remitOrderState == 1 ?'正在接单' : '暂停接单'}} </strong> </span>
+					</div>
+					<div class="account-change-body-item">
+						<label>类型:</label> <span><strong> 出款</strong></span>
+					</div>
+					<div class="platform-order-body-item">
+						<button class="btn btn-outline-info btn-lg"  v-show="remitOrderState != 1" v-on:click="updataRemitOrderStateNO"  type="button"  >开始接单</button>
+						<button class="btn btn-outline-danger btn-lg"  v-show="remitOrderState == 1" v-on:click="updataRemitOrderStateOFF"  type="button" >暂停接单</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div th:replace="common/footer::html"></div>
+	<script type="text/javascript" src="/static/js/appeal-record.js"></script>
+</body>
+</html>

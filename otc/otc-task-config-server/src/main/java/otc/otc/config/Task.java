@@ -6,6 +6,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import otc.otc.feign.FileServiceClien;
 import otc.otc.feign.QueueServiceClien;
 
 /**
@@ -18,9 +19,11 @@ import otc.otc.feign.QueueServiceClien;
 @EnableScheduling
 public class Task {
 	@Autowired QueueServiceClien queueServiceClienImpl;
+	@Autowired FileServiceClien fileServiceClienImpl;
 	@Scheduled(cron = "0 */1 * * * ?")
 	public void queue() {
 		queueServiceClienImpl.task();
+		fileServiceClienImpl.task();
 	}
 	
 	

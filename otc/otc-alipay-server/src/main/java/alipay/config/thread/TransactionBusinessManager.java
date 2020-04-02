@@ -13,7 +13,6 @@ import java.sql.Connection;
  * 事务业务管理
  */
 public class TransactionBusinessManager {
-
     /**
      * 执行业务逻辑
      * @param transactionBusiness 事务中的业务类
@@ -48,7 +47,6 @@ public class TransactionBusinessManager {
             threadConnection.addConn(conn);
             /**释放ConnectionHolder对象*/
             connectionHolder.released();
-
             return result;
         }
         return null;

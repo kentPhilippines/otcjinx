@@ -19,4 +19,9 @@ public class FileServiceClienFeignHystrix  implements FileServiceClienFeign{
 		return null;
 	}
 
+	@Override
+	public void task() {
+		// TODO Auto-generated method stub
+	}
+
 }

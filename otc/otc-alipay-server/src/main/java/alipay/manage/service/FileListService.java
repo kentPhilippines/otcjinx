@@ -13,26 +13,12 @@ public interface FileListService {
      * @return
      */
     boolean addQr(FileList editGatheringCode);
-
-    /**
-     * <p>查询当天未被使用并且可用的二维码</p>
-     * @return
-     */
-    List<FileList> queryQrcodeList();
-
-    /**
-     * <p>查询全部可用的二维码</p>
-     * @return
-     */
-    List<FileList> queryAll(double amount);
-
     /**
      * <p>分页查询二维码数据</p>
      * @param qr
      * @return
      */
     List<FileList> findQrPage(FileList qr);
-
     /**
      * <p>更新二维码信息</p>
      * @param editGatheringCode
@@ -75,11 +61,6 @@ public interface FileListService {
      */
     boolean  updataQrCut(String qrcodeId);
 
-    /**
-     * <p>获取可交易的二维码</p>
-     * @return
-     */
-    List<FileList> findQrcodeAllByIsDeal();
 
     /**
      * <p>根据二维码编号查询二维码</p>
@@ -201,6 +182,25 @@ public interface FileListService {
      * @return
      */
     List<String> findQrAmountList(String concealId);
+
+    
+    /**
+     * <p>获取未剪裁的图片</p>
+     * @return
+     */
+	List<FileList> findFileNotCut();
+
+	/**
+	 * <p>删除二维码【远程调用】</p>
+	 * @param fileId
+	 */
+	void deleteFile(String fileId);
+
+	/**
+	 * <p>将二维码标记为已剪裁</p>
+	 * @param fileId
+	 */
+	void updataFileIsCut(String fileId);
 
 
 

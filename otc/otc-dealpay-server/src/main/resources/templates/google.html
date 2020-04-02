@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>google认证</title>
+<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/css/bootstrap.min.css">
+<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdn.staticfile.org/popper.js/1.12.5/umd/popper.min.js"></script>
+<script src="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/js/bootstrap.min.js"></script>
+<script src="https://cdn.staticfile.org/vue/2.4.2/vue.min.js"></script>
+<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+<script src="../static/js/layui/layui.all.js"></script>
+<link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+<script src="https://cdn.bootcss.com/layer/2.3/layer.js"></script>
+<link href="/static/css/common/common.css" rel="stylesheet" type="text/css">
+<script src="/static/js/common/common.js"></script>
+<style type="text/css">
+.login-container {
+	padding-top: 5rem;
+}
+
+.login-btn {
+	margin-bottom: 1rem;
+}
+</style>
+</head>
+
+<body>
+	<div th:replace="common/header::html"></div>
+	<div id="google" >
+		<div class="page-body">
+			<div class="container login-container">
+				<form>
+					<div class="form-group">
+  							<img id="img" src="" style="max-width:100%;height:auto;">
+					</div>
+					
+					<div class="form-group">
+						<input type="text" class="form-control" placeholder="请输入google验证码" v-model="googleCode">
+<!-- 						<input id="userName" type="hidden" name="userName" v-model="userName"> -->
+					</div>
+					<button type="button" class="btn btn-danger btn-lg btn-block login-btn" style=" background-color:#28a745" v-on:click="google">立即认证</button>
+					<button type="button" class="btn btn-light btn-lg btn-block" v-show="registerEnabled" v-on:click="footerVM.goTo('/register')">注册</button>
+				</form>
+				
+				<p>操作步骤：</p>
+					<p>1、下载并安装谷歌身份验证器。安卓手机请在网页搜索google authenticator APP并下载。苹果手机请在AppStore搜索google authenticator APP并下载。</p>
+					<p>2、安装完成后，请用该APP扫描上方的二维码进行绑定操作。</p>
+					<p>3、绑定成功后，请将APP自动生成的动态验证码输入下方的文本框用于系统认证。</p>
+					<p>4、认证成功。</p>
+			</div>
+		</div>
+	</div>
+	<div th:replace="common/footer::html"></div>
+	<script type="text/javascript">
+	let id = this.getQueryString('username')
+	console.log(id);
+	$("#userName").val(id);
+	let imgurl = "storage/img/"+id+".jpg";
+	$("#img").attr("src",imgurl);
+		var googleVM = new Vue({
+			el : '#google',
+			data : {
+				registerEnabled : false,
+				userName : '',
+				googleCode: ''
+			},
+			computed : {},
+			created : function() {
+			},
+			mounted : function() {
+				headerVM.title = 'google认证';
+				this.loadRegisterSetting();
+			},
+			methods : {
+
+				loadRegisterSetting : function() {
+					var that = this;
+					that.$http.get('/masterControl/getRegisterSetting').then(function(res) {
+						that.registerEnabled = res.body.result.registerEnabled;
+					});
+				},
+				google : function() {
+					var that = this;
+					if (that.googleCode == null || that.googleCode == '') {
+						layer.alert('请输入google验证码');
+						return;
+					}
+					that.$http.post('/qrcodeAuth', {
+						userName : id,
+						googleCode : that.googleCode
+					}, {
+						emulateJSON : true
+					}).then(function(res) {
+						if(res.body.success){
+							window.location.href = '/login';
+						}else{
+							layer.alert(res.body.message)
+						}
+					});
+				}
+			}
+		});
+	</script>
+</body>
+</html>

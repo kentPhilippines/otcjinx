@@ -5,6 +5,7 @@ import alipay.manage.bean.DealOrder;
 import alipay.manage.bean.UserFund;
 import alipay.manage.mapper.AmountMapper;
 import alipay.manage.mapper.DealOrderMapper;
+import alipay.manage.service.FileListService;
 import alipay.manage.service.MediumService;
 import alipay.manage.service.UserInfoService;
 import alipay.manage.util.AmountRunUtil;
@@ -32,6 +33,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import otc.api.alipay.Common;
+import otc.bean.alipay.FileList;
 import otc.bean.alipay.Medium;
 import otc.common.PayApiConstant;
 import otc.common.SystemConstants;
@@ -59,6 +61,41 @@ public class Api {
 	@Autowired QrUtil qrUtil;
 	@Autowired NotifyUtil notifyUtil;
 	@Autowired QueueUtil queueUtil;
+	@Autowired FileListService fileListServiceImpl;
+	
+	@PostMapping(PayApiConstant.File.FILE_API+PayApiConstant.File.OFF_FILE)
+	public void updateFileNotDeal(@RequestParam("fileId")String fileId) {
+		log.info("【当前接收到远程调用方法，删除不合格二维码，当前二维码编号："+fileId+"】");
+		fileListServiceImpl.deleteFile(fileId);
+	};
+	@PostMapping(PayApiConstant.File.FILE_API+PayApiConstant.File.OPEN_FILE)
+	public void updataFileIsDeal(@RequestParam("fileId")String fileId) {
+		log.info("【当前接收到远程调用方法，将二维码标记为以剪裁，二维码编号："+fileId+"】");
+		fileListServiceImpl.updataFileIsCut(fileId);
+	};
+	
+	/**
+	 * <p>获取没有剪裁的文件 </p>
+	 * @return
+	 */
+	@PostMapping(PayApiConstant.File.FILE_API+PayApiConstant.File.FIND_FILE_NOT_CUT)
+	public List<FileList> findFileNotCut(){
+		log.info("【当前远程调用，查询所有未剪裁二维码】");
+		List<FileList> fileList = fileListServiceImpl.findFileNotCut();
+		return fileList;
+	};
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * <p>关闭收款媒介</p>
+	 * @param mediumNumber
+	 * @return
+	 */
 	@PostMapping(PayApiConstant.Alipay.MEDIUM_API+PayApiConstant.Alipay.OFF_MEDIUM_QR)
 	Result offMediumQueue(@RequestParam("mediumNumber")String mediumNumber) {
 	if(StrUtil.isBlank(mediumNumber))
@@ -67,6 +104,9 @@ public class Api {
 		Result pop = queueUtil.pop(medium);
 		return pop;
 	};
+	
+	
+	
 	/**
 	 * <p>系统回调订单成功资金处理</p>
 	 * @param param

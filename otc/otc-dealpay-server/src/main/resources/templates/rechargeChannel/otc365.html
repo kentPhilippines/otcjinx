@@ -1,0 +1,999 @@
+<html lang="en" data-dpr="1" style="font-size: 74px;">
+<head>
+<meta content="webkit" name="renderer">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta charset="UTF-8">
+<meta name="viewport"
+	content="initial-scale=1,maximum-scale=1, minimum-scale=1">
+<link rel="icon" type="image/png"
+	href="http://open.otc365.com/v1/buy/assets/img/favicon.png">
+<title>OTC365,全球专业的数字货币担保场外交易平台</title>
+<link rel="stylesheet"
+	href="http://open.otc365.com/v1/buy/assets/css/flexible.css">
+<script type="text/javascript" async=""
+	src="https://www.google-analytics.com/analytics.js"></script>
+<script src="http://open.otc365.com/v1/buy/assets/js/flexible.js?v=2"></script>
+<style>
+@charset "utf-8"; 
+
+html {
+	color: #000;
+	background: #fff;
+	overflow-y: scroll;
+	-webkit-text-size-adjust: 100%;
+	-ms-text-size-adjust: 100%
+}
+
+html * {
+	outline: 0;
+	-webkit-text-size-adjust: none;
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0)
+}
+
+html, body {
+	font-family: sans-serif
+}
+
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code,
+	form, fieldset, legend, input, textarea, p, blockquote, th, td, hr,
+	button, article, aside, details, figcaption, figure, footer, header,
+	hgroup, menu, nav, section {
+	margin: 0;
+	padding: 0
+}
+
+input, select, textarea {
+	font-size: 100%
+}
+
+table {
+	border-collapse: collapse;
+	border-spacing: 0
+}
+
+fieldset, img {
+	border: 0
+}
+
+abbr, acronym {
+	border: 0;
+	font-variant: normal
+}
+
+del {
+	text-decoration: line-through
+}
+
+address, caption, cite, code, dfn, em, th, var {
+	font-style: normal;
+	font-weight: 500
+}
+
+ol, ul {
+	list-style: none
+}
+
+caption, th {
+	text-align: left
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-size: 100%;
+	font-weight: 500
+}
+
+q:before, q:after {
+	content: ''
+}
+
+sub, sup {
+	font-size: 75%;
+	line-height: 0;
+	position: relative;
+	vertical-align: baseline
+}
+
+sup {
+	top: -.5em
+}
+
+sub {
+	bottom: -.25em
+}
+
+a:hover {
+	text-decoration: underline
+}
+
+ins, a {
+	text-decoration: none
+}
+</style>
+<link rel="stylesheet" href="http://open.otc365.com/v1/buy/assets/css/main.css?ve=4.3">
+<link rel="stylesheet" href="http://open.otc365.com/v1/buy/assets/css/reset.css">
+<link rel="stylesheet" href="http://open.otc365.com/v1/buy/assets/css/phoneMain.css?ve=4.5">
+<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/javascript" src="http://open.otc365.com/v1/buy/assets/js/pulick.js?v=2"></script>
+<script src="https://cdn.staticfile.org/vue/2.4.2/vue.min.js"></script>
+<link rel="stylesheet" href="http://open.otc365.com/v1/buy/assets/static/layer-v3.1.1/layer/theme/default/layer.css?v=3.1.1" id="layuicss-layer">
+</head>
+<body style="font-size: 12px;">
+	<header class="phone fixed">
+		<img src="http://open.otc365.com/v1/buy/assets/img/logo.png"><span>
+			专业的数字货币场外担保交易平台</span>
+	</header>
+	<div id="newPayForOrderPhone">
+		<div id="orderPage">
+			<div class="payForOrderRight">
+				<div class="title">
+					<span class="confirmOrder">确认订单</span> <span class="countdown"><i
+						class="countdownLogo"></i>0:0 </span>
+				</div>
+				<div class="payForOrderMsg">
+					<div class="order-details">
+						<div class="item">
+							<div class="total-price orange">
+								<span></span><span class="smallNum">{{orderInfo.orderAmount}}</span>
+							</div>
+							<div class="amount gray">
+								<span></span> <span class="smallNum">{{ orderInfo.orderAmount / 7 | numFilter }}</span>
+							</div>
+						</div>
+						<div class="item">
+							<div class="info">
+								<span>金额： </span><i class="icon icon-cny"></i>
+							</div>
+						 <div class="info">
+								<span>数量： </span> <i class="icon icon-usdt"></i>
+							</div>  
+						</div>
+						<div class="item">
+							<div class="order-num">订单号：{{orderInfo.orderId}}</div>
+						<!-- 	<div class="unit-price">单价：50</div> -->
+						</div>
+					</div>
+					<div class="paymentInfo">
+						<img
+							src="http://open.otc365.com/v1/buy/assets/img/certificate_phone.png"
+							class="dealerTipsImg">
+						<div class="othersMethods">
+							<div class="payWayInfo" v-for:>
+								<div class="infoDetail">
+									<div>
+										<span>交易员：</span> <span id="accname">{{orderInfo.bankInfo.accname}}</span>
+									</div>
+									<a
+										onclick="gtag('event','Copy',{ 'event_category':'OrderPage','event_label':'payNumber'})"
+										data-clipboard-action="copy"
+										data-clipboard-target="#accname" class="btn copyText">复制</a>
+								</div>
+								</a>
+							</div>
+						</div>
+						<!-- 银行卡展示 -->
+						<div class="othersMethods">
+							<div class="payWayInfo" v-for:>
+								<div class="infoDetail">
+									<div>
+										<span>银行账号：</span> <span id="payNumber">{{orderInfo.bankInfo.bankNo}}</span>
+									</div>
+									<a
+										onclick="gtag('event','Copy',{ 'event_category':'OrderPage','event_label':'payNumber'})"
+										data-clipboard-action="copy"
+										data-clipboard-target="#payNumber" class="btn copyText">复制</a>
+								</div>
+								</a>
+							</div>
+						</div>
+						<div class="othersMethods">
+							<div class="payWayInfo" v-for:>
+								<div class="infoDetail">
+									<div>
+										<span>汇款银行：</span> <span id="bankName">{{orderInfo.bankInfo.bankName}}</span>
+									</div>
+									<a
+										onclick="gtag('event','Copy',{ 'event_category':'OrderPage','event_label':'payNumber'})"
+										data-clipboard-action="copy"
+										data-clipboard-target="#bankName" class="btn copyText">复制</a>
+								</div>
+								</a>
+							</div>
+						</div>
+						<div class="othersMethods">
+							<div class="payWayInfo" v-for:>
+								<div class="infoDetail">
+									<div>
+										<span>金额：</span> <span id="amount">{{orderInfo.orderAmount}}</span>
+									</div>
+									<a
+										onclick="gtag('event','Copy',{ 'event_category':'OrderPage','event_label':'payNumber'})"
+										data-clipboard-action="copy"
+										data-clipboard-target="#amount" class="btn copyText">复制</a>
+								</div>
+								</a>
+							</div>
+						</div>
+						<!-- <div class="othersMethods">
+							<div class="payWayInfo" v-for:>
+								<div class="infoDetail">
+									<div>
+										<span>银行卡绑定手机号：</span> <span id="mobile">{{orderInfo.bankInfo.mobile}}</span>
+									</div>
+									<a
+										onclick="gtag('event','Copy',{ 'event_category':'OrderPage','event_label':'payNumber'})"
+										data-clipboard-action="copy"
+										data-clipboard-target="#mobile" class="btn copyText">复制</a>
+								</div>
+								</a>
+							</div>
+						</div> -->
+						
+						
+						
+					</div>
+					<div class="payment">
+						<div class="warning">
+							<i class="icon icon-warning"></i> <span class="imp-txt">非本人账户付款</span>及
+							<span class="imp-txt">备注/附言</span>会造成 <span class="imp-txt">交易失败</span>
+						</div>
+						<div class="btn-group">
+							<div class="btn btn-confirm">
+								我已完成汇款<span>()</span>
+							</div>
+							<div class="btn btn-cancel" v-on:click="cancelOrder">取消订单</div>
+						</div>
+						<p style="margin-left: 0.5333vw;">
+							如<span style="color: rgb(232, 72, 16);">「未点击」</span>将导致延迟到账
+						</p>
+					</div>
+					<div class="tips">
+						<p class="remind">温馨提示：</p>
+						<ul>
+							<li>1.每笔订单会生成唯一的收款信息，请不要保存信息进行二次转账。</li>
+							<li>2.单日取消订单达5次后不可买入，请谨慎操作。</li>
+							<li>3.单笔订单仅支持1次切换汇款方式，如您还需要切换请重新下单。</li>
+							<li>4.请您在规定时间内完成汇款后务必点击“我已完成汇款”按钮，交易员确认收款后，将放行数字货币资产至您账户，以免系统将取消订单。</li>
+							<li>5.您的汇款将直接转入交易员银行账户，交易过程中交易员出售的数字资产由平台托管保护，可放心交易。</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="bigerquDialog dialog" style="align-items: center;">
+			<div>
+				<h3>扫码操作流程:</h3>
+				<p>1、截屏 &gt; 保存到相册</p>
+				<p>
+					2、打开
+					<!---->
+					&gt; 选择 [扫一扫]
+				</p>
+				<p>3、选择相册 &gt; 选择二维码 &gt; 完成转账</p>
+				<img>
+			</div>
+		</div>
+		<div class="changePayway dialogStyle dialog"
+			style="align-items: center;">
+			<div>
+				<div>
+					<span class="cloose"> <img
+						src="http://open.otc365.com/v1/buy/assets/img/close.png"></span> <img
+						src="http://open.otc365.com/v1/buy/assets/img/payWayFalse.png">
+					<h3>支付切换次数不足</h3>
+					<p>您已超过切换次数</p>
+					<p>如仍需变更汇款方式请重新下单</p>
+				</div>
+				<button class="btnBgGreen">确定</button>
+				<button class="btnNone">取消</button>
+			</div>
+		</div>
+	 	<div class="dialogStyle fristTransaction dialog"
+			style="display: none; align-items: center;">
+			<div>
+
+
+		 
+				<div>
+					<img src="http://open.otc365.com/v1/buy/assets/img/riskWarning.png">
+					<h3>交易须知</h3>
+					<p>您将与OTC365认证交易员进行交易，</p>
+					<p>OTC365将全程为您担保。</p>
+				</div>
+			 
+
+
+
+				<div class="read">
+					<div>
+						<p class="readRemind">
+							请先阅读并同意OTC365服务协议<span></span>
+						</p>
+						
+					</div>
+					<span>我已悉知交易风险,并同意OTC365 <a
+						href="https://otc3652018.zendesk.com/hc/zh-cn/articles/360020934812--OTC365%E6%9C%8D%E5%8A%A1%E5%8D%8F%E8%AE%AE-">服务条款</a></span>
+				</div>
+				<button class="btnBgGreen">确定</button>
+			</div>
+		</div> 
+		<div class="cancelOrderDialog dialogStyle dialog"
+			style="align-items: center;">
+			<div>
+				<div>
+					<span class="cloose"> <img
+						src="http://open.otc365.com/v1/buy/assets/img/close.png"></span> <img
+						src="http://open.otc365.com/v1/buy/assets/img/payWayCancel.png">
+					<h3>确认取消订单</h3>
+					<p>如您已向交易员汇款,请勿取消交易</p>
+					<p>单日累计取消5笔不可买入</p>
+				</div>
+				<div class="read">
+					<div>
+						<p class="readRemind">
+							请先确认以下信息！<span></span>
+						</p>
+						<!---->
+					</div>
+					<span>我确认还没有汇款给交易员</span>
+				</div>
+				<button class="btnBgGreen">确定</button>
+				<button class="btnNone">取消</button>
+			</div>
+		</div>
+		<div class="confirmOrderDialog dialogStyle dialog"
+			style="align-items: center;">
+			<div>
+				<div>
+					<span class="cloose"><img
+						src="http://open.otc365.com/v1/buy/assets/img/close.png"></span> <img
+						src="http://open.otc365.com/v1/buy/assets/img/payWayTrue.png">
+					<h3>确认汇款</h3>
+					<p>请确保您的汇款金额与订单金额一致</p>
+					<p style="margin: 0px -15px;">如未汇款点击该按钮,可能会被系统列入黑名单</p>
+				</div>
+				<button class="btnBgGreen">确认已汇款</button>
+				<button class="btnNone">点错了</button>
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript"
+		src="http://open.otc365.com/v1/buy/assets/js/vue.min.js"></script>
+	<script src="http://open.otc365.com/v1/buy/assets/js/clipboard.min.js"></script>
+	<script type="text/javascript"
+		src="http://open.otc365.com/v1/buy/assets/static/layer-v3.1.1/layer/layer.js"></script>
+	<script async=""
+		src="https://www.googletagmanager.com/gtag/js?id=UA-104898935-3"></script>
+	<script type="text/javascript"
+		src="http://open.otc365.com/v1/buy/assets/js/scoket.js"></script>
+	<script async=""
+		src="https://www.googletagmanager.com/gtag/js?id=UA-104898935-3"></script>
+	<script type="text/javascript"
+		src="http://open.otc365.com/v1/buy/assets/js/utils.js"></script>
+	<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() {
+    dataLayer.push(arguments);
+  }
+  gtag('js', new Date());
+  gtag('config', 'UA-104898935-3');
+</script>
+	<script>
+  var clipboard = new ClipboardJS('.btn');
+  clipboard.on('success', function(e) {
+    layer.msg('复制成功', {
+      skin: 'icon-class',
+      icon: 6,
+      time: 1000
+    });
+  });
+
+  clipboard.on('error', function(e) {
+    layer.msg('复制失败,请手动长按文字进行复制', {
+      skin: 'icon-class',
+      icon: 5,
+      time: 1000
+    });
+  });
+  $(window).scroll(function() {
+      var scrollTop = $(window).scrollTop();
+      var scrollHeight = $(document).height();
+      var windowHeight = $(window).height();
+      if (scrollTop + windowHeight >= scrollHeight) {
+        gtag('event', 'Scroll', {
+          'event_category': 'OrderPage',
+          'event_label': 'Bottom'
+        })
+      }
+    })
+    //下拉框
+    $(document).click(function (event) {
+      $(".payWayChoose .paymentMethods").hide();//当点击空白处，隐藏ul弹窗
+    });
+    //判断是否滚动事件是否停止
+  $.fn.scrollEnd = function(callback, timeout) {
+    $(this).scroll(function() {
+      var $this = $(this);
+      if ($this.data('scrollTimeout')) {
+        clearTimeout($this.data('scrollTimeout'));
+      }
+      $this.data('scrollTimeout', setTimeout(callback, timeout));
+    });
+  };
+  var i = 1
+  $(window).scrollEnd(function() {
+    if (i == 1) {} else {
+      gtag('event', 'Scroll', {
+        'event_category': 'OrderPage'
+      })
+    }
+    i += 1
+  }, 1000);
+
+  //判斷 手机是否是横屏状态
+  function orient() {
+    if (window.orientation === 180 || window.orientation === 0) {
+      $('.dialog').css('align-items', 'center')
+      return false;
+    }
+    if (window.orientation === 90 || window.orientation === -90) {
+      $('.dialog').css('align-items', 'start')
+      return false;
+    }
+  }
+
+  $(function() {
+    orient();
+  });
+  $(window).bind('orientationchange', function(e) {
+    orient();
+  });
+  var newPayForOrderPhone = new Vue({
+    el: "#newPayForOrderPhone",
+    data: {
+      auth: sessionStorage.getItem('buyAuth') || '',
+      //时间
+      timeStamp: 0,
+      time: {
+        hr: 0,
+        min: 0,
+        sec: 0
+      },
+      orderInfo : {
+    	  orderId : '',
+    	  orderAmount : '',
+    	  orderQrUser : '',
+    	  bankInfo : {
+    		  bankNo : '',
+    		  accname : '' ,
+    		  mobile : '' ,
+    		  bankName : ''
+    		  
+    	  }
+      },
+      disabledNumber: '',
+      //收款人信息
+      orderPayway: '',
+      payWay: {},
+      //订单信息
+      dealer: '',
+      orderMessage: {
+        orderNumber: '',
+        orderSumPrice: '',
+        orderUnitPrice: '',
+        orderAmount: '',
+        popStatus: '',
+        time_out: ''
+      },
+      price: {
+        integer: '',
+        decimal: ''
+      },
+      quantity: {
+        integer: '',
+        decimal: ''
+      },
+      orderSumPriceArr: {
+        sunPriceFloat: '',
+        sunPriceInt: ''
+      },
+      cancelNum: '',
+      //提交按钮状态
+      //url传递的信息
+      orderId: {
+        bankcardNo : '',
+        order : ''
+      },
+      //取消跳转
+      goBackUrl: '',
+      //用户号码
+      userPhone: '',
+      //交易须知
+      choose: false,
+      cancelChoose: false,
+      //付款方式切换
+      chooseWay: '',
+      actives: '',
+      menuIndex: '5',
+      originId: '',
+      alipayDisabled: true,
+      wechatDisabled: true,
+      bankDisabled: true,
+      kyc: '',
+      //定时器
+      int: ''
+    },
+    filters: {
+    	 numFilter (value) {
+			    let realVal = ''
+			    if (value) {
+			      // 截取当前数据到小数点后三位
+			      let tempVal = parseFloat(value).toFixed(5)
+			      realVal = tempVal.substring(0, tempVal.length - 1)
+			    } else {
+			      realVal = '--'
+			    }
+			    return realVal
+			  },
+      thousandBitSeparator: function(num) {
+        var res = num.toString().replace(/\d+/, function(n) { // 先提取整数部分
+          return n.replace(/(\d)(?=(\d{3})+$)/g, function($1) {
+            return $1 + ",";
+          });
+        })
+        return res;
+      }
+    },
+    computed: {
+      paymentMethods: function () {
+        return this.orderPayway === '2' ? '支付宝' : this.orderPayway === '3' ? '微信' : ''
+      },
+      bankInfo: function () {
+        return this.payWay.bankName + this.payWay.registerAddress
+      }
+    },
+    mounted: function() {
+      //获取url中"?"后的信息
+      this.orderId = parseUrl();
+      this.orderId.payWay = '1';
+      this.userPhone = this.orderId.phone;
+      var fristTime = window.localStorage.getItem("fristTime");
+      if (fristTime == "" || fristTime == null || fristTime != this.userPhone) {
+        $(".fristTransaction").css("display", "flex")
+        this.choose = false
+      } else {
+        $(".fristTransaction").hide()
+      }
+
+      this.getDataFrist()
+      this.getlimitConfig()
+
+    },
+    methods: {
+      // 强制保留4位小数
+      accurateDecimal: function (number, n) {
+        return (parseInt(number * 10000) / 10000).toFixed(n)
+      },
+      // 小数点分割数字
+      splitNumber: function () {
+        var priceArr = this.orderMessage.orderSumPrice.toString().split('.')
+        this.price.integer = priceArr[0]
+        this.price.decimal = priceArr[1]
+        var quantityArr = this.orderMessage.orderAmount.toString().split('.')
+        this.quantity.integer = quantityArr[0]
+        this.quantity.decimal = quantityArr[1]
+      },
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      //获取初始化信息 主要是获取交易订单信息
+      getDataFrist: function() {
+        var thid = this;
+        var data = this.orderId;//这里首先要初始化订单号,通过访问的url
+        $.ajax({
+          url:   "/third/merchantBuyApi/findOrder",
+          type: 'get',
+          headers: {
+            Auth: this.auth
+          },
+          data: data,
+          success: function(res) {
+            if (res.success == false) {
+              layer.msg(res.msg, function() {});
+            } else {
+              if (res.result.orderStatus == '2'  ) {
+               thid.orderInfo.orderId = res.result.orderId;
+               thid.orderInfo.orderAmount = res.result.dealAmount;
+               thid.orderInfo.orderQrUser = res.result.orderQrUser;
+               thid.orderInfo.bankInfo = res.result.withdraw;
+            /* 	  
+            	  if (thid.timeStamp == '0') {
+                  thid.timeStamp = res.result.usefulTime;//超时时间
+                  thid.disabledNumber = 20 - (res.result.time_out  - res.result.usefulTime)
+                  thid.time.min = parseInt(thid.timeStamp / 60) < 10 ? "0" + parseInt(thid.timeStamp / 60) : parseInt(thid.timeStamp / 60);
+                  thid.time.sec = thid.timeStamp - thid.time.min * 60 < 10 ? "0" + thid.timeStamp - thid.time.min * 60 : thid.timeStamp - thid.time.min * 60;
+                  thid.countdown()
+               	 } */
+                
+            //    thid.payWay = res.result.orderPayinfo
+           //     thid.orderPayway = res.result.orderPayway
+           //     thid.kyc = res.result.kyc
+           //     thid.menuIndex = thid.orderPayway - 1
+           //     thid.orderMessage.time_out = res.result.time_out;
+          //      thid.orderMessage.cancel_time = res.result.cancel_times;
+          //      thid.orderMessage.orderNumber = res.result.orderNumber;
+         //       thid.orderMessage.orderSumPrice = res.result.dealAmount;
+
+         //       thid.orderMessage.orderUnitPrice = res.result.orderUnitPrice;
+         //       thid.orderMessage.popStatus = res.result.popStatus;
+         //       thid.dealer = res.result.dealer;
+         //       thid.originId = res.result.originId;
+         //       thid.goBackUrl = res.result.sync_url;
+                //进入页面GA事件
+                if (thid.orderPayway == 1) {
+                  gtag('event', 'PaymentDefault', {
+                    'event_category': 'OrderPage',
+                    'event_label': 'Bank'
+                  })
+                } else if (thid.orderPayway == 2) {
+                  gtag('event', 'PaymentDefault', {
+                    'event_category': 'OrderPage',
+                    'event_label': 'Alipay'
+                  })
+                } else if (thid.orderPayway == 3) {
+                  gtag('event', 'PaymentDefault', {
+                    'event_category': 'OrderPage',
+                    'event_label': 'Wechat'
+                  })
+                }
+                //截取总价
+                var arr = thid.orderMessage.orderSumPrice;
+                if (arr.length > 1) {
+                  thid.orderSumPriceArr.sunPriceFloat = "." + arr[1]
+                } else {
+                  thid.orderSumPriceArr.sunPriceFloat = ".00"
+                }
+                thid.orderSumPriceArr.sunPriceInt = arr
+                  //通过商户数量显示USDT订单数量
+             /*   if (res.data.order_amount > 0) {
+                  thid.orderMessage.orderAmount = res.result.order_amount
+                  thid.orderMessage.orderUnitPrice = res.result.order_price
+                } else {
+                  thid.orderMessage.orderAmount = res.result.orderAmount
+                  thid.orderMessage.orderUnitPrice = res.result.orderUnitPrice
+                } */
+                thid.orderMessage.orderAmount = thid.accurateDecimal(thid.orderMessage.orderAmount, 4)
+                thid.splitNumber()
+                thid.ajaxGetLimit()
+              /*   socket(thid.orderId.orderId, res.result.auth, function(num) {
+                  thid.orderStatus = num.orderStatus
+                  if (thid.orderStatus != '1' && thid.orderStatus != '7') {
+                    window.location.href = './waitBUYForcheck.html?orderId=' + thid.orderId.orderId + '&phone=' + thid.orderId.phone;
+                  }
+                }) */
+              } else {
+                window.location.href = './waitBUYForcheck.html?orderId=' + thid.orderId.orderId;
+              }
+            }
+
+          },
+          error: function(error) {
+            console.log(error);
+          }
+        })
+      },
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      getlimitConfig: function() {
+        var thid = this;
+        $.ajax({
+          headers: {
+            Auth: this.auth
+          },
+          url: publickUrl + "/third/limit/config",
+          type: 'get',
+          success: function(res) {
+            thid.cancelNum = res.data.cancel_num
+          },
+          error: function(error) {
+            console.log(error);
+          }
+        })
+      },
+      ajaxGetLimit: function() {
+        var thid = this
+        $.ajax({
+          url: publickUrl + "/third/limit",
+          type: 'get',
+          headers: {
+            Auth: this.auth
+          },
+          success: function(res) {
+            if (res.success == false) {} else {
+              for (var i = 0; i < res.data.length; i++) {
+                var getbool = (thid.orderMessage.orderSumPrice - res.data[i].min >= 0 && res.data[i].max - thid.orderMessage.orderSumPrice >= 0) ? false : true
+                if (res.data[i].pay_way == '1') {
+                  if (thid.orderPayway == res.data[i].pay_way) {
+                    thid.bankDisabled = true
+
+                  } else {
+                    thid.bankDisabled = getbool
+                  }
+
+                } else if (res.data[i].pay_way == '2') {
+                  if (thid.orderPayway == res.data[i].pay_way) {
+                    thid.alipayDisabled = true
+                  } else {
+                    thid.alipayDisabled = getbool
+                  }
+
+                } else if (res.data[i].pay_way == '3') {
+                  if (thid.orderPayway == res.data[i].pay_way) {
+                    thid.wechatDisabled = true
+                  } else {
+                    thid.wechatDisabled = getbool
+                  }
+                }
+
+              }
+            }
+          },
+          error: function(error) {
+            console.log(error);
+          }
+        })
+      },
+
+      // 点击确认付款
+      confirmPayment: function(payWay) {
+        var thid = this
+        var change = thid.orderId.payWay == 1 ? 'Bank' : thid.orderId.payWay == 2 ? 'Alipay' : 'Wechat'
+        if (thid.orderId.payWay == 1) {
+          gtag('event', 'Confirm', {
+            'event_category': 'OrderPage',
+            'event_label': 'Bank'
+          })
+        } else if (thid.orderId.payWay == 2) {
+          gtag('event', 'Confirm', {
+            'event_category': 'OrderPage',
+            'event_label': 'Alipay'
+          })
+        } else if (thid.orderId.payWay == 3) {
+          gtag('event', 'Confirm', {
+            'event_category': 'OrderPage',
+            'event_label': 'Wechat'
+          })
+        }
+        $(".confirmOrderDialog").css('display', 'flex')
+
+      },
+      confirmPaymentCancel: function() {
+        gtag('event', 'Popup', {
+          'event_category': 'OrderPage',
+          'event_label': 'Close'
+        })
+        $(".confirmOrderDialog").hide()
+      },
+      confirmPaymentAjax: function() {
+        var thid = this
+        var data = thid.orderId
+        gtag('event', 'Popup', {
+          'event_category': 'OrderPage',
+          'event_label': 'Confirm'
+        })
+        $.ajax({
+          headers: {
+            Auth: this.auth
+          },
+          url: publickUrl + "/third/merchant_buy_api/confirm_pay",
+          type: 'get',
+          data: data,
+          success: function(res) {
+            if (res.success == false) {} else {
+              window.location.href = './waitBUYForcheck.html?orderId=' + thid.orderId.orderId;
+            }
+          },
+          error: function(error) {
+            console.log(error);
+          }
+        })
+      },
+      //倒计时功能
+      countdown: function() {
+        var thid = this;
+        var interval;
+        interval = setInterval(function() {
+          thid.time.min = parseInt(thid.timeStamp / 60) < 10 ? "0" + parseInt(thid.timeStamp / 60) : parseInt(thid.timeStamp / 60);
+          thid.time.sec = parseInt(thid.timeStamp % 60) < 10 ? "0" + parseInt(thid.timeStamp % 60) : parseInt(thid.timeStamp % 60)
+          if (thid.time.min == 0 && thid.time.sec == 0) {
+            clearInterval(interval);
+            layer.msg("您已超时,请重新购买！", function() {
+              window.location.href = './waitBUYForcheck.html?orderId=' + thid.orderId.orderId;
+            })
+
+            return;
+          }
+          if (thid.disabledNumber >= 0) {
+            thid.disabledNumber--
+          }
+          thid.timeStamp--
+        }, 1000);
+      },
+      //取消订单
+      cancelOrder: function() {
+    	  debugger;
+        gtag('event', 'CancelPopup', {
+          'event_category': 'OrderPage',
+          'event_label': 'Close'
+        })
+        $('.cancelOrderDialog').hide()
+        this.cancelChoose = false
+      },
+      cancelOrderAjax: function() {
+        var thid = this
+        var data = this.orderId
+        if (this.cancelChoose == true) {
+          gtag('event', 'CancelPopup', {
+            'event_category': 'OrderPage',
+            'event_label': 'Confirm'
+          })
+          $.ajax({
+            headers: {
+              Auth: this.auth
+            },
+            url: publickUrl + "/third/merchant_buy_api/cancel",
+            type: 'get',
+            data: data,
+            success: function(res) {
+              if (res.success == false) {
+                layer.msg(res.msg, function() {})
+              } else {
+                window.location.href = './waitBUYForcheck.html?orderId=' + thid.orderId.orderId;
+              }
+            },
+            error: function(error) {
+              console.log(error);
+            }
+          })
+        } else {
+          $('.readRemind').show()
+          setTimeout(function() {
+            $('.readRemind').hide()
+          }, 2000)
+        }
+      },
+      goBack: function() {
+        window.location.href = this.goBackUrl;
+        gtag('event', 'GoBack', {
+          'event_category': 'PayForOrder'
+        })
+      },
+      //首次进入同意协议
+      fristTransaction: function() {
+        var thid = this
+        var phone = thid.userPhone
+        if (this.choose == true) {
+          $(".fristTransaction").hide()
+          $(".layui-layer-tips").hide()
+          var obj = {
+            "userPhone": phone
+          }
+          window.localStorage.setItem("fristTime", phone)
+        } else {
+          $('.readRemind').show()
+          setTimeout(function() {
+            $('.readRemind').hide()
+          }, 2000)
+        }
+      },
+      //切换支付方式
+      changPayway: function() {
+        this.chooseWay = ''
+        $('.changePayway').css('display', 'flex')
+      },
+      menuShow: function(keys) {
+        var thid = this
+        var data = thid.orderId
+        data.payWay = thid.chooseWay
+        var nowPayway = thid.orderPayway == '1' ? 'Bank' : (thid.orderPayway == '2' ? 'Alipay' : 'Wechat')
+        var changePayway = data.payWay == '1' ? 'Bank' : (data.payWay == '2' ? 'Alipay' : 'Wechat')
+        var gaLable = nowPayway + '_' + changePayway
+        gtag('event', 'PaymentMethod', {
+          'event_category': 'OrderPage',
+          'event_label': gaLable
+        })
+        if (thid.originId == null) {
+          if (data.payWay == '') {
+            layer.msg('请选择支付方式', {
+              skin: 'bgHui-class'
+            });
+          } else {
+            $.ajax({
+              headers: {
+                Auth: this.auth
+              },
+              url: publickUrl + "/third/merchant_buy_api/switch_order",
+              data: data,
+              success: function(res) {
+                var payWay = data.payWay == '1' ? '网银' : (data.payWay == '2' ? '支付宝' : '微信')
+                if (res.success == false) {
+                  if (res.code == '800407') {
+                    layer.msg('您已超过切换次数,如仍需变更支付方式请重新下单', {
+                      skin: 'bgHui-class'
+                    });
+                  } else if (res.code - 0 >= 800400 && res.code - 0 <= 800405) {
+                    layer.msg('当前' + payWay + '忙线,请继续使用当前付款方式', {
+                      skin: 'bgHui-class'
+                    });
+                  } else {
+                    layer.msg(res.msg, {
+                      skin: 'bgHui-class'
+                    });
+                  }
+                } else {
+
+                  window.location.href = './payForOrder.html?orderId=' + res.data + "&phone=" + thid.orderId.phone
+                }
+              },
+              error: function(error) {
+                console.log(error);
+              }
+            })
+          }
+        } else {
+          $(".changePayway").hide()
+        }
+      },
+      //放大图片
+      showUpBigImg: function() {
+        $('.bigerquDialog').css('display', 'flex')
+        $('.bigerquDialog').css('align-items', 'start')
+      }
+    }
+  })
+</script>
+	<div class="layui-layer-move"></div>
+</body>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>个人帐变</title>
+<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/css/bootstrap.min.css">
+<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdn.staticfile.org/popper.js/1.12.5/umd/popper.min.js"></script>
+<script src="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/js/bootstrap.min.js"></script>
+<script src="https://cdn.staticfile.org/vue/2.4.2/vue.min.js"></script>
+<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+<script src="https://cdn.bootcss.com/dayjs/1.7.8/dayjs.min.js"></script>
+<script src="/static/js/common/common.js"></script>
+<link href="/static/css/common/common.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+</style>
+</head>
+
+<body>
+	<div th:replace="common/header::html"></div>
+	<div id="personalAccountChange" v-cloak>
+		<div class="page-body" style="background: #f2f2f2;">
+			<div class="input-group" style="padding-bottom: 0.3rem; padding-top: 0.3rem;">
+				<select class="form-control" style="width: 2.2rem; height: 3rem;" v-model="accountChangeTypeCode">
+					<option value="">帐变类型</option>
+					<option v-for="dictItem in accountChangeTypeDictItems" :value="dictItem.code">{{dictItem.name}}</option>
+				</select><input type="date" class="form-control" style="width: 8rem;" v-model="accountTime">
+				<div class="input-group-append">
+					<button class="btn btn-outline-secondary" type="button" v-on:click="query">查询</button>
+				</div>
+			</div>
+			<div class="form-details" v-for="accountChangeLog in accountChangeLogs">
+				<div class="form-details-body">
+					<div class="form-details-item">
+						<label>帐变时间:</label> <span>{{accountChangeLog.createTime |dateFilter("yyyy-mm-dd hh:mm:ss") }}</span>
+					</div>
+					<div class="form-details-item">
+						<label>帐变类型:</label> <span>{{
+						accountChangeLog.runType  == 1 ? '充值交易' :
+						accountChangeLog.runType  == 2 ? '系统加款' :
+						accountChangeLog.runType  == 3 ? '交易手续费' :
+						accountChangeLog.runType  == 4 ? '系统扣款' :
+						accountChangeLog.runType  == 5 ? '代付' :
+						accountChangeLog.runType  == 6 ? '代付手续费' :
+						accountChangeLog.runType  == 7 ? '冻结' :
+						accountChangeLog.runType  == 8 ? '解冻' :
+						accountChangeLog.runType  == 9 ? '代付手手续费冻结' :
+						accountChangeLog.runType  == 10 ? '代付冻结' :
+						accountChangeLog.runType  == 11 ? '增加交易点数' :
+						accountChangeLog.runType  == 12 ? '点数扣除' :
+						accountChangeLog.runType  == 13 ? '代理商分润' :
+						accountChangeLog.runType  == 14 ? '码商分润' :''
+						}}</span>
+					</div>
+					<div class="form-details-item">
+						<label>帐变金额:</label> <span class="form-details-item-highlight">{{accountChangeLog.amount}}元</span> 
+					</div>
+				</div>
+			</div>
+			<div style="padding-left: 13rem;">
+				<ul class="pagination">
+					<li class="page-item"><a class="page-link" v-show="totalPage > 0 && pageNum > 1" v-on:click="prePage">上一页</a></li>
+					<li class="page-item"><a class="page-link" v-show="pageNum >= 1 && pageNum < totalPage" v-on:click="nextPage">下一页</a></li>
+				</ul>
+			</div>
+
+		</div>
+	</div>
+	<div th:replace="common/footer::html"></div>
+	<script type="text/javascript">
+		var personalAccountChangeVM = new Vue({
+			el : '#personalAccountChange',
+			data : {
+				accountChangeTypeCode : '',
+				accountChangeTypeDictItems : [],
+				accountTime : dayjs().format('YYYY-MM-DD'),
+				accountChangeLogs : [],
+				pageNum : 1,
+				totalPage : 1
+			},
+			filters: {
+				 dateFilter: function (data, format = "") {
+		             var dt = new Date(data);
+		             var y = dt.getFullYear();
+		             var m = (dt.getMonth()+1).toString().padStart(2,"0");
+		             var d = dt.getDate().toString().padStart(2,"0");
+		             var h = dt.getHours().toString().padStart(2,"0");
+		             var mm = dt.getMinutes().toString().padStart(2,"0");
+		             var s = dt.getSeconds().toString().padStart(2,"0");
+		             if (format.toLocaleLowerCase() === "yyyy-mm-dd" ||
+		                 format.toLocaleLowerCase() === "") {
+		                 return `${y}-${m}-${d}`;
+		             } else if (format.toLocaleLowerCase() === "yyyy/mm/dd") {
+		                 return `${y}/${m}/${d}`;
+		             } else if (format.toLocaleLowerCase() === "yyyy-mm-dd hh:mm:ss") {
+		                 return `${y}-${m}-${d} ${h}:${mm}:${s}`;
+		             } else if (format.toLocaleLowerCase() === "yyyy/mm/dd hh:mm:ss") {
+		                 return `${y}/${m}/${d} ${h}:${mm}:${s}`;
+		             } else {
+		                 return `输入的时间格式有误`;
+		             }
+		         }
+			 },
+			computed : {},
+			created : function() {
+			},
+			mounted : function() {
+				headerVM.title = '个人帐变';
+				headerVM.showBackFlag = true;
+				this.loadAccountChangeTypeDictItem();
+				this.loadByPage();
+			},
+			methods : {
+				/**
+				 * 加载账变类型字典项
+				 */
+				loadAccountChangeTypeDictItem : function() {
+					var that = this;
+						var dir = [
+								{code : 13 , name : '代理商分润'},
+								{code : 12 , name : '交易点数扣除'},
+								{code : 11 , name : '代付'},
+								{code : 1 , name : '交易点充值'},
+								{code : 14 , name : '码商分润'},
+								{code : '' , name : '所有'}
+						]
+					
+					
+					this.accountChangeTypeDictItems =  dir;
+				},
+
+				query : function() {
+					this.pageNum = 1;
+					this.loadByPage();
+				},
+
+				prePage : function() {
+					this.pageNum = this.pageNum - 1;
+					this.loadByPage();
+				},
+
+				nextPage : function() {
+					this.pageNum = this.pageNum + 1;
+					this.loadByPage();
+				},
+
+				loadByPage : function() {
+					var that = this;
+					that.$http.get('/order/findMyAccountChangeLogByPage', {
+						params : {
+							pageSize : 5,
+							pageNum : that.pageNum,
+							startTime : that.accountTime,
+							endTime : that.accountTime,
+							accountChangeTypeCode : that.accountChangeTypeCode
+						}
+					}).then(function(res) {
+						that.accountChangeLogs = res.body.result.content;
+						that.pageNum = res.body.result.pageNum;
+						that.totalPage = res.body.result.totalPage;
+					});
+				}
+			}
+		});
+	</script>
+</body>
+</html>
