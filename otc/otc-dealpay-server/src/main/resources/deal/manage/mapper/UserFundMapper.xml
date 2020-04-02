@@ -1,0 +1,538 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="deal.manage.mapper.UserFundMapper" >
+  <resultMap id="BaseResultMap" type="deal.manage.bean.UserFund" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="userId" property="userId" jdbcType="VARCHAR" />
+    <result column="userName" property="userName" jdbcType="VARCHAR" />
+    <result column="cashBalance" property="cashBalance" jdbcType="DECIMAL" />
+    <result column="rechargeNumber" property="rechargeNumber" jdbcType="DECIMAL" />
+    <result column="freezeBalance" property="freezeBalance" jdbcType="DECIMAL" />
+    <result column="accountBalance" property="accountBalance" jdbcType="DECIMAL" />
+    <result column="sumDealAmountR" property="sumDealAmountR" jdbcType="DECIMAL" />
+    <result column="sumDealAmountC" property="sumDealAmountC" jdbcType="DECIMAL" />
+    <result column="sumProfit" property="sumProfit" jdbcType="DECIMAL" />
+    <result column="sumAgentProfit" property="sumAgentProfit" jdbcType="DECIMAL" />
+    <result column="sumOrderCountR" property="sumOrderCountR" jdbcType="INTEGER" />
+    <result column="sumOrderCountC" property="sumOrderCountC" jdbcType="INTEGER" />
+    <result column="todayDealAmountR" property="todayDealAmountR" jdbcType="DECIMAL" />
+    <result column="todayDealAmountC" property="todayDealAmountC" jdbcType="DECIMAL" />
+    <result column="todayProfit" property="todayProfit" jdbcType="DECIMAL" />
+    <result column="todayAgentProfit" property="todayAgentProfit" jdbcType="DECIMAL" />
+    <result column="todayOrderCountR" property="todayOrderCountR" jdbcType="INTEGER" />
+    <result column="todayOrderCountC" property="todayOrderCountC" jdbcType="INTEGER" />
+    <result column="userType" property="userType" jdbcType="CHAR" />
+    <result column="agent" property="agent" jdbcType="VARCHAR" />
+    <result column="isAgent" property="isAgent" jdbcType="CHAR" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="submitTime" property="submitTime" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, userId, userName, cashBalance, rechargeNumber, freezeBalance, accountBalance, 
+    sumDealAmountR, sumDealAmountC, sumProfit, sumAgentProfit, sumOrderCountR, sumOrderCountC, 
+    todayDealAmountR, todayDealAmountC, todayProfit, todayAgentProfit, todayOrderCountR, 
+    todayOrderCountC, userType, agent, isAgent, createTime, submitTime, status, version
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="deal.manage.bean.UserFundExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from dealpay_user_fund
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dealpay_user_fund
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dealpay_user_fund
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="deal.manage.bean.UserFundExample" >
+    delete from dealpay_user_fund
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="deal.manage.bean.UserFund" useGeneratedKeys="true" keyProperty="id" >
+    insert into dealpay_user_fund (userId, userName, cashBalance, 
+      rechargeNumber, freezeBalance, accountBalance, 
+      sumDealAmountR, sumDealAmountC, sumProfit, 
+      sumAgentProfit, sumOrderCountR, sumOrderCountC, 
+      todayDealAmountR, todayDealAmountC, todayProfit, 
+      todayAgentProfit, todayOrderCountR, todayOrderCountC, 
+      userType, agent, isAgent, 
+      createTime, submitTime, status, 
+      version)
+    values (#{userId,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, #{cashBalance,jdbcType=DECIMAL}, 
+      #{rechargeNumber,jdbcType=DECIMAL}, #{freezeBalance,jdbcType=DECIMAL}, #{accountBalance,jdbcType=DECIMAL}, 
+      #{sumDealAmountR,jdbcType=DECIMAL}, #{sumDealAmountC,jdbcType=DECIMAL}, #{sumProfit,jdbcType=DECIMAL}, 
+      #{sumAgentProfit,jdbcType=DECIMAL}, #{sumOrderCountR,jdbcType=INTEGER}, #{sumOrderCountC,jdbcType=INTEGER}, 
+      #{todayDealAmountR,jdbcType=DECIMAL}, #{todayDealAmountC,jdbcType=DECIMAL}, #{todayProfit,jdbcType=DECIMAL}, 
+      #{todayAgentProfit,jdbcType=DECIMAL}, #{todayOrderCountR,jdbcType=INTEGER}, #{todayOrderCountC,jdbcType=INTEGER}, 
+      #{userType,jdbcType=CHAR}, #{agent,jdbcType=VARCHAR}, #{isAgent,jdbcType=CHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{submitTime,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, 
+      #{version,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="deal.manage.bean.UserFund" useGeneratedKeys="true" keyProperty="id" >
+    insert into dealpay_user_fund
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        userId,
+      </if>
+      <if test="userName != null" >
+        userName,
+      </if>
+      <if test="cashBalance != null" >
+        cashBalance,
+      </if>
+      <if test="rechargeNumber != null" >
+        rechargeNumber,
+      </if>
+      <if test="freezeBalance != null" >
+        freezeBalance,
+      </if>
+      <if test="accountBalance != null" >
+        accountBalance,
+      </if>
+      <if test="sumDealAmountR != null" >
+        sumDealAmountR,
+      </if>
+      <if test="sumDealAmountC != null" >
+        sumDealAmountC,
+      </if>
+      <if test="sumProfit != null" >
+        sumProfit,
+      </if>
+      <if test="sumAgentProfit != null" >
+        sumAgentProfit,
+      </if>
+      <if test="sumOrderCountR != null" >
+        sumOrderCountR,
+      </if>
+      <if test="sumOrderCountC != null" >
+        sumOrderCountC,
+      </if>
+      <if test="todayDealAmountR != null" >
+        todayDealAmountR,
+      </if>
+      <if test="todayDealAmountC != null" >
+        todayDealAmountC,
+      </if>
+      <if test="todayProfit != null" >
+        todayProfit,
+      </if>
+      <if test="todayAgentProfit != null" >
+        todayAgentProfit,
+      </if>
+      <if test="todayOrderCountR != null" >
+        todayOrderCountR,
+      </if>
+      <if test="todayOrderCountC != null" >
+        todayOrderCountC,
+      </if>
+      <if test="userType != null" >
+        userType,
+      </if>
+      <if test="agent != null" >
+        agent,
+      </if>
+      <if test="isAgent != null" >
+        isAgent,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="submitTime != null" >
+        submitTime,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null" >
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="cashBalance != null" >
+        #{cashBalance,jdbcType=DECIMAL},
+      </if>
+      <if test="rechargeNumber != null" >
+        #{rechargeNumber,jdbcType=DECIMAL},
+      </if>
+      <if test="freezeBalance != null" >
+        #{freezeBalance,jdbcType=DECIMAL},
+      </if>
+      <if test="accountBalance != null" >
+        #{accountBalance,jdbcType=DECIMAL},
+      </if>
+      <if test="sumDealAmountR != null" >
+        #{sumDealAmountR,jdbcType=DECIMAL},
+      </if>
+      <if test="sumDealAmountC != null" >
+        #{sumDealAmountC,jdbcType=DECIMAL},
+      </if>
+      <if test="sumProfit != null" >
+        #{sumProfit,jdbcType=DECIMAL},
+      </if>
+      <if test="sumAgentProfit != null" >
+        #{sumAgentProfit,jdbcType=DECIMAL},
+      </if>
+      <if test="sumOrderCountR != null" >
+        #{sumOrderCountR,jdbcType=INTEGER},
+      </if>
+      <if test="sumOrderCountC != null" >
+        #{sumOrderCountC,jdbcType=INTEGER},
+      </if>
+      <if test="todayDealAmountR != null" >
+        #{todayDealAmountR,jdbcType=DECIMAL},
+      </if>
+      <if test="todayDealAmountC != null" >
+        #{todayDealAmountC,jdbcType=DECIMAL},
+      </if>
+      <if test="todayProfit != null" >
+        #{todayProfit,jdbcType=DECIMAL},
+      </if>
+      <if test="todayAgentProfit != null" >
+        #{todayAgentProfit,jdbcType=DECIMAL},
+      </if>
+      <if test="todayOrderCountR != null" >
+        #{todayOrderCountR,jdbcType=INTEGER},
+      </if>
+      <if test="todayOrderCountC != null" >
+        #{todayOrderCountC,jdbcType=INTEGER},
+      </if>
+      <if test="userType != null" >
+        #{userType,jdbcType=CHAR},
+      </if>
+      <if test="agent != null" >
+        #{agent,jdbcType=VARCHAR},
+      </if>
+      <if test="isAgent != null" >
+        #{isAgent,jdbcType=CHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="submitTime != null" >
+        #{submitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="deal.manage.bean.UserFundExample" resultType="java.lang.Integer" >
+    select count(*) from dealpay_user_fund
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update dealpay_user_fund
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.userId != null" >
+        userId = #{record.userId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userName != null" >
+        userName = #{record.userName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.cashBalance != null" >
+        cashBalance = #{record.cashBalance,jdbcType=DECIMAL},
+      </if>
+      <if test="record.rechargeNumber != null" >
+        rechargeNumber = #{record.rechargeNumber,jdbcType=DECIMAL},
+      </if>
+      <if test="record.freezeBalance != null" >
+        freezeBalance = #{record.freezeBalance,jdbcType=DECIMAL},
+      </if>
+      <if test="record.accountBalance != null" >
+        accountBalance = #{record.accountBalance,jdbcType=DECIMAL},
+      </if>
+      <if test="record.sumDealAmountR != null" >
+        sumDealAmountR = #{record.sumDealAmountR,jdbcType=DECIMAL},
+      </if>
+      <if test="record.sumDealAmountC != null" >
+        sumDealAmountC = #{record.sumDealAmountC,jdbcType=DECIMAL},
+      </if>
+      <if test="record.sumProfit != null" >
+        sumProfit = #{record.sumProfit,jdbcType=DECIMAL},
+      </if>
+      <if test="record.sumAgentProfit != null" >
+        sumAgentProfit = #{record.sumAgentProfit,jdbcType=DECIMAL},
+      </if>
+      <if test="record.sumOrderCountR != null" >
+        sumOrderCountR = #{record.sumOrderCountR,jdbcType=INTEGER},
+      </if>
+      <if test="record.sumOrderCountC != null" >
+        sumOrderCountC = #{record.sumOrderCountC,jdbcType=INTEGER},
+      </if>
+      <if test="record.todayDealAmountR != null" >
+        todayDealAmountR = #{record.todayDealAmountR,jdbcType=DECIMAL},
+      </if>
+      <if test="record.todayDealAmountC != null" >
+        todayDealAmountC = #{record.todayDealAmountC,jdbcType=DECIMAL},
+      </if>
+      <if test="record.todayProfit != null" >
+        todayProfit = #{record.todayProfit,jdbcType=DECIMAL},
+      </if>
+      <if test="record.todayAgentProfit != null" >
+        todayAgentProfit = #{record.todayAgentProfit,jdbcType=DECIMAL},
+      </if>
+      <if test="record.todayOrderCountR != null" >
+        todayOrderCountR = #{record.todayOrderCountR,jdbcType=INTEGER},
+      </if>
+      <if test="record.todayOrderCountC != null" >
+        todayOrderCountC = #{record.todayOrderCountC,jdbcType=INTEGER},
+      </if>
+      <if test="record.userType != null" >
+        userType = #{record.userType,jdbcType=CHAR},
+      </if>
+      <if test="record.agent != null" >
+        agent = #{record.agent,jdbcType=VARCHAR},
+      </if>
+      <if test="record.isAgent != null" >
+        isAgent = #{record.isAgent,jdbcType=CHAR},
+      </if>
+      <if test="record.createTime != null" >
+        createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.submitTime != null" >
+        submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.status != null" >
+        status = #{record.status,jdbcType=INTEGER},
+      </if>
+      <if test="record.version != null" >
+        version = #{record.version,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update dealpay_user_fund
+    set id = #{record.id,jdbcType=INTEGER},
+      userId = #{record.userId,jdbcType=VARCHAR},
+      userName = #{record.userName,jdbcType=VARCHAR},
+      cashBalance = #{record.cashBalance,jdbcType=DECIMAL},
+      rechargeNumber = #{record.rechargeNumber,jdbcType=DECIMAL},
+      freezeBalance = #{record.freezeBalance,jdbcType=DECIMAL},
+      accountBalance = #{record.accountBalance,jdbcType=DECIMAL},
+      sumDealAmountR = #{record.sumDealAmountR,jdbcType=DECIMAL},
+      sumDealAmountC = #{record.sumDealAmountC,jdbcType=DECIMAL},
+      sumProfit = #{record.sumProfit,jdbcType=DECIMAL},
+      sumAgentProfit = #{record.sumAgentProfit,jdbcType=DECIMAL},
+      sumOrderCountR = #{record.sumOrderCountR,jdbcType=INTEGER},
+      sumOrderCountC = #{record.sumOrderCountC,jdbcType=INTEGER},
+      todayDealAmountR = #{record.todayDealAmountR,jdbcType=DECIMAL},
+      todayDealAmountC = #{record.todayDealAmountC,jdbcType=DECIMAL},
+      todayProfit = #{record.todayProfit,jdbcType=DECIMAL},
+      todayAgentProfit = #{record.todayAgentProfit,jdbcType=DECIMAL},
+      todayOrderCountR = #{record.todayOrderCountR,jdbcType=INTEGER},
+      todayOrderCountC = #{record.todayOrderCountC,jdbcType=INTEGER},
+      userType = #{record.userType,jdbcType=CHAR},
+      agent = #{record.agent,jdbcType=VARCHAR},
+      isAgent = #{record.isAgent,jdbcType=CHAR},
+      createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
+      status = #{record.status,jdbcType=INTEGER},
+      version = #{record.version,jdbcType=INTEGER}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="deal.manage.bean.UserFund" >
+    update dealpay_user_fund
+    <set >
+      <if test="userId != null" >
+        userId = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null" >
+        userName = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="cashBalance != null" >
+        cashBalance = #{cashBalance,jdbcType=DECIMAL},
+      </if>
+      <if test="rechargeNumber != null" >
+        rechargeNumber = #{rechargeNumber,jdbcType=DECIMAL},
+      </if>
+      <if test="freezeBalance != null" >
+        freezeBalance = #{freezeBalance,jdbcType=DECIMAL},
+      </if>
+      <if test="accountBalance != null" >
+        accountBalance = #{accountBalance,jdbcType=DECIMAL},
+      </if>
+      <if test="sumDealAmountR != null" >
+        sumDealAmountR = #{sumDealAmountR,jdbcType=DECIMAL},
+      </if>
+      <if test="sumDealAmountC != null" >
+        sumDealAmountC = #{sumDealAmountC,jdbcType=DECIMAL},
+      </if>
+      <if test="sumProfit != null" >
+        sumProfit = #{sumProfit,jdbcType=DECIMAL},
+      </if>
+      <if test="sumAgentProfit != null" >
+        sumAgentProfit = #{sumAgentProfit,jdbcType=DECIMAL},
+      </if>
+      <if test="sumOrderCountR != null" >
+        sumOrderCountR = #{sumOrderCountR,jdbcType=INTEGER},
+      </if>
+      <if test="sumOrderCountC != null" >
+        sumOrderCountC = #{sumOrderCountC,jdbcType=INTEGER},
+      </if>
+      <if test="todayDealAmountR != null" >
+        todayDealAmountR = #{todayDealAmountR,jdbcType=DECIMAL},
+      </if>
+      <if test="todayDealAmountC != null" >
+        todayDealAmountC = #{todayDealAmountC,jdbcType=DECIMAL},
+      </if>
+      <if test="todayProfit != null" >
+        todayProfit = #{todayProfit,jdbcType=DECIMAL},
+      </if>
+      <if test="todayAgentProfit != null" >
+        todayAgentProfit = #{todayAgentProfit,jdbcType=DECIMAL},
+      </if>
+      <if test="todayOrderCountR != null" >
+        todayOrderCountR = #{todayOrderCountR,jdbcType=INTEGER},
+      </if>
+      <if test="todayOrderCountC != null" >
+        todayOrderCountC = #{todayOrderCountC,jdbcType=INTEGER},
+      </if>
+      <if test="userType != null" >
+        userType = #{userType,jdbcType=CHAR},
+      </if>
+      <if test="agent != null" >
+        agent = #{agent,jdbcType=VARCHAR},
+      </if>
+      <if test="isAgent != null" >
+        isAgent = #{isAgent,jdbcType=CHAR},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="submitTime != null" >
+        submitTime = #{submitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        version = #{version,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="deal.manage.bean.UserFund" >
+    update dealpay_user_fund
+    set userId = #{userId,jdbcType=VARCHAR},
+      userName = #{userName,jdbcType=VARCHAR},
+      cashBalance = #{cashBalance,jdbcType=DECIMAL},
+      rechargeNumber = #{rechargeNumber,jdbcType=DECIMAL},
+      freezeBalance = #{freezeBalance,jdbcType=DECIMAL},
+      accountBalance = #{accountBalance,jdbcType=DECIMAL},
+      sumDealAmountR = #{sumDealAmountR,jdbcType=DECIMAL},
+      sumDealAmountC = #{sumDealAmountC,jdbcType=DECIMAL},
+      sumProfit = #{sumProfit,jdbcType=DECIMAL},
+      sumAgentProfit = #{sumAgentProfit,jdbcType=DECIMAL},
+      sumOrderCountR = #{sumOrderCountR,jdbcType=INTEGER},
+      sumOrderCountC = #{sumOrderCountC,jdbcType=INTEGER},
+      todayDealAmountR = #{todayDealAmountR,jdbcType=DECIMAL},
+      todayDealAmountC = #{todayDealAmountC,jdbcType=DECIMAL},
+      todayProfit = #{todayProfit,jdbcType=DECIMAL},
+      todayAgentProfit = #{todayAgentProfit,jdbcType=DECIMAL},
+      todayOrderCountR = #{todayOrderCountR,jdbcType=INTEGER},
+      todayOrderCountC = #{todayOrderCountC,jdbcType=INTEGER},
+      userType = #{userType,jdbcType=CHAR},
+      agent = #{agent,jdbcType=VARCHAR},
+      isAgent = #{isAgent,jdbcType=CHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      submitTime = #{submitTime,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=INTEGER},
+      version = #{version,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

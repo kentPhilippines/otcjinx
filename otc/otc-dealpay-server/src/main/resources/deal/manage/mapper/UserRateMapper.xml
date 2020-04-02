@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="deal.manage.mapper.UserRateMapper" >
+  <resultMap id="BaseResultMap" type="deal.manage.bean.UserRate" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="userId" property="userId" jdbcType="VARCHAR" />
+    <result column="userType" property="userType" jdbcType="INTEGER" />
+    <result column="switchs" property="switchs" jdbcType="INTEGER" />
+    <result column="fee" property="fee" jdbcType="DECIMAL" />
+    <result column="feeType" property="feeType" jdbcType="INTEGER" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="submitTime" property="submitTime" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="retain1" property="retain1" jdbcType="CHAR" />
+    <result column="retain2" property="retain2" jdbcType="CHAR" />
+    <result column="retain3" property="retain3" jdbcType="CHAR" />
+    <result column="retain4" property="retain4" jdbcType="CHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, userId, userType, switchs, fee, feeType, createTime, submitTime, status, retain1, 
+    retain2, retain3, retain4
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="deal.manage.bean.UserRateExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from dealpay_user_rate
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dealpay_user_rate
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dealpay_user_rate
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="deal.manage.bean.UserRateExample" >
+    delete from dealpay_user_rate
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="deal.manage.bean.UserRate" useGeneratedKeys="true" keyProperty="id" >
+    insert into dealpay_user_rate (userId, userType, switchs, 
+      fee, feeType, createTime, 
+      submitTime, status, retain1, 
+      retain2, retain3, retain4)
+    values (#{userId,jdbcType=VARCHAR}, #{userType,jdbcType=INTEGER}, #{switchs,jdbcType=INTEGER}, 
+      #{fee,jdbcType=DECIMAL}, #{feeType,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{submitTime,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, #{retain1,jdbcType=CHAR}, 
+      #{retain2,jdbcType=CHAR}, #{retain3,jdbcType=CHAR}, #{retain4,jdbcType=CHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="deal.manage.bean.UserRate" useGeneratedKeys="true" keyProperty="id" >
+    insert into dealpay_user_rate
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        userId,
+      </if>
+      <if test="userType != null" >
+        userType,
+      </if>
+      <if test="switchs != null" >
+        switchs,
+      </if>
+      <if test="fee != null" >
+        fee,
+      </if>
+      <if test="feeType != null" >
+        feeType,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="submitTime != null" >
+        submitTime,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="retain1 != null" >
+        retain1,
+      </if>
+      <if test="retain2 != null" >
+        retain2,
+      </if>
+      <if test="retain3 != null" >
+        retain3,
+      </if>
+      <if test="retain4 != null" >
+        retain4,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="userType != null" >
+        #{userType,jdbcType=INTEGER},
+      </if>
+      <if test="switchs != null" >
+        #{switchs,jdbcType=INTEGER},
+      </if>
+      <if test="fee != null" >
+        #{fee,jdbcType=DECIMAL},
+      </if>
+      <if test="feeType != null" >
+        #{feeType,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="submitTime != null" >
+        #{submitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="retain1 != null" >
+        #{retain1,jdbcType=CHAR},
+      </if>
+      <if test="retain2 != null" >
+        #{retain2,jdbcType=CHAR},
+      </if>
+      <if test="retain3 != null" >
+        #{retain3,jdbcType=CHAR},
+      </if>
+      <if test="retain4 != null" >
+        #{retain4,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="deal.manage.bean.UserRateExample" resultType="java.lang.Integer" >
+    select count(*) from dealpay_user_rate
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update dealpay_user_rate
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.userId != null" >
+        userId = #{record.userId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userType != null" >
+        userType = #{record.userType,jdbcType=INTEGER},
+      </if>
+      <if test="record.switchs != null" >
+        switchs = #{record.switchs,jdbcType=INTEGER},
+      </if>
+      <if test="record.fee != null" >
+        fee = #{record.fee,jdbcType=DECIMAL},
+      </if>
+      <if test="record.feeType != null" >
+        feeType = #{record.feeType,jdbcType=INTEGER},
+      </if>
+      <if test="record.createTime != null" >
+        createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.submitTime != null" >
+        submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.status != null" >
+        status = #{record.status,jdbcType=INTEGER},
+      </if>
+      <if test="record.retain1 != null" >
+        retain1 = #{record.retain1,jdbcType=CHAR},
+      </if>
+      <if test="record.retain2 != null" >
+        retain2 = #{record.retain2,jdbcType=CHAR},
+      </if>
+      <if test="record.retain3 != null" >
+        retain3 = #{record.retain3,jdbcType=CHAR},
+      </if>
+      <if test="record.retain4 != null" >
+        retain4 = #{record.retain4,jdbcType=CHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update dealpay_user_rate
+    set id = #{record.id,jdbcType=INTEGER},
+      userId = #{record.userId,jdbcType=VARCHAR},
+      userType = #{record.userType,jdbcType=INTEGER},
+      switchs = #{record.switchs,jdbcType=INTEGER},
+      fee = #{record.fee,jdbcType=DECIMAL},
+      feeType = #{record.feeType,jdbcType=INTEGER},
+      createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
+      status = #{record.status,jdbcType=INTEGER},
+      retain1 = #{record.retain1,jdbcType=CHAR},
+      retain2 = #{record.retain2,jdbcType=CHAR},
+      retain3 = #{record.retain3,jdbcType=CHAR},
+      retain4 = #{record.retain4,jdbcType=CHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="deal.manage.bean.UserRate" >
+    update dealpay_user_rate
+    <set >
+      <if test="userId != null" >
+        userId = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="userType != null" >
+        userType = #{userType,jdbcType=INTEGER},
+      </if>
+      <if test="switchs != null" >
+        switchs = #{switchs,jdbcType=INTEGER},
+      </if>
+      <if test="fee != null" >
+        fee = #{fee,jdbcType=DECIMAL},
+      </if>
+      <if test="feeType != null" >
+        feeType = #{feeType,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="submitTime != null" >
+        submitTime = #{submitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="retain1 != null" >
+        retain1 = #{retain1,jdbcType=CHAR},
+      </if>
+      <if test="retain2 != null" >
+        retain2 = #{retain2,jdbcType=CHAR},
+      </if>
+      <if test="retain3 != null" >
+        retain3 = #{retain3,jdbcType=CHAR},
+      </if>
+      <if test="retain4 != null" >
+        retain4 = #{retain4,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="deal.manage.bean.UserRate" >
+    update dealpay_user_rate
+    set userId = #{userId,jdbcType=VARCHAR},
+      userType = #{userType,jdbcType=INTEGER},
+      switchs = #{switchs,jdbcType=INTEGER},
+      fee = #{fee,jdbcType=DECIMAL},
+      feeType = #{feeType,jdbcType=INTEGER},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      submitTime = #{submitTime,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=INTEGER},
+      retain1 = #{retain1,jdbcType=CHAR},
+      retain2 = #{retain2,jdbcType=CHAR},
+      retain3 = #{retain3,jdbcType=CHAR},
+      retain4 = #{retain4,jdbcType=CHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

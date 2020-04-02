@@ -1,0 +1,495 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="deal.manage.mapper.RechargeMapper" >
+  <resultMap id="BaseResultMap" type="deal.manage.bean.Recharge" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="orderId" property="orderId" jdbcType="CHAR" />
+    <result column="userId" property="userId" jdbcType="VARCHAR" />
+    <result column="rechargeType" property="rechargeType" jdbcType="INTEGER" />
+    <result column="orderStatus" property="orderStatus" jdbcType="CHAR" />
+    <result column="depositor" property="depositor" jdbcType="VARCHAR" />
+    <result column="amount" property="amount" jdbcType="DECIMAL" />
+    <result column="fee" property="fee" jdbcType="DECIMAL" />
+    <result column="actualAmount" property="actualAmount" jdbcType="DECIMAL" />
+    <result column="chargeBankcard" property="chargeBankcard" jdbcType="CHAR" />
+    <result column="phone" property="phone" jdbcType="CHAR" />
+    <result column="notfiy" property="notfiy" jdbcType="CHAR" />
+    <result column="chargeCard" property="chargeCard" jdbcType="CHAR" />
+    <result column="chargePerson" property="chargePerson" jdbcType="CHAR" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="submitTime" property="submitTime" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="retain1" property="retain1" jdbcType="CHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="deal.manage.bean.Recharge" extends="BaseResultMap" >
+    <result column="chargeReason" property="chargeReason" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, orderId, userId, rechargeType, orderStatus, depositor, amount, fee, actualAmount, 
+    chargeBankcard, phone, notfiy, chargeCard, chargePerson, createTime, submitTime, 
+    status, retain1
+  </sql>
+  <sql id="Blob_Column_List" >
+    chargeReason
+  </sql>
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="deal.manage.bean.RechargeExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from dealpay_recharge
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="deal.manage.bean.RechargeExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from dealpay_recharge
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from dealpay_recharge
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dealpay_recharge
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="deal.manage.bean.RechargeExample" >
+    delete from dealpay_recharge
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="deal.manage.bean.Recharge" useGeneratedKeys="true" keyProperty="id" >
+    insert into dealpay_recharge (orderId, userId, rechargeType, 
+      orderStatus, depositor, amount, 
+      fee, actualAmount, chargeBankcard, 
+      phone, notfiy, chargeCard, chargePerson, 
+      createTime, submitTime, status, 
+      retain1, chargeReason)
+    values (#{orderId,jdbcType=CHAR}, #{userId,jdbcType=VARCHAR}, #{rechargeType,jdbcType=INTEGER}, 
+      #{orderStatus,jdbcType=CHAR}, #{depositor,jdbcType=VARCHAR}, #{amount,jdbcType=DECIMAL}, 
+      #{fee,jdbcType=DECIMAL}, #{actualAmount,jdbcType=DECIMAL}, #{chargeBankcard,jdbcType=CHAR}, 
+      #{phone,jdbcType=CHAR}, #{notfiy,jdbcType=CHAR}, #{chargeCard,jdbcType=CHAR}, #{chargePerson,jdbcType=CHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{submitTime,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, 
+      #{retain1,jdbcType=CHAR}, #{chargeReason,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="deal.manage.bean.Recharge" useGeneratedKeys="true" keyProperty="id" >
+    insert into dealpay_recharge
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="orderId != null" >
+        orderId,
+      </if>
+      <if test="userId != null" >
+        userId,
+      </if>
+      <if test="rechargeType != null" >
+        rechargeType,
+      </if>
+      <if test="orderStatus != null" >
+        orderStatus,
+      </if>
+      <if test="depositor != null" >
+        depositor,
+      </if>
+      <if test="amount != null" >
+        amount,
+      </if>
+      <if test="fee != null" >
+        fee,
+      </if>
+      <if test="actualAmount != null" >
+        actualAmount,
+      </if>
+      <if test="chargeBankcard != null" >
+        chargeBankcard,
+      </if>
+      <if test="phone != null" >
+        phone,
+      </if>
+      <if test="notfiy != null" >
+        notfiy,
+      </if>
+      <if test="chargeCard != null" >
+        chargeCard,
+      </if>
+      <if test="chargePerson != null" >
+        chargePerson,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="submitTime != null" >
+        submitTime,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="retain1 != null" >
+        retain1,
+      </if>
+      <if test="chargeReason != null" >
+        chargeReason,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="orderId != null" >
+        #{orderId,jdbcType=CHAR},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="rechargeType != null" >
+        #{rechargeType,jdbcType=INTEGER},
+      </if>
+      <if test="orderStatus != null" >
+        #{orderStatus,jdbcType=CHAR},
+      </if>
+      <if test="depositor != null" >
+        #{depositor,jdbcType=VARCHAR},
+      </if>
+      <if test="amount != null" >
+        #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="fee != null" >
+        #{fee,jdbcType=DECIMAL},
+      </if>
+      <if test="actualAmount != null" >
+        #{actualAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="chargeBankcard != null" >
+        #{chargeBankcard,jdbcType=CHAR},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=CHAR},
+      </if>
+      <if test="notfiy != null" >
+        #{notfiy,jdbcType=CHAR},
+      </if>
+      <if test="chargeCard != null" >
+        #{chargeCard,jdbcType=CHAR},
+      </if>
+      <if test="chargePerson != null" >
+        #{chargePerson,jdbcType=CHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="submitTime != null" >
+        #{submitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="retain1 != null" >
+        #{retain1,jdbcType=CHAR},
+      </if>
+      <if test="chargeReason != null" >
+        #{chargeReason,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="deal.manage.bean.RechargeExample" resultType="java.lang.Integer" >
+    select count(*) from dealpay_recharge
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update dealpay_recharge
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.orderId != null" >
+        orderId = #{record.orderId,jdbcType=CHAR},
+      </if>
+      <if test="record.userId != null" >
+        userId = #{record.userId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.rechargeType != null" >
+        rechargeType = #{record.rechargeType,jdbcType=INTEGER},
+      </if>
+      <if test="record.orderStatus != null" >
+        orderStatus = #{record.orderStatus,jdbcType=CHAR},
+      </if>
+      <if test="record.depositor != null" >
+        depositor = #{record.depositor,jdbcType=VARCHAR},
+      </if>
+      <if test="record.amount != null" >
+        amount = #{record.amount,jdbcType=DECIMAL},
+      </if>
+      <if test="record.fee != null" >
+        fee = #{record.fee,jdbcType=DECIMAL},
+      </if>
+      <if test="record.actualAmount != null" >
+        actualAmount = #{record.actualAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="record.chargeBankcard != null" >
+        chargeBankcard = #{record.chargeBankcard,jdbcType=CHAR},
+      </if>
+      <if test="record.phone != null" >
+        phone = #{record.phone,jdbcType=CHAR},
+      </if>
+      <if test="record.notfiy != null" >
+        notfiy = #{record.notfiy,jdbcType=CHAR},
+      </if>
+      <if test="record.chargeCard != null" >
+        chargeCard = #{record.chargeCard,jdbcType=CHAR},
+      </if>
+      <if test="record.chargePerson != null" >
+        chargePerson = #{record.chargePerson,jdbcType=CHAR},
+      </if>
+      <if test="record.createTime != null" >
+        createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.submitTime != null" >
+        submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.status != null" >
+        status = #{record.status,jdbcType=INTEGER},
+      </if>
+      <if test="record.retain1 != null" >
+        retain1 = #{record.retain1,jdbcType=CHAR},
+      </if>
+      <if test="record.chargeReason != null" >
+        chargeReason = #{record.chargeReason,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map" >
+    update dealpay_recharge
+    set id = #{record.id,jdbcType=INTEGER},
+      orderId = #{record.orderId,jdbcType=CHAR},
+      userId = #{record.userId,jdbcType=VARCHAR},
+      rechargeType = #{record.rechargeType,jdbcType=INTEGER},
+      orderStatus = #{record.orderStatus,jdbcType=CHAR},
+      depositor = #{record.depositor,jdbcType=VARCHAR},
+      amount = #{record.amount,jdbcType=DECIMAL},
+      fee = #{record.fee,jdbcType=DECIMAL},
+      actualAmount = #{record.actualAmount,jdbcType=DECIMAL},
+      chargeBankcard = #{record.chargeBankcard,jdbcType=CHAR},
+      phone = #{record.phone,jdbcType=CHAR},
+      notfiy = #{record.notfiy,jdbcType=CHAR},
+      chargeCard = #{record.chargeCard,jdbcType=CHAR},
+      chargePerson = #{record.chargePerson,jdbcType=CHAR},
+      createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
+      status = #{record.status,jdbcType=INTEGER},
+      retain1 = #{record.retain1,jdbcType=CHAR},
+      chargeReason = #{record.chargeReason,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update dealpay_recharge
+    set id = #{record.id,jdbcType=INTEGER},
+      orderId = #{record.orderId,jdbcType=CHAR},
+      userId = #{record.userId,jdbcType=VARCHAR},
+      rechargeType = #{record.rechargeType,jdbcType=INTEGER},
+      orderStatus = #{record.orderStatus,jdbcType=CHAR},
+      depositor = #{record.depositor,jdbcType=VARCHAR},
+      amount = #{record.amount,jdbcType=DECIMAL},
+      fee = #{record.fee,jdbcType=DECIMAL},
+      actualAmount = #{record.actualAmount,jdbcType=DECIMAL},
+      chargeBankcard = #{record.chargeBankcard,jdbcType=CHAR},
+      phone = #{record.phone,jdbcType=CHAR},
+      notfiy = #{record.notfiy,jdbcType=CHAR},
+      chargeCard = #{record.chargeCard,jdbcType=CHAR},
+      chargePerson = #{record.chargePerson,jdbcType=CHAR},
+      createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
+      status = #{record.status,jdbcType=INTEGER},
+      retain1 = #{record.retain1,jdbcType=CHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="deal.manage.bean.Recharge" >
+    update dealpay_recharge
+    <set >
+      <if test="orderId != null" >
+        orderId = #{orderId,jdbcType=CHAR},
+      </if>
+      <if test="userId != null" >
+        userId = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="rechargeType != null" >
+        rechargeType = #{rechargeType,jdbcType=INTEGER},
+      </if>
+      <if test="orderStatus != null" >
+        orderStatus = #{orderStatus,jdbcType=CHAR},
+      </if>
+      <if test="depositor != null" >
+        depositor = #{depositor,jdbcType=VARCHAR},
+      </if>
+      <if test="amount != null" >
+        amount = #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="fee != null" >
+        fee = #{fee,jdbcType=DECIMAL},
+      </if>
+      <if test="actualAmount != null" >
+        actualAmount = #{actualAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="chargeBankcard != null" >
+        chargeBankcard = #{chargeBankcard,jdbcType=CHAR},
+      </if>
+      <if test="phone != null" >
+        phone = #{phone,jdbcType=CHAR},
+      </if>
+      <if test="notfiy != null" >
+        notfiy = #{notfiy,jdbcType=CHAR},
+      </if>
+      <if test="chargeCard != null" >
+        chargeCard = #{chargeCard,jdbcType=CHAR},
+      </if>
+      <if test="chargePerson != null" >
+        chargePerson = #{chargePerson,jdbcType=CHAR},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="submitTime != null" >
+        submitTime = #{submitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="retain1 != null" >
+        retain1 = #{retain1,jdbcType=CHAR},
+      </if>
+      <if test="chargeReason != null" >
+        chargeReason = #{chargeReason,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="deal.manage.bean.Recharge" >
+    update dealpay_recharge
+    set orderId = #{orderId,jdbcType=CHAR},
+      userId = #{userId,jdbcType=VARCHAR},
+      rechargeType = #{rechargeType,jdbcType=INTEGER},
+      orderStatus = #{orderStatus,jdbcType=CHAR},
+      depositor = #{depositor,jdbcType=VARCHAR},
+      amount = #{amount,jdbcType=DECIMAL},
+      fee = #{fee,jdbcType=DECIMAL},
+      actualAmount = #{actualAmount,jdbcType=DECIMAL},
+      chargeBankcard = #{chargeBankcard,jdbcType=CHAR},
+      phone = #{phone,jdbcType=CHAR},
+      notfiy = #{notfiy,jdbcType=CHAR},
+      chargeCard = #{chargeCard,jdbcType=CHAR},
+      chargePerson = #{chargePerson,jdbcType=CHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      submitTime = #{submitTime,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=INTEGER},
+      retain1 = #{retain1,jdbcType=CHAR},
+      chargeReason = #{chargeReason,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="deal.manage.bean.Recharge" >
+    update dealpay_recharge
+    set orderId = #{orderId,jdbcType=CHAR},
+      userId = #{userId,jdbcType=VARCHAR},
+      rechargeType = #{rechargeType,jdbcType=INTEGER},
+      orderStatus = #{orderStatus,jdbcType=CHAR},
+      depositor = #{depositor,jdbcType=VARCHAR},
+      amount = #{amount,jdbcType=DECIMAL},
+      fee = #{fee,jdbcType=DECIMAL},
+      actualAmount = #{actualAmount,jdbcType=DECIMAL},
+      chargeBankcard = #{chargeBankcard,jdbcType=CHAR},
+      phone = #{phone,jdbcType=CHAR},
+      notfiy = #{notfiy,jdbcType=CHAR},
+      chargeCard = #{chargeCard,jdbcType=CHAR},
+      chargePerson = #{chargePerson,jdbcType=CHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      submitTime = #{submitTime,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=INTEGER},
+      retain1 = #{retain1,jdbcType=CHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,428 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="deal.manage.mapper.WithdrawMapper" >
+  <resultMap id="BaseResultMap" type="deal.manage.bean.Withdraw" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="orderId" property="orderId" jdbcType="CHAR" />
+    <result column="userId" property="userId" jdbcType="VARCHAR" />
+    <result column="withdrawType" property="withdrawType" jdbcType="INTEGER" />
+    <result column="bankNo" property="bankNo" jdbcType="VARCHAR" />
+    <result column="accname" property="accname" jdbcType="VARCHAR" />
+    <result column="orderStatus" property="orderStatus" jdbcType="CHAR" />
+    <result column="bankName" property="bankName" jdbcType="VARCHAR" />
+    <result column="amount" property="amount" jdbcType="DECIMAL" />
+    <result column="fee" property="fee" jdbcType="DECIMAL" />
+    <result column="actualAmount" property="actualAmount" jdbcType="DECIMAL" />
+    <result column="mobile" property="mobile" jdbcType="CHAR" />
+    <result column="notify" property="notify" jdbcType="VARCHAR" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="submitTime" property="submitTime" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="witType" property="witType" jdbcType="VARCHAR" />
+    <result column="retain1" property="retain1" jdbcType="CHAR" />
+    <result column="retain2" property="retain2" jdbcType="CHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, orderId, userId, withdrawType, bankNo, accname, orderStatus, bankName, amount, 
+    fee, actualAmount, mobile, notify, createTime, submitTime, status, witType, retain1, 
+    retain2
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="deal.manage.bean.WithdrawExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from dealpay_withdraw
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from dealpay_withdraw
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dealpay_withdraw
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="deal.manage.bean.WithdrawExample" >
+    delete from dealpay_withdraw
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="deal.manage.bean.Withdraw" useGeneratedKeys="true" keyProperty="id" >
+    insert into dealpay_withdraw (orderId, userId, withdrawType, 
+      bankNo, accname, orderStatus, 
+      bankName, amount, fee, 
+      actualAmount, mobile, notify, 
+      createTime, submitTime, status, 
+      witType, retain1, retain2
+      )
+    values (#{orderId,jdbcType=CHAR}, #{userId,jdbcType=VARCHAR}, #{withdrawType,jdbcType=INTEGER}, 
+      #{bankNo,jdbcType=VARCHAR}, #{accname,jdbcType=VARCHAR}, #{orderStatus,jdbcType=CHAR}, 
+      #{bankName,jdbcType=VARCHAR}, #{amount,jdbcType=DECIMAL}, #{fee,jdbcType=DECIMAL}, 
+      #{actualAmount,jdbcType=DECIMAL}, #{mobile,jdbcType=CHAR}, #{notify,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{submitTime,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, 
+      #{witType,jdbcType=VARCHAR}, #{retain1,jdbcType=CHAR}, #{retain2,jdbcType=CHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="deal.manage.bean.Withdraw" useGeneratedKeys="true" keyProperty="id" >
+    insert into dealpay_withdraw
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="orderId != null" >
+        orderId,
+      </if>
+      <if test="userId != null" >
+        userId,
+      </if>
+      <if test="withdrawType != null" >
+        withdrawType,
+      </if>
+      <if test="bankNo != null" >
+        bankNo,
+      </if>
+      <if test="accname != null" >
+        accname,
+      </if>
+      <if test="orderStatus != null" >
+        orderStatus,
+      </if>
+      <if test="bankName != null" >
+        bankName,
+      </if>
+      <if test="amount != null" >
+        amount,
+      </if>
+      <if test="fee != null" >
+        fee,
+      </if>
+      <if test="actualAmount != null" >
+        actualAmount,
+      </if>
+      <if test="mobile != null" >
+        mobile,
+      </if>
+      <if test="notify != null" >
+        notify,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="submitTime != null" >
+        submitTime,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="witType != null" >
+        witType,
+      </if>
+      <if test="retain1 != null" >
+        retain1,
+      </if>
+      <if test="retain2 != null" >
+        retain2,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="orderId != null" >
+        #{orderId,jdbcType=CHAR},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="withdrawType != null" >
+        #{withdrawType,jdbcType=INTEGER},
+      </if>
+      <if test="bankNo != null" >
+        #{bankNo,jdbcType=VARCHAR},
+      </if>
+      <if test="accname != null" >
+        #{accname,jdbcType=VARCHAR},
+      </if>
+      <if test="orderStatus != null" >
+        #{orderStatus,jdbcType=CHAR},
+      </if>
+      <if test="bankName != null" >
+        #{bankName,jdbcType=VARCHAR},
+      </if>
+      <if test="amount != null" >
+        #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="fee != null" >
+        #{fee,jdbcType=DECIMAL},
+      </if>
+      <if test="actualAmount != null" >
+        #{actualAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="mobile != null" >
+        #{mobile,jdbcType=CHAR},
+      </if>
+      <if test="notify != null" >
+        #{notify,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="submitTime != null" >
+        #{submitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="witType != null" >
+        #{witType,jdbcType=VARCHAR},
+      </if>
+      <if test="retain1 != null" >
+        #{retain1,jdbcType=CHAR},
+      </if>
+      <if test="retain2 != null" >
+        #{retain2,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="deal.manage.bean.WithdrawExample" resultType="java.lang.Integer" >
+    select count(*) from dealpay_withdraw
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update dealpay_withdraw
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.orderId != null" >
+        orderId = #{record.orderId,jdbcType=CHAR},
+      </if>
+      <if test="record.userId != null" >
+        userId = #{record.userId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.withdrawType != null" >
+        withdrawType = #{record.withdrawType,jdbcType=INTEGER},
+      </if>
+      <if test="record.bankNo != null" >
+        bankNo = #{record.bankNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.accname != null" >
+        accname = #{record.accname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.orderStatus != null" >
+        orderStatus = #{record.orderStatus,jdbcType=CHAR},
+      </if>
+      <if test="record.bankName != null" >
+        bankName = #{record.bankName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.amount != null" >
+        amount = #{record.amount,jdbcType=DECIMAL},
+      </if>
+      <if test="record.fee != null" >
+        fee = #{record.fee,jdbcType=DECIMAL},
+      </if>
+      <if test="record.actualAmount != null" >
+        actualAmount = #{record.actualAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="record.mobile != null" >
+        mobile = #{record.mobile,jdbcType=CHAR},
+      </if>
+      <if test="record.notify != null" >
+        notify = #{record.notify,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null" >
+        createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.submitTime != null" >
+        submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.status != null" >
+        status = #{record.status,jdbcType=INTEGER},
+      </if>
+      <if test="record.witType != null" >
+        witType = #{record.witType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.retain1 != null" >
+        retain1 = #{record.retain1,jdbcType=CHAR},
+      </if>
+      <if test="record.retain2 != null" >
+        retain2 = #{record.retain2,jdbcType=CHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update dealpay_withdraw
+    set id = #{record.id,jdbcType=INTEGER},
+      orderId = #{record.orderId,jdbcType=CHAR},
+      userId = #{record.userId,jdbcType=VARCHAR},
+      withdrawType = #{record.withdrawType,jdbcType=INTEGER},
+      bankNo = #{record.bankNo,jdbcType=VARCHAR},
+      accname = #{record.accname,jdbcType=VARCHAR},
+      orderStatus = #{record.orderStatus,jdbcType=CHAR},
+      bankName = #{record.bankName,jdbcType=VARCHAR},
+      amount = #{record.amount,jdbcType=DECIMAL},
+      fee = #{record.fee,jdbcType=DECIMAL},
+      actualAmount = #{record.actualAmount,jdbcType=DECIMAL},
+      mobile = #{record.mobile,jdbcType=CHAR},
+      notify = #{record.notify,jdbcType=VARCHAR},
+      createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
+      status = #{record.status,jdbcType=INTEGER},
+      witType = #{record.witType,jdbcType=VARCHAR},
+      retain1 = #{record.retain1,jdbcType=CHAR},
+      retain2 = #{record.retain2,jdbcType=CHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="deal.manage.bean.Withdraw" >
+    update dealpay_withdraw
+    <set >
+      <if test="orderId != null" >
+        orderId = #{orderId,jdbcType=CHAR},
+      </if>
+      <if test="userId != null" >
+        userId = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="withdrawType != null" >
+        withdrawType = #{withdrawType,jdbcType=INTEGER},
+      </if>
+      <if test="bankNo != null" >
+        bankNo = #{bankNo,jdbcType=VARCHAR},
+      </if>
+      <if test="accname != null" >
+        accname = #{accname,jdbcType=VARCHAR},
+      </if>
+      <if test="orderStatus != null" >
+        orderStatus = #{orderStatus,jdbcType=CHAR},
+      </if>
+      <if test="bankName != null" >
+        bankName = #{bankName,jdbcType=VARCHAR},
+      </if>
+      <if test="amount != null" >
+        amount = #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="fee != null" >
+        fee = #{fee,jdbcType=DECIMAL},
+      </if>
+      <if test="actualAmount != null" >
+        actualAmount = #{actualAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="mobile != null" >
+        mobile = #{mobile,jdbcType=CHAR},
+      </if>
+      <if test="notify != null" >
+        notify = #{notify,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="submitTime != null" >
+        submitTime = #{submitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="witType != null" >
+        witType = #{witType,jdbcType=VARCHAR},
+      </if>
+      <if test="retain1 != null" >
+        retain1 = #{retain1,jdbcType=CHAR},
+      </if>
+      <if test="retain2 != null" >
+        retain2 = #{retain2,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="deal.manage.bean.Withdraw" >
+    update dealpay_withdraw
+    set orderId = #{orderId,jdbcType=CHAR},
+      userId = #{userId,jdbcType=VARCHAR},
+      withdrawType = #{withdrawType,jdbcType=INTEGER},
+      bankNo = #{bankNo,jdbcType=VARCHAR},
+      accname = #{accname,jdbcType=VARCHAR},
+      orderStatus = #{orderStatus,jdbcType=CHAR},
+      bankName = #{bankName,jdbcType=VARCHAR},
+      amount = #{amount,jdbcType=DECIMAL},
+      fee = #{fee,jdbcType=DECIMAL},
+      actualAmount = #{actualAmount,jdbcType=DECIMAL},
+      mobile = #{mobile,jdbcType=CHAR},
+      notify = #{notify,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      submitTime = #{submitTime,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=INTEGER},
+      witType = #{witType,jdbcType=VARCHAR},
+      retain1 = #{retain1,jdbcType=CHAR},
+      retain2 = #{retain2,jdbcType=CHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

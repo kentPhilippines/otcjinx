@@ -1,0 +1,478 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="deal.manage.mapper.RunorderMapper" >
+  <resultMap id="BaseResultMap" type="deal.manage.bean.Runorder" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="orderId" property="orderId" jdbcType="CHAR" />
+    <result column="associatedId" property="associatedId" jdbcType="CHAR" />
+    <result column="orderAccount" property="orderAccount" jdbcType="CHAR" />
+    <result column="runOrderType" property="runOrderType" jdbcType="INTEGER" />
+    <result column="amount" property="amount" jdbcType="DECIMAL" />
+    <result column="generationIp" property="generationIp" jdbcType="CHAR" />
+    <result column="acountR" property="acountR" jdbcType="VARCHAR" />
+    <result column="accountW" property="accountW" jdbcType="VARCHAR" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="submitTime" property="submitTime" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="runType" property="runType" jdbcType="CHAR" />
+    <result column="amountType" property="amountType" jdbcType="CHAR" />
+    <result column="amountNow" property="amountNow" jdbcType="DECIMAL" />
+    <result column="retain4" property="retain4" jdbcType="CHAR" />
+    <result column="retain5" property="retain5" jdbcType="CHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="deal.manage.bean.Runorder" extends="BaseResultMap" >
+    <result column="dealDescribe" property="dealDescribe" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, orderId, associatedId, orderAccount, runOrderType, amount, generationIp, acountR, 
+    accountW, createTime, submitTime, status, runType, amountType, amountNow, retain4, 
+    retain5
+  </sql>
+  <sql id="Blob_Column_List" >
+    dealDescribe
+  </sql>
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="deal.manage.bean.RunorderExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from dealpay_run_order
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="deal.manage.bean.RunorderExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from dealpay_run_order
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from dealpay_run_order
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dealpay_run_order
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="deal.manage.bean.RunorderExample" >
+    delete from dealpay_run_order
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="deal.manage.bean.Runorder" useGeneratedKeys="true" keyProperty="id" >
+    insert into dealpay_run_order (orderId, associatedId, orderAccount, 
+      runOrderType, amount, generationIp, 
+      acountR, accountW, createTime, 
+      submitTime, status, runType, 
+      amountType, amountNow, retain4, 
+      retain5, dealDescribe)
+    values (#{orderId,jdbcType=CHAR}, #{associatedId,jdbcType=CHAR}, #{orderAccount,jdbcType=CHAR}, 
+      #{runOrderType,jdbcType=INTEGER}, #{amount,jdbcType=DECIMAL}, #{generationIp,jdbcType=CHAR}, 
+      #{acountR,jdbcType=VARCHAR}, #{accountW,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{submitTime,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, #{runType,jdbcType=CHAR}, 
+      #{amountType,jdbcType=CHAR}, #{amountNow,jdbcType=DECIMAL}, #{retain4,jdbcType=CHAR}, 
+      #{retain5,jdbcType=CHAR}, #{dealDescribe,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="deal.manage.bean.Runorder" useGeneratedKeys="true" keyProperty="id" >
+    insert into dealpay_run_order
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="orderId != null" >
+        orderId,
+      </if>
+      <if test="associatedId != null" >
+        associatedId,
+      </if>
+      <if test="orderAccount != null" >
+        orderAccount,
+      </if>
+      <if test="runOrderType != null" >
+        runOrderType,
+      </if>
+      <if test="amount != null" >
+        amount,
+      </if>
+      <if test="generationIp != null" >
+        generationIp,
+      </if>
+      <if test="acountR != null" >
+        acountR,
+      </if>
+      <if test="accountW != null" >
+        accountW,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="submitTime != null" >
+        submitTime,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="runType != null" >
+        runType,
+      </if>
+      <if test="amountType != null" >
+        amountType,
+      </if>
+      <if test="amountNow != null" >
+        amountNow,
+      </if>
+      <if test="retain4 != null" >
+        retain4,
+      </if>
+      <if test="retain5 != null" >
+        retain5,
+      </if>
+      <if test="dealDescribe != null" >
+        dealDescribe,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="orderId != null" >
+        #{orderId,jdbcType=CHAR},
+      </if>
+      <if test="associatedId != null" >
+        #{associatedId,jdbcType=CHAR},
+      </if>
+      <if test="orderAccount != null" >
+        #{orderAccount,jdbcType=CHAR},
+      </if>
+      <if test="runOrderType != null" >
+        #{runOrderType,jdbcType=INTEGER},
+      </if>
+      <if test="amount != null" >
+        #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="generationIp != null" >
+        #{generationIp,jdbcType=CHAR},
+      </if>
+      <if test="acountR != null" >
+        #{acountR,jdbcType=VARCHAR},
+      </if>
+      <if test="accountW != null" >
+        #{accountW,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="submitTime != null" >
+        #{submitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="runType != null" >
+        #{runType,jdbcType=CHAR},
+      </if>
+      <if test="amountType != null" >
+        #{amountType,jdbcType=CHAR},
+      </if>
+      <if test="amountNow != null" >
+        #{amountNow,jdbcType=DECIMAL},
+      </if>
+      <if test="retain4 != null" >
+        #{retain4,jdbcType=CHAR},
+      </if>
+      <if test="retain5 != null" >
+        #{retain5,jdbcType=CHAR},
+      </if>
+      <if test="dealDescribe != null" >
+        #{dealDescribe,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="deal.manage.bean.RunorderExample" resultType="java.lang.Integer" >
+    select count(*) from dealpay_run_order
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update dealpay_run_order
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.orderId != null" >
+        orderId = #{record.orderId,jdbcType=CHAR},
+      </if>
+      <if test="record.associatedId != null" >
+        associatedId = #{record.associatedId,jdbcType=CHAR},
+      </if>
+      <if test="record.orderAccount != null" >
+        orderAccount = #{record.orderAccount,jdbcType=CHAR},
+      </if>
+      <if test="record.runOrderType != null" >
+        runOrderType = #{record.runOrderType,jdbcType=INTEGER},
+      </if>
+      <if test="record.amount != null" >
+        amount = #{record.amount,jdbcType=DECIMAL},
+      </if>
+      <if test="record.generationIp != null" >
+        generationIp = #{record.generationIp,jdbcType=CHAR},
+      </if>
+      <if test="record.acountR != null" >
+        acountR = #{record.acountR,jdbcType=VARCHAR},
+      </if>
+      <if test="record.accountW != null" >
+        accountW = #{record.accountW,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null" >
+        createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.submitTime != null" >
+        submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.status != null" >
+        status = #{record.status,jdbcType=INTEGER},
+      </if>
+      <if test="record.runType != null" >
+        runType = #{record.runType,jdbcType=CHAR},
+      </if>
+      <if test="record.amountType != null" >
+        amountType = #{record.amountType,jdbcType=CHAR},
+      </if>
+      <if test="record.amountNow != null" >
+        amountNow = #{record.amountNow,jdbcType=DECIMAL},
+      </if>
+      <if test="record.retain4 != null" >
+        retain4 = #{record.retain4,jdbcType=CHAR},
+      </if>
+      <if test="record.retain5 != null" >
+        retain5 = #{record.retain5,jdbcType=CHAR},
+      </if>
+      <if test="record.dealDescribe != null" >
+        dealDescribe = #{record.dealDescribe,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map" >
+    update dealpay_run_order
+    set id = #{record.id,jdbcType=INTEGER},
+      orderId = #{record.orderId,jdbcType=CHAR},
+      associatedId = #{record.associatedId,jdbcType=CHAR},
+      orderAccount = #{record.orderAccount,jdbcType=CHAR},
+      runOrderType = #{record.runOrderType,jdbcType=INTEGER},
+      amount = #{record.amount,jdbcType=DECIMAL},
+      generationIp = #{record.generationIp,jdbcType=CHAR},
+      acountR = #{record.acountR,jdbcType=VARCHAR},
+      accountW = #{record.accountW,jdbcType=VARCHAR},
+      createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
+      status = #{record.status,jdbcType=INTEGER},
+      runType = #{record.runType,jdbcType=CHAR},
+      amountType = #{record.amountType,jdbcType=CHAR},
+      amountNow = #{record.amountNow,jdbcType=DECIMAL},
+      retain4 = #{record.retain4,jdbcType=CHAR},
+      retain5 = #{record.retain5,jdbcType=CHAR},
+      dealDescribe = #{record.dealDescribe,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update dealpay_run_order
+    set id = #{record.id,jdbcType=INTEGER},
+      orderId = #{record.orderId,jdbcType=CHAR},
+      associatedId = #{record.associatedId,jdbcType=CHAR},
+      orderAccount = #{record.orderAccount,jdbcType=CHAR},
+      runOrderType = #{record.runOrderType,jdbcType=INTEGER},
+      amount = #{record.amount,jdbcType=DECIMAL},
+      generationIp = #{record.generationIp,jdbcType=CHAR},
+      acountR = #{record.acountR,jdbcType=VARCHAR},
+      accountW = #{record.accountW,jdbcType=VARCHAR},
+      createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
+      status = #{record.status,jdbcType=INTEGER},
+      runType = #{record.runType,jdbcType=CHAR},
+      amountType = #{record.amountType,jdbcType=CHAR},
+      amountNow = #{record.amountNow,jdbcType=DECIMAL},
+      retain4 = #{record.retain4,jdbcType=CHAR},
+      retain5 = #{record.retain5,jdbcType=CHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="deal.manage.bean.Runorder" >
+    update dealpay_run_order
+    <set >
+      <if test="orderId != null" >
+        orderId = #{orderId,jdbcType=CHAR},
+      </if>
+      <if test="associatedId != null" >
+        associatedId = #{associatedId,jdbcType=CHAR},
+      </if>
+      <if test="orderAccount != null" >
+        orderAccount = #{orderAccount,jdbcType=CHAR},
+      </if>
+      <if test="runOrderType != null" >
+        runOrderType = #{runOrderType,jdbcType=INTEGER},
+      </if>
+      <if test="amount != null" >
+        amount = #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="generationIp != null" >
+        generationIp = #{generationIp,jdbcType=CHAR},
+      </if>
+      <if test="acountR != null" >
+        acountR = #{acountR,jdbcType=VARCHAR},
+      </if>
+      <if test="accountW != null" >
+        accountW = #{accountW,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="submitTime != null" >
+        submitTime = #{submitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="runType != null" >
+        runType = #{runType,jdbcType=CHAR},
+      </if>
+      <if test="amountType != null" >
+        amountType = #{amountType,jdbcType=CHAR},
+      </if>
+      <if test="amountNow != null" >
+        amountNow = #{amountNow,jdbcType=DECIMAL},
+      </if>
+      <if test="retain4 != null" >
+        retain4 = #{retain4,jdbcType=CHAR},
+      </if>
+      <if test="retain5 != null" >
+        retain5 = #{retain5,jdbcType=CHAR},
+      </if>
+      <if test="dealDescribe != null" >
+        dealDescribe = #{dealDescribe,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="deal.manage.bean.Runorder" >
+    update dealpay_run_order
+    set orderId = #{orderId,jdbcType=CHAR},
+      associatedId = #{associatedId,jdbcType=CHAR},
+      orderAccount = #{orderAccount,jdbcType=CHAR},
+      runOrderType = #{runOrderType,jdbcType=INTEGER},
+      amount = #{amount,jdbcType=DECIMAL},
+      generationIp = #{generationIp,jdbcType=CHAR},
+      acountR = #{acountR,jdbcType=VARCHAR},
+      accountW = #{accountW,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      submitTime = #{submitTime,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=INTEGER},
+      runType = #{runType,jdbcType=CHAR},
+      amountType = #{amountType,jdbcType=CHAR},
+      amountNow = #{amountNow,jdbcType=DECIMAL},
+      retain4 = #{retain4,jdbcType=CHAR},
+      retain5 = #{retain5,jdbcType=CHAR},
+      dealDescribe = #{dealDescribe,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="deal.manage.bean.Runorder" >
+    update dealpay_run_order
+    set orderId = #{orderId,jdbcType=CHAR},
+      associatedId = #{associatedId,jdbcType=CHAR},
+      orderAccount = #{orderAccount,jdbcType=CHAR},
+      runOrderType = #{runOrderType,jdbcType=INTEGER},
+      amount = #{amount,jdbcType=DECIMAL},
+      generationIp = #{generationIp,jdbcType=CHAR},
+      acountR = #{acountR,jdbcType=VARCHAR},
+      accountW = #{accountW,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      submitTime = #{submitTime,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=INTEGER},
+      runType = #{runType,jdbcType=CHAR},
+      amountType = #{amountType,jdbcType=CHAR},
+      amountNow = #{amountNow,jdbcType=DECIMAL},
+      retain4 = #{retain4,jdbcType=CHAR},
+      retain5 = #{retain5,jdbcType=CHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

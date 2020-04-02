@@ -1,0 +1,704 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="deal.manage.mapper.UserInfoMapper" >
+  <resultMap id="BaseResultMap" type="deal.manage.bean.UserInfo" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="userId" property="userId" jdbcType="VARCHAR" />
+    <result column="userName" property="userName" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="payPasword" property="payPasword" jdbcType="VARCHAR" />
+    <result column="salt" property="salt" jdbcType="VARCHAR" />
+    <result column="userType" property="userType" jdbcType="INTEGER" />
+    <result column="switchs" property="switchs" jdbcType="INTEGER" />
+    <result column="userNode" property="userNode" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="agent" property="agent" jdbcType="VARCHAR" />
+    <result column="isAgent" property="isAgent" jdbcType="CHAR" />
+    <result column="credit" property="credit" jdbcType="DECIMAL" />
+    <result column="receiveOrderState" property="receiveOrderState" jdbcType="INTEGER" />
+    <result column="remitOrderState" property="remitOrderState" jdbcType="INTEGER" />
+    <result column="QQ" property="QQ" jdbcType="VARCHAR" />
+    <result column="telegram" property="telegram" jdbcType="VARCHAR" />
+    <result column="skype" property="skype" jdbcType="VARCHAR" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="submitTime" property="submitTime" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="minAmount" property="minAmount" jdbcType="DECIMAL" />
+    <result column="maxAmount" property="maxAmount" jdbcType="DECIMAL" />
+    <result column="totalAmount" property="totalAmount" jdbcType="DECIMAL" />
+    <result column="timesTotal" property="timesTotal" jdbcType="INTEGER" />
+    <result column="startTime" property="startTime" jdbcType="VARCHAR" />
+    <result column="endTime" property="endTime" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="deal.manage.bean.UserInfo" extends="BaseResultMap" >
+    <result column="privateKey" property="privateKey" jdbcType="LONGVARCHAR" />
+    <result column="publicKey" property="publicKey" jdbcType="LONGVARCHAR" />
+    <result column="witip" property="witip" jdbcType="LONGVARCHAR" />
+    <result column="queueList" property="queueList" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, userId, userName, password, payPasword, salt, userType, switchs, userNode, email, 
+    agent, isAgent, credit, receiveOrderState, remitOrderState, QQ, telegram, skype, 
+    createTime, submitTime, status, minAmount, maxAmount, totalAmount, timesTotal, startTime, 
+    endTime
+  </sql>
+  <sql id="Blob_Column_List" >
+    privateKey, publicKey, witip, queueList
+  </sql>
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="deal.manage.bean.UserInfoExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from dealpay_user_info
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="deal.manage.bean.UserInfoExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from dealpay_user_info
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from dealpay_user_info
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dealpay_user_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="deal.manage.bean.UserInfoExample" >
+    delete from dealpay_user_info
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="deal.manage.bean.UserInfo" useGeneratedKeys="true" keyProperty="id" >
+    insert into dealpay_user_info (userId, userName, password, 
+      payPasword, salt, userType, 
+      switchs, userNode, email, 
+      agent, isAgent, credit, 
+      receiveOrderState, remitOrderState, QQ, 
+      telegram, skype, createTime, 
+      submitTime, status, minAmount, 
+      maxAmount, totalAmount, timesTotal, 
+      startTime, endTime, privateKey, 
+      publicKey, witip, queueList
+      )
+    values (#{userId,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
+      #{payPasword,jdbcType=VARCHAR}, #{salt,jdbcType=VARCHAR}, #{userType,jdbcType=INTEGER}, 
+      #{switchs,jdbcType=INTEGER}, #{userNode,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
+      #{agent,jdbcType=VARCHAR}, #{isAgent,jdbcType=CHAR}, #{credit,jdbcType=DECIMAL}, 
+      #{receiveOrderState,jdbcType=INTEGER}, #{remitOrderState,jdbcType=INTEGER}, #{QQ,jdbcType=VARCHAR}, 
+      #{telegram,jdbcType=VARCHAR}, #{skype,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{submitTime,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, #{minAmount,jdbcType=DECIMAL}, 
+      #{maxAmount,jdbcType=DECIMAL}, #{totalAmount,jdbcType=DECIMAL}, #{timesTotal,jdbcType=INTEGER}, 
+      #{startTime,jdbcType=VARCHAR}, #{endTime,jdbcType=VARCHAR}, #{privateKey,jdbcType=LONGVARCHAR}, 
+      #{publicKey,jdbcType=LONGVARCHAR}, #{witip,jdbcType=LONGVARCHAR}, #{queueList,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="deal.manage.bean.UserInfo" useGeneratedKeys="true" keyProperty="id" >
+    insert into dealpay_user_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        userId,
+      </if>
+      <if test="userName != null" >
+        userName,
+      </if>
+      <if test="password != null" >
+        password,
+      </if>
+      <if test="payPasword != null" >
+        payPasword,
+      </if>
+      <if test="salt != null" >
+        salt,
+      </if>
+      <if test="userType != null" >
+        userType,
+      </if>
+      <if test="switchs != null" >
+        switchs,
+      </if>
+      <if test="userNode != null" >
+        userNode,
+      </if>
+      <if test="email != null" >
+        email,
+      </if>
+      <if test="agent != null" >
+        agent,
+      </if>
+      <if test="isAgent != null" >
+        isAgent,
+      </if>
+      <if test="credit != null" >
+        credit,
+      </if>
+      <if test="receiveOrderState != null" >
+        receiveOrderState,
+      </if>
+      <if test="remitOrderState != null" >
+        remitOrderState,
+      </if>
+      <if test="QQ != null" >
+        QQ,
+      </if>
+      <if test="telegram != null" >
+        telegram,
+      </if>
+      <if test="skype != null" >
+        skype,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="submitTime != null" >
+        submitTime,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="minAmount != null" >
+        minAmount,
+      </if>
+      <if test="maxAmount != null" >
+        maxAmount,
+      </if>
+      <if test="totalAmount != null" >
+        totalAmount,
+      </if>
+      <if test="timesTotal != null" >
+        timesTotal,
+      </if>
+      <if test="startTime != null" >
+        startTime,
+      </if>
+      <if test="endTime != null" >
+        endTime,
+      </if>
+      <if test="privateKey != null" >
+        privateKey,
+      </if>
+      <if test="publicKey != null" >
+        publicKey,
+      </if>
+      <if test="witip != null" >
+        witip,
+      </if>
+      <if test="queueList != null" >
+        queueList,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null" >
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="payPasword != null" >
+        #{payPasword,jdbcType=VARCHAR},
+      </if>
+      <if test="salt != null" >
+        #{salt,jdbcType=VARCHAR},
+      </if>
+      <if test="userType != null" >
+        #{userType,jdbcType=INTEGER},
+      </if>
+      <if test="switchs != null" >
+        #{switchs,jdbcType=INTEGER},
+      </if>
+      <if test="userNode != null" >
+        #{userNode,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="agent != null" >
+        #{agent,jdbcType=VARCHAR},
+      </if>
+      <if test="isAgent != null" >
+        #{isAgent,jdbcType=CHAR},
+      </if>
+      <if test="credit != null" >
+        #{credit,jdbcType=DECIMAL},
+      </if>
+      <if test="receiveOrderState != null" >
+        #{receiveOrderState,jdbcType=INTEGER},
+      </if>
+      <if test="remitOrderState != null" >
+        #{remitOrderState,jdbcType=INTEGER},
+      </if>
+      <if test="QQ != null" >
+        #{QQ,jdbcType=VARCHAR},
+      </if>
+      <if test="telegram != null" >
+        #{telegram,jdbcType=VARCHAR},
+      </if>
+      <if test="skype != null" >
+        #{skype,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="submitTime != null" >
+        #{submitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="minAmount != null" >
+        #{minAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="maxAmount != null" >
+        #{maxAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="totalAmount != null" >
+        #{totalAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="timesTotal != null" >
+        #{timesTotal,jdbcType=INTEGER},
+      </if>
+      <if test="startTime != null" >
+        #{startTime,jdbcType=VARCHAR},
+      </if>
+      <if test="endTime != null" >
+        #{endTime,jdbcType=VARCHAR},
+      </if>
+      <if test="privateKey != null" >
+        #{privateKey,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="publicKey != null" >
+        #{publicKey,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="witip != null" >
+        #{witip,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="queueList != null" >
+        #{queueList,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="deal.manage.bean.UserInfoExample" resultType="java.lang.Integer" >
+    select count(*) from dealpay_user_info
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update dealpay_user_info
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.userId != null" >
+        userId = #{record.userId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userName != null" >
+        userName = #{record.userName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.password != null" >
+        password = #{record.password,jdbcType=VARCHAR},
+      </if>
+      <if test="record.payPasword != null" >
+        payPasword = #{record.payPasword,jdbcType=VARCHAR},
+      </if>
+      <if test="record.salt != null" >
+        salt = #{record.salt,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userType != null" >
+        userType = #{record.userType,jdbcType=INTEGER},
+      </if>
+      <if test="record.switchs != null" >
+        switchs = #{record.switchs,jdbcType=INTEGER},
+      </if>
+      <if test="record.userNode != null" >
+        userNode = #{record.userNode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.email != null" >
+        email = #{record.email,jdbcType=VARCHAR},
+      </if>
+      <if test="record.agent != null" >
+        agent = #{record.agent,jdbcType=VARCHAR},
+      </if>
+      <if test="record.isAgent != null" >
+        isAgent = #{record.isAgent,jdbcType=CHAR},
+      </if>
+      <if test="record.credit != null" >
+        credit = #{record.credit,jdbcType=DECIMAL},
+      </if>
+      <if test="record.receiveOrderState != null" >
+        receiveOrderState = #{record.receiveOrderState,jdbcType=INTEGER},
+      </if>
+      <if test="record.remitOrderState != null" >
+        remitOrderState = #{record.remitOrderState,jdbcType=INTEGER},
+      </if>
+      <if test="record.QQ != null" >
+        QQ = #{record.QQ,jdbcType=VARCHAR},
+      </if>
+      <if test="record.telegram != null" >
+        telegram = #{record.telegram,jdbcType=VARCHAR},
+      </if>
+      <if test="record.skype != null" >
+        skype = #{record.skype,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null" >
+        createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.submitTime != null" >
+        submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.status != null" >
+        status = #{record.status,jdbcType=INTEGER},
+      </if>
+      <if test="record.minAmount != null" >
+        minAmount = #{record.minAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="record.maxAmount != null" >
+        maxAmount = #{record.maxAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="record.totalAmount != null" >
+        totalAmount = #{record.totalAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="record.timesTotal != null" >
+        timesTotal = #{record.timesTotal,jdbcType=INTEGER},
+      </if>
+      <if test="record.startTime != null" >
+        startTime = #{record.startTime,jdbcType=VARCHAR},
+      </if>
+      <if test="record.endTime != null" >
+        endTime = #{record.endTime,jdbcType=VARCHAR},
+      </if>
+      <if test="record.privateKey != null" >
+        privateKey = #{record.privateKey,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="record.publicKey != null" >
+        publicKey = #{record.publicKey,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="record.witip != null" >
+        witip = #{record.witip,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="record.queueList != null" >
+        queueList = #{record.queueList,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map" >
+    update dealpay_user_info
+    set id = #{record.id,jdbcType=INTEGER},
+      userId = #{record.userId,jdbcType=VARCHAR},
+      userName = #{record.userName,jdbcType=VARCHAR},
+      password = #{record.password,jdbcType=VARCHAR},
+      payPasword = #{record.payPasword,jdbcType=VARCHAR},
+      salt = #{record.salt,jdbcType=VARCHAR},
+      userType = #{record.userType,jdbcType=INTEGER},
+      switchs = #{record.switchs,jdbcType=INTEGER},
+      userNode = #{record.userNode,jdbcType=VARCHAR},
+      email = #{record.email,jdbcType=VARCHAR},
+      agent = #{record.agent,jdbcType=VARCHAR},
+      isAgent = #{record.isAgent,jdbcType=CHAR},
+      credit = #{record.credit,jdbcType=DECIMAL},
+      receiveOrderState = #{record.receiveOrderState,jdbcType=INTEGER},
+      remitOrderState = #{record.remitOrderState,jdbcType=INTEGER},
+      QQ = #{record.QQ,jdbcType=VARCHAR},
+      telegram = #{record.telegram,jdbcType=VARCHAR},
+      skype = #{record.skype,jdbcType=VARCHAR},
+      createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
+      status = #{record.status,jdbcType=INTEGER},
+      minAmount = #{record.minAmount,jdbcType=DECIMAL},
+      maxAmount = #{record.maxAmount,jdbcType=DECIMAL},
+      totalAmount = #{record.totalAmount,jdbcType=DECIMAL},
+      timesTotal = #{record.timesTotal,jdbcType=INTEGER},
+      startTime = #{record.startTime,jdbcType=VARCHAR},
+      endTime = #{record.endTime,jdbcType=VARCHAR},
+      privateKey = #{record.privateKey,jdbcType=LONGVARCHAR},
+      publicKey = #{record.publicKey,jdbcType=LONGVARCHAR},
+      witip = #{record.witip,jdbcType=LONGVARCHAR},
+      queueList = #{record.queueList,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update dealpay_user_info
+    set id = #{record.id,jdbcType=INTEGER},
+      userId = #{record.userId,jdbcType=VARCHAR},
+      userName = #{record.userName,jdbcType=VARCHAR},
+      password = #{record.password,jdbcType=VARCHAR},
+      payPasword = #{record.payPasword,jdbcType=VARCHAR},
+      salt = #{record.salt,jdbcType=VARCHAR},
+      userType = #{record.userType,jdbcType=INTEGER},
+      switchs = #{record.switchs,jdbcType=INTEGER},
+      userNode = #{record.userNode,jdbcType=VARCHAR},
+      email = #{record.email,jdbcType=VARCHAR},
+      agent = #{record.agent,jdbcType=VARCHAR},
+      isAgent = #{record.isAgent,jdbcType=CHAR},
+      credit = #{record.credit,jdbcType=DECIMAL},
+      receiveOrderState = #{record.receiveOrderState,jdbcType=INTEGER},
+      remitOrderState = #{record.remitOrderState,jdbcType=INTEGER},
+      QQ = #{record.QQ,jdbcType=VARCHAR},
+      telegram = #{record.telegram,jdbcType=VARCHAR},
+      skype = #{record.skype,jdbcType=VARCHAR},
+      createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
+      status = #{record.status,jdbcType=INTEGER},
+      minAmount = #{record.minAmount,jdbcType=DECIMAL},
+      maxAmount = #{record.maxAmount,jdbcType=DECIMAL},
+      totalAmount = #{record.totalAmount,jdbcType=DECIMAL},
+      timesTotal = #{record.timesTotal,jdbcType=INTEGER},
+      startTime = #{record.startTime,jdbcType=VARCHAR},
+      endTime = #{record.endTime,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="deal.manage.bean.UserInfo" >
+    update dealpay_user_info
+    <set >
+      <if test="userId != null" >
+        userId = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null" >
+        userName = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="payPasword != null" >
+        payPasword = #{payPasword,jdbcType=VARCHAR},
+      </if>
+      <if test="salt != null" >
+        salt = #{salt,jdbcType=VARCHAR},
+      </if>
+      <if test="userType != null" >
+        userType = #{userType,jdbcType=INTEGER},
+      </if>
+      <if test="switchs != null" >
+        switchs = #{switchs,jdbcType=INTEGER},
+      </if>
+      <if test="userNode != null" >
+        userNode = #{userNode,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="agent != null" >
+        agent = #{agent,jdbcType=VARCHAR},
+      </if>
+      <if test="isAgent != null" >
+        isAgent = #{isAgent,jdbcType=CHAR},
+      </if>
+      <if test="credit != null" >
+        credit = #{credit,jdbcType=DECIMAL},
+      </if>
+      <if test="receiveOrderState != null" >
+        receiveOrderState = #{receiveOrderState,jdbcType=INTEGER},
+      </if>
+      <if test="remitOrderState != null" >
+        remitOrderState = #{remitOrderState,jdbcType=INTEGER},
+      </if>
+      <if test="QQ != null" >
+        QQ = #{QQ,jdbcType=VARCHAR},
+      </if>
+      <if test="telegram != null" >
+        telegram = #{telegram,jdbcType=VARCHAR},
+      </if>
+      <if test="skype != null" >
+        skype = #{skype,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="submitTime != null" >
+        submitTime = #{submitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="minAmount != null" >
+        minAmount = #{minAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="maxAmount != null" >
+        maxAmount = #{maxAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="totalAmount != null" >
+        totalAmount = #{totalAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="timesTotal != null" >
+        timesTotal = #{timesTotal,jdbcType=INTEGER},
+      </if>
+      <if test="startTime != null" >
+        startTime = #{startTime,jdbcType=VARCHAR},
+      </if>
+      <if test="endTime != null" >
+        endTime = #{endTime,jdbcType=VARCHAR},
+      </if>
+      <if test="privateKey != null" >
+        privateKey = #{privateKey,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="publicKey != null" >
+        publicKey = #{publicKey,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="witip != null" >
+        witip = #{witip,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="queueList != null" >
+        queueList = #{queueList,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="deal.manage.bean.UserInfo" >
+    update dealpay_user_info
+    set userId = #{userId,jdbcType=VARCHAR},
+      userName = #{userName,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      payPasword = #{payPasword,jdbcType=VARCHAR},
+      salt = #{salt,jdbcType=VARCHAR},
+      userType = #{userType,jdbcType=INTEGER},
+      switchs = #{switchs,jdbcType=INTEGER},
+      userNode = #{userNode,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      agent = #{agent,jdbcType=VARCHAR},
+      isAgent = #{isAgent,jdbcType=CHAR},
+      credit = #{credit,jdbcType=DECIMAL},
+      receiveOrderState = #{receiveOrderState,jdbcType=INTEGER},
+      remitOrderState = #{remitOrderState,jdbcType=INTEGER},
+      QQ = #{QQ,jdbcType=VARCHAR},
+      telegram = #{telegram,jdbcType=VARCHAR},
+      skype = #{skype,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      submitTime = #{submitTime,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=INTEGER},
+      minAmount = #{minAmount,jdbcType=DECIMAL},
+      maxAmount = #{maxAmount,jdbcType=DECIMAL},
+      totalAmount = #{totalAmount,jdbcType=DECIMAL},
+      timesTotal = #{timesTotal,jdbcType=INTEGER},
+      startTime = #{startTime,jdbcType=VARCHAR},
+      endTime = #{endTime,jdbcType=VARCHAR},
+      privateKey = #{privateKey,jdbcType=LONGVARCHAR},
+      publicKey = #{publicKey,jdbcType=LONGVARCHAR},
+      witip = #{witip,jdbcType=LONGVARCHAR},
+      queueList = #{queueList,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="deal.manage.bean.UserInfo" >
+    update dealpay_user_info
+    set userId = #{userId,jdbcType=VARCHAR},
+      userName = #{userName,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      payPasword = #{payPasword,jdbcType=VARCHAR},
+      salt = #{salt,jdbcType=VARCHAR},
+      userType = #{userType,jdbcType=INTEGER},
+      switchs = #{switchs,jdbcType=INTEGER},
+      userNode = #{userNode,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      agent = #{agent,jdbcType=VARCHAR},
+      isAgent = #{isAgent,jdbcType=CHAR},
+      credit = #{credit,jdbcType=DECIMAL},
+      receiveOrderState = #{receiveOrderState,jdbcType=INTEGER},
+      remitOrderState = #{remitOrderState,jdbcType=INTEGER},
+      QQ = #{QQ,jdbcType=VARCHAR},
+      telegram = #{telegram,jdbcType=VARCHAR},
+      skype = #{skype,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      submitTime = #{submitTime,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=INTEGER},
+      minAmount = #{minAmount,jdbcType=DECIMAL},
+      maxAmount = #{maxAmount,jdbcType=DECIMAL},
+      totalAmount = #{totalAmount,jdbcType=DECIMAL},
+      timesTotal = #{timesTotal,jdbcType=INTEGER},
+      startTime = #{startTime,jdbcType=VARCHAR},
+      endTime = #{endTime,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

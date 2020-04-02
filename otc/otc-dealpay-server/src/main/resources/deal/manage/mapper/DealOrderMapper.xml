@@ -1,0 +1,603 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="deal.manage.mapper.DealOrderMapper" >
+  <resultMap id="BaseResultMap" type="deal.manage.bean.DealOrder" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="orderId" property="orderId" jdbcType="CHAR" />
+    <result column="associatedId" property="associatedId" jdbcType="CHAR" />
+    <result column="orderStatus" property="orderStatus" jdbcType="CHAR" />
+    <result column="dealAmount" property="dealAmount" jdbcType="DECIMAL" />
+    <result column="dealFee" property="dealFee" jdbcType="DECIMAL" />
+    <result column="actualAmount" property="actualAmount" jdbcType="DECIMAL" />
+    <result column="orderType" property="orderType" jdbcType="CHAR" />
+    <result column="orderAccount" property="orderAccount" jdbcType="CHAR" />
+    <result column="orderQrUser" property="orderQrUser" jdbcType="CHAR" />
+    <result column="orderQr" property="orderQr" jdbcType="VARCHAR" />
+    <result column="externalOrderId" property="externalOrderId" jdbcType="VARCHAR" />
+    <result column="generationIp" property="generationIp" jdbcType="VARCHAR" />
+    <result column="notify" property="notify" jdbcType="VARCHAR" />
+    <result column="back" property="back" jdbcType="VARCHAR" />
+    <result column="isNotify" property="isNotify" jdbcType="VARCHAR" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="submitTime" property="submitTime" jdbcType="TIMESTAMP" />
+    <result column="feeId" property="feeId" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="productType" property="productType" jdbcType="CHAR" />
+    <result column="retain2" property="retain2" jdbcType="CHAR" />
+    <result column="retain3" property="retain3" jdbcType="CHAR" />
+    <result column="retain4" property="retain4" jdbcType="CHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="deal.manage.bean.DealOrder" extends="BaseResultMap" >
+    <result column="dealDescribe" property="dealDescribe" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, orderId, associatedId, orderStatus, dealAmount, dealFee, actualAmount, orderType, 
+    orderAccount, orderQrUser, orderQr, externalOrderId, generationIp, notify, back, 
+    isNotify, createTime, submitTime, feeId, status, productType, retain2, retain3, retain4
+  </sql>
+  <sql id="Blob_Column_List" >
+    dealDescribe
+  </sql>
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="deal.manage.bean.DealOrderExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from dealpay_deal_order
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="deal.manage.bean.DealOrderExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from dealpay_deal_order
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from dealpay_deal_order
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from dealpay_deal_order
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="deal.manage.bean.DealOrderExample" >
+    delete from dealpay_deal_order
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="deal.manage.bean.DealOrder" useGeneratedKeys="true" keyProperty="id" >
+    insert into dealpay_deal_order (orderId, associatedId, orderStatus, 
+      dealAmount, dealFee, actualAmount, 
+      orderType, orderAccount, orderQrUser, 
+      orderQr, externalOrderId, generationIp, 
+      notify, back, isNotify, 
+      createTime, submitTime, feeId, 
+      status, productType, retain2, 
+      retain3, retain4, dealDescribe
+      )
+    values (#{orderId,jdbcType=CHAR}, #{associatedId,jdbcType=CHAR}, #{orderStatus,jdbcType=CHAR}, 
+      #{dealAmount,jdbcType=DECIMAL}, #{dealFee,jdbcType=DECIMAL}, #{actualAmount,jdbcType=DECIMAL}, 
+      #{orderType,jdbcType=CHAR}, #{orderAccount,jdbcType=CHAR}, #{orderQrUser,jdbcType=CHAR}, 
+      #{orderQr,jdbcType=VARCHAR}, #{externalOrderId,jdbcType=VARCHAR}, #{generationIp,jdbcType=VARCHAR}, 
+      #{notify,jdbcType=VARCHAR}, #{back,jdbcType=VARCHAR}, #{isNotify,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{submitTime,jdbcType=TIMESTAMP}, #{feeId,jdbcType=INTEGER}, 
+      #{status,jdbcType=INTEGER}, #{productType,jdbcType=CHAR}, #{retain2,jdbcType=CHAR}, 
+      #{retain3,jdbcType=CHAR}, #{retain4,jdbcType=CHAR}, #{dealDescribe,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="deal.manage.bean.DealOrder" useGeneratedKeys="true" keyProperty="id" >
+    insert into dealpay_deal_order
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="orderId != null" >
+        orderId,
+      </if>
+      <if test="associatedId != null" >
+        associatedId,
+      </if>
+      <if test="orderStatus != null" >
+        orderStatus,
+      </if>
+      <if test="dealAmount != null" >
+        dealAmount,
+      </if>
+      <if test="dealFee != null" >
+        dealFee,
+      </if>
+      <if test="actualAmount != null" >
+        actualAmount,
+      </if>
+      <if test="orderType != null" >
+        orderType,
+      </if>
+      <if test="orderAccount != null" >
+        orderAccount,
+      </if>
+      <if test="orderQrUser != null" >
+        orderQrUser,
+      </if>
+      <if test="orderQr != null" >
+        orderQr,
+      </if>
+      <if test="externalOrderId != null" >
+        externalOrderId,
+      </if>
+      <if test="generationIp != null" >
+        generationIp,
+      </if>
+      <if test="notify != null" >
+        notify,
+      </if>
+      <if test="back != null" >
+        back,
+      </if>
+      <if test="isNotify != null" >
+        isNotify,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="submitTime != null" >
+        submitTime,
+      </if>
+      <if test="feeId != null" >
+        feeId,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="productType != null" >
+        productType,
+      </if>
+      <if test="retain2 != null" >
+        retain2,
+      </if>
+      <if test="retain3 != null" >
+        retain3,
+      </if>
+      <if test="retain4 != null" >
+        retain4,
+      </if>
+      <if test="dealDescribe != null" >
+        dealDescribe,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="orderId != null" >
+        #{orderId,jdbcType=CHAR},
+      </if>
+      <if test="associatedId != null" >
+        #{associatedId,jdbcType=CHAR},
+      </if>
+      <if test="orderStatus != null" >
+        #{orderStatus,jdbcType=CHAR},
+      </if>
+      <if test="dealAmount != null" >
+        #{dealAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="dealFee != null" >
+        #{dealFee,jdbcType=DECIMAL},
+      </if>
+      <if test="actualAmount != null" >
+        #{actualAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="orderType != null" >
+        #{orderType,jdbcType=CHAR},
+      </if>
+      <if test="orderAccount != null" >
+        #{orderAccount,jdbcType=CHAR},
+      </if>
+      <if test="orderQrUser != null" >
+        #{orderQrUser,jdbcType=CHAR},
+      </if>
+      <if test="orderQr != null" >
+        #{orderQr,jdbcType=VARCHAR},
+      </if>
+      <if test="externalOrderId != null" >
+        #{externalOrderId,jdbcType=VARCHAR},
+      </if>
+      <if test="generationIp != null" >
+        #{generationIp,jdbcType=VARCHAR},
+      </if>
+      <if test="notify != null" >
+        #{notify,jdbcType=VARCHAR},
+      </if>
+      <if test="back != null" >
+        #{back,jdbcType=VARCHAR},
+      </if>
+      <if test="isNotify != null" >
+        #{isNotify,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="submitTime != null" >
+        #{submitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="feeId != null" >
+        #{feeId,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="productType != null" >
+        #{productType,jdbcType=CHAR},
+      </if>
+      <if test="retain2 != null" >
+        #{retain2,jdbcType=CHAR},
+      </if>
+      <if test="retain3 != null" >
+        #{retain3,jdbcType=CHAR},
+      </if>
+      <if test="retain4 != null" >
+        #{retain4,jdbcType=CHAR},
+      </if>
+      <if test="dealDescribe != null" >
+        #{dealDescribe,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="deal.manage.bean.DealOrderExample" resultType="java.lang.Integer" >
+    select count(*) from dealpay_deal_order
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update dealpay_deal_order
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.orderId != null" >
+        orderId = #{record.orderId,jdbcType=CHAR},
+      </if>
+      <if test="record.associatedId != null" >
+        associatedId = #{record.associatedId,jdbcType=CHAR},
+      </if>
+      <if test="record.orderStatus != null" >
+        orderStatus = #{record.orderStatus,jdbcType=CHAR},
+      </if>
+      <if test="record.dealAmount != null" >
+        dealAmount = #{record.dealAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="record.dealFee != null" >
+        dealFee = #{record.dealFee,jdbcType=DECIMAL},
+      </if>
+      <if test="record.actualAmount != null" >
+        actualAmount = #{record.actualAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="record.orderType != null" >
+        orderType = #{record.orderType,jdbcType=CHAR},
+      </if>
+      <if test="record.orderAccount != null" >
+        orderAccount = #{record.orderAccount,jdbcType=CHAR},
+      </if>
+      <if test="record.orderQrUser != null" >
+        orderQrUser = #{record.orderQrUser,jdbcType=CHAR},
+      </if>
+      <if test="record.orderQr != null" >
+        orderQr = #{record.orderQr,jdbcType=VARCHAR},
+      </if>
+      <if test="record.externalOrderId != null" >
+        externalOrderId = #{record.externalOrderId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.generationIp != null" >
+        generationIp = #{record.generationIp,jdbcType=VARCHAR},
+      </if>
+      <if test="record.notify != null" >
+        notify = #{record.notify,jdbcType=VARCHAR},
+      </if>
+      <if test="record.back != null" >
+        back = #{record.back,jdbcType=VARCHAR},
+      </if>
+      <if test="record.isNotify != null" >
+        isNotify = #{record.isNotify,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null" >
+        createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.submitTime != null" >
+        submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.feeId != null" >
+        feeId = #{record.feeId,jdbcType=INTEGER},
+      </if>
+      <if test="record.status != null" >
+        status = #{record.status,jdbcType=INTEGER},
+      </if>
+      <if test="record.productType != null" >
+        productType = #{record.productType,jdbcType=CHAR},
+      </if>
+      <if test="record.retain2 != null" >
+        retain2 = #{record.retain2,jdbcType=CHAR},
+      </if>
+      <if test="record.retain3 != null" >
+        retain3 = #{record.retain3,jdbcType=CHAR},
+      </if>
+      <if test="record.retain4 != null" >
+        retain4 = #{record.retain4,jdbcType=CHAR},
+      </if>
+      <if test="record.dealDescribe != null" >
+        dealDescribe = #{record.dealDescribe,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map" >
+    update dealpay_deal_order
+    set id = #{record.id,jdbcType=INTEGER},
+      orderId = #{record.orderId,jdbcType=CHAR},
+      associatedId = #{record.associatedId,jdbcType=CHAR},
+      orderStatus = #{record.orderStatus,jdbcType=CHAR},
+      dealAmount = #{record.dealAmount,jdbcType=DECIMAL},
+      dealFee = #{record.dealFee,jdbcType=DECIMAL},
+      actualAmount = #{record.actualAmount,jdbcType=DECIMAL},
+      orderType = #{record.orderType,jdbcType=CHAR},
+      orderAccount = #{record.orderAccount,jdbcType=CHAR},
+      orderQrUser = #{record.orderQrUser,jdbcType=CHAR},
+      orderQr = #{record.orderQr,jdbcType=VARCHAR},
+      externalOrderId = #{record.externalOrderId,jdbcType=VARCHAR},
+      generationIp = #{record.generationIp,jdbcType=VARCHAR},
+      notify = #{record.notify,jdbcType=VARCHAR},
+      back = #{record.back,jdbcType=VARCHAR},
+      isNotify = #{record.isNotify,jdbcType=VARCHAR},
+      createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
+      feeId = #{record.feeId,jdbcType=INTEGER},
+      status = #{record.status,jdbcType=INTEGER},
+      productType = #{record.productType,jdbcType=CHAR},
+      retain2 = #{record.retain2,jdbcType=CHAR},
+      retain3 = #{record.retain3,jdbcType=CHAR},
+      retain4 = #{record.retain4,jdbcType=CHAR},
+      dealDescribe = #{record.dealDescribe,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update dealpay_deal_order
+    set id = #{record.id,jdbcType=INTEGER},
+      orderId = #{record.orderId,jdbcType=CHAR},
+      associatedId = #{record.associatedId,jdbcType=CHAR},
+      orderStatus = #{record.orderStatus,jdbcType=CHAR},
+      dealAmount = #{record.dealAmount,jdbcType=DECIMAL},
+      dealFee = #{record.dealFee,jdbcType=DECIMAL},
+      actualAmount = #{record.actualAmount,jdbcType=DECIMAL},
+      orderType = #{record.orderType,jdbcType=CHAR},
+      orderAccount = #{record.orderAccount,jdbcType=CHAR},
+      orderQrUser = #{record.orderQrUser,jdbcType=CHAR},
+      orderQr = #{record.orderQr,jdbcType=VARCHAR},
+      externalOrderId = #{record.externalOrderId,jdbcType=VARCHAR},
+      generationIp = #{record.generationIp,jdbcType=VARCHAR},
+      notify = #{record.notify,jdbcType=VARCHAR},
+      back = #{record.back,jdbcType=VARCHAR},
+      isNotify = #{record.isNotify,jdbcType=VARCHAR},
+      createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
+      feeId = #{record.feeId,jdbcType=INTEGER},
+      status = #{record.status,jdbcType=INTEGER},
+      productType = #{record.productType,jdbcType=CHAR},
+      retain2 = #{record.retain2,jdbcType=CHAR},
+      retain3 = #{record.retain3,jdbcType=CHAR},
+      retain4 = #{record.retain4,jdbcType=CHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="deal.manage.bean.DealOrder" >
+    update dealpay_deal_order
+    <set >
+      <if test="orderId != null" >
+        orderId = #{orderId,jdbcType=CHAR},
+      </if>
+      <if test="associatedId != null" >
+        associatedId = #{associatedId,jdbcType=CHAR},
+      </if>
+      <if test="orderStatus != null" >
+        orderStatus = #{orderStatus,jdbcType=CHAR},
+      </if>
+      <if test="dealAmount != null" >
+        dealAmount = #{dealAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="dealFee != null" >
+        dealFee = #{dealFee,jdbcType=DECIMAL},
+      </if>
+      <if test="actualAmount != null" >
+        actualAmount = #{actualAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="orderType != null" >
+        orderType = #{orderType,jdbcType=CHAR},
+      </if>
+      <if test="orderAccount != null" >
+        orderAccount = #{orderAccount,jdbcType=CHAR},
+      </if>
+      <if test="orderQrUser != null" >
+        orderQrUser = #{orderQrUser,jdbcType=CHAR},
+      </if>
+      <if test="orderQr != null" >
+        orderQr = #{orderQr,jdbcType=VARCHAR},
+      </if>
+      <if test="externalOrderId != null" >
+        externalOrderId = #{externalOrderId,jdbcType=VARCHAR},
+      </if>
+      <if test="generationIp != null" >
+        generationIp = #{generationIp,jdbcType=VARCHAR},
+      </if>
+      <if test="notify != null" >
+        notify = #{notify,jdbcType=VARCHAR},
+      </if>
+      <if test="back != null" >
+        back = #{back,jdbcType=VARCHAR},
+      </if>
+      <if test="isNotify != null" >
+        isNotify = #{isNotify,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="submitTime != null" >
+        submitTime = #{submitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="feeId != null" >
+        feeId = #{feeId,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="productType != null" >
+        productType = #{productType,jdbcType=CHAR},
+      </if>
+      <if test="retain2 != null" >
+        retain2 = #{retain2,jdbcType=CHAR},
+      </if>
+      <if test="retain3 != null" >
+        retain3 = #{retain3,jdbcType=CHAR},
+      </if>
+      <if test="retain4 != null" >
+        retain4 = #{retain4,jdbcType=CHAR},
+      </if>
+      <if test="dealDescribe != null" >
+        dealDescribe = #{dealDescribe,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="deal.manage.bean.DealOrder" >
+    update dealpay_deal_order
+    set orderId = #{orderId,jdbcType=CHAR},
+      associatedId = #{associatedId,jdbcType=CHAR},
+      orderStatus = #{orderStatus,jdbcType=CHAR},
+      dealAmount = #{dealAmount,jdbcType=DECIMAL},
+      dealFee = #{dealFee,jdbcType=DECIMAL},
+      actualAmount = #{actualAmount,jdbcType=DECIMAL},
+      orderType = #{orderType,jdbcType=CHAR},
+      orderAccount = #{orderAccount,jdbcType=CHAR},
+      orderQrUser = #{orderQrUser,jdbcType=CHAR},
+      orderQr = #{orderQr,jdbcType=VARCHAR},
+      externalOrderId = #{externalOrderId,jdbcType=VARCHAR},
+      generationIp = #{generationIp,jdbcType=VARCHAR},
+      notify = #{notify,jdbcType=VARCHAR},
+      back = #{back,jdbcType=VARCHAR},
+      isNotify = #{isNotify,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      submitTime = #{submitTime,jdbcType=TIMESTAMP},
+      feeId = #{feeId,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      productType = #{productType,jdbcType=CHAR},
+      retain2 = #{retain2,jdbcType=CHAR},
+      retain3 = #{retain3,jdbcType=CHAR},
+      retain4 = #{retain4,jdbcType=CHAR},
+      dealDescribe = #{dealDescribe,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="deal.manage.bean.DealOrder" >
+    update dealpay_deal_order
+    set orderId = #{orderId,jdbcType=CHAR},
+      associatedId = #{associatedId,jdbcType=CHAR},
+      orderStatus = #{orderStatus,jdbcType=CHAR},
+      dealAmount = #{dealAmount,jdbcType=DECIMAL},
+      dealFee = #{dealFee,jdbcType=DECIMAL},
+      actualAmount = #{actualAmount,jdbcType=DECIMAL},
+      orderType = #{orderType,jdbcType=CHAR},
+      orderAccount = #{orderAccount,jdbcType=CHAR},
+      orderQrUser = #{orderQrUser,jdbcType=CHAR},
+      orderQr = #{orderQr,jdbcType=VARCHAR},
+      externalOrderId = #{externalOrderId,jdbcType=VARCHAR},
+      generationIp = #{generationIp,jdbcType=VARCHAR},
+      notify = #{notify,jdbcType=VARCHAR},
+      back = #{back,jdbcType=VARCHAR},
+      isNotify = #{isNotify,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      submitTime = #{submitTime,jdbcType=TIMESTAMP},
+      feeId = #{feeId,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      productType = #{productType,jdbcType=CHAR},
+      retain2 = #{retain2,jdbcType=CHAR},
+      retain3 = #{retain3,jdbcType=CHAR},
+      retain4 = #{retain4,jdbcType=CHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
