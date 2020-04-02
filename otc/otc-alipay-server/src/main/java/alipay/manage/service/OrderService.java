@@ -34,13 +34,6 @@ public interface OrderService {
 	 * @return
 	 */
 	List<RunOrder> findOrderRunByPage(RunOrder order);
-
-	/**
-	 * 【分页查询流水订单】当条件为null的时候 分页查询所有
-	 * @param orderAccount
-	 * @return
-	 */
-	List<RunOrder> findAllOrderRunByPage(String orderAccount);
 	
 	/**
 	 * <p>分页查询订单，根据自己的所有子账号</p>

@@ -151,15 +151,12 @@ public class OrderContorller {
 	        log.info("当前用户未登陆");
 	        return Result.buildFailMessage("当前用户未登陆");
 	    }
-		List<RunOrder> orderList =null;
 		order.setOrderAccount(user.getUserId());
-		if(StringUtils.isEmpty(accountChangeTypeCode) || StringUtils.isEmpty(startTime)) {
-			orderList = orderServiceImpl.findAllOrderRunByPage(order.getOrderAccount());
-		}else {
+		if(StrUtil.isNotBlank(startTime)) 
 			order.setTime(startTime);
+		if(StrUtil.isNotBlank(accountChangeTypeCode))
 			order.setRunType(accountChangeTypeCode);
-			orderList = orderServiceImpl.findOrderRunByPage(order);
-		}
+		List<RunOrder> orderList = orderServiceImpl.findOrderRunByPage(order);
 		PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
 		PageInfo<RunOrder> pageInfo = new PageInfo<RunOrder>(orderList);
 		PageResult<RunOrder> pageR = new PageResult<RunOrder>();

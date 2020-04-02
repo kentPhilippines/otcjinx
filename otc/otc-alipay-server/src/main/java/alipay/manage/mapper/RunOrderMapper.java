@@ -37,6 +37,4 @@ public interface RunOrderMapper {
 
     int updateByPrimaryKey(RunOrder record);
       
-    @Select("select * from alipay_run_order where orderAccount=#{orderAccount} and status=1")
-	List<RunOrder> selectAllRunOrderByorderAccount(@Param("orderAccount")String orderAccount);
 }

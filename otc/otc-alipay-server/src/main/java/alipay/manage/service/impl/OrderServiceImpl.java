@@ -56,20 +56,22 @@ public class OrderServiceImpl implements OrderService{
 			criteria.andOrderAccountEqualTo(order.getOrderAccount());
 		if(StrUtil.isNotBlank(order.getTime())) {
 			Date date = getDate(order.getTime());
-			Calendar calendar = new GregorianCalendar();
-			calendar.setTime(date);
-			calendar.set(Calendar.HOUR,0);
-			calendar.set(Calendar.MINUTE,0);
-			calendar.set(Calendar.SECOND,0);
-			calendar.set(Calendar.MILLISECOND,0);
-			System.out.println("开始时间："+calendar.getTime());
-			Date time = calendar.getTime();
-			calendar.set(Calendar.HOUR,23);
-			calendar.set(Calendar.MINUTE,59);
-			calendar.set(Calendar.SECOND,59);
-			calendar.set(Calendar.MILLISECOND,999);
-			System.out.println("结束时间："+calendar.getTime());
-			criteria.andCreateTimeBetween(time, calendar.getTime());
+			order.setCreateTime(date);
+//			Calendar calendar = new GregorianCalendar();
+//			calendar.setTime(date);
+//			calendar.set(Calendar.HOUR,0);
+//			calendar.set(Calendar.MINUTE,0);
+//			calendar.set(Calendar.SECOND,0);
+//			calendar.set(Calendar.MILLISECOND,0);
+//			System.out.println("开始时间："+calendar.getTime());
+//			Date time = calendar.getTime();
+//			calendar.set(Calendar.HOUR,23);
+//			calendar.set(Calendar.MINUTE,59);
+//			calendar.set(Calendar.SECOND,59);
+//			calendar.set(Calendar.MILLISECOND,999);
+//			System.out.println("结束时间："+calendar.getTime());
+//			criteria.andCreateTimeBetween(time, calendar.getTime());
+			criteria.andCreateTimeEqualTo(order.getCreateTime());
 		}
 		if(CollUtil.isNotEmpty(order.getOrderAccountList()))
 			criteria.andOrderAccountListEqualTo(order.getOrderAccountList());
@@ -88,15 +90,7 @@ public class OrderServiceImpl implements OrderService{
 		}
 		return dateTime;
 	}
-	 /**
-	  * 【分页查询流水订单】当条件为null的时候 分页查询所有
-	  */
-	@Override
-	public List<RunOrder> findAllOrderRunByPage(String orderAccount) {
-		// TODO Auto-generated method stub
-		List<RunOrder> listRunOrder=runOrderMapper.selectAllRunOrderByorderAccount(orderAccount);
-		return listRunOrder;
-	}
+
 	
 	@Override
 	public List<DealOrder> findOrderByPage(DealOrder order) {
