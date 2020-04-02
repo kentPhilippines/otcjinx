@@ -1,6 +1,7 @@
 package alipay.manage.service.impl;
 
 import alipay.manage.bean.InviteCodeExample;
+import alipay.manage.bean.InviteCodeExample.Criteria;
 import alipay.manage.mapper.InviteCodeMapper;
 import cn.hutool.core.collection.CollUtil;
 import org.slf4j.Logger;
@@ -17,13 +18,24 @@ import java.util.List;
 public class InviteCodeServiceImpl implements InviteCodeService{
 	@Autowired
 	InviteCodeMapper inviteCodeMapper;
+	
+	
 	@Override
 	public boolean addinviteCode(InviteCode bean) {
-		return false;
+		//添加邀请码
+		int insertSelective = inviteCodeMapper.insertSelective(bean);
+		return insertSelective > 0 && insertSelective < 2;
 	}
+	/**
+	 * <p>产生随机邀请码</p>
+	 */
 	@Override
 	public boolean findinviteCode(String randomString) {
-		return false;
+		InviteCodeExample example = new InviteCodeExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andInviteCodeEqualTo(randomString);
+		List<InviteCode> selectByExample = inviteCodeMapper.selectByExample(example);
+		return CollUtil.isEmpty(selectByExample)?false:true;
 	}
 
 	@Override
