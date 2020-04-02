@@ -603,7 +603,7 @@
 
 
   <select id="selectByExampleByMyId" parameterType="String" resultMap="BaseResultMap">
-        SELECT
+	 SELECT
         r1.payTypr as dealType,
         q1.orderId as orderId,
         q1.orderStatus as orderStatus,
@@ -612,6 +612,7 @@
         q1.actualAmount as actualAmount,
         q1.orderType as orderType,
         q1.orderQr as orderQr,
+        q1.retain1 as retain1,
         q1.orderAccount as orderAccount,
         q1.externalOrderId as externalOrderId,
         q1.createTime as createTime,
@@ -620,6 +621,7 @@
         FROM alipay_deal_order q1
         LEFT JOIN alipay_file_list q2 ON q1.orderQr = q2.concealId
         LEFT JOIN alipay_user_rate r1 ON q1.feeId = r1.fee
+		left JOIN alipay_product p1 on p1.productId=q1.retain1
         WHERE
           q1.orderQrUser = #{userId}
           and to_days(q1.createTime) = to_days(#{createTime})
@@ -634,6 +636,8 @@
       	q1.dealAmount as dealAmount,
       	q1.actualAmount as actualAmount,
       	q1.orderType as orderType,
+      	q1.retain1 as retain1,
+      	q1.orderQr as orderQr,
       	q1.orderAccount as orderAccount,
       	q1.externalOrderId as externalOrderId,
       	q1.createTime as createTime,
