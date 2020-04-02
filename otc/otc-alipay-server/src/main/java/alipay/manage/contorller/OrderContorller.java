@@ -19,7 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.github.pagehelper.PageHelper;
@@ -176,12 +178,15 @@ public class OrderContorller {
 	@Transactional
 	public Result findLowerLevelAccountChangeLogByPage(
 			HttpServletRequest request,
-			String startTime,
-			String pageNum,
-			String pageSize,
-			String accountChangeTypeCode,
-			String userName
+			@RequestParam(required = false)String startTime,
+			@RequestParam(required = false)String pageNum,
+			@RequestParam(required = false)String pageSize,
+			@RequestParam(required = true)String accountChangeTypeCode,
+			@RequestParam(required = true)String userName
 			) {
+		log.info("startTime*****>"+startTime);
+		log.info("accountChangeTypeCode*****>"+accountChangeTypeCode);
+		log.info("userName*****>"+userName);
 		UserInfo user = sessionUtil.getUser(request);
 		if (ObjectUtil.isNull(user)) {
 	        log.info("当前用户未登陆");
@@ -196,14 +201,20 @@ public class OrderContorller {
 		} 
 		userList.add(user.getUserId());
 		log.info("子账户"+userList.toString());
+		List<RunOrder> orderList =null;
 		RunOrder orderRun = new RunOrder();
 		orderRun.setOrderAccountList(userList);
-		if(StrUtil.isNotBlank(startTime))
-			orderRun.setTime(startTime);
-		if(StrUtil.isNotBlank(accountChangeTypeCode))
-			orderRun.setRunType(accountChangeTypeCode);
+		//所有下级的账号  带入到 流水  表里面看所有的流水[参数为null]查询所有下级账号流水
+		if(StrUtil.isEmpty(startTime) || StrUtil.isEmpty(accountChangeTypeCode)) {
+			orderList=orderServiceImpl.findAllOrderRunByPage(orderRun);			
+		}else {	
+			if(StrUtil.isNotBlank(startTime))
+				orderRun.setTime(startTime);
+			if(StrUtil.isNotBlank(accountChangeTypeCode))
+				orderRun.setRunOrderType(Integer.valueOf(accountChangeTypeCode));
+			orderList = orderServiceImpl.findOrderRunByPage(orderRun);
+		}
 		PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
-		List<RunOrder> orderList = orderServiceImpl.findOrderRunByPage(orderRun);
 		PageInfo<RunOrder> pageInfo = new PageInfo<RunOrder>(orderList);
 		PageResult<RunOrder> pageR = new PageResult<RunOrder>();
 		pageR.setContent(pageInfo.getList());
@@ -212,6 +223,7 @@ public class OrderContorller {
 		pageR.setTotalPage(pageInfo.getPages());
 		return Result.buildSuccessResult(pageR);
 	}
+	
 	@GetMapping("/findLowerLevelAccountReceiveOrderRecordByPage")
 	@ResponseBody
 	@Transactional
@@ -333,4 +345,24 @@ public class OrderContorller {
 		return bean;
 	}
 		 
+	/**
+	 * <p>申诉</p>
+	 * @param request
+	 * @param appealType
+	 * @param actualPayAmount
+	 * @param userSreenshotIds
+	 * @param merchantOrderId
+	 * @return
+	 */
+	@PostMapping("/userStartAppeal")
+	@ResponseBody
+	public Result userStartAppeal(HttpServletRequest request,String appealType,String actualPayAmount,String userSreenshotIds,String merchantOrderId) {
+		UserInfo user = sessionUtil.getUser(request);
+		RunOrder order = new RunOrder();
+		if(ObjectUtil.isNull(user)) {
+			return Result.buildFailMessage("当前用户未登录");
+		}
+		return  null;
+	}
+	
 }
