@@ -83,4 +83,17 @@ public interface UserInfoMapper {
      * @return
      */
     int updateproxyByUser(UserInfo user);
+
+    /**
+     * <p>修改登录密码</p>
+     * @param userId
+     * @param newPassword
+     * @return
+     */
+    @Update("update alipay_user_info set password = #{newPassword} where userId = #{userId}")
+	int updataPassword(@Param("userId")String userId, @Param("newPassword")String newPassword);
+
+    
+    @Update("update alipay_user_info set payPasword = #{newPassword} where userId = #{userId}")
+	int updataPayPassword(String userId, String newPayPassword);
 }

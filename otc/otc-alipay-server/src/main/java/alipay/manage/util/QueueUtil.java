@@ -38,30 +38,20 @@ public class QueueUtil {
 	 */
 	public Result addNode(Medium medium) {
 		log.info("【进入支付媒介入列操作】");
-		Future<Result> execAsync = ThreadUtil.execAsync(()->{
 			Result addNode  = Result.buildFail();
-			try {
-				lock.lock();
-				boolean flag = mediumServiceImpl.updataMediumStatusSu(medium.getId().toString());// open Medium
-				if(!flag)
-					return Result.buildFail();
 				Medium mediumId = mediumServiceImpl.findMediumId(medium.getId().toString());
 				String mediumNo = mediumId.getMediumId();
 				log.info("【当前操作的媒介id为："+mediumNo+"】");
-				if(redisUtil.hasKey(MEDIUM_QUEUE+mediumNo)) 
-					return Result.buildFailMessage("本地标记已存在");
-				redisUtil.set(MEDIUM_QUEUE+mediumNo, mediumNo);
 				addNode = queueServiceClienImpl.addNode(mediumId);	// addNode - queue
-			 }finally {
-				 lock.unlock();
-			}
+				if(addNode.isSuccess()) {
+					if(redisUtil.hasKey(MEDIUM_QUEUE+mediumNo)) 
+						return Result.buildFailMessage("本地标记已存在");
+					redisUtil.set(MEDIUM_QUEUE+mediumNo, mediumNo);
+					boolean flag = mediumServiceImpl.updataMediumStatusSu(medium.getId().toString());// open Medium
+					if(!flag)
+						return Result.buildFail();
+				}
 			return addNode;
-		});
-		try {
-			return execAsync.get(20,TimeUnit.MILLISECONDS);
-		} catch (InterruptedException | ExecutionException | TimeoutException e) {
-			return Result.buildFail();
-		}
 	}
 	/**
 	 * <p>收款媒介出列操作</p>
@@ -70,27 +60,17 @@ public class QueueUtil {
 	 */
 	public Result pop(Medium medium) {
 		log.info("【进入支付媒介出列操作】");
-		Future<Result> execAsync = ThreadUtil.execAsync(()->{
 			Result deleteNode  = Result.buildFail();
-		try {
-		lock.lock();
-			boolean flag = mediumServiceImpl.updataMediumStatusEr(medium.getId().toString());   // off medium
-			if(!flag)
-				return Result.buildFail();
 			Medium mediumId = mediumServiceImpl.findMediumId(medium.getId().toString());
 			String mediumNo = mediumId.getMediumId();
-			log.info("【当前操作的媒介id为："+mediumNo+"】");
-			redisUtil.del(MEDIUM_QUEUE+mediumNo);
 			deleteNode = queueServiceClienImpl.deleteNode(mediumId);   // delete medium  -  queue
-		 }finally {
-			 lock.unlock();
-		}
+			if(deleteNode.isSuccess()) {
+				log.info("【当前操作的媒介id为："+mediumNo+"】");
+				redisUtil.del(MEDIUM_QUEUE+mediumNo);
+				boolean flag = mediumServiceImpl.updataMediumStatusEr(medium.getId().toString());   // off medium
+				if(!flag)
+					return Result.buildFail();
+			}
 		return deleteNode;
-		});
-		try {
-			return execAsync.get(20,TimeUnit.MILLISECONDS);
-		} catch (InterruptedException | ExecutionException | TimeoutException e) {
-			return Result.buildFail();
-		}
 	}
 }

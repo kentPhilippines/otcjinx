@@ -110,7 +110,6 @@ var gatheringCodeVM = new Vue({
 				params : {
 					pageSize : 5,
 					pageNum : that.pageNum1,
-					code : that.mediumCode,
 					status : that.medium.status
 				}
 			}).then(function(res) {
@@ -274,7 +273,6 @@ var gatheringCodeVM = new Vue({
 			var that = this;
 			var qrcodeId = that.qrcodeId;
 			//var qrcodeId=that.mediums[0].qrcodeId;
-			console.log("qrcodeId---->" , that.mediums[0].qrcodeId);
 			var flag = that.editGatheringCode.fixedGatheringAmount;
 			if(qrcodeId == ''  || qrcodeId == null	){
 					layer.alert('请上传二维码', {
@@ -296,7 +294,6 @@ var gatheringCodeVM = new Vue({
 					amount : amount,
 					flag : flag
 			}} ).then(function(res) {
-				console.log("*******>" , res.body);
 				if(res.body.success){
 					layer.alert('操作成功!', {
 						icon : 1,

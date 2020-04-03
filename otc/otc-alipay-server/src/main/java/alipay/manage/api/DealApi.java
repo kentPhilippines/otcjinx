@@ -107,12 +107,12 @@ public class DealApi {
 		order.setOrderStatus(Common.Order.DealOrder.ORDER_STATUS_DISPOSE.toString());
 		order.setOrderType(Common.Order.ORDER_TYPE_DEAL.toString());
 		UserRate rate = userInfoServiceImpl.findUserRate(findQr.getFileholder(),Common.Deal.PRODUCT_ALIPAY_SCAN);
-		orderApp.setOrderId(Number.getOrderQr());
+		order.setOrderId(Number.getOrderQr());
 		order.setFeeId(rate.getId());
 		order.setRetain1(rate.getPayTypr());
 		boolean addOrder = orderServiceImpl.addOrder(order);
 		if(addOrder)
-			corr(orderApp.getOrderId());
+			corr(order.getOrderId());
 		return addOrder;
 	}
 	/**

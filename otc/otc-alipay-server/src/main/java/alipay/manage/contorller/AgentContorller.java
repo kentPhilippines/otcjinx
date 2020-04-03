@@ -100,7 +100,6 @@ public class AgentContorller {
 	            @RequestBody InviteCode bean,
 	            HttpServletRequest request
 	    ) {
-	    	log.info("userType=====》"+ bean.getUserType());
 	    	UserInfo user = sessionUtil.getUser(request);
 	    	if(ObjectUtil.isNull(user))
 	    		return Result.buildFailMessage("当前用户未登录");
@@ -145,7 +144,6 @@ public class AgentContorller {
 	    		                                              @RequestParam(required = false)String userName,
 	    		                                              HttpServletRequest request) {
 	    	UserInfo user2 = sessionUtil.getUser(request);
-	    	log.info("获取用户 " + user2);
 	        if (StrUtil.isBlank(user2.getUserId()))
 	            return Result.buildFail();
 	        UserInfo user = new UserInfo();
@@ -154,7 +152,6 @@ public class AgentContorller {
 	        user.setAgent(user2.getUserId());
 	        PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
 	        List<UserInfo> userList = userInfoService.findSunAccount(user);
-	        log.info("获取用户信息" + userList);
 	        for (UserInfo qrUser : userList)
 	            findOnline(qrUser);
 	        PageInfo<UserInfo> pageInfo = new PageInfo<UserInfo>(userList);
@@ -170,11 +167,9 @@ public class AgentContorller {
 	    @ResponseBody
 	    public Result findAgentCount(HttpServletRequest request) {
 	    	UserInfo user2 = sessionUtil.getUser(request);
-	    	log.info("user2.getUserId"+user2.getUserId());
 			if (ObjectUtil.isNull(user2))
 				throw new OtherErrors("当前用户未登录");
 	        UserFund findUserByAccount = userInfoService.findUserFundByAccount(user2.getUserId());
-	        log.info("通过id获取资金账户表::"+ findUserByAccount);
 	        UserCountBean findMoreCount = findMyDate(findUserByAccount.getId());
 	        findMoreCount.setMoreDealProfit(findUserByAccount.getTodayAgentProfit().toString());
 	        return Result.buildSuccessResult(findMoreCount);

@@ -3,6 +3,7 @@ package otc.api;
 import java.util.List;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -33,7 +34,7 @@ public interface AlipayServiceClienFeign {
 	 * @param mediumAlipay				媒介类型
 	 * @return
 	 */
-	@PostMapping(PayApiConstant.Alipay.MEDIUM_API+PayApiConstant.Alipay.FIND_MEDIUM_IS_DEAL)
+	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,value = PayApiConstant.Alipay.MEDIUM_API+PayApiConstant.Alipay.FIND_MEDIUM_IS_DEAL)
 	List<Medium> findIsDealMedium(@RequestParam("mediumType")String mediumAlipay);
 	
 	/**
@@ -41,25 +42,25 @@ public interface AlipayServiceClienFeign {
 	 * @param mediumNumber
 	 * @return
 	 */
-	@PostMapping(PayApiConstant.Alipay.MEDIUM_API+PayApiConstant.Alipay.OFF_MEDIUM_QR)
+	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,value = PayApiConstant.Alipay.MEDIUM_API+PayApiConstant.Alipay.OFF_MEDIUM_QR)
 	Result offMediumQueue(@RequestParam("mediumNumber")String mediumNumber);
 	/**
 	 * <p>获取没有剪裁的文件 </p>
 	 * @return
 	 */
-	@PostMapping(PayApiConstant.File.FILE_API+PayApiConstant.File.FIND_FILE_NOT_CUT)
+	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,value = PayApiConstant.File.FILE_API+PayApiConstant.File.FIND_FILE_NOT_CUT)
 	public List<FileList> findFileNotCut();
 	/**
 	 * <p>逻辑删除该二维码数据</p>
 	 * @param fileId
 	 */
-	@PostMapping(PayApiConstant.File.FILE_API+PayApiConstant.File.OFF_FILE)
+	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,value = PayApiConstant.File.FILE_API+PayApiConstant.File.OFF_FILE)
 	public void updateFileNotDeal(@RequestParam("fileId")String fileId);
 	/**
 	 * <p>将二维码标记为以剪裁</p>
 	 * @param fileId
 	 */
-	@PostMapping(PayApiConstant.File.FILE_API+PayApiConstant.File.OPEN_FILE)
+	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,value = PayApiConstant.File.FILE_API+PayApiConstant.File.OPEN_FILE)
 	public void updataFileIsDeal(@RequestParam("fileId")String fileId);
 	
 	

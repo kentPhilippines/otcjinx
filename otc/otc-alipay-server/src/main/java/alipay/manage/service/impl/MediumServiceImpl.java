@@ -2,6 +2,7 @@ package alipay.manage.service.impl;
 
 import alipay.config.redis.RedisUtil;
 import alipay.manage.bean.MediumExample;
+import alipay.manage.bean.MediumExample.Criteria;
 import alipay.manage.bean.UserInfo;
 import alipay.manage.mapper.MediumMapper;
 import alipay.manage.mapper.UserInfoMapper;
@@ -79,10 +80,8 @@ public class MediumServiceImpl implements MediumService {
       */
 	@Override
 	public List<Medium> findAllMedium(String qrcodeId) {
-		// TODO Auto-generated method stub
 		MediumExample example =  new MediumExample();
-		example.createCriteria();
-		MediumExample.Criteria criteria = example.createCriteria();
+		Criteria criteria = example.createCriteria();
         criteria.andQrcodeIdEqualTo(qrcodeId);
         criteria.andIsDealEqualTo(Common.Medium.QR_IS_DEAL_ON);
         List<Medium> selectByExample = mediumDao.selectByExample(example);
@@ -113,7 +112,7 @@ public class MediumServiceImpl implements MediumService {
     public List<Medium> findIsDealMedium(String mediumAlipay) {
         MediumExample example =  new MediumExample();
         MediumExample.Criteria criteria = example.createCriteria();
-        criteria.andCodeEqualTo(mediumAlipay);
+        criteria.andQrcodeIdEqualTo(mediumAlipay);
         criteria.andIsDealEqualTo(Common.Medium.QR_IS_DEAL_ON);
         criteria.andStatusEqualTo(Integer.valueOf(Common.STATUS_IS_OK));
         List<Medium> selectByExample = mediumDao.selectByExample(example);
@@ -148,7 +147,11 @@ public class MediumServiceImpl implements MediumService {
 
     @Override
     public boolean updataMediumStatusEr(String id) {
-        return false;
+    	Medium record=new Medium();
+    	record.setId(Integer.parseInt(id));
+    	record.setStatus(Common.STATUS_IS_NOT_OK);
+    	int flag=mediumDao.updateByPrimaryKeySelective(record);
+        return flag>0 && flag<2;
     }
 
     @Override
@@ -161,8 +164,8 @@ public class MediumServiceImpl implements MediumService {
     public boolean updataMediumStatusSu(String id) {
     	Medium record=new Medium();
     	record.setId(Integer.parseInt(id));
-    	record.setStatus(1);
-    	int flag=mediumDao.updateByPrimaryKey(record);
+    	record.setStatus(Common.STATUS_IS_OK);
+    	int flag=mediumDao.updateByPrimaryKeySelective(record);
         return flag>0 && flag<2;
     }
 

@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import alipay.config.thread.ThreadConnection;
 import alipay.config.thread.TransactionBusiness;
 import alipay.config.thread.TransactionBusinessManager;
-import alipay.manage.api.OrderApi;
 import alipay.manage.bean.DealOrder;
 import alipay.manage.bean.DealOrderApp;
 import alipay.manage.bean.Recharge;
@@ -42,7 +41,7 @@ import otc.result.Result;
 import otc.util.number.Number;
 @Component
 public class OrderUtil {
-	Logger log = LoggerFactory.getLogger(OrderApi.class);
+	Logger log = LoggerFactory.getLogger(OrderUtil.class);
 	@Autowired OrderService orderServiceImpl;
 	@Autowired AmountUtil amountUtil;
 	@Autowired AmountRunUtil amountRunUtil;

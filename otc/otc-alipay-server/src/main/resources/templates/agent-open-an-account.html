@@ -52,10 +52,10 @@
 						<label>确认资金密码</label> <input type="password" class="form-control" placeholder="请确认资金密码" v-model="NewSecurityPassword">
 					</div>
 					 
-					<div class="form-group">
+				<!-- 	<div class="form-group">
 						<label>返点</label> 
 						<input type="text" class="form-control"  v-model="rebate"  placeholder="请输入返点 ">
-					</div>
+					</div> -->
 					<button type="button" class="btn bg-primary btn-lg btn-block login-btn" v-on:click="agentOpenAnAccount">确认开户</button>
 					<button type="button" class="btn btn-light btn-lg btn-block" v-on:click="window.history.back(-1);">返回</button>
 				</form>
@@ -163,14 +163,14 @@
 						layer.alert('资金密码不合法!请输入以字母开头,长度为6-15个字母和数字的密码');
 						return;
 					}
-					if (that.rebate == null || that.rebate == '') {
+					/* if (that.rebate == null || that.rebate == '') {
 						layer.alert('请选择返点', {
 							title : '提示',
 							icon : 7,
 							time : 3000
 						});
 						return;
-					}
+					} */
 					that.$http.post('/agent/agentOpenAnAccount', {
 						accountId : that.userName,
 						accountName : that.accountName,

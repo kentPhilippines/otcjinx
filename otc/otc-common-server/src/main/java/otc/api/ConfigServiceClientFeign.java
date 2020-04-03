@@ -1,6 +1,7 @@
 package otc.api;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -20,6 +21,6 @@ public interface ConfigServiceClientFeign {
 	 * @param key						配置键
 	 * @return							【返回值】
 	 */
-	@PostMapping(PayApiConstant.Config.CONFIG_API+PayApiConstant.Config.CONFIG_API_GET_CONFIG_SYSTEM)
+	@PostMapping( PayApiConstant.Config.CONFIG_API+PayApiConstant.Config.CONFIG_API_GET_CONFIG_SYSTEM)
 	public Result getConfig(@RequestParam("system") String system ,@RequestParam("key")  String key);
 }

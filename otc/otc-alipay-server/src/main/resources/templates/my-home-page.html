@@ -126,13 +126,13 @@
                 <div class="cash-deposit" style="margin-left: 1.2rem;">
                     <span>余额:</span><label>{{cashBalance | numFilter }}元</label>
                 </div>
-            <div class="cash-deposit" style="margin-left: 1.2rem;">
+          <!--   <div class="cash-deposit" style="margin-left: 1.2rem;">
                     <span>收益:</span><label>{{cashBalance != null ? cashBalance
                         : 0}}元</label>
                 </div> 
                 <div class="cash-deposit">
                     <span>费率:</span><label>{{fee != null ? fee*100: 0 | numFilter }}%</label>
-                </div> 
+                </div>  -->
                 <div class="personal-info">
                     <label><i class="fa fa-angle-right" aria-hidden="true"
                               v-on:click="footerVM.goTo('/personal-info')"></i></label>
@@ -146,7 +146,7 @@
                     <span>接单人数:</span><label>{{onlineStat.bizOnlineCount}}</label>
                 </div>
                 <div class="personal-info">
-                    <label><i class="fa fa-angle-right" aria-hidden="true" v-show="onlineStat.isAgent == 1"
+                    <label><i class="fa fa-angle-right" aria-hidden="true" 
                               v-on:click="footerVM.goTo('/onlineStatMembers')"></i></label>
                 </div>
             </div>
@@ -177,14 +177,14 @@
             </div>
             <ul class="list-group">
                 <li class="list-group-item fa fa-users"
-                    v-show="isLoggedInFlag && accountType == 'agent'"
+                    v-show="isLoggedInFlag && accountType == '1'"
                     v-on:click="footerVM.goTo('/agent-center')">代理中心<span><i
                         aria-hidden="true" class="fa fa-angle-right"></i></span>
                 </li>
-                <li class="list-group-item"
+             <!--    <li class="list-group-item"
                     v-on:click="footerVM.goTo('/online-customer')">在线客服<span><i
                     aria-hidden="true" class="fa fa-angle-right"></i></span>
-                </li>
+                </li> -->
                 <li class="list-group-item logout-group-item fa fa-share"  v-show="isLoggedInFlag" v-on:click="logout">退出登录<span>
                     <i aria-hidden="true" class="fa fa-angle-right"></i></span></li>
             </ul>
@@ -256,7 +256,7 @@
                                     that.isLoggedInFlag = true;
                                     that.userName = res.body.result.userName;
                                     that.cashBalance = res.body.result.amount;
-                                    that.accountType = res.body.result.accountType;
+                                    that.accountType = res.body.result.isAgent;
 /*                                     that.fee = res.body.result.fee;
  */                                    headerVM.title = that.userName + '(' + (60000 + res.body.result.id) + ')';
                                 }

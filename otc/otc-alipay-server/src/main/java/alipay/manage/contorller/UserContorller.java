@@ -165,8 +165,6 @@ public class UserContorller {
 		user.setPassword(oldLoginPwd);
 		user.setNewPassword(newLoginPwd);
 		Result updateAccountPassword = accountApiServiceImpl.updateLoginPassword(user);
-		if(updateAccountPassword.isSuccess())
-			return Result.buildSuccessResult();
 		return updateAccountPassword;
 	}
 	/**
@@ -177,22 +175,18 @@ public class UserContorller {
 	@PostMapping("/modifyMoneyPwd")
 	@ResponseBody
 	public Result modifyMoneyPwd(String oldMoneyPwd, String newMoneyPwd, HttpServletRequest request) {
-		return null;
-		/**
-		 * ##################
-		 * 这里有接口可以直接调用
-		 */
-		/*
-		 * if(StrUtil.isBlank(oldMoneyPwd)|| StrUtil.isBlank(newMoneyPwd)) return
-		 * Result.buildFailResult("必填参数为空"); UserInfo user =
-		 * sessionUtil.getUser(request); if (ObjectUtil.isNull(user)) {
-		 * log.info("当前用户未登陆"); return Result.buildFailMessage("当前用户未登陆"); } newMoneyPwd
-		 * = Md5Util.md5(newMoneyPwd); oldMoneyPwd = Md5Util.md5(oldMoneyPwd);
-		 * user.setNewPayPassword(newMoneyPwd); user.setPayPasword(oldMoneyPwd); Result
-		 * updateAccountPassword = accountApiServiceImpl.updatePayPassword(user);
-		 * if(updateAccountPassword.isSuccess()) return Result.buildSuccessResult();
-		 * return updateAccountPassword;
-		 */}
+		if(StrUtil.isBlank(oldMoneyPwd)|| StrUtil.isBlank(newMoneyPwd))
+			return Result.buildFailResult("必填参数为空");
+		UserInfo user = sessionUtil.getUser(request);
+		if (ObjectUtil.isNull(user)) {
+	        log.info("当前用户未登陆");
+	        return Result.buildFailMessage("当前用户未登陆");
+	    }
+		user.setPayPasword(oldMoneyPwd);
+		user.setNewPayPassword(newMoneyPwd);
+		Result updateAccountPassword = accountApiServiceImpl.updatePayPassword(user);
+		return updateAccountPassword;
+	}
 
 	@GetMapping("/virtualAmount")
 	@ResponseBody

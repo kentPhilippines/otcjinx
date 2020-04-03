@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -42,7 +43,7 @@ public class ConfigApi {
 	 * @return
 	 */
 	@PostMapping(PayApiConstant.Config.CONFIG_API_GET_CONFIG_SYSTEM)
-	public Result getconfig(String system , String key) {
+	public Result getconfig(  String system ,  String key) {
 		if(StrUtil.isBlank(system) || StrUtil.isBlank(key))
 			return Result.buildFailMessage("必传参数为空");
 		Result getconfig = cacheConfigUtil.getconfig(system, key);

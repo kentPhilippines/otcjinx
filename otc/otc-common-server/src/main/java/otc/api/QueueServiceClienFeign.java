@@ -3,6 +3,7 @@ package otc.api;
 import java.util.List;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -38,12 +39,12 @@ public interface QueueServiceClienFeign {
 	 * @param medium
 	 * @return
 	 */
-	@PostMapping(PayApiConstant.Queue.QUEUE_API+PayApiConstant.Queue.ADD_QR)
-	public Result addNode(@RequestParam("medium")Medium medium);
+	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, value =PayApiConstant.Queue.QUEUE_API+PayApiConstant.Queue.ADD_QR )
+	public Result addNode(Medium medium);
 	
 	
-	@PostMapping(PayApiConstant.Queue.QUEUE_API+PayApiConstant.Queue.DELETE_QR)
-	public Result deleteNode(@RequestParam("medium")Medium medium);
+	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,value = PayApiConstant.Queue.QUEUE_API+PayApiConstant.Queue.DELETE_QR)
+	public Result deleteNode(Medium medium);
 	
 	
 	/**

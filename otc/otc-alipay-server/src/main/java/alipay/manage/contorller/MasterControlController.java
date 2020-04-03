@@ -34,7 +34,7 @@ import static java.util.stream.Collectors.toList;
 @RequestMapping("/masterControl")
 public class MasterControlController {
    private static Logger log= LoggerFactory.getLogger(MasterControlController.class);
-	@Resource ConfigServiceClientFeign configServiceClientFeignImpl;
+    @Autowired ConfigServiceClientFeign configServiceClientFeignImpl;
 	@Autowired SessionUtil sessionUtil;
 	@Autowired RedisUtil redisUtil;
 	@Autowired UserInfoService userInfoService;

@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,7 +34,7 @@ public class QueueApi {
 	 * @return
 	 */
 	@PostMapping(PayApiConstant.Queue.FIND_QR)
-	public Object[] findQr(String[] code) {
+	public Object[] findQr(@RequestBody String[] code) {
 		log.info("【远程调用队列处理方法】");
 		Set<Object> list = queueList.getList(code);
 		Object[] array = list.toArray();
@@ -43,29 +44,31 @@ public class QueueApi {
 	}
 	
 	@PostMapping(PayApiConstant.Queue.UPDATA_QR)
-	public void updata(String mediumNumber , FileList file) {
+	public void updata(@RequestBody String mediumNumber , @RequestBody FileList file) {
 		log.info("【远程调用队列处理方法-更改队列顺序,当前队列标志："+file.getAttr()+"】");
 		queueList.updataNode(mediumNumber, file, file.getAttr());
 	}
 	
 	@PostMapping(PayApiConstant.Queue.ADD_QR)
-	public Result addQueue(Medium medium) {
-		boolean addNode = queueList.addNode(medium.getMediumHolder(), medium.getAttr());
+	public Result addQueue(@RequestBody Medium medium) {
+		log.info("【远程调用参数："+medium.toString()+"】");
+		boolean addNode = queueList.addNode(medium.getMediumNumber(), medium.getAttr());
 		if(addNode) {
-			log.info("【添加收款媒介本地缓存数据储存，当前添加收款媒介数据id："+medium.getMediumId()+"，队列相关元素："+medium.getMediumNumber()+"】");
-			String md5 = RSAUtils.md5(DATA_QUEUE_HASH+medium.getMediumNumber());
-			redisUtil.hset(DATA_QUEUE_HASH, md5, medium, 259200);//本地收款媒介缓存数据会缓存三天
+			String md5 = RSAUtils.md5(DATA_QUEUE_HASH+medium.getMediumNumber() );
+			redisUtil.hset(DATA_QUEUE_HASH, md5, medium, 259200);//本地收款媒介缓存数据会缓存三天			
 			return Result.buildSuccess();
 		}
-		return Result.buildFail();
+		return Result.buildFailMessage("打开失败");
 	} 
 	
 	@PostMapping(PayApiConstant.Queue.DELETE_QR)
-	public Result deleteNode(Medium medium) {
+	public Result deleteNode(@RequestBody Medium medium) {
+		log.info("【远程调用参数："+medium.toString()+"】");
+		log.info("【执行出列操作，出列对象："+medium.getMediumNumber()+"】");
 		boolean deleteNode = queueList.deleteNode(medium.getMediumNumber(),medium.getAttr());
 		if(deleteNode)
 			return Result.buildSuccess();
-		return Result.buildFail();
+		return Result.buildFailMessage("打开失败");
 	}
 	
 }

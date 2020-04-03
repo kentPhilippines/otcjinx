@@ -162,9 +162,8 @@ public class FileListServiceImpl implements FileListService {
         FileListExample example = new FileListExample();
         FileListExample.Criteria criteria = example.createCriteria();
         criteria.andConcealIdEqualTo(mediumId);
-        criteria.andIsDealEqualTo("2"); //数据逻辑可用
+        criteria.andIsDealEqualTo(Common.isOk); //数据逻辑可用
         List<FileList> fileResult=fileListMapper.selectByExample(example);
-        log.info("fileResult   :: " + fileResult);
         return fileResult;
     }
     /**

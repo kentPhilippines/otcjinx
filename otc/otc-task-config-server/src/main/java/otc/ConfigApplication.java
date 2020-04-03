@@ -18,12 +18,11 @@ import cn.hutool.core.util.NetUtil;
 @EnableFeignClients
 public class ConfigApplication {
 	public static void main(String[] args) {
-		int port = 0;
 		int defaultPort = 2232;
-		while(!NetUtil.isUsableLocalPort(port)) {
+		while(!NetUtil.isUsableLocalPort(defaultPort)) {
 			System.err.print("端口%d被占用了，无法启动%n");
-			port = ++defaultPort;
+			defaultPort += 1;
 		}
-		new SpringApplicationBuilder(ConfigApplication.class).properties("server.port=" + port).run(args);
+		new SpringApplicationBuilder(ConfigApplication.class).properties("server.port=" + defaultPort).run(args);
 	}
 }

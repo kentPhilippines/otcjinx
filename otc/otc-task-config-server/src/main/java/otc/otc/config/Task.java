@@ -22,7 +22,7 @@ public class Task {
 	@Autowired FileServiceClien fileServiceClienImpl;
 	@Scheduled(cron = "0 */1 * * * ?")
 	public void queue() {
-		queueServiceClienImpl.task();
+	//	queueServiceClienImpl.task();
 		fileServiceClienImpl.task();
 	}
 	

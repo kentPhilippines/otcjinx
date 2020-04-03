@@ -95,7 +95,7 @@
 
 label {
 	text-align: end;
-	width: 7rem;
+	width: 8rem;
 	margin-right: 1rem;
 }
 
@@ -135,13 +135,14 @@ select {
 		<div class="page-body">
 			<div class="recharge-form">
 					<div class="row" style="padding-left: 3rem; color: red; font-weight: bold;">
-							<label>请选择充值金额</label>
-					<div style="width: 20rem;">
+							<label>请选择充值金额：</label>
+					</div>
+					<div style="width: 20rem;margin: 0 auto;">
 								<button v-for="amount in amountList" class="btn btn-outline-info btn-lg"   type="button"   style="margin: 0.2rem 0.2rem 0.2rem 0.2rem;width: 6rem;"  v-on:click="clickAmount(amount.code)"> {{amount.amount}}</button>		
 						</div>
 					
 					<!-- 	<div class="col-sm-12">请依银行资料存款后再填写以下信息</div> -->
-					</div>
+				
 					<div class="form-group" >
 						<!-- <div class="col-sm-9 offset-sm-3 recharge-form-item">
 							<label>充值通道</label> 
@@ -149,13 +150,6 @@ select {
 							<option value="">请选择</option> 
 							<option v-for="payChannel in payChannels"  :value="payChannel.payCode"  >{{payChannel.payName}}</option>
 						</div> -->
-						
-						
-						
-						
-						
-						
-						
 					</div>
 				</div>
 			<!-- 	<div class="row">

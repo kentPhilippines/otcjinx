@@ -71,12 +71,8 @@ public class PaymentCodeContorller {
         if (ObjectUtil.isNull(user))
             throw new OtherErrors("当前用户未登录");
         List<Medium> list =null;
-         medium.setQrcodeId(user.getUserId());
-        if(StrUtil.isBlank(String.valueOf(medium.getStatus()))||StrUtil.isBlank(medium.getCode())) {
-        	list =mediumServicel.findAllMedium(medium.getQrcodeId());
-        }else {
-        	list = mediumServicel.findMedium(medium);
-        }
+        medium.setQrcodeId(user.getUserId());
+        list =mediumServicel.findAllMedium(medium.getQrcodeId());
         PageInfo<Medium> pageInfo = new PageInfo<Medium>(list);
         PageResult<Medium> pageR = new PageResult<Medium>();
         pageR.setContent(pageInfo.getList());
@@ -98,7 +94,6 @@ public class PaymentCodeContorller {
         if (ObjectUtil.isNull(user))
           return Result.buildFailMessage("未获取到登录用户");
         UserFund bean = userFundService.showTodayReceiveOrderSituation(user.getUserId());
-        log.info("获取累计结果::: " + bean);
         return Result.buildSuccessResult("数据获取成功", bean);
     }
 
@@ -155,9 +150,7 @@ public class PaymentCodeContorller {
         UserInfo user = sessionUtil.getUser(request);
         if (ObjectUtil.isNull(user))
             throw new OtherErrors("当前用户未登录");
-        log.info("接受的介质参数为：" + mediumId);
         List<FileList> qrList = fileListService.findQrByMediumId(mediumId);
-        log.info("获取结果集合 " + qrList);
         return Result.buildSuccessResult(qrList);
     }
 
@@ -214,12 +207,6 @@ public class PaymentCodeContorller {
             throw new UserException("未获取到登录用户",null);
         medium.setQrcodeId(user.getUserId());
         boolean flag = mediumServicel.addMedium(medium);
-     /*
-        if (!redisUtil.hasKey(medium.getMediumNumber() + RedisConstant.User.QUEUEQRNODE)) {
-            queueQrcodeUtil.addNode(medium.getMediumNumber());
-            redisUtil.set(medium.getMediumNumber() + RedisConstant.User.QUEUEQRNODE, medium.getMediumNumber());//支付宝放入标记
-        }
-        */
         if (flag) {
             return Result.buildSuccessResult();
         }

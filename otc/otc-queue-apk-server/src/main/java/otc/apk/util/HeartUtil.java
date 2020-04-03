@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.ZSetOperations.TypedTuple;
+import org.springframework.stereotype.Component;
 
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
@@ -14,7 +15,7 @@ import otc.bean.alipay.Medium;
 import otc.common.RedisConstant;
 import otc.result.Result;
 import otc.util.RSAUtils;
-
+@Component
 public class HeartUtil {
 	@Autowired RedisUtil redisUtil;
     private static final String REDISKEY_QUEUE = RedisConstant.Queue.QUEUE_REDIS;//队列储存数据
