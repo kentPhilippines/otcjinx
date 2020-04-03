@@ -1,9 +1,11 @@
 package alipay.manage.service.impl;
 
 import alipay.manage.bean.FileListExample;
+import alipay.manage.bean.FileListExample.Criteria;
 import alipay.manage.mapper.FileListMapper;
 import alipay.manage.service.FileListService;
 import alipay.manage.service.MediumService;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import org.slf4j.Logger;
@@ -105,9 +107,14 @@ public class FileListServiceImpl implements FileListService {
 
     @Override
     public FileList findQrByNo(String orderQr) {
-        return null;
+    	FileListExample example = new FileListExample();
+    	Criteria criteria = example.createCriteria();
+    	criteria.andFileIdEqualTo(orderQr);
+    	List<FileList> selectByExample = fileListMapper.selectByExample(example);
+    	return CollUtil.getFirst(selectByExample);
     }
 
+    
     @Override
     public List<FileList> findIsMyQrcodePage(FileList qrcode) {
         return null;
@@ -213,7 +220,7 @@ public class FileListServiceImpl implements FileListService {
         bean.setCreateTime(null);
         bean.setIsDeal(Common.notOk);
         bean.setStatus(Common.STATUS_IS_NOT_OK);
-        criteria.andConcealIdEqualTo(qrcodeId);
+        criteria.andFileIdEqualTo(qrcodeId);
         int updateByExampleSelective = fileListMapper.updateByExampleSelective(bean, example);
         return updateByExampleSelective > 0 && updateByExampleSelective < 2;
     }
