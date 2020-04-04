@@ -55,7 +55,6 @@ public class AccountApiSericeImpl implements AccountApiService {
         String salt = HashKit.randomSalt();
         Result password = HashKit.encodePassword(user.getUserId(), user.getPassword(), salt);
         Result payPasword = HashKit.encodePassword(user.getUserId(), user.getPayPasword(), salt);
-        log.info("payPasword " + payPasword.isSuccess());
         if (!password.isSuccess())
             return Result.buildFailMessage("生成密钥失败");
         if (!payPasword.isSuccess())
@@ -104,7 +103,17 @@ public class AccountApiSericeImpl implements AccountApiService {
      */
     @Override
     public Result updateLoginPassword(UserInfo user) {
-        return null;
+    	UserInfo userInfo = userInfoDao.findUserByUserId(user.getUserId());
+    	Result password = HashKit.encodePassword(user.getUserId(), user.getPassword(), userInfo.getSalt());
+    	if(password.isSuccess()) {
+    		boolean equals = userInfo.getPassword().equals(password.getResult().toString());
+    		if(equals) {
+    			int a = userInfoDao.updataPassword( user.getUserId(),   user.getNewPassword());
+    			if(a>0 && a < 2) 
+    				return Result.buildSuccessMessage("密码修改成功");
+    		}
+    	}
+        return Result.buildFailMessage("密码修改失败，请检查密码是否正确");
     }
 
     /**
@@ -112,7 +121,17 @@ public class AccountApiSericeImpl implements AccountApiService {
      */
     @Override
     public Result updatePayPassword(UserInfo user) {
-        return null;
+    	UserInfo userInfo = userInfoDao.findUserByUserId(user.getUserId());
+    	Result password = HashKit.encodePassword(user.getUserId(), user.getPayPasword(), userInfo.getSalt());
+    	if(password.isSuccess()) {
+    		boolean equals = userInfo.getPayPasword().equals(password.getResult().toString());
+    		if(equals) {
+    			int a = userInfoDao.updataPayPassword( user.getUserId(),user.getNewPayPassword());
+    			if(a>0 && a < 2) 
+    				return Result.buildSuccessMessage("密码修改成功");
+    		}
+    	}
+        return Result.buildFailMessage("密码修改失败，请检查密码是否正确");
     }
 
     @Override

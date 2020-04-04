@@ -37,16 +37,11 @@ import otc.result.Result;
 @Controller
 public class AccountContorller {
     Logger log = LoggerFactory.getLogger(AccountContorller.class);
-    @Autowired
-    SessionUtil sessionUtil;
-    @Autowired
-    InviteCodeService inviteCodeServiceImpl;
-    @Autowired
-    UserInfoService accountServiceImpl;
-    @Autowired
-    RedisUtil redisUtil;
-    @Autowired
-    UserUtil userUtil;
+    @Autowired SessionUtil sessionUtil;
+    @Autowired InviteCodeService inviteCodeServiceImpl;
+    @Autowired UserInfoService accountServiceImpl;
+    @Autowired RedisUtil redisUtil;
+    @Autowired UserUtil userUtil;
     /**
      * <p>代理商开户</p>
      * 手机端专用

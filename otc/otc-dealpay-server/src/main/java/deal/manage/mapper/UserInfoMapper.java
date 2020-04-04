@@ -52,4 +52,8 @@ public interface UserInfoMapper {
 	void closeMerchantRateChannel(String userId, int code);
 
 	void stopAllStatusByUserId(String userId, int code);
+
+	int updataPassword(String userId, String newPassword);
+
+	int updataPayPassword(String userId, String newPayPassword);
 }

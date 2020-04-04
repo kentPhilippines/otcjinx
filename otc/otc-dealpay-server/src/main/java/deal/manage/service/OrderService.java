@@ -96,4 +96,23 @@ public interface OrderService {
 	 */
 	boolean addRechargeOrder(Recharge order);
 
+	/**
+	 * <p>修改订单状态</p>
+	 * @param orderId
+	 * @param string
+	 * @param b
+	 * @return
+	 */
+	boolean updataOrderStatusByOrderId(String orderId, String string, boolean b);
+
+	/**
+	 * <p>根据时间查询交易订单</p>
+	 * @param userId
+	 * @param orderType
+	 * @param formatDateTime
+	 * @param formatDateTime2
+	 * @return
+	 */
+	List<DealOrder> findOrderByUser(String userId, String orderType, String formatDateTime, String formatDateTime2);
+
 }

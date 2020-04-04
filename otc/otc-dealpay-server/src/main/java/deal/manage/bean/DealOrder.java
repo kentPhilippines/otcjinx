@@ -2,6 +2,8 @@ package deal.manage.bean;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -56,7 +58,26 @@ public class DealOrder {
 
     private String dealDescribe;
 
-    public Integer getId() {
+    private List orderQrUserList;
+    
+    public List getOrderQrUserList() {
+		return orderQrUserList;
+	}
+
+	public void setOrderQrUserList(List orderQrUserList) {
+		this.orderQrUserList = orderQrUserList;
+	}
+
+	private String Time;
+    public String getTime() {
+		return Time;
+	}
+
+	public void setTime(String time) {
+		Time = time;
+	}
+
+	public Integer getId() {
         return id;
     }
 

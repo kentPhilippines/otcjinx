@@ -18,6 +18,22 @@ public class PayApiConstant {
 		public static final String CONFIG_API_GET_CONFIG_MANAGE = "/getConfigAdmin";//后台获取所有接口配置的接口
 		public static final String CONFIG_API_GET_CONFIG_SYSTEM = "/getConfigSystem";//获取统一配置文件接口
 	}
+	
+	
+	public class Dealpay{
+		public static final String ACCOUNT_API = "/account-api";//账户类型接口
+		public static final String ADD_ACCOUNT = "/add-account";//用户开户
+		public static final String EDIT_ACCOUNT = "/edit-account";//修改用户资料
+		public static final String EDIT_ACCOUNT_PASSWORD = "/edit-account-password";//修改登录密码
+		public static final String EDIT_ACCOUNT_PAY_PASSWORD = "/edit-account-pay-password";//修改资金密码
+		public static final String AMOUNT = "/amount";//账户加钱接口 【充值点数】
+		public static final String DELETE_AMOUNT ="/delete_amount";//账户减钱接口【账户金额扣除】
+		public static final String FREEZE_AMOUNT = "/freeze_amount";//账户冻结接口【账户资金冻结】
+		public static final String GENERATE_ORDER_DEDUCT = "/deduct_order"; //生成扣款订单【扣款订单】
+		public static final String AUDIT_MERCHANT_STATUS = "/audit-merchant-status"; //修改商户的状态
+	}
+	
+	
 	public class Alipay{
 		public static final String ACCOUNT_API = "/account-api";//账户类型接口
 		public static final String ADD_ACCOUNT = "/add-account";//用户开户

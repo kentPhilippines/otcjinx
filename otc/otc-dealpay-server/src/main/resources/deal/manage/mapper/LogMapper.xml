@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="deal.manage.mapper.LogMapper" >
+  <resultMap id="BaseResultMap" type="deal.manage.bean.Log" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="ipAddr" property="ipAddr" jdbcType="VARCHAR" />
+    <result column="loginLocation" property="loginLocation" jdbcType="VARCHAR" />
+    <result column="loginTime" property="loginTime" jdbcType="TIMESTAMP" />
+    <result column="useName" property="useName" jdbcType="VARCHAR" />
+    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="submitTime" property="submitTime" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="deal.manage.bean.Log" extends="BaseResultMap" >
+    <result column="msg" property="msg" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <insert id="insert" parameterType="deal.manage.bean.Log" useGeneratedKeys="true" keyProperty="id" >
+    insert into alipay_log (ipAddr, loginLocation, loginTime, 
+      useName, createTime, submitTime, 
+      status, msg)
+    values (#{ipAddr,jdbcType=VARCHAR}, #{loginLocation,jdbcType=VARCHAR}, #{loginTime,jdbcType=TIMESTAMP}, 
+      #{useName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{submitTime,jdbcType=TIMESTAMP}, 
+      #{status,jdbcType=INTEGER}, #{msg,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="deal.manage.bean.Log" useGeneratedKeys="true" keyProperty="id" >
+    insert into alipay_log
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="ipAddr != null" >
+        ipAddr,
+      </if>
+      <if test="loginLocation != null" >
+        loginLocation,
+      </if>
+      <if test="loginTime != null" >
+        loginTime,
+      </if>
+      <if test="useName != null" >
+        useName,
+      </if>
+      <if test="createTime != null" >
+        createTime,
+      </if>
+      <if test="submitTime != null" >
+        submitTime,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="msg != null" >
+        msg,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="ipAddr != null" >
+        #{ipAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="loginLocation != null" >
+        #{loginLocation,jdbcType=VARCHAR},
+      </if>
+      <if test="loginTime != null" >
+        #{loginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="useName != null" >
+        #{useName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="submitTime != null" >
+        #{submitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="msg != null" >
+        #{msg,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>

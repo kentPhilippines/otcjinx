@@ -44,7 +44,16 @@ public class Withdraw {
 
     private String retain2;
 
-    public Integer getId() {
+    private String Time;
+    public String getTime() {
+		return Time;
+	}
+
+	public void setTime(String time) {
+		Time = time;
+	}
+
+	public Integer getId() {
         return id;
     }
 

@@ -154,4 +154,34 @@ public interface UserInfoService {
 	 * @return
 	 */
 	int updateBalanceById(Integer id, BigDecimal deduct, Integer version);
+
+	boolean updateReceiveOrderState(String userId, Integer valueOf);
+
+	/**
+	 * <p>修改当前用户的入款状态为 【可接单】</p>
+	 * @param userId
+	 * @return
+	 */
+	boolean updataReceiveOrderStateNO(String userId);
+
+	/**
+	 * <p>修改当前用户的入款状态为 【不可接单】</p>
+	 * @param userId
+	 * @return
+	 */
+	boolean updataReceiveOrderStateOFF(String userId);
+
+	/**
+	 * <p>修改当前用的的出款状态为 【可接单】</p>
+	 * @param userId
+	 * @return
+	 */
+	boolean updataRemitOrderStateNO(String userId);
+
+	/**
+	 * <p>修改当前用户的出款状态为 【不可接单】</p>
+	 * @param userId
+	 * @return
+	 */
+	boolean updataRemitOrderStateOFF(String userId);
 }

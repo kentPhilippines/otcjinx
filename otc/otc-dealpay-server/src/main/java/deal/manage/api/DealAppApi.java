@@ -19,7 +19,6 @@ import deal.manage.bean.UserRate;
 import deal.manage.bean.Withdraw;
 import deal.manage.bean.util.DealBean;
 import deal.manage.bean.util.WithdrawalBean;
-import deal.manage.service.OrderAppService;
 import deal.manage.service.WithdrawService;
 import otc.api.alipay.Common;
 import otc.api.alipay.Common.Order.DealOrderApp;
@@ -38,7 +37,6 @@ public class DealAppApi {
 	@Autowired VendorRequestApi vendorRequestApi;
 	Logger log = LoggerFactory.getLogger(DealAppApi.class);
     @Autowired AccountApiService accountApiServiceImpl;
-    @Autowired OrderAppService orderAppServiceImpl;
     @Autowired WithdrawService withdrawServiceImpl;
 	/**
 	 * <p>下游商户交易接口</p>
