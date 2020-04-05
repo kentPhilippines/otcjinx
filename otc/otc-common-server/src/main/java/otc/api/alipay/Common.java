@@ -116,6 +116,7 @@ public class Common {
 
 	public static class Deals{
 		public static final String ORDERDEAL = "DE";//交易订单
+		public static final String WITDBC = "BDC";//卡商交易出款订单
 		public static final String ORDERRUN = "RUN";//流水订单
 		public static final String ORDERWIT = "WIT";//代付订单
 		public static final String ORDERWIT_APP = "AW";//代付订单
@@ -127,6 +128,7 @@ public class Common {
 		public static final String ADD_MOUNT = "ADD";//系统加钱订单
 		public static final String DEL_MOUNT = "DEL";//系统减钱订单
 		public static final String YUCHUANG_FLOW = "ANO";//越创流水
+		public static final String WITDBR = "BDC";
 	}
 
 	public static final Integer STATUS_IS_OK = 1;//数据有效

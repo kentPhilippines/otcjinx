@@ -5,10 +5,10 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import deal.manage.bean.DealOrder;
-import deal.manage.bean.Recharge;
 import deal.manage.bean.Runorder;
 import deal.manage.bean.Withdraw;
 import deal.manage.service.OrderService;
+import otc.bean.dealpay.Recharge;
 @Component
 public class OrderServiceImpl implements OrderService {
 
@@ -101,6 +101,12 @@ public class OrderServiceImpl implements OrderService {
 			String formatDateTime2) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public boolean updateOrderStatus(String orderId, String orderStatusSu) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

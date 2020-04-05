@@ -11,7 +11,6 @@ import alipay.manage.service.MediumService;
 import alipay.manage.service.UserFundService;
 import alipay.manage.service.UserInfoService;
 import alipay.manage.service.impl.CorrelationServiceImpl;
-import alipay.manage.util.QueueQrcodeUtil;
 import alipay.manage.util.SessionUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
@@ -56,8 +55,6 @@ public class PaymentCodeContorller {
     CorrelationServiceImpl correlationService;
     @Autowired
     UserFundService userFundService;
-    @Autowired
-    QueueQrcodeUtil queueQrcodeUtil;
     
     
     /**
@@ -103,8 +100,6 @@ public class PaymentCodeContorller {
             return Result.buildFailResult("参数为空");
         FileList qr = fileListService.findQrByNo(qrcodeId);
         Medium findMediumById = mediumServicel.findMediumById(qr.getConcealId());
-        if (queueQrcodeUtil.getList().contains(findMediumById.getMediumNumber()))
-            return Result.buildFailResult("当前二维码正在接单排队，禁止操作");
         Boolean flag = fileListService.deleteQrByQrcodeId(qrcodeId);
         if (flag)
             return Result.buildSuccessMessage("操作成功");
@@ -145,7 +140,6 @@ public class PaymentCodeContorller {
 
     /**
      * <p>获取与当前登录用户相关的二维码图片账号</p>
-     *
      * @param qr
      * @return
      */
@@ -266,7 +260,6 @@ public class PaymentCodeContorller {
     }
     /**
      * <p>添加一个二维码</p>
-     *
      * @param mediumId
      * @param request
      * @return
@@ -287,7 +280,6 @@ public class PaymentCodeContorller {
 
     /**
      * 上级查询下级在线人数
-     *
      * @param request
      * @return
      */

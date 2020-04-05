@@ -4,44 +4,37 @@ import java.util.List;
 import java.util.Map;
 
 import deal.manage.bean.DealOrder;
-import deal.manage.bean.Recharge;
 import deal.manage.bean.Runorder;
 import deal.manage.bean.Withdraw;
+import otc.bean.dealpay.Recharge;
 
 
 public interface OrderService {
-
 	/**
-	 * <p>码商查询自己的订单</p>
+	 * <p>卡商查询自己的订单</p>
 	 * @param userId				账户号
 	 * @param createTime			时间
 	 * @return
 	 */
 	List<DealOrder> findOrderByUser(String userId, String createTime);
-
 	/**
 	 * <p>根据关联订单号查询唯一的订单信息</p>
 	 * @param orderId
 	 * @return
 	 */
 	DealOrder findOrderByAssociatedId(String orderId);
-
-	
-	
 	/**
 	 * <p>分页查询流水订单，根据自己的子账号</p>
 	 * @param order
 	 * @return
 	 */
 	List<Runorder> findOrderRunByPage(Runorder order);
-	
 	/**
 	 * <p>分页查询订单，根据自己的所有子账号</p>
 	 * @param order
 	 * @return
 	 */
 	List<DealOrder> findOrderByPage(DealOrder order);
-
 	/**
 	 * <p>查询充值订单</p>
 	 * @param bean
@@ -56,18 +49,17 @@ public interface OrderService {
 	 * @return
 	 */
 	List<Withdraw> findWithdrawOrder(Withdraw bean);
-
 	/**
-	 * <p>根据订单号查询订单【码商交易订单】</p>
+	 * <p>根据订单号查询订单【卡商交易订单】</p>
 	 * @param orderId
 	 * @return
 	 */
 	DealOrder findOrderByOrderId(String orderId);
 	/**
-	 * <p>修改订单状态【码商交易订单】</p>
-	 * @param orderId
-	 * @param mag 
-	 * @param status
+	 * <p>修改订单状态【卡商交易订单】</p>
+	 * @param orderId				订单状态
+	 * @param mag 					修改备注
+	 * @param status				状态
 	 * @return
 	 */
 	boolean updateOrderStatus(String orderId, String status, String mag);
@@ -114,5 +106,7 @@ public interface OrderService {
 	 * @return
 	 */
 	List<DealOrder> findOrderByUser(String userId, String orderType, String formatDateTime, String formatDateTime2);
+	
+	boolean updateOrderStatus(String orderId, String orderStatusSu);
 
 }

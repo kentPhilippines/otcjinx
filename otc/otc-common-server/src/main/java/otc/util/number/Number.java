@@ -131,6 +131,18 @@ public class Number {
 		String objectId = IdUtil.objectId().toUpperCase();
 		return Common.Deals.ORDERRUN+objectId;	
 	}
+
+
+	public static String getBDC() {
+		String objectId = IdUtil.objectId().toUpperCase();
+		return Common.Deals.WITDBC+objectId;	
+	}
+
+
+	public static String getBDR() {
+		String objectId = IdUtil.objectId().toUpperCase();
+		return Common.Deals.WITDBR+objectId;	
+	}
   
     
     

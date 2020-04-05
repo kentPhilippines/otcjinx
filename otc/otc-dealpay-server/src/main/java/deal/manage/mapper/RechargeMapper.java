@@ -1,7 +1,8 @@
 package deal.manage.mapper;
 
-import deal.manage.bean.Recharge;
 import deal.manage.bean.RechargeExample;
+import otc.bean.dealpay.Recharge;
+
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;

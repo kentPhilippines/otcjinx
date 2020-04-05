@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="deal.manage.mapper.RechargeMapper" >
-  <resultMap id="BaseResultMap" type="deal.manage.bean.Recharge" >
+  <resultMap id="BaseResultMap" type="otc.bean.dealpay.Recharge" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="orderId" property="orderId" jdbcType="CHAR" />
     <result column="userId" property="userId" jdbcType="VARCHAR" />
@@ -20,8 +20,9 @@
     <result column="submitTime" property="submitTime" jdbcType="TIMESTAMP" />
     <result column="status" property="status" jdbcType="INTEGER" />
     <result column="retain1" property="retain1" jdbcType="CHAR" />
+    <result column="weight" property="weight" jdbcType="VARCHAR" />
   </resultMap>
-  <resultMap id="ResultMapWithBLOBs" type="deal.manage.bean.Recharge" extends="BaseResultMap" >
+  <resultMap id="ResultMapWithBLOBs" type="otc.bean.dealpay.Recharge" extends="BaseResultMap" >
     <result column="chargeReason" property="chargeReason" jdbcType="LONGVARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
@@ -84,7 +85,7 @@
   </sql>
   <sql id="Base_Column_List" >
     id, orderId, userId, rechargeType, orderStatus, depositor, amount, fee, actualAmount, 
-    chargeBankcard, phone, notfiy, chargeCard, chargePerson, createTime, submitTime, 
+    chargeBankcard, phone, notfiy, chargeCard, chargePerson, createTime, submitTime, weight,
     status, retain1
   </sql>
   <sql id="Blob_Column_List" >
@@ -140,21 +141,21 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="deal.manage.bean.Recharge" useGeneratedKeys="true" keyProperty="id" >
+  <insert id="insert" parameterType="otc.bean.dealpay.Recharge" useGeneratedKeys="true" keyProperty="id" >
     insert into dealpay_recharge (orderId, userId, rechargeType, 
       orderStatus, depositor, amount, 
       fee, actualAmount, chargeBankcard, 
       phone, notfiy, chargeCard, chargePerson, 
       createTime, submitTime, status, 
-      retain1, chargeReason)
+      retain1, chargeReason,weight)
     values (#{orderId,jdbcType=CHAR}, #{userId,jdbcType=VARCHAR}, #{rechargeType,jdbcType=INTEGER}, 
       #{orderStatus,jdbcType=CHAR}, #{depositor,jdbcType=VARCHAR}, #{amount,jdbcType=DECIMAL}, 
       #{fee,jdbcType=DECIMAL}, #{actualAmount,jdbcType=DECIMAL}, #{chargeBankcard,jdbcType=CHAR}, 
       #{phone,jdbcType=CHAR}, #{notfiy,jdbcType=CHAR}, #{chargeCard,jdbcType=CHAR}, #{chargePerson,jdbcType=CHAR}, 
       #{createTime,jdbcType=TIMESTAMP}, #{submitTime,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, 
-      #{retain1,jdbcType=CHAR}, #{chargeReason,jdbcType=LONGVARCHAR})
+      #{retain1,jdbcType=CHAR}, #{chargeReason,jdbcType=LONGVARCHAR},#{weight})
   </insert>
-  <insert id="insertSelective" parameterType="deal.manage.bean.Recharge" useGeneratedKeys="true" keyProperty="id" >
+  <insert id="insertSelective" parameterType="otc.bean.dealpay.Recharge" useGeneratedKeys="true" keyProperty="id" >
     insert into dealpay_recharge
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="orderId != null" >
@@ -211,6 +212,9 @@
       <if test="chargeReason != null" >
         chargeReason,
       </if>
+      <if test="weight != null" >
+        weight,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="orderId != null" >
@@ -266,6 +270,9 @@
       </if>
       <if test="chargeReason != null" >
         #{chargeReason,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="weight != null" >
+        #{weight},
       </if>
     </trim>
   </insert>
@@ -335,6 +342,9 @@
       <if test="record.chargeReason != null" >
         chargeReason = #{record.chargeReason,jdbcType=LONGVARCHAR},
       </if>
+      <if test="record.weight != null" >
+        weight = #{record.weight},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -360,7 +370,8 @@
       submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
       status = #{record.status,jdbcType=INTEGER},
       retain1 = #{record.retain1,jdbcType=CHAR},
-      chargeReason = #{record.chargeReason,jdbcType=LONGVARCHAR}
+      chargeReason = #{record.chargeReason,jdbcType=LONGVARCHAR},
+      weight = #{record.weight}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -384,12 +395,13 @@
       createTime = #{record.createTime,jdbcType=TIMESTAMP},
       submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
       status = #{record.status,jdbcType=INTEGER},
-      retain1 = #{record.retain1,jdbcType=CHAR}
+      retain1 = #{record.retain1,jdbcType=CHAR},
+      weight = #{record.weight,jdbcType=CHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="deal.manage.bean.Recharge" >
+  <update id="updateByPrimaryKeySelective" parameterType="otc.bean.dealpay.Recharge" >
     update dealpay_recharge
     <set >
       <if test="orderId != null" >
@@ -446,10 +458,13 @@
       <if test="chargeReason != null" >
         chargeReason = #{chargeReason,jdbcType=LONGVARCHAR},
       </if>
+      <if test="weight != null" >
+        weight = #{weight},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="deal.manage.bean.Recharge" >
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="otc.bean.dealpay.Recharge" >
     update dealpay_recharge
     set orderId = #{orderId,jdbcType=CHAR},
       userId = #{userId,jdbcType=VARCHAR},
@@ -468,10 +483,11 @@
       submitTime = #{submitTime,jdbcType=TIMESTAMP},
       status = #{status,jdbcType=INTEGER},
       retain1 = #{retain1,jdbcType=CHAR},
-      chargeReason = #{chargeReason,jdbcType=LONGVARCHAR}
+      chargeReason = #{chargeReason,jdbcType=LONGVARCHAR},
+      weight = #{weight}
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="deal.manage.bean.Recharge" >
+  <update id="updateByPrimaryKey" parameterType="otc.bean.dealpay.Recharge" >
     update dealpay_recharge
     set orderId = #{orderId,jdbcType=CHAR},
       userId = #{userId,jdbcType=VARCHAR},
@@ -489,7 +505,8 @@
       createTime = #{createTime,jdbcType=TIMESTAMP},
       submitTime = #{submitTime,jdbcType=TIMESTAMP},
       status = #{status,jdbcType=INTEGER},
-      retain1 = #{retain1,jdbcType=CHAR}
+      retain1 = #{retain1,jdbcType=CHAR},
+      weight = #{weight}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

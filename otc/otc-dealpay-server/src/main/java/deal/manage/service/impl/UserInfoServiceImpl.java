@@ -169,4 +169,16 @@ public class UserInfoServiceImpl implements UserInfoService {
 		return false;
 	}
 
+	@Override
+	public List<UserFund> findUserByWeight(String[] split) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<UserFund> findUserFund() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

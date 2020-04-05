@@ -10,4 +10,12 @@ public interface WithdrawService {
 	 */
 	boolean addOrder(Withdraw witb);
 
+	
+	/**
+	 * <p>根据代付订单号查询代付订单</p>
+	 * @param orderId
+	 * @return
+	 */
+	Withdraw findOrderId(String orderId);
+
 }

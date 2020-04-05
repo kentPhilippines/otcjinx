@@ -184,4 +184,18 @@ public interface UserInfoService {
 	 * @return
 	 */
 	boolean updataRemitOrderStateOFF(String userId);
+
+	
+	/**
+	 * <p>根据充值人的权重查询符合权重要求的卡商</p>
+	 * @param split
+	 * @return
+	 */
+	List<UserFund> findUserByWeight(String[] split);
+
+	/**
+	 * <p>查询符合要求的出款卡商</p>
+	 * @return
+	 */
+	List<UserFund> findUserFund();
 }

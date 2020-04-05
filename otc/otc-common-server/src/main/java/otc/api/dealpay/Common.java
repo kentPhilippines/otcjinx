@@ -55,6 +55,9 @@ public class Common {
 			public static final String ORDER_STATUS_SU = "2";//订单成功
 			public static final String ORDER_STATUS_ER = "3";//订单失败
 			public static final String ORDER_STATUS_YU = "1";//订单处理中
+			public static final Integer WIT_BK = 2;				//卡商充值
+			public static final Integer WIT_ACC = 1;			//商户充值
+
 		}
 		public static class Wit{
 			public static final String ORDER_STATUS_SU = "2";//订单成功
@@ -109,6 +112,13 @@ public class Common {
 			public static final String ORDER_STATUS_OVERTIME = "5";//订单超时
 			
 			public static final String ORDER_STATUS_OVERTIME_PER = "7";//人工处理
+			
+			
+			
+			public static final String DEAL_ORDER_R = "2";//入款交易
+			public static final String DEAL_ORDER_C = "1";//出款交易
+			
+			
 		}
 		
 

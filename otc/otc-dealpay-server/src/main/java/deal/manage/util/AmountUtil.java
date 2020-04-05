@@ -169,6 +169,13 @@ public class AmountUtil {
 		BigDecimal cashBalance = userFund.getCashBalance();//当前利润账户
 		BigDecimal freezeBalance = userFund.getFreezeBalance();//当前冻结账户
 		BigDecimal rechargeNumber = userFund.getRechargeNumber();//当前充值点数
+		
+		
+		
+		
+		
+		
+		
 	//	BigDecimal sumAgentProfit = userFund.getSumAgentProfit();//当前代理商分润  【当前订单为自己接单，不需要该字段】
 	//	BigDecimal sumProfit = userFund.getSumProfit();//当前当前总的利润
 	//	BigDecimal todayAgentProfit = userFund.getTodayAgentProfit();//今日代理分润  【当前订单为自己接单，无需统计该字段】
@@ -525,5 +532,27 @@ public class AmountUtil {
 			log.info("【当前账户添加充值点数【失败】，请联系技术检查当前账户存在的异常情况】");
 			return	Result.buildFail();
 		}
+	}
+	
+	
+	
+	
+	
+	
+	/**
+	 * <p>根据订单的账户变更和流水生成【入款订单】</p>
+	 * @param orderId			卡商交易订单号
+	 * @return
+	 */
+	public Result orderAmountR(String orderId) {
+		return null;
+	}
+	/**
+	 * <p>根据订单的账户变更和流水生成【出款订单】</p>
+	 * @param orderId			卡商交易订单号
+	 * @return
+	 */
+	public Result orderAmountC(String orderId) {
+		return null;
 	}
 }

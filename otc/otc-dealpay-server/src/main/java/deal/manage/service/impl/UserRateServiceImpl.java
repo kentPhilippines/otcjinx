@@ -19,4 +19,16 @@ public class UserRateServiceImpl implements UserRateService {
 		return null;
 	}
 
+	@Override
+	public UserRate findUserRateC(String userId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public UserRate findUserRateR(String account) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

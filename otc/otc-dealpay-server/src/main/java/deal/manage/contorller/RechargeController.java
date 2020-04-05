@@ -22,7 +22,6 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import deal.manage.bean.BankList;
-import deal.manage.bean.Recharge;
 import deal.manage.bean.UserInfo;
 import deal.manage.service.BankListService;
 import deal.manage.service.UserInfoService;

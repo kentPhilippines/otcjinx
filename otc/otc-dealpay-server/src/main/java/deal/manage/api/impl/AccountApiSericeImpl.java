@@ -37,7 +37,6 @@ public class AccountApiSericeImpl implements AccountApiService {
     @Autowired UserFundMapper userFundDao;
     @Autowired UserInfoService userInfoService;
     @Autowired AmountUtil amountUtil;
-
     @Override
     public Result addAccount(UserInfo user) {
         if (ObjectUtil.isNull(user))
@@ -170,12 +169,6 @@ public class AccountApiSericeImpl implements AccountApiService {
         if (!encodePassword.isSuccess())
             return Result.buildFailMessage("生成密钥失败，联系客服人员处理");
         return null;
-    }
-
-    @Override
-    public Result addAmount(UserFund userFund) {
-        log.info("【调用加款接口】");
-        return amountUtil.addAmounRecharge(userFund, userFund.getRechargeNumber());
     }
 
     /**

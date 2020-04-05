@@ -13,6 +13,7 @@ public class ConfigFile {
 	
 	public class Deal{
 		public static final String TIBLE_LINK = "TIBLE_LINK";//网站标题
+		public static final String RECHARGE_URL = "RECHARGE_URL";//网站标题
 	}
 	public class Alipay{
 		/**

@@ -70,6 +70,13 @@ public interface BankListService {
 	 */
 	boolean updataStatusSu(String id);
 
+	/**
+	 * <p>根据银行卡系统编号查询银行卡具体信息</p>
+	 * @param cardbank
+	 * @return
+	 */
+	BankList findBankInfoNo(String cardbank);
+
 
 
 }

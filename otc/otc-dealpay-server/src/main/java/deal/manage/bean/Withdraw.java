@@ -7,45 +7,45 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 public class Withdraw {
     private Integer id;
-
     private String orderId;
-
     private String userId;
-
     private Integer withdrawType;
-
     private String bankNo;
-
     private String accname;
-
     private String orderStatus;
-
     private String bankName;
-
     private BigDecimal amount;
-
     private BigDecimal fee;
-
     private BigDecimal actualAmount;
-
     private String mobile;
-
     private String notify;
-
     private Date createTime;
-
     private Date submitTime;
-
     private Integer status;
-
     private String witType;
-
+    private String appOrderId;
     private String retain1;
-
+    private String weight;
     private String retain2;
 
     private String Time;
-    public String getTime() {
+    public String getWeight() {
+		return weight;
+	}
+
+	public void setWeight(String weight) {
+		this.weight = weight;
+	}
+
+	public String getAppOrderId() {
+		return appOrderId;
+	}
+
+	public void setAppOrderId(String appOrderId) {
+		this.appOrderId = appOrderId;
+	}
+
+	public String getTime() {
 		return Time;
 	}
 

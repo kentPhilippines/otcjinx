@@ -7,6 +7,7 @@ public class PayApiConstant {
 		public static final String ALIPAY_SERVER = "otc-alipay-server";//支付宝服务
 		public static final String FILE_SERVER = "otc-file-server";
 		public static final String QUEUE_APK_SERVER = "otc-queue-apk-server";
+		public static final String DEALPAY_SERVER = "otc-dealpay-server";
 	}
 	public class Test{
 		public static final String FIND_TEST = "/findTest";
@@ -31,6 +32,12 @@ public class PayApiConstant {
 		public static final String FREEZE_AMOUNT = "/freeze_amount";//账户冻结接口【账户资金冻结】
 		public static final String GENERATE_ORDER_DEDUCT = "/deduct_order"; //生成扣款订单【扣款订单】
 		public static final String AUDIT_MERCHANT_STATUS = "/audit-merchant-status"; //修改商户的状态
+		
+		
+		
+		
+		public static final String DEAL_API = "/deal-api";// 卡商交易接口
+		public static final String RECHARGE_URL = "/recharge-url";//卡商充值交易【卡商入款交易】
 	}
 	
 	

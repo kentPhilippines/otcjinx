@@ -28,7 +28,6 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import deal.manage.bean.DealOrder;
-import deal.manage.bean.Recharge;
 import deal.manage.bean.Runorder;
 import deal.manage.bean.UserInfo;
 import deal.manage.bean.Withdraw;
@@ -42,6 +41,7 @@ import deal.manage.util.IsDealIpUtil;
 import deal.manage.util.LogUtil;
 import deal.manage.util.OrderUtil;
 import deal.manage.util.SessionUtil;
+import otc.bean.dealpay.Recharge;
 import otc.result.Result;
 
 /**
