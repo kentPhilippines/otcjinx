@@ -5,11 +5,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import alipay.manage.api.StorageApi;
-import alipay.manage.bean.Recharge;
-import alipay.manage.bean.Withdraw;
+import alipay.manage.api.feign.DealpayServiceClien;
 import alipay.manage.mapper.RechargeMapper;
 import alipay.manage.util.OrderUtil;
 import otc.api.alipay.Common;
+import otc.bean.dealpay.Recharge;
+import otc.bean.dealpay.Withdraw;
 import otc.result.Result;
 /**
  * <p>充值代付接口渠道分发</p>
@@ -20,9 +21,12 @@ public abstract class AmountObject  implements AmountChannel{
 	Logger log = LoggerFactory.getLogger(AmountObject.class);
 	@Autowired RechargeMapper rechargeDao;
 	@Autowired OrderUtil orderUtil;
+	@Autowired DealpayServiceClien dealpayServiceClienImpl;
 		@Override
 		public Result recharge(Recharge rechaege) {
 			//  返回充值接口
+			
+			
 			return null;
 		}
 	

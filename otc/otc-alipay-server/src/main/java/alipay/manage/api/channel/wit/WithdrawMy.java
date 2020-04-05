@@ -3,8 +3,8 @@ package alipay.manage.api.channel.wit;
 import org.springframework.stereotype.Component;
 
 import alipay.manage.api.config.PayOrderService;
-import alipay.manage.bean.Withdraw;
 import otc.api.alipay.Common;
+import otc.bean.dealpay.Withdraw;
 import otc.result.Result;
 
 @Component(Common.Deal.WITHDRAW_MY)

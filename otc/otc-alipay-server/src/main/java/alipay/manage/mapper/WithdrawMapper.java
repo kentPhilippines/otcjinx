@@ -1,7 +1,8 @@
 package alipay.manage.mapper;
 
-import alipay.manage.bean.Withdraw;
 import alipay.manage.bean.WithdrawExample;
+import otc.bean.dealpay.Withdraw;
+
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;

@@ -1,8 +1,8 @@
 package alipay.manage.api.channel.amount;
 
 import alipay.manage.bean.DealOrderApp;
-import alipay.manage.bean.Recharge;
-import alipay.manage.bean.Withdraw;
+import otc.bean.dealpay.Recharge;
+import otc.bean.dealpay.Withdraw;
 import otc.result.Result;
 
 public interface AmountChannel {

@@ -3,7 +3,7 @@ package alipay.manage.api.channel.amount.recharge;
 import org.springframework.stereotype.Component;
 
 import alipay.manage.api.channel.amount.AmountObject;
-import alipay.manage.bean.Recharge;
+import otc.bean.dealpay.Recharge;
 import otc.result.Result;
 
 /**
@@ -41,7 +41,7 @@ public class MyChannel extends AmountObject{
 		
 		return super.recharge(rechaege);
 	}
-	
+
 	
 	
 

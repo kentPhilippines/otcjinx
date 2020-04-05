@@ -1,7 +1,8 @@
 package alipay.manage.mapper;
 
-import alipay.manage.bean.Recharge;
 import alipay.manage.bean.RechargeExample;
+import otc.bean.dealpay.Recharge;
+
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;

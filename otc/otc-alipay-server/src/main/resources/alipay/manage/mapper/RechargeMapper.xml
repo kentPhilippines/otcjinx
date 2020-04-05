@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="alipay.manage.mapper.RechargeMapper" >
-  <resultMap id="BaseResultMap" type="alipay.manage.bean.Recharge" >
+  <resultMap id="BaseResultMap" type="otc.bean.dealpay.Recharge" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="orderId" property="orderId" jdbcType="CHAR" />
     <result column="userId" property="userId" jdbcType="VARCHAR" />
@@ -24,7 +24,7 @@
     <result column="retain1" property="retain1" jdbcType="CHAR" />
   </resultMap>
 
-  <resultMap id="ResultMapWithBLOBs" type="alipay.manage.bean.Recharge" extends="BaseResultMap" >
+  <resultMap id="ResultMapWithBLOBs" type="otc.bean.dealpay.Recharge" extends="BaseResultMap" >
     <result column="chargeReason" property="chargeReason" jdbcType="LONGVARCHAR" />
   </resultMap>
 
@@ -148,7 +148,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="alipay.manage.bean.Recharge" useGeneratedKeys="true" keyProperty="id" >
+  <insert id="insert" parameterType="otc.bean.dealpay.Recharge" useGeneratedKeys="true" keyProperty="id" >
     insert into alipay_recharge (orderId, userId, rechargeType, 
       isTripartite, orderStatus, depositor, 
       amount, orderType, fee, 
@@ -164,7 +164,7 @@
       #{createTime,jdbcType=TIMESTAMP}, #{submitTime,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, 
       #{retain1,jdbcType=CHAR}, #{chargeReason,jdbcType=LONGVARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="alipay.manage.bean.Recharge" useGeneratedKeys="true" keyProperty="id" >
+  <insert id="insertSelective" parameterType="otc.bean.dealpay.Recharge" useGeneratedKeys="true" keyProperty="id" >
     insert into alipay_recharge
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="orderId != null" >
@@ -421,7 +421,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="alipay.manage.bean.Recharge" >
+  <update id="updateByPrimaryKeySelective" parameterType="otc.bean.dealpay.Recharge" >
     update alipay_recharge
     <set >
       <if test="orderId != null" >
@@ -487,7 +487,7 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="alipay.manage.bean.Recharge" >
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="otc.bean.dealpay.Recharge" >
     update alipay_recharge
     set orderId = #{orderId,jdbcType=CHAR},
       userId = #{userId,jdbcType=VARCHAR},
@@ -511,7 +511,7 @@
       chargeReason = #{chargeReason,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="alipay.manage.bean.Recharge" >
+  <update id="updateByPrimaryKey" parameterType="otc.bean.dealpay.Recharge" >
     update alipay_recharge
     set orderId = #{orderId,jdbcType=CHAR},
       userId = #{userId,jdbcType=VARCHAR},

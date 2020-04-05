@@ -1,7 +1,7 @@
 package alipay.manage.api.config;
 
 import alipay.manage.bean.DealOrderApp;
-import alipay.manage.bean.Withdraw;
+import otc.bean.dealpay.Withdraw;
 import otc.result.Result;
 
 public interface PayService {

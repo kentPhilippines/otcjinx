@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="alipay.manage.mapper.WithdrawMapper" >
-  <resultMap id="BaseResultMap" type="alipay.manage.bean.Withdraw" >
+  <resultMap id="BaseResultMap" type="otc.bean.dealpay.Withdraw" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="orderId" property="orderId" jdbcType="CHAR" />
     <result column="userId" property="userId" jdbcType="VARCHAR" />
@@ -115,7 +115,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="alipay.manage.bean.Withdraw" useGeneratedKeys="true" keyProperty="id" >
+  <insert id="insert" parameterType="otc.bean.dealpay.Withdraw" useGeneratedKeys="true" keyProperty="id" >
     insert into alipay_withdraw (orderId, userId, withdrawType, 
       bankNo, accname, orderStatus, 
       bankName, amount, fee, 
@@ -129,7 +129,7 @@
       #{createTime,jdbcType=TIMESTAMP}, #{submitTime,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, 
       #{retain1,jdbcType=CHAR}, #{retain2,jdbcType=CHAR},#{witType})
   </insert>
-  <insert id="insertSelective" parameterType="alipay.manage.bean.Withdraw" useGeneratedKeys="true" keyProperty="id" >
+  <insert id="insertSelective" parameterType="otc.bean.dealpay.Withdraw" useGeneratedKeys="true" keyProperty="id" >
     insert into alipay_withdraw
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="orderId != null" >
@@ -340,7 +340,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="alipay.manage.bean.Withdraw" >
+  <update id="updateByPrimaryKeySelective" parameterType="otc.bean.dealpay.Withdraw" >
     update alipay_withdraw
     <set >
       <if test="orderId != null" >
@@ -400,7 +400,7 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="alipay.manage.bean.Withdraw" >
+  <update id="updateByPrimaryKey" parameterType="otc.bean.dealpay.Withdraw" >
     update alipay_withdraw
     set orderId = #{orderId,jdbcType=CHAR},
       userId = #{userId,jdbcType=VARCHAR},

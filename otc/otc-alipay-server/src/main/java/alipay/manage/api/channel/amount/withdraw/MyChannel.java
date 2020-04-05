@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import alipay.manage.api.channel.amount.AmountObject;
-import alipay.manage.bean.Withdraw;
 import alipay.manage.util.OrderUtil;
+import otc.bean.dealpay.Withdraw;
 import otc.result.Result;
 
 /**

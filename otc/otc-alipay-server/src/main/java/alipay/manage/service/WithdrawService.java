@@ -1,6 +1,6 @@
 package alipay.manage.service;
 
-import alipay.manage.bean.Withdraw;
+import otc.bean.dealpay.Withdraw;
 
 public interface WithdrawService {
 	/**

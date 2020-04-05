@@ -8,11 +8,11 @@ import com.google.common.collect.Maps;
 
 import alipay.manage.bean.DealOrderApp;
 import alipay.manage.bean.UserFund;
-import alipay.manage.bean.Withdraw;
 import alipay.manage.service.UserInfoService;
 import alipay.manage.util.AmountRunUtil;
 import alipay.manage.util.AmountUtil;
 import otc.api.alipay.Common;
+import otc.bean.dealpay.Withdraw;
 import otc.common.SystemConstants;
 import otc.result.Result;
 import otc.util.RSAUtils;

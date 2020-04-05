@@ -5,9 +5,9 @@ import java.util.Map;
 
 import alipay.manage.bean.DealOrder;
 import alipay.manage.bean.DealOrderApp;
-import alipay.manage.bean.Recharge;
 import alipay.manage.bean.RunOrder;
-import alipay.manage.bean.Withdraw;
+import otc.bean.dealpay.Recharge;
+import otc.bean.dealpay.Withdraw;
 
 public interface OrderService {
 

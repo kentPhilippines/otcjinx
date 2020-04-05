@@ -5,10 +5,8 @@ import alipay.config.annotion.Submit;
 import alipay.manage.api.channel.amount.AmountChannel;
 import alipay.manage.api.config.FactoryForStrategy;
 import alipay.manage.bean.Product;
-import alipay.manage.bean.Recharge;
 import alipay.manage.bean.UserFund;
 import alipay.manage.bean.UserInfo;
-import alipay.manage.bean.Withdraw;
 import alipay.manage.service.OrderService;
 import alipay.manage.service.ProductService;
 import alipay.manage.service.UserFundService;
@@ -31,6 +29,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import otc.api.alipay.Common;
+import otc.bean.dealpay.Recharge;
+import otc.bean.dealpay.Withdraw;
 import otc.result.Result;
 import otc.util.encode.HashKit;
 import otc.util.number.Number;
@@ -87,7 +87,6 @@ public class RechargeContorller {
         if(ObjectUtil.isNull(param.getAmount() )
         		|| StrUtil.isBlank(param.getDepositor()) 
         		|| StrUtil.isBlank(param.getPhone())
-        		|| StrUtil.isBlank(param.getSync_url())
         		)
         		return Result.buildFailMessage("关键信息为空");
         param.setUserId(user.getUserId());

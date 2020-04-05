@@ -11,7 +11,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import javax.servlet.http.HttpServletRequest;
 
-import alipay.manage.bean.*;
 import alipay.manage.service.UserRateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +26,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
+import alipay.manage.bean.DealOrder;
+import alipay.manage.bean.RunOrder;
+import alipay.manage.bean.UserInfo;
 import alipay.manage.bean.util.PageResult;
 import alipay.manage.service.OrderService;
 import alipay.manage.service.UserInfoService;
@@ -42,6 +44,8 @@ import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import otc.api.alipay.Common;
+import otc.bean.dealpay.Recharge;
+import otc.bean.dealpay.Withdraw;
 import otc.exception.user.UserException;
 import otc.result.Result;
 import otc.util.StringUtils;

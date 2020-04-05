@@ -4,7 +4,12 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import alipay.manage.bean.*;
+import alipay.manage.bean.DealOrder;
+import alipay.manage.bean.DealOrderExample;
+import alipay.manage.bean.RechargeExample;
+import alipay.manage.bean.RunOrder;
+import alipay.manage.bean.RunOrderExample;
+import alipay.manage.bean.WithdrawExample;
 import alipay.manage.mapper.DealOrderMapper;
 import alipay.manage.mapper.RechargeMapper;
 import alipay.manage.mapper.RunOrderMapper;
@@ -14,6 +19,8 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import otc.api.alipay.Common;
+import otc.bean.dealpay.Recharge;
+import otc.bean.dealpay.Withdraw;
 import otc.util.number.Number;
 
 import org.apache.commons.lang3.StringUtils;
