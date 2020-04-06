@@ -46,6 +46,12 @@ public class AgentContorller {
 	@PostMapping("/agentOpenAnAccount")
 	@ResponseBody
 	public Result agentOpenAnAccount(@RequestBody UserInfo user,HttpServletRequest request) {
+		
+		
+		
+		
+		
+		
 		return Result.buildFail();
 	}
 	/**

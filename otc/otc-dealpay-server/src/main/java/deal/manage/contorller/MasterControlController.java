@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import cn.hutool.log.Log;
+import cn.hutool.log.LogFactory;
 import deal.config.feign.ConfigServiceClient;
 import deal.manage.bean.util.RegisterSetting;
 import otc.bean.config.ConfigFile;
@@ -12,6 +14,7 @@ import otc.result.Result;
 @Controller
 @RequestMapping("/masterControl")
 public class MasterControlController {
+	private static final Log log = LogFactory.get();
 	@Autowired ConfigServiceClient ConfigServiceClientImpl;
 	/**
 	 * <p>获取网站标题</p>
@@ -20,7 +23,9 @@ public class MasterControlController {
 	@GetMapping("/getSystemSetting")
 	@ResponseBody
 	public Result getSystemSetting() {
-		return Result.buildSuccessResult(ConfigServiceClientImpl.getConfig(ConfigFile.DEAL, ConfigFile.Deal.TIBLE_LINK).getResult().toString());
+		Result config = ConfigServiceClientImpl.getConfig(ConfigFile.DEAL, ConfigFile.Deal.TIBLE_LINK);
+		log.info(config.toString());
+		return Result.buildSuccessResult(config.getResult().toString());
 	}
 	/**
 	 * <p>获取页面配置</p>

@@ -161,7 +161,7 @@
 			</div>
 			<ul class="list-group">
 				<li class="list-group-item"
-					v-show="isLoggedInFlag && accountType == 'agent'"
+					v-show="isLoggedInFlag && accountType == '1'"
 					v-on:click="footerVM.goTo('/agent-center')">代理中心<span><i
 						aria-hidden="true" class="fa fa-angle-right"></i></span>
 				</li>
@@ -238,7 +238,7 @@
 													that.isLoggedInFlag = true;
 													that.userName = res.body.result.accountName;
 													that.cashDeposit = res.body.result.accountBalance;
-													that.accountType = res.body.result.accountType;
+													that.accountType = res.body.result.isAgent;
 													that.fee = res.body.result.fee;
 													headerVM.title = that.userName;
 													

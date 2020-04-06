@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 @Mapper
 public interface UserFundMapper {
     int countByExample(UserFundExample example);
@@ -29,4 +30,7 @@ public interface UserFundMapper {
     int updateByPrimaryKeySelective(UserFund record);
 
     int updateByPrimaryKey(UserFund record);
+
+    @Select("select * from dealpay_user_fund where userId = #{userId}")
+	UserFund findUserFund(@Param("userId")String userId);
 }

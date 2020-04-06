@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 @Mapper
 public interface UserRateMapper {
     int countByExample(UserRateExample example);
@@ -31,4 +32,19 @@ public interface UserRateMapper {
     int updateByPrimaryKey(UserRate record);
 
 	UserRate findUserRateWitByUserId(String userId);
+	/**
+	 * <p>查询卡商出款费率</p>
+	 * @param userId
+	 * @return
+	 */
+	@Select("select * from  dealpay_user_rate where feeType = 2 and userId =  #{userId}")
+	UserRate findUserRateC(@Param("userId") String userId);
+
+	/**
+	 * 查询卡商入款费率
+	 * @param account
+	 * @return
+	 */
+	@Select("select * from  dealpay_user_rate where feeType = 1 and userId =  #{userId}")
+	UserRate findUserRateR(@Param("userId") String userId);
 }

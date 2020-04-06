@@ -11,6 +11,9 @@ zuul:
     api-a:
       path: /api-alipay/**
       serviceId: otc-alipay-server
+    api-b:
+      path: /api-dealpay/**
+      serviceId: otc-dealpay-server
   host:
     maxTotalConnections: 6000000
     maxPerRouteConnections: 600000

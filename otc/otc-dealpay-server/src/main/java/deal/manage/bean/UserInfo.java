@@ -48,9 +48,26 @@ public class UserInfo implements Serializable{
 	    private String online;
 	    private String agentCount;
 
+	    private String fee;
+	    private String cardFee;
 	    
 	    
-	    
+	public String getFee() {
+			return fee;
+		}
+
+		public void setFee(String fee) {
+			this.fee = fee;
+		}
+
+		public String getCardFee() {
+			return cardFee;
+		}
+
+		public void setCardFee(String cardFee) {
+			this.cardFee = cardFee;
+		}
+
 	public String getInviteCode() {
 			return inviteCode;
 		}

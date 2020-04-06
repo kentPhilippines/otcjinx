@@ -8,7 +8,7 @@ var personalInfoVM = new Vue({
 		editBankInfoFlag : false,
 		openAccountBank : '',
 		accountHolder : '',
-		bankCardAccount : '',
+		bankcardAccount : '',
 
 		modifyLoginPwdFlag : false,
 		oldLoginPwd : '',
@@ -63,7 +63,7 @@ var personalInfoVM = new Vue({
 			this.editBankInfoFlag = true;
 			this.openAccountBank = this.bankInfo.openAccountBank;
 			this.accountHolder = this.bankInfo.accountHolder;
-			this.bankCardAccount = this.bankInfo.bankCardAccount;
+			this.bankcardAccount = this.bankInfo.bankcardAccount;
 		},
 
 		bindBankInfo : function() {
@@ -84,7 +84,7 @@ var personalInfoVM = new Vue({
 				});
 				return;
 			}
-			if (that.bankCardAccount == null || that.bankCardAccount == '') {
+			if (that.bankcardAccount == null || that.bankcardAccount == '') {
 				layer.alert('请输入银行卡账号', {
 					title : '提示',
 					icon : 7,
@@ -95,7 +95,7 @@ var personalInfoVM = new Vue({
 			that.$http.post('/userAccount/bindBankInfo', {
 				openAccountBank : that.openAccountBank,
 				accountHolder : that.accountHolder,
-				bankCardAccount : that.bankCardAccount
+				bankcardAccount : that.bankcardAccount
 			}, {
 				emulateJSON : true
 			}).then(function(res) {

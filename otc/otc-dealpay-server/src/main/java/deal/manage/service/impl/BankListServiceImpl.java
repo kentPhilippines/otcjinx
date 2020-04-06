@@ -3,71 +3,88 @@ package deal.manage.service.impl;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import cn.hutool.core.util.StrUtil;
 import deal.manage.bean.BankList;
+import deal.manage.bean.BankListExample;
+import deal.manage.bean.BankListExample.Criteria;
+import deal.manage.mapper.BankListMapper;
 import deal.manage.service.BankListService;
+import otc.util.number.Number;
 @Component
 public class BankListServiceImpl implements BankListService {
-
+	@Autowired BankListMapper bankListDao;
 	@Override
 	public List<BankList> findBankCardByQr(String userId) {
-		// TODO Auto-generated method stub
-		return null;
+		return bankListDao.findBankCardByQr(userId);
 	}
 
 	@Override
 	public boolean addBankcard(BankList bank) {
-		// TODO Auto-generated method stub
-		return false;
+		int insertSelective = bankListDao.insertSelective(bank);
+		return insertSelective > 0 && insertSelective < 2;
 	}
 
 	@Override
 	public BankList findBankByNo(String bankNo) {
-		// TODO Auto-generated method stub
-		return null;
+		return bankListDao.findBankByNo(bankNo);
 	}
 
 	@Override
 	public List<BankList> findBankInfoAccount(BankList bank) {
-		// TODO Auto-generated method stub
-		return null;
+		BankListExample example = new BankListExample();
+		Criteria criteria = example.createCriteria();
+		if(StrUtil.isNotBlank(bank.getAccount()))
+			criteria.andAccountEqualTo(bank.getAccount());
+		if(StrUtil.isNotBlank(bank.getAccountHolder()))
+			criteria.andAccountHolderEqualTo(bank.getAccountHolder());
+		if(StrUtil.isNotBlank(bank.getBankcardId()))
+			criteria.andBankcardAccountEqualTo(bank.getBankcardId());
+		if(StrUtil.isNotBlank(bank.getBankType()))
+			criteria.andBankTypeEqualTo(bank.getBankType());
+		if(StrUtil.isNotBlank(bank.getOpenAccountBank()))
+			criteria.andOpenAccountBankEqualTo(bank.getOpenAccountBank());
+		if(StrUtil.isNotBlank(bank.getBankcardAccount()))
+			criteria.andBankcardAccountEqualTo(bank.getBankcardAccount());
+		List<BankList> selectByExample = bankListDao.selectByExample(example);
+		return selectByExample;
 	}
 
 	@Override
 	public boolean deleteBankById(String id) {
-		// TODO Auto-generated method stub
-		return false;
+		int a = bankListDao.deleteId(id);
+		return a > 0 && a  < 2;
 	}
 
 	@Override
 	public List<BankList> findBankCardByType(Integer bankApp) {
-		// TODO Auto-generated method stub
-		return null;
+		return bankListDao.findBankCardByType(bankApp);
 	}
 
 	@Override
 	public boolean addBankCard(BankList bank) {
-		// TODO Auto-generated method stub
-		return false;
+		bank.setBankcardId(Number.getBank());
+		int insertSelective = bankListDao.insertSelective(bank);
+		return insertSelective > 0 && insertSelective < 2;
 	}
 
 	@Override
 	public boolean updataQrStatusEr(String id) {
-		// TODO Auto-generated method stub
-		return false;
+		int a = bankListDao.updataQrStatusEr(id);
+		return a > 0 && a < 2;
 	}
 
 	@Override
 	public boolean updataStatusSu(String id) {
-		// TODO Auto-generated method stub
-		return false;
+		int a = bankListDao.updataStatusSu(id);
+		return a > 0 && a < 2;
 	}
 
 	@Override
 	public BankList findBankInfoNo(String cardbank) {
-		// TODO Auto-generated method stub
-		return null;
+		return bankListDao.findBankInfoNo(cardbank);
 	}
 
 	@Override

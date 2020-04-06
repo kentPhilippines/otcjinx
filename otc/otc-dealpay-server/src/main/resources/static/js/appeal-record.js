@@ -117,7 +117,7 @@ var appealRecordVM = new Vue({
 					.then(
 							function(res) {
 								if (res.body.result != null) {
-									that.accountName = res.body.result.accountName;
+									that.accountName = res.body.result.userName;
 									that.remitOrderState = res.body.result.remitOrderState;
 									that.receiveOrderState = res.body.result.receiveOrderState;
 									that.cardFee = res.body.result.cardFee;

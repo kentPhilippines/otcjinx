@@ -32,10 +32,10 @@
 			<div class="container login-container">
 				<form>
 					<div class="form-group">
-						<label>用户名</label> <input type="text" class="form-control" placeholder="请输入账号" v-model="userName">
+						<label>用户名</label> <input type="text" class="form-control" placeholder="请输入账号" v-model="userId">
 					</div>
 					<div class="form-group">
-						<label>用户昵称</label> <input type="text" class="form-control" placeholder="请输入昵称" v-model="accountName">
+						<label>用户昵称</label> <input type="text" class="form-control" placeholder="请输入昵称" v-model="userName">
 					</div>
 					<div class="form-group">
 						<label>登录密码</label> <input type="password" class="form-control" placeholder="请输入密码" v-model="password">
@@ -44,10 +44,10 @@
 						<label>确认登录密码</label> <input type="password" class="form-control" placeholder="请确认密码" v-model="confirmPassword">
 					</div>
 					<div class="form-group">
-						<label>资金密码</label> <input type="password" class="form-control" placeholder="请输入资金密码" v-model="securityPassword">
+						<label>资金密码</label> <input type="password" class="form-control" placeholder="请输入资金密码" v-model="payPasword">
 					</div>
 					<div class="form-group">
-						<label>确认资金密码</label> <input type="password" class="form-control" placeholder="请确认资金密码" v-model="NewSecurityPassword">
+						<label>确认资金密码</label> <input type="password" class="form-control" placeholder="请确认资金密码" v-model="newPayPassword">
 					</div>
 					 
 					<div class="form-group">
@@ -70,13 +70,13 @@
 			el : '#login',
 			data : {
 				accountRebate : '',
-				userName : '',
+				userId : '',
 				fee : '',
 				password : '',
 				confirmPassword : '',
-				securityPassword : '',
-				NewSecurityPassword : '',
-				accountName : '',
+				payPasword : '',
+				newPayPassword : '',
+				userName : '',
 				rebate : '',
 				rebateDictItems : []
 			},
@@ -112,7 +112,7 @@
 
 				agentOpenAnAccount : function() {
 					var that = this;
-					if (that.userName == null || that.userName == '') {
+					if (that.userId == null || that.userId == '') {
 						layer.alert('请输入用户名', {
 							title : '提示',
 							icon : 7,
@@ -120,7 +120,7 @@
 						});
 						return;
 					}
-					if (that.accountName == null || that.accountName == '') {
+					if (that.userName == null || that.userName == '') {
 						layer.alert('请输入用户昵称', {
 							title : '提示',
 							icon : 7,
@@ -153,7 +153,7 @@
 						layer.alert('密码不一致');
 						return;
 					}
-					if (that.securityPassword != that.NewSecurityPassword) {
+					if (that.newPayPassword != that.payPasword) {
 						layer.alert('资金密码不一致');
 						return;
 					}
@@ -162,7 +162,7 @@
 						layer.alert('密码不合法!请输入以字母开头,长度为6-15个字母和数字的密码');
 						return;
 					}
-					if (!passwordPatt.test(that.securityPassword)) {
+					if (!passwordPatt.test(that.newPayPassword)) {
 						layer.alert('资金密码不合法!请输入以字母开头,长度为6-15个字母和数字的密码');
 						return;
 					}
@@ -170,7 +170,7 @@
 						accountId : that.userName,
 						accountName : that.accountName,
 						password : that.password,
-						securityPassword : that.securityPassword,
+						newPayPassword : that.securityPassword,
 						fee : that.rebate,
 						cardFee : that.rebate
 					}).then(function(res) {

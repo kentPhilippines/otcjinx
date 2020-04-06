@@ -132,4 +132,9 @@ public class Result {
 	public void setCode(Integer code) {
 		this.code = code;
 	}
+
+	@Override
+	public String toString() {
+		return "Result [success=" + success + ", message=" + message + ", result=" + result + ", code=" + code + "]";
+	}
 }

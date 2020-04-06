@@ -49,10 +49,10 @@ public interface UserInfoMapper {
     
     @Select("select * from dealpay_user_info where userId = #{userId} or userName = #{userName}")
     UserInfo findUserId(@Param("userId") String userId, @Param("userName") String userName);
-    @Select("select * from alipay_user_info where userId = #{userId}")
+    @Select("select * from dealpay_user_info where userId = #{userId}")
     UserInfo findUserByUserId(@Param("userId") String userId);
 
-    @Select("select * from alipay_user_rate where userId = #{userId} and payTypr = #{passCode} and switchs = 1")
+    @Select("select * from dealpay_user_rate where userId = #{userId} and payTypr = #{passCode} and switchs = 1")
     UserRate selectUserRateByUserId(@Param("userId") String userId, @Param("passCode") String passCode);
 
     @Select("select  id, userId, userName, cashBalance, rechargeNumber, freezeBalance, accountBalance, " +
@@ -74,6 +74,34 @@ public interface UserInfoMapper {
 
     
     @Update("update dealpay_user_info set payPasword = #{newPassword} where userId = #{userId}")
-	int updataPayPassword(String userId, String newPayPassword);
+	int updataPayPassword(@Param("userId")String userId,@Param("newPayPassword") String newPayPassword);
+    /***
+     * <p>打开用户接单</p>
+     * @param userId
+     * @return
+     */
+    @Update("update dealpay_user_info set receiveOrderState = 1 where userId = #{userId}")
+	int updataReceiveOrderStateNO(@Param("userId")String userId);
+	/**
+	 * <p>关闭用户接单</p>
+	 * @param userId
+	 * @return
+	 */
+    @Update("update dealpay_user_info set receiveOrderState = 2 where userId = #{userId}")
+	int updataReceiveOrderStateOFF(@Param("userId")String userId);
+	/**
+	 * 打开出款接单
+	 * @param userId
+	 * @return
+	 */
+    @Update("update dealpay_user_info set remitOrderState = 1 where userId = #{userId}")
+	int updataRemitOrderStateNO(@Param("userId")String userId);
+	/**
+	 * 关闭出款接单
+	 * @param userId
+	 * @return
+	 */
+    @Update("update dealpay_user_info set remitOrderState = 2 where userId = #{userId}")
+	int updataRemitOrderStateOFF(@Param("userId")String userId);
 
 }

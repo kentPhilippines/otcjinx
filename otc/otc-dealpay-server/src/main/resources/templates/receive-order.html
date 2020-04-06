@@ -305,7 +305,9 @@
 				<div class="platform-order" v-for="gatheringCode in gatheringCodes">
 				<div class="platform-order-body">
 					<div class="account-change-body-item">
-						<label>账户:</label> <span>{{gatheringCode.qrAccount }}</span>
+						<label>账户:</label> <span>{{gatheringCode.account }}</span>
+					</div>
+					<div class="account-change-body-item">
 						<label>状态:</label> <span class="account-change-body-item-highlight">{{gatheringCode.status == 1 ? '正在接单' : '未接单'}}</span>
 					</div>
 					<div class="account-change-body-item">
@@ -314,7 +316,7 @@
 					</div>
 					<div class="account-change-body-item">
 						<!-- <label> 收款金额: </label> <span class="account-change-body-item-highlight">{{gatheringCode.isFixation == 2 ? gatheringCode.fixationAmount + '元' : '不固定'}}</span> -->
-						<label>卡号:</label> <span class="account-change-body-item-highlight">{{gatheringCode.bankCardAccount}}</span>
+						<label>卡号:</label> <span class="account-change-body-item-highlight">{{gatheringCode.bankcardAccount}}</span>
 					</div>
 					<div class="account-change-body-item">
 						<!-- <label> 收款金额: </label> <span class="account-change-body-item-highlight">{{gatheringCode.isFixation == 2 ? gatheringCode.fixationAmount + '元' : '不固定'}}</span> -->
@@ -474,7 +476,9 @@
 							id : gatheringCodeId,
 						}
 					}).then(function(res) {
+						if(res.body.success){
 						that.loadGatheringCodeByPage();
+						}
 					});
 				},
 				updataQrStatusEr : function(gatheringCodeId) {
@@ -484,7 +488,9 @@
 							id : gatheringCodeId,
 						}
 					}).then(function(res) {
-						that.loadGatheringCodeByPage();
+						if(res.body.success){
+							that.loadGatheringCodeByPage();
+						}
 					});
 				},
 				

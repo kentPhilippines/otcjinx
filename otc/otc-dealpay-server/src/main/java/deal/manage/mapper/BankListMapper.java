@@ -4,8 +4,11 @@ import deal.manage.bean.BankList;
 import deal.manage.bean.BankListExample;
 import java.util.List;
 
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 @Mapper
 public interface BankListMapper {
     int countByExample(BankListExample example);
@@ -35,4 +38,42 @@ public interface BankListMapper {
     int updateByPrimaryKeyWithBLOBs(BankList record);
 
     int updateByPrimaryKey(BankList record);
+
+    
+    
+    
+    /**
+     * 银行卡号查询
+     * @param bankNo			卡号
+     * @return
+     */
+    @Select("select * from dealpay_bank_list where bankcardAccount  = #{bankNo} and isDeal = 2")
+	BankList findBankByNo(@Param("bankNo")String bankNo);
+    @Delete("  delete from dealpay_bank_list     where id = #{id}"  )
+	int deleteId(@Param("id")String id);
+
+    
+    @Select("select * from dealpay_bank_list where cardType = #{cardType} and isDeal = 2 ")
+	List<BankList> findBankCardByType(@Param("cardType")Integer cardType);
+
+    /**
+     * <p>银行卡置为不可用</p>
+     * @param id				银行卡id
+     * @return
+     */
+    @Update("update dealpay_bank_list set status = 0 where id = #{id}")
+	int updataQrStatusEr(@Param("id")String id);
+
+    /**
+     * <p>银行卡置为可用</p>
+     * @param id
+     * @return
+     */
+    @Update("update dealpay_bank_list set status = 1  where id = #{id}")
+	int updataStatusSu(@Param("id")String id);
+
+    @Select("select * from dealpay_bank_list where bankcardId = #{bankNo}")
+	BankList findBankInfoNo(@Param("bankNo")String bankNo);
+    @Select("select * from dealpay_bank_list where account = #{userId}")
+	List<BankList> findBankCardByQr(@Param("userId")String userId);
 }

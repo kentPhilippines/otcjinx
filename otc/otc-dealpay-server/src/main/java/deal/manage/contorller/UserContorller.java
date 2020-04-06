@@ -22,10 +22,14 @@ import cn.hutool.core.util.StrUtil;
 import deal.manage.api.AccountApiService;
 import deal.manage.bean.BankList;
 import deal.manage.bean.Invitecode;
+import deal.manage.bean.UserFund;
 import deal.manage.bean.UserInfo;
+import deal.manage.bean.UserRate;
 import deal.manage.service.BankListService;
 import deal.manage.service.InviteCodeService;
+import deal.manage.service.UserFundService;
 import deal.manage.service.UserInfoService;
+import deal.manage.service.UserRateService;
 import deal.manage.util.CardBankOrderUtil;
 import deal.manage.util.SessionUtil;
 import otc.result.Result;
@@ -40,6 +44,8 @@ public class UserContorller {
 	@Autowired InviteCodeService inviteCodeServiceImpl;
 	@Autowired CardBankOrderUtil bankUtil;
 	@Autowired AccountApiService accountApiServiceImpl;
+	@Autowired UserRateService userRateServiceImpl;
+	@Autowired UserFundService userFundServiceImpl;
 	/**
 	 * <p>获取账号登录情况</p>
 	 * @return
@@ -51,7 +57,20 @@ public class UserContorller {
 		if(ObjectUtil.isNull(user)) 
 			return Result.buildFailMessage("当前用户未登录");
 		UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(user.getUserId());
+		UserRate rateR = userRateServiceImpl.findUserRateR(userInfo.getUserId());
+		UserRate rateC = userRateServiceImpl.findUserRateC(userInfo.getUserId());
+		userInfo.setFee(rateR.getFee().toString());
+		userInfo.setCardFee(rateC.getFee().toString());
 		return Result.buildSuccessResult("数据获取成功",userInfo);
+	}
+	@GetMapping("/getUserFund")
+	@ResponseBody
+	public Result getUserFund(HttpServletRequest request) {
+		UserInfo user = sessionUtil.getUser(request);
+		if(ObjectUtil.isNull(user)) 
+			return Result.buildFailMessage("当前用户未登录");
+		UserFund userFund = userFundServiceImpl.findUserFund(user.getUserId());
+		return Result.buildSuccessResult("数据获取成功",userFund);
 	}
 	/**
 	 * <p>修改当前用户的接单状态</p>
@@ -98,7 +117,6 @@ public class UserContorller {
 		if(ObjectUtil.isNull(user)) 
 			return Result.buildFailMessage("当前用户未登录");
 		bank.setAccount(user.getUserId());
-		System.out.println(bank.toString());
 		boolean flag  = bankCardServiceImpl.addBankCard(bank);
 		if(flag)
 			return Result.buildSuccessResult();

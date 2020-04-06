@@ -224,24 +224,6 @@ var gatheringCodeVM = new Vue({
 				});
 				return;
 			}
-			/*if (editGatheringCode.fixedGatheringAmount == null) {
-				layer.alert('请选择是否固定收款金额', {
-					title : '提示',
-					icon : 7,
-					time : 3000
-				});
-				return;
-			}*/
-			/*if (editGatheringCode.fixedGatheringAmount) {
-				if (editGatheringCode.gatheringAmount == null || editGatheringCode.gatheringAmount == '') {
-					layer.alert('请输入收款金额', {
-						title : '提示',
-						icon : 7,
-						time : 3000
-					});
-					return;
-				}
-			}*/
 			if (editGatheringCode.account == null || editGatheringCode.account == '') {
 				layer.alert('请填写开户人', {
 					title : '提示',
@@ -275,31 +257,20 @@ var gatheringCodeVM = new Vue({
 				return;
 			}
 			
-			
-			
 			that.addOrUpdateGatheringCodeInner();
-			if ($('.gathering-code-pic').fileinput('getPreview').content.length != 0) {
-				editGatheringCode.createTime =null;
-				editGatheringCode.submitTime =null;
-				that.addOrUpdateGatheringCodeInner();
-			} else {
-				var filesCount = $('.gathering-code-pic').fileinput('getFilesCount');
-				if (filesCount == 0) {
-					layer.alert('请选择要上传的图片', {
-						title : '提示',
-						icon : 7,
-						time : 3000
-					});
-					return;
-				}
-				$('.gathering-code-pic').fileinput('upload');
-			}
 		},
 
 		
 		addOrUpdateGatheringCodeInner : function() {
 			var that = this;
-			that.$http.post('/userAccount/bindBankInfo',  that.editGatheringCode ).then(function(res) {
+			var bank = {
+					bankcardAccount :  that.editGatheringCode.bankNo,
+					accountHolder : that.editGatheringCode.account,
+					openAccountBank : that.editGatheringCode.bank,
+					bankcode :  that.editGatheringCode.bankCode,
+					phone : that.editGatheringCode.phone
+			}
+			that.$http.post('/userAccount/bindBankInfo',  bank ).then(function(res) {
 				if(res.body.success){
 					layer.alert('操作成功!', {
 						icon : 1,

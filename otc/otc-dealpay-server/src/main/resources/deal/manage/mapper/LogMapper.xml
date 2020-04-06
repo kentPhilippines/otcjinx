@@ -15,7 +15,7 @@
     <result column="msg" property="msg" jdbcType="LONGVARCHAR" />
   </resultMap>
   <insert id="insert" parameterType="deal.manage.bean.Log" useGeneratedKeys="true" keyProperty="id" >
-    insert into alipay_log (ipAddr, loginLocation, loginTime, 
+    insert into deal_log (ipAddr, loginLocation, loginTime, 
       useName, createTime, submitTime, 
       status, msg)
     values (#{ipAddr,jdbcType=VARCHAR}, #{loginLocation,jdbcType=VARCHAR}, #{loginTime,jdbcType=TIMESTAMP}, 
@@ -23,7 +23,7 @@
       #{status,jdbcType=INTEGER}, #{msg,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="deal.manage.bean.Log" useGeneratedKeys="true" keyProperty="id" >
-    insert into alipay_log
+    insert into deal_log
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="ipAddr != null" >
         ipAddr,

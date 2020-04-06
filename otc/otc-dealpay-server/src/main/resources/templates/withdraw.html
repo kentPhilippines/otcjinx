@@ -66,11 +66,6 @@
 				</div>
 				<div class="row">
 					<div class="col-sm-9 offset-sm-3 withdraw-form-item withdraw-form-highlight-item">
-						<label>可提现总额</label> <span >{{cashDeposit  - Fcash}}</span>元
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-sm-9 offset-sm-3 withdraw-form-item withdraw-form-highlight-item">
 						<label>锁定金额</label> <span>{{Fcash}}</span>元
 					</div>
 				</div>
@@ -79,7 +74,7 @@
 						<label>提现卡号</label>
 						<select class="form-control" style="width: 13.2rem; height: 3rem;display: inline; "    v-model="withdrawBank">
 							<option value="">请选择</option>
-							<option v-for="bank in bankInfo " :value="bank.bankCardAccount">{{bank.bankCardAccount}} -- {{bank.accountHolder }}</option>
+							<option v-for="bank in bankInfo " :value="bank.bankCardAccount">{{bank.bankcardAccount}} -- {{bank.accountHolder }}</option>
 						</select> 
 						</div>
 				</div>
@@ -149,10 +144,9 @@
 				 */
 				getUserAccountInfo : function() {
 					var that = this;
-					that.$http.get('/userAccount/getUserAccountInfo').then(function(res) {
+					that.$http.get('/userAccount/getUserFund').then(function(res) {
 						if (res.body.result != null) {
 							that.cashDeposit = res.body.result.accountBalance;
-							that.cash =  res.body.result.cashBalance;
 						}
 					});
 				},

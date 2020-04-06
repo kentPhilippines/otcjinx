@@ -3,20 +3,31 @@ package deal.manage.service.impl;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import cn.hutool.core.util.StrUtil;
 import deal.manage.bean.UserFund;
 import deal.manage.bean.UserInfo;
+import deal.manage.bean.UserInfoExample;
+import deal.manage.bean.UserInfoExample.Criteria;
 import deal.manage.bean.UserRate;
+import deal.manage.mapper.UserInfoMapper;
 import deal.manage.service.UserInfoService;
 import otc.result.Result;
 @Component
 public class UserInfoServiceImpl implements UserInfoService {
-
+	@Autowired UserInfoMapper userInfoDao;
 	@Override
 	public List<UserInfo> findSunAccount(UserInfo user) {
-		// TODO Auto-generated method stub
-		return null;
+		UserInfoExample example = new UserInfoExample();
+		Criteria createCriteria = example.createCriteria();
+		if(StrUtil.isNotBlank(user.getUserId()))
+			createCriteria.andUserIdEqualTo(user.getUserId());
+		if(StrUtil.isNotBlank(user.getAgent()))
+			createCriteria.andAgentEqualTo(user.getAgent());
+		List<UserInfo> selectByExample = userInfoDao.selectByExample(example);
+		return selectByExample;
 	}
 
 	@Override
@@ -27,7 +38,6 @@ public class UserInfoServiceImpl implements UserInfoService {
 
 	@Override
 	public UserInfo getUser(String username) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -51,8 +61,7 @@ public class UserInfoServiceImpl implements UserInfoService {
 
 	@Override
 	public UserInfo findUserInfoByUserId(String userId) {
-		// TODO Auto-generated method stub
-		return null;
+		return userInfoDao.findUserByUserId(userId);
 	}
 
 	@Override
@@ -147,26 +156,26 @@ public class UserInfoServiceImpl implements UserInfoService {
 
 	@Override
 	public boolean updataReceiveOrderStateNO(String userId) {
-		// TODO Auto-generated method stub
-		return false;
+		int a = userInfoDao.updataReceiveOrderStateNO(userId);
+		return a  > 0 && a  < 2;
 	}
 
 	@Override
 	public boolean updataReceiveOrderStateOFF(String userId) {
-		// TODO Auto-generated method stub
-		return false;
+		int a = userInfoDao.updataReceiveOrderStateOFF(userId);
+		return a  > 0 && a  < 2;
 	}
 
 	@Override
 	public boolean updataRemitOrderStateNO(String userId) {
-		// TODO Auto-generated method stub
-		return false;
+		int a = userInfoDao.updataRemitOrderStateNO(userId);
+		return a  > 0 && a  < 2;
 	}
 
 	@Override
 	public boolean updataRemitOrderStateOFF(String userId) {
-		// TODO Auto-generated method stub
-		return false;
+		int a = userInfoDao.updataRemitOrderStateOFF(userId);
+		return a  > 0 && a  < 2;
 	}
 
 	@Override

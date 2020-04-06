@@ -1,22 +1,22 @@
 package deal.manage.service.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import deal.manage.bean.UserFund;
+import deal.manage.mapper.UserFundMapper;
 import deal.manage.service.UserFundService;
 @Component
 public class UserFundServiceImpl implements UserFundService {
-
-	@Override
+	@Autowired UserFundMapper userFundDao;
+	@Override//查看接单记录
 	public UserFund showTodayReceiveOrderSituation(String userId) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public UserFund findUserInfoByUserId(String userId) {
-		// TODO Auto-generated method stub
-		return null;
+	public UserFund findUserFund(String userId) {
+		return userFundDao.findUserFund(userId);
 	}
 
 }

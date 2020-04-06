@@ -37,10 +37,16 @@ public class CacheConfigUtil {
 		mapAlipay.put(ConfigFile.Alipay.FREEZE_PLAIN_VIRTUAL, "1800");
 		mapAlipay.put(ConfigFile.Alipay.TIBLE_LINK, "跑分");
 		mapAlipay.put(ConfigFile.Alipay.LOCAL_STORAGE_PATH_BAK, "D:/img/bak");
+		
 	}
 	static void dealMap(){
 		mapDeal  = new HashMap<String, String>();
 		mapDeal.put(ConfigFile.Alipay.LOCAL_STORAGE_PATH, "D:/img");
+		mapDeal.put(ConfigFile.Alipay.QR_OUT_TIME, "300");
+		mapDeal.put(ConfigFile.Alipay.QR_IS_CLICK, "3000");
+		mapDeal.put(ConfigFile.Alipay.FREEZE_PLAIN_VIRTUAL, "1800");
+		mapDeal.put(ConfigFile.Alipay.TIBLE_LINK, "快马卡商");
+		mapDeal.put(ConfigFile.Alipay.LOCAL_STORAGE_PATH_BAK, "D:/img/bak");
 	}
 	static void payMap(){
 		mapPay  = new HashMap<String, String>();

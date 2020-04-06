@@ -10,5 +10,5 @@ public interface UserFundService {
      * @param userId
      * @return
      */
-    UserFund findUserInfoByUserId(String userId);
+    UserFund findUserFund(String userId);
 }
