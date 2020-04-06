@@ -38,6 +38,7 @@ public class PayApiConstant {
 		
 		public static final String DEAL_API = "/deal-api";// 卡商交易接口
 		public static final String RECHARGE_URL = "/recharge-url";//卡商充值交易【卡商入款交易】
+		public static final String WITH_PAY = "/with-pay";//卡商出款交易【卡商出款交易】
 	}
 	
 	

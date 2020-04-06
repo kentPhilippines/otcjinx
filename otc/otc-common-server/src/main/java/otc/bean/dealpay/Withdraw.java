@@ -24,6 +24,7 @@ public class Withdraw implements Serializable{
     private BigDecimal actualAmount;//实际到账费用
     private String mobile;			//提现手机
     private String notify;			//提现成功回调参数
+    private String appOrderId;		//下游商户订单号【如果为后台代付 则该字段为空】
     private Date createTime;			
     private Date submitTime;
     private Integer status;
@@ -31,7 +32,20 @@ public class Withdraw implements Serializable{
     private String retain2;		//代付 ip
     private String Time;	
     private String witType;//  代付产品类型
-    public String getWitType() {
+    private String weight;   //代付用户权重  【一般作为下游商户，这个值为空】
+    public String getAppOrderId() {
+		return appOrderId;
+	}
+	public void setAppOrderId(String appOrderId) {
+		this.appOrderId = appOrderId;
+	}
+	public String getWeight() {
+		return weight;
+	}
+	public void setWeight(String weight) {
+		this.weight = weight;
+	}
+	public String getWitType() {
 		return witType;
 	}
 	public void setWitType(String witType) {
@@ -151,4 +165,13 @@ public class Withdraw implements Serializable{
     public void setRetain2(String retain2) {
         this.retain2 = retain2 == null ? null : retain2.trim();
     }
+	@Override
+	public String toString() {
+		return "Withdraw [id=" + id + ", orderId=" + orderId + ", userId=" + userId + ", withdrawType=" + withdrawType
+				+ ", bankNo=" + bankNo + ", accname=" + accname + ", orderStatus=" + orderStatus + ", bankName="
+				+ bankName + ", amount=" + amount + ", fee=" + fee + ", actualAmount=" + actualAmount + ", mobile="
+				+ mobile + ", notify=" + notify + ", createTime=" + createTime + ", submitTime=" + submitTime
+				+ ", status=" + status + ", retain1=" + retain1 + ", retain2=" + retain2 + ", Time=" + Time
+				+ ", witType=" + witType + "]";
+	}
 }
