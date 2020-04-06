@@ -1,5 +1,7 @@
 package deal.manage.service;
 
+import java.util.List;
+
 import otc.bean.dealpay.Recharge;
 
 public interface RechargeService {
@@ -17,5 +19,9 @@ public interface RechargeService {
 	 * @return
 	 */
 	boolean addOrder(Recharge order);
+
+
+	
+	List<Recharge> findRechargeOrder(Recharge bean);
 
 }

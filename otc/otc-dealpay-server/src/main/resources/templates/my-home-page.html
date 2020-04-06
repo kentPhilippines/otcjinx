@@ -236,13 +236,11 @@
 											function(res) {
 												if (res.body.result != null) {
 													that.isLoggedInFlag = true;
-													that.userName = res.body.result.accountName;
+													that.userName = res.body.result.userName;
 													that.cashDeposit = res.body.result.accountBalance;
 													that.accountType = res.body.result.isAgent;
 													that.fee = res.body.result.fee;
 													headerVM.title = that.userName;
-													
-													
 												}
 											});
 						},

@@ -24,10 +24,13 @@ import cn.hutool.core.util.StrUtil;
 import deal.manage.api.AccountApiService;
 import deal.manage.bean.Invitecode;
 import deal.manage.bean.UserInfo;
+import deal.manage.bean.UserRate;
 import deal.manage.bean.util.PageResult;
 import deal.manage.service.InviteCodeService;
 import deal.manage.service.UserInfoService;
+import deal.manage.service.UserRateService;
 import deal.manage.util.SessionUtil;
+import otc.api.dealpay.Common;
 import otc.result.Result;
 
 @Controller
@@ -38,6 +41,7 @@ public class AgentContorller {
 	@Autowired InviteCodeService inviteCodeServiceImpl;
 	@Autowired UserInfoService userinfoServiceImpl;
 	@Autowired AccountApiService accountApiServiceImpl;
+	@Autowired UserRateService userRateServiceImpl;
 	/**
 	 * <p>代理商开户</p>
 	 *	 手机端专用
@@ -45,16 +49,43 @@ public class AgentContorller {
 	 */
 	@PostMapping("/agentOpenAnAccount")
 	@ResponseBody
+	@Transactional
 	public Result agentOpenAnAccount(@RequestBody UserInfo user,HttpServletRequest request) {
-		
-		
-		
-		
-		
-		
-		return Result.buildFail();
+		UserInfo user2 = sessionUtil.getUser(request);
+		if(ObjectUtil.isNull(user2))
+			return Result.buildFailMessage("当前用户未登录");
+		user.setAgent(user2.getUserId());
+		user.setUserType(Common.User.USER_TYPE_CARD);
+		user.setIsAgent(Common.User.USER_IS_MEMBER);
+		UserRate rateR = userRateServiceImpl.findUserRateR(user2.getUserId());
+		UserRate rateC = userRateServiceImpl.findUserRateC(user2.getUserId());
+		BigDecimal feeR = rateR.getFee();
+		BigDecimal feeC = rateC.getFee();
+		String cardFee = user.getCardFee();//出款
+		String fee = user.getFee();//入款
+		if(StrUtil.isBlank(fee)||StrUtil.isBlank(cardFee))
+			return Result.buildFailMessage("请设置会员费率");
+		if(!(feeR.compareTo(new BigDecimal(fee)) > -1)) 
+			return Result.buildFailMessage("入款费率设置违规");
+		if(!(feeC.compareTo(new BigDecimal(cardFee)) > -1)) 
+			return Result.buildFailMessage("出款费率设置违规");
+		Result addAccount = accountApiServiceImpl.addAccount(user);
+		if(addAccount.isSuccess()) {
+			UserRate rate = new UserRate();
+			rate.setUserId(user.getUserId());
+			rate.setFee(new BigDecimal(user.getFee()));
+			rate.setFeeType(Common.User.DEAL_FEE);
+			rate.setUserType(Common.User.USER_TYPE_CARD);
+			boolean add = userRateServiceImpl.add(rate);
+			rate.setFeeType(Common.User.CAED_FEE);
+			rate.setFee(new BigDecimal(user.getCardFee()));
+			boolean a = userRateServiceImpl.add(rate);
+			if(add&&a) 
+				return Result.buildSuccessMessage("开户成功");
+		}
+		return Result.buildFailMessage("开户失败");
 	}
-	/**
+	/** 
 	 * <p>密码修改</p>
 	 * 	手机端专用
 	 * @return
@@ -94,33 +125,28 @@ public class AgentContorller {
 		 * <li>入款费率不能大于自己的费率</li>
 		 */
 		UserInfo user = sessionUtil.getUser(request);
-		if(ObjectUtil.isNull(bean.getCustFee())||StrUtil.isBlank(bean.getUserType())||ObjectUtil.isNull(user))
+		if(ObjectUtil.isNull(bean.getCustFee())||StrUtil.isBlank(bean.getUserType())||ObjectUtil.isNull(user)||ObjectUtil.isNull(bean.getFee()))
 			return Result.buildFailMessage("必传参数为空");
-	/*
-		
-		
-		UserInfo user2 = accountServiceImpl.getUser(user2.getUserId());
-		BigDecimal fee = user2.getFee();
-		BigDecimal rebateNew = new BigDecimal(bean.getRebate());
-		if(fee.compareTo(rebateNew) == -1 ) {
-			return JsonResult.buildFailResult("利率设置异常，无法设置高于自己账号入款利率，当前我的利率为："+fee);
-		}
-		BigDecimal cardFee = user2.getCardFee();
-		String cardFee2 = bean.getCardFee();
-		BigDecimal cardFee3 = new BigDecimal(cardFee2);
-		if(cardFee.compareTo(cardFee3) == -1 ) {
-			return JsonResult.buildFailResult("利率设置异常，无法设置高于自己账号出款利率，当前我的利率为："+fee);
-		}
-		bean.setBelongUser(user.getAccountId());
-		bean.setCount(0);
+		UserRate rateR = userRateServiceImpl.findUserRateR(user.getUserId());
+		UserRate rateC = userRateServiceImpl.findUserRateC(user.getUserId());
+		BigDecimal feeR = rateR.getFee();
+		BigDecimal feeC = rateC.getFee();
+		BigDecimal cardFee = bean.getCustFee();//出款
+		BigDecimal fee = bean.getFee();//入款
+		if(!(feeR.compareTo(fee) > -1)) 
+			return Result.buildFailMessage("入款费率设置违规");
+		if(!(feeC.compareTo(cardFee) > -1)) 
+			return Result.buildFailMessage("出款费率设置违规");
 		String createinviteCode = createinviteCode();
+		bean.setBelongUser(user.getUserId());
+		bean.setCount(0);
 		bean.setInviteCode(createinviteCode);
 		bean.setIsDeal(Common.isOk);
+		bean.setFee(fee);
+		bean.setCustFee(cardFee);
 		boolean flag = inviteCodeServiceImpl.addinviteCode(bean);
 		if(flag)
-			return JsonResult.buildSuccessResult("操作成功",settingFile.getName(settingFile.OPEN_ACCOUNT_CODE)+createinviteCode);
-		return JsonResult.buildFailResult();
-		*/
+			return Result.buildSuccessResult("操作成功","127.0.0.1:7010/register?inviteCode="+createinviteCode);
 		return Result.buildFailMessage("开户失败");
 	}
 	/**

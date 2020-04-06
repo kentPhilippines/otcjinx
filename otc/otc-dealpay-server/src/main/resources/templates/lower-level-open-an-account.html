@@ -146,9 +146,9 @@
 						return;
 					}
 					that.$http.post('/agent/generateInviteCodeAndGetInviteRegisterLink', {
-						accountType : that.accountType,
-						rebate : that.rebate,
-						cardFee : that.cardFee
+						userType : that.accountType,
+						fee : that.rebate,
+						custFee : that.cardFee
 					}).then(function(res) {
 						layer.alert(res.body.message, {
 							icon : 1,

@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 @Mapper
 public interface WithdrawMapper {
     int countByExample(WithdrawExample example);
@@ -29,4 +30,8 @@ public interface WithdrawMapper {
     int updateByPrimaryKeySelective(Withdraw record);
 
     int updateByPrimaryKey(Withdraw record);
+
+    
+    @Select("select * from dealpay_withdraw where orderId = #{orderId}")
+	Withdraw findOrderId(@Param("orderId") String orderId);
 }

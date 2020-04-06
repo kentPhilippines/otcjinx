@@ -30,4 +30,9 @@ public interface UserRateService {
 	 * @return
 	 */
 	UserRate findUserRateR(String account);
+	/**
+	 * <p>添加一个费率</p>
+	 * @param rate
+	 */
+	boolean  add(UserRate rate);
 }

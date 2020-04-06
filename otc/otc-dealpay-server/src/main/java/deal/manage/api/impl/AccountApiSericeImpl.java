@@ -44,7 +44,6 @@ public class AccountApiSericeImpl implements AccountApiService {
         if (StrUtil.isBlank(user.getUserId()) || StrUtil.isBlank(user.getUserName())
                 || ObjectUtil.isNull(user.getUserType())
                 || StrUtil.isBlank(user.getIsAgent())
-                || StrUtil.isBlank(user.getEmail())
         ) {
             return Result.buildFailMessage("必传参数为空");
         }

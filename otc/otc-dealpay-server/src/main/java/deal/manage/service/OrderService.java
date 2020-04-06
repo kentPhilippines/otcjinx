@@ -24,31 +24,11 @@ public interface OrderService {
 	 */
 	DealOrder findOrderByAssociatedId(String orderId);
 	/**
-	 * <p>分页查询流水订单，根据自己的子账号</p>
-	 * @param order
-	 * @return
-	 */
-	List<Runorder> findOrderRunByPage(Runorder order);
-	/**
 	 * <p>分页查询订单，根据自己的所有子账号</p>
 	 * @param order
 	 * @return
 	 */
 	List<DealOrder> findOrderByPage(DealOrder order);
-	/**
-	 * <p>查询充值订单</p>
-	 * @param bean
-	 * @return
-	 */
-
-	List<Recharge> findRechargeOrder(Recharge bean);
-
-	/**
-	 * <p>查询代付订单</p>
-	 * @param bean
-	 * @return
-	 */
-	List<Withdraw> findWithdrawOrder(Withdraw bean);
 	/**
 	 * <p>根据订单号查询订单【卡商交易订单】</p>
 	 * @param orderId

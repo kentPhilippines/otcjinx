@@ -33,4 +33,10 @@ public class UserRateServiceImpl implements UserRateService {
 		return rate;
 	}
 
+	@Override
+	public boolean add(UserRate rate) {
+		int insertSelective = userRateDao.insertSelective(rate);
+		return insertSelective > 0 && insertSelective < 2;
+	}
+
 }

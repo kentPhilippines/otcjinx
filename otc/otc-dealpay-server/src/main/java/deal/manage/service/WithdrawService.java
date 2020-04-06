@@ -1,5 +1,7 @@
 package deal.manage.service;
 
+import java.util.List;
+
 import deal.manage.bean.Withdraw;
 
 public interface WithdrawService {
@@ -17,5 +19,8 @@ public interface WithdrawService {
 	 * @return
 	 */
 	Withdraw findOrderId(String orderId);
+
+
+	List<Withdraw> findWithdrawOrder(Withdraw bean);
 
 }

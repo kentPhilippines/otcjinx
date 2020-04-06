@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,6 +33,7 @@ import deal.manage.service.UserInfoService;
 import deal.manage.service.UserRateService;
 import deal.manage.util.CardBankOrderUtil;
 import deal.manage.util.SessionUtil;
+import otc.api.dealpay.Common;
 import otc.result.Result;
 
 @Controller
@@ -129,6 +131,7 @@ public class UserContorller {
 	 */
 	@PostMapping("/register")
 	@ResponseBody
+	@Transactional
 	public Result register(  UserInfo user ,HttpServletRequest request) {
 		if(StrUtil.isBlank(user.getUserId())|| StrUtil.isBlank(user.getPassword()) 
 				|| StrUtil.isBlank(user.getPassword())
@@ -136,22 +139,32 @@ public class UserContorller {
 				|| StrUtil.isBlank(user.getUserName())
 				|| StrUtil.isBlank(user.getInviteCode()))
 			return Result.buildFailMessage("必传参数为空");
-/*		Invitecode code = inviteCodeServiceImpl.findInviteCode(user.getInviteCode());
-		if(code.getStatus()==0) {
+		Invitecode code = inviteCodeServiceImpl.findInviteCode(user.getInviteCode());
+		if(code.getStatus()==0) 
 			return Result.buildFailMessage("当前邀请码不可用");
-		}
-		user.setFee(new BigDecimal(code.getFee()));//邀请码费率
 		user.setAgent(code.getBelongUser());//邀请码生成人
 		user.setIsAgent(code.getUserType().equals("agent")?"1":"2");
-		user.setCardFee(new BigDecimal(code.getCardFee()));
-		user.setUserType(Common.USER_TYPE_CARD);
-		JsonResult openAgentAccount = agentApi.openAgentAccount(user);
+		user.setUserType(Common.User.USER_TYPE_CARD);
+		Result addAccount = accountApiServiceImpl.addAccount(user);
 		boolean flag = false;
-		if(openAgentAccount.isSuccess())
-			flag = inviteCodeServiceImpl.updataInviteCode(user.getInviteCode(),user.getAccountId());
-		if(openAgentAccount.isSuccess() && flag)
-			return JsonResult.buildSuccessResult();
-			*/
+		boolean add = false;
+		boolean a = false;
+		if(addAccount.isSuccess()) {
+			flag = inviteCodeServiceImpl.updataInviteCode(user.getInviteCode(),user.getUserId());
+			if(flag) {
+				UserRate rate = new UserRate();
+				rate.setUserId(user.getUserId());
+				rate.setFee(code.getFee());
+				rate.setFeeType(Common.User.DEAL_FEE);
+				rate.setUserType(Common.User.USER_TYPE_CARD);
+				add = userRateServiceImpl.add(rate);
+				rate.setFeeType(Common.User.CAED_FEE);
+				rate.setFee(code.getCustFee());
+				a = userRateServiceImpl.add(rate);
+			}
+		}
+		if(addAccount.isSuccess() && flag && add && a)
+			return Result.buildSuccessResult();
 		return Result.buildFailMessage("注册失败");
 	}
 	/**

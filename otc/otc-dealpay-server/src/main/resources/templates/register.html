@@ -138,10 +138,10 @@
 					}
 					that.$http.post('/userAccount/register', {
 						inviteCode : that.inviteCode,
-						accountId : that.userName,
-						accountName : that.realName,
+						userId : that.userName,
+						userName : that.realName,
 						password : that.loginPwd,
-						securityPassword : that.moneyPwd
+						payPasword : that.moneyPwd
 					}, {
 						emulateJSON : true
 					}).then(function(res) {

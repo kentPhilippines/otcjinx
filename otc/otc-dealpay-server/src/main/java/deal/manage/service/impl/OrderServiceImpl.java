@@ -25,28 +25,11 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public List<Runorder> findOrderRunByPage(Runorder order) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public List<DealOrder> findOrderByPage(DealOrder order) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
-	public List<Recharge> findRechargeOrder(Recharge bean) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Withdraw> findWithdrawOrder(Withdraw bean) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public DealOrder findOrderByOrderId(String orderId) {

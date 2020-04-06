@@ -34,7 +34,10 @@ import deal.manage.bean.Withdraw;
 import deal.manage.bean.util.AreaIp;
 import deal.manage.bean.util.PageResult;
 import deal.manage.service.OrderService;
+import deal.manage.service.RechargeService;
+import deal.manage.service.RunOrderService;
 import deal.manage.service.UserInfoService;
+import deal.manage.service.WithdrawService;
 import deal.manage.util.DateTools;
 import deal.manage.util.EnterOrderUtil;
 import deal.manage.util.IsDealIpUtil;
@@ -58,6 +61,9 @@ public class OrderContorller {
 	@Autowired OrderUtil orderUtil;
 	@Autowired LogUtil logUtil;
 	@Autowired UserInfoService accountServiceImpl;
+	@Autowired RunOrderService runOrderServiceImpl;
+	@Autowired RechargeService rechargeServiceImpl;
+	@Autowired WithdrawService withdrawServiceImpl;
 	private Lock lock = new ReentrantLock();
 	/**
 	 * <p>获取当前我，正在交易的订单</p>
@@ -205,7 +211,7 @@ public class OrderContorller {
 		if(StrUtil.isNotBlank(accountChangeTypeCode))
 			order.setRunType(accountChangeTypeCode);
 		PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
-		List<Runorder> orderList = orderServiceImpl.findOrderRunByPage(order);
+		List<Runorder> orderList = runOrderServiceImpl.findOrderRunByPage(order);
 		PageInfo<Runorder> pageInfo = new PageInfo<Runorder>(orderList);
 		PageResult<Runorder> pageR = new PageResult<Runorder>();
 		pageR.setContent(pageInfo.getList());
@@ -262,7 +268,7 @@ public class OrderContorller {
 		if(StrUtil.isNotBlank(accountChangeTypeCode))
 			orderRun.setRunType(accountChangeTypeCode);
 		PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
-		List<Runorder> orderList = orderServiceImpl.findOrderRunByPage(orderRun);
+		List<Runorder> orderList = runOrderServiceImpl.findOrderRunByPage(orderRun);
 		PageInfo<Runorder> pageInfo = new PageInfo<Runorder>(orderList);
 		PageResult<Runorder> pageR = new PageResult<Runorder>();
 		pageR.setContent(pageInfo.getList());
@@ -340,7 +346,7 @@ public class OrderContorller {
 			if(StrUtil.isNotBlank(startTime))
 				bean.setTime(startTime);
 			PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
-			List<Recharge> witList = orderServiceImpl.findRechargeOrder(bean);
+			List<Recharge> witList = rechargeServiceImpl.findRechargeOrder(bean);
 			PageInfo<Recharge> pageInfo = new PageInfo<Recharge>(witList);
 			PageResult<Recharge> pageR = new PageResult<Recharge>();
 			pageR.setContent(pageInfo.getList());
@@ -354,7 +360,7 @@ public class OrderContorller {
 			if(StrUtil.isNotBlank(startTime))
 				bean.setTime(startTime);
 			PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
-			List<Withdraw> witList = orderServiceImpl.findWithdrawOrder(bean);
+			List<Withdraw> witList = withdrawServiceImpl.findWithdrawOrder(bean);
 			PageInfo<Withdraw> pageInfo = new PageInfo<Withdraw>(witList);
 			PageResult<Withdraw> pageR = new PageResult<Withdraw>();
 			pageR.setContent(pageInfo.getList());

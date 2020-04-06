@@ -77,7 +77,7 @@ public class EnterOrderUtil {
 			return Result.buildFailResult("操作用户不存在");
 		String userType = userInfo.getUserType().toString();
 		if(StrUtil.isBlank(userType))  //兼容之前的真实数据
-			userType = Common.User.USER_TYPE_CARD;
+			userType = Common.User.USER_TYPE_CARD.toString();
 		Result enterOrderStatus = EnterOrderStatus(orderId, orderStatus, userType, userId);
 		if(enterOrderStatus.isSuccess()) {
 			boolean operation = true;

@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 @Mapper
 public interface RechargeMapper {
     int countByExample(RechargeExample example);
@@ -36,4 +37,7 @@ public interface RechargeMapper {
     int updateByPrimaryKeyWithBLOBs(Recharge record);
 
     int updateByPrimaryKey(Recharge record);
+
+    @Select("select * from dealpay_recharge where orderId = #{orderId}")
+	Recharge findOrderId(@Param("orderId") String orderId);
 }
