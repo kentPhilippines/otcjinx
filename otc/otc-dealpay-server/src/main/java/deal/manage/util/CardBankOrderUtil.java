@@ -115,9 +115,6 @@ public class CardBankOrderUtil {
 		}
 		return Result.buildFail();
 	}
-	
-	
-	
 	/**
 	 * <p>卡商入款订单生成</p>
 	 * @param orderId					
@@ -154,9 +151,6 @@ public class CardBankOrderUtil {
 			return Result.buildSuccessResult("订单生成成功", clickBnak);
 		return Result.buildFailMessage("操作失败");
 	}
-	
-	
-	
 	/**
 	 * <p>根据充值订单和充值金额，选定入款的卡商</p>
 	 * @param bigDecimal
@@ -227,9 +221,6 @@ public class CardBankOrderUtil {
 		}
 		return null;
 	}
-	
-	
-	
 	/**
 	 * <p>获取银行卡交易金额【1800秒内】</p>
 	 * @param bankCard

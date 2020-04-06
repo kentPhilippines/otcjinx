@@ -3,12 +3,15 @@ package deal.manage.util;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import deal.manage.bean.BankList;
+import deal.manage.service.BankListService;
 
 @Component
 public class BankUtil {
+	@Autowired BankListService bankListServiceImpl;
 	/**
 	 * <p>根据交易金额选定交易银行卡</p>
 	 * @param amount
@@ -22,7 +25,7 @@ public class BankUtil {
 		 * 4,获取当前卡商开启的银行卡
 		 * 5,组成银行卡集合
 		 */
-		return null;
+		return bankListServiceImpl.findDealBank(amount);
 	}
 
 }

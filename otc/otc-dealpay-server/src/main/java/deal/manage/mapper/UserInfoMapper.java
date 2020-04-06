@@ -9,6 +9,8 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 @Mapper
 public interface UserInfoMapper {
     int countByExample(UserInfoExample example);
@@ -39,21 +41,39 @@ public interface UserInfoMapper {
 
     int updateByPrimaryKey(UserInfo record);
 
-	UserInfo findUserId(String userId, String userName);
+    
+    
+    
+    
+    
+    
+    @Select("select * from dealpay_user_info where userId = #{userId} or userName = #{userName}")
+    UserInfo findUserId(@Param("userId") String userId, @Param("userName") String userName);
+    @Select("select * from alipay_user_info where userId = #{userId}")
+    UserInfo findUserByUserId(@Param("userId") String userId);
 
-	UserInfo findUserByUserId(String userId);
+    @Select("select * from alipay_user_rate where userId = #{userId} and payTypr = #{passCode} and switchs = 1")
+    UserRate selectUserRateByUserId(@Param("userId") String userId, @Param("passCode") String passCode);
 
-	UserRate selectUserRateByUserId(String userId, String passCode);
+    @Select("select  id, userId, userName, cashBalance, rechargeNumber, freezeBalance, accountBalance, " +
+            " sumDealAmount, sumRechargeAmount, sumProfit, sumAgentProfit, sumOrderCount, todayDealAmount, " +
+            " todayProfit, todayOrderCount, todayAgentProfit, userType, agent, isAgent, createTime, " +
+            " submitTime, status, version from dealpay_user_fund where userId = #{userId}")
+    UserFund selectUsrFundByUserId(@Param("userId") String userId);
 
-	UserFund selectUsrFundByUserId(String userId);
+    @Update("update dealpay_user_info set ${paramKey} = #{paramValue} where userId = #{userId} ")
+    int updateMerchantStatusByUserId(@Param("userId") String userId, @Param("paramKey") String paramKey, @Param("paramValue") String paramValue);
+    @Update("update dealpay_user_rate set switchs = #{status} where userId = #{userId} and userType = 1 ")
+	void closeMerchantRateChannel(@Param("userId") String userId, @Param("status")  Integer code);
+    @Update("update dealpay_user_info set receiveOrderState = #{status}, remitOrderState = #{status} where userId = #{userId}")
+	void stopAllStatusByUserId(@Param("userId") String userId, @Param("status")  Integer code);
 
-	int updateMerchantStatusByUserId(String userId, String paramKey, String paramValue);
+	
+    @Update("update dealpay_user_info set password = #{newPassword} where userId = #{userId}")
+	int updataPassword(@Param("userId")String userId, @Param("newPassword")String newPassword);
 
-	void closeMerchantRateChannel(String userId, int code);
-
-	void stopAllStatusByUserId(String userId, int code);
-
-	int updataPassword(String userId, String newPassword);
-
+    
+    @Update("update dealpay_user_info set payPasword = #{newPassword} where userId = #{userId}")
 	int updataPayPassword(String userId, String newPayPassword);
+
 }

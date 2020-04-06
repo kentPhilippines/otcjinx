@@ -49,7 +49,7 @@ public class AccountApi {
         ) {
             return Result.buildFailMessage("必传参数为空");
         }
-        if (!user.getUserType().toString().equals(Common.User.USER_TYPE_APP))
+        if (user.getUserType().toString().equals(Common.User.USER_TYPE_APP))
             return Result.buildFailMessage("开户账户类型不符合");
         user.setIsAgent(Common.User.USER_IS_AGENT);
         Result addAccount = accountApiServiceImpl.addAccount(user);

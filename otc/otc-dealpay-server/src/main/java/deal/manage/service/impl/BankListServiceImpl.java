@@ -1,5 +1,6 @@
 package deal.manage.service.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
@@ -65,6 +66,12 @@ public class BankListServiceImpl implements BankListService {
 
 	@Override
 	public BankList findBankInfoNo(String cardbank) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<BankList> findDealBank(BigDecimal amount) {
 		// TODO Auto-generated method stub
 		return null;
 	}

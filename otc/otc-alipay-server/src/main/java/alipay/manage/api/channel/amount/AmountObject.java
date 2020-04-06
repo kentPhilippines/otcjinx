@@ -15,7 +15,6 @@ import otc.result.Result;
 /**
  * <p>充值代付接口渠道分发</p>
  * @author hx08
- *
  */
 public abstract class AmountObject  implements AmountChannel{
 	Logger log = LoggerFactory.getLogger(AmountObject.class);
@@ -25,19 +24,14 @@ public abstract class AmountObject  implements AmountChannel{
 		@Override
 		public Result recharge(Recharge rechaege) {
 			//  返回充值接口
-			
-			
-			return null;
+			Result recharge = dealpayServiceClienImpl.recharge(rechaege);
+			return recharge;
 		}
-	
-	
-		
-		
-		
 		@Override
 		public Result withdraw(Withdraw wit) {
 		// 返回代付成功 当找不到代付渠道的时候代付失败
-		return null;
+			Result result = dealpayServiceClienImpl.wit(wit);
+		return result;
 		}
 		/**
 		 * <p>充值失败时候，将充值订单修改为失败</p>

@@ -14,6 +14,7 @@ import deal.manage.util.CardBankOrderUtil;
 import otc.api.dealpay.Common;
 import otc.bean.config.ConfigFile;
 import otc.bean.dealpay.Recharge;
+import otc.bean.dealpay.Withdraw;
 import otc.common.PayApiConstant;
 import otc.result.DealBean;
 import otc.result.Result;
@@ -27,6 +28,11 @@ public class Api {
 	private static String Url;
 	
 	
+	/**
+	 * <p>接受充值</p>
+	 * @param recharge
+	 * @return
+	 */
 	@PostMapping(PayApiConstant.Dealpay.DEAL_API+PayApiConstant.Dealpay.RECHARGE_URL)
 	public Result recharge(Recharge recharge) {
 		log.info("【接收到下游调用充值渠道】");		
@@ -54,7 +60,37 @@ public class Api {
 		}
 		return Result.buildFailMessage("暂无充值渠道");
 	}
-	
-	
-	
+	/**
+	 * <p>接受代付</p>
+	 * @param wit
+	 * @return
+	 */
+	@PostMapping(PayApiConstant.Dealpay.DEAL_API+PayApiConstant.Dealpay.WITH_PAY)
+	public Result wit(Withdraw  wit) {
+		log.info("【接收到下游调用代付渠道】");		
+		if(ObjectUtil.isNull(wit)) {
+			log.info("【当前调用参数为空】");		
+			return Result.buildFailMessage("充值失败，接口调用参数为空");
+		}
+		deal.manage.bean.Withdraw with = new deal.manage.bean.Withdraw();
+		with.setOrderId(wit.getOrderId());
+		with.setActualAmount(wit.getActualAmount());
+		with.setAmount(wit.getAmount());
+		with.setBankName(wit.getBankName());
+		with.setBankNo(wit.getBankNo());
+		with.setMobile(wit.getMobile());
+		with.setNotify(wit.getNotify());
+		with.setOrderStatus(wit.getOrderStatus());
+		with.setUserId(wit.getUserId());
+		with.setWithdrawType(Integer.valueOf(wit.getWithdrawType()));
+		with.setWeight(wit.getWeight());
+		with.setAppOrderId(wit.getAppOrderId());
+		boolean order = withdrawServiceImpl.addOrder(with);
+		if(order) {
+			Result orderW = cardBankOrderUtil.createBankOrderW(with.getOrderId());
+			if(orderW.isSuccess())
+				return orderW;
+		}
+		return Result.buildFailMessage("代付失败"); 
+	}
 }

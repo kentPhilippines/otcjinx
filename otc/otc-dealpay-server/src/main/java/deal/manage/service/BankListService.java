@@ -1,5 +1,6 @@
 package deal.manage.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import deal.manage.bean.BankList;
@@ -76,6 +77,12 @@ public interface BankListService {
 	 * @return
 	 */
 	BankList findBankInfoNo(String cardbank);
+
+	
+	
+	
+	
+	List<BankList> findDealBank(BigDecimal amount);
 
 
 
