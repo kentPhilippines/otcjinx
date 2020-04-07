@@ -4,6 +4,8 @@ package deal.manage.contorller;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import deal.manage.api.AccountApiService;
@@ -262,9 +265,21 @@ public class UserContorller {
 		UserInfo user = sessionUtil.getUser(request);
 		if(ObjectUtil.isNull(user)) 
 			return Result.buildFailMessage("当前用户未登录");
+		UserRate rateR = null;
+		UserRate rateC = null;
 		UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(userId);
-		UserRate rateR = userRateServiceImpl.findUserRateR(userInfo.getUserId());
-		UserRate rateC = userRateServiceImpl.findUserRateC(userInfo.getUserId());
+		Future<UserRate> execAsync3 = ThreadUtil.execAsync(()->{
+			return userRateServiceImpl.findUserRateR(userInfo.getUserId());
+		});
+		Future<UserRate> execAsync2 = ThreadUtil.execAsync(()->{
+			return userRateServiceImpl.findUserRateC(userInfo.getUserId());
+		});
+		try {
+			rateR = execAsync3.get();
+			rateC = execAsync2.get();
+		} catch (InterruptedException | ExecutionException e) {
+			return Result.buildFailMessage("错误"); 
+		}
 		userInfo.setFee(rateR.getFee().toString());
 		userInfo.setCardFee(rateC.getFee().toString());
 		return Result.buildSuccessResult(userInfo);
