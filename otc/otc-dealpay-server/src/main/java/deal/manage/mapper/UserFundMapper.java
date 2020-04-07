@@ -2,6 +2,8 @@ package deal.manage.mapper;
 
 import deal.manage.bean.UserFund;
 import deal.manage.bean.UserFundExample;
+import deal.manage.bean.UserInfo;
+
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -33,4 +35,6 @@ public interface UserFundMapper {
 
     @Select("select * from dealpay_user_fund where userId = #{userId}")
 	UserFund findUserFund(@Param("userId")String userId);
+
+	List<UserFund> findSunAccount(UserInfo user);
 }

@@ -1,9 +1,12 @@
 package deal.manage.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import deal.manage.bean.UserFund;
+import deal.manage.bean.UserInfo;
 import deal.manage.mapper.UserFundMapper;
 import deal.manage.service.UserFundService;
 @Component
@@ -17,6 +20,11 @@ public class UserFundServiceImpl implements UserFundService {
 	@Override
 	public UserFund findUserFund(String userId) {
 		return userFundDao.findUserFund(userId);
+	}
+
+	@Override
+	public List<UserFund> findSunAccount(UserInfo user) {
+		return userFundDao.findSunAccount(user);
 	}
 
 }

@@ -535,4 +535,15 @@
       version = #{version,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  <select id="findSunAccount"  parameterType="deal.manage.bean.UserFund" resultMap="BaseResultMap"> 
+  		select  f.* , r.fee AS fee , a.fee AS cardFee from dealpay_user_fund  f
+  		left join dealpay_user_rate r   on f.userId = r.userId and r.feeType = 1
+  		left join dealpay_user_rate a     on f.userId = a.userId and a.feeType = 2
+  		<where>
+  			<if test="userId != null and userId != '' ">and f.userId = #{userId}</if>
+  			<if test="userName != null and userName != '' ">and f.userName = #{userName}</if>
+  			<if test="userType != null and userType != '' ">and f.userType = #{userType}</if>
+  			<if test="agent != null and agent != '' ">and f.agent = #{agent}</if>
+  		</where>
+  </select>
 </mapper>

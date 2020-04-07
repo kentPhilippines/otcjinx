@@ -16,7 +16,7 @@
 <div id="updataAccountFee" v-cloak>
 <div class="form-group">
 	<div class="form-details-item">
-	 <label>账号</label> <input type="text" class="form-control" placeholder="请输入账号" v-model="accountName">
+	 <label>账号</label> <input type="text" class="form-control" placeholder="请输入账号" v-model="userName">
 	</div>
 	<div class="form-details-item">
 	 <label>费率</label>
@@ -33,8 +33,8 @@
 		data : {
 			fee : '',
 			cardFee : '',
-			accountId : '',
-			accountName : '',
+			userId : '',
+			userName : '',
 			agentFee : '',
 			isfee:'',
 			feeType : ''
@@ -43,20 +43,20 @@
 		created : function() {
 		},
 		mounted : function() {
-			var accountId = getQueryString('accountId');
+			var userId = getQueryString('userId');
 			this.feeType = getQueryString('feeType');
-			this.accountId = accountId;
+			this.userId = userId;
 			this.findUserByAccountId();
 			this.getUserAccountInfo();
 		},
 		methods : {
 			findUserByAccountId : function(){
 				that = this;
-				that.$http.post('/userAccount/findUserByAccountId', { accountId : that.accountId }, { emulateJSON : true })
+				that.$http.post('/userAccount/findUserByAccountId', { userId : that.userId }, { emulateJSON : true })
 				.then(function(res) {
 					that.fee = res.body.result.fee;
 					that.cardFee = res.body.result.cardFee;
-					that.accountName = res.body.result.accountName
+					that.userName = res.body.result.userName
 				});
 			},
 			getUserAccountInfo : function() {
@@ -89,7 +89,7 @@
 			},
 			updataAgentFee : function(){
 				var that = this;
-				that.$http.post('/userAccount/updataAgentFee',{ fee : that.fee, accountId : that.accountId,feeType:that.feeType},{ emulateJSON : true })
+				that.$http.post('/userAccount/updataAgentFee',{ fee : that.fee, userId : that.userId,feeType:that.feeType},{ emulateJSON : true })
 				.then(function(res) {
 							if(res.body.success){
 								parent.layer.closeAll();

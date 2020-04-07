@@ -39,4 +39,16 @@ public class UserRateServiceImpl implements UserRateService {
 		return insertSelective > 0 && insertSelective < 2;
 	}
 
+	@Override
+	public boolean updateRateR(String userId, String fee) {
+		int a = userRateDao.updateRateR(userId,fee);
+		return a > 0 && a < 2;
+	}
+
+	@Override
+	public boolean updateRateC(String userId, String fee) {
+		int updateRateC = userRateDao.updateRateC(userId, fee);
+		return updateRateC > 0 && updateRateC < 2;
+	}
+
 }

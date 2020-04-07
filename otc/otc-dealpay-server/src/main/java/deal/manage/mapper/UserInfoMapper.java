@@ -104,4 +104,7 @@ public interface UserInfoMapper {
     @Update("update dealpay_user_info set remitOrderState = 2 where userId = #{userId}")
 	int updataRemitOrderStateOFF(@Param("userId")String userId);
 
+    @Select("select * from dealpay_user_info where id = #{id}")
+	UserInfo findUserFundKeyId(@Param("id") String id);
+
 }

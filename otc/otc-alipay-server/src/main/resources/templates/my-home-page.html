@@ -237,7 +237,6 @@
                         .get('/masterControl/getRegisterSetting')
                         .then(
                             function (res) {
-                                console.log("头部的登录 " , res.body.result)
                                 that.loginOrRegisterTxt = res.body.result.registerEnabled ? '登录/注册': '登录';
                             });
                 },

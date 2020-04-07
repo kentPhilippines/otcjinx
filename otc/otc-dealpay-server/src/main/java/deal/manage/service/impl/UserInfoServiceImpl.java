@@ -190,4 +190,10 @@ public class UserInfoServiceImpl implements UserInfoService {
 		return null;
 	}
 
+	@Override
+	public UserInfo findUserFundKeyId(String userId) {
+		
+		return userInfoDao.findUserFundKeyId(userId);
+	}
+
 }

@@ -36,7 +36,7 @@
 						<label>用户名:</label> <span>{{account.userId}}</span>
 					</div>
 					<div class="form-details-item">
-						<label>保证金:</label> <span class="form-details-item-highlight">{{account.rechargeNumber}}</span>
+						<label>保证金:</label> <span class="form-details-item-highlight">{{account.accountBalance}}</span>
 						
 					</div>
 					<div class="form-details-item">
@@ -44,26 +44,27 @@
 					</div>
 					<div class="form-details-item">
 						<label>收款费率</label> <span class="form-details-item-highlight ">{{account.fee}}</span> 
-						<button  class="btn btn-outline-info btn-lg"   type="button" feeType = 'fee'  style="margin: 0.2rem 0.2rem 0.2rem 0.2rem;  width: 7rem; height: 3rem;"  v-on:click="updataAccountFee(account.id,feeTypeQr)"><span>修改费率</span>  </button>		
+						<button  class="btn btn-outline-info btn-lg"   type="button" feeType = 'fee' 
+						 style="margin: 0.2rem 0.2rem 0.2rem 0.2rem;  width: 7rem; height: 3rem;" 
+						 v-on:click="updataAccountFee(account.userId,feeTypeQr)"><span>修改费率</span>  </button>		
 					</div>
 					<div class="form-details-item">
 						<label>出款费率</label> <span class="form-details-item-highlight">{{account.cardFee}}</span> 
-						<button  class="btn btn-outline-info btn-lg"   type="button"   style="margin: 0.2rem 0.2rem 0.2rem 0.2rem;  width: 7rem; height: 3rem;"  v-on:click="updataAccountFee(account.id,feeTypeCard)"><span>修改费率</span>  </button>		
+						<button  class="btn btn-outline-info btn-lg"   type="button"   
+						style="margin: 0.2rem 0.2rem 0.2rem 0.2rem;  width: 7rem; height: 3rem;"  
+						v-on:click="updataAccountFee(account.userId,feeTypeCard)"><span>修改费率</span>  </button>		
 					</div>
 					<div class="form-details-item">
 						<label>账号性质:</label> <span class="form-details-item-highlight">{{account.isAgent == 1 ? '代理商' : '会员'}}</span> 
 						<button  class="btn btn-outline-info btn-lg"  v-show="account.isAgent != 1"  type="button"   style="margin: 0.2rem 0.2rem 0.2rem 0.2rem;  width: 7rem; height: 3rem;"  v-on:click="updateIsAgent(account.id)"><span>升级代理</span>  </button>		
 					</div>
 					<div class="form-details-item">
-						<label>接单状态:</label> <span class="form-details-item-highlight">{{account.receiveOrderState ==  1 ? '正常接单' : '暂停接单'}}</span> 
-						<button  class="btn btn-outline-info btn-lg"  v-show="account.receiveOrderState != 1"  type="button"   style="margin: 0.2rem 0.2rem 0.2rem 0.2rem;  width: 7rem; height: 3rem;"  v-on:click="updateReceiveOrderState(account.id,'1')"><span>激活</span>  </button>		
-						<button  class="btn btn-outline-info btn-lg" v-show="account.receiveOrderState == 1"  type="button"   style="margin: 0.2rem 0.2rem 0.2rem 0.2rem;  width: 7rem; height: 3rem;"  v-on:click="updateReceiveOrderState(account.id,'2')"><span>关闭</span>  </button>		
+						<!-- <label>接单状态:</label> <span class="form-details-item-highlight">{{account.receiveOrderState ==  1 ? '正常接单' : '暂停接单'}}</span>  -->
+						<!-- <button  class="btn btn-outline-info btn-lg"  v-show="account.receiveOrderState != 1"  type="button"   style="margin: 0.2rem 0.2rem 0.2rem 0.2rem;  width: 7rem; height: 3rem;"  v-on:click="updateReceiveOrderState(account.id,'1')"><span>激活</span>  </button>		
+						<button  class="btn btn-outline-info btn-lg" v-show="account.receiveOrderState == 1"  type="button"   style="margin: 0.2rem 0.2rem 0.2rem 0.2rem;  width: 7rem; height: 3rem;"  v-on:click="updateReceiveOrderState(account.id,'2')"><span>关闭</span>  </button>		 -->
 					</div>
 					<div class="form-details-item">
 						<label>注册时间:</label> <span>{{account.createTime  | dateFilter("yyyy-mm-dd hh:mm:ss")}}</span>
-					</div>
-					<div class="form-details-item">
-						<label>最近登录时间:</label> <span>{{account.loginTime | dateFilter("yyyy-mm-dd hh:mm:ss")}}</span>
 					</div>
 				</div>
 			</div>
@@ -173,7 +174,7 @@
 						shade: false,
 						maxmin: true, //开启最大化最小化按钮
 						area: ['18rem','18rem'],
-						content: "/userAccount/updataAccountFee?accountId="+accountId+"&feeType="+feeType,
+						content: "/userAccount/updataAccountFee?userId="+accountId+"&feeType="+feeType,
 						success: function(){
 							  },
 						end : function(){

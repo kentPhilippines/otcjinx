@@ -23,10 +23,12 @@ import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import deal.manage.api.AccountApiService;
 import deal.manage.bean.Invitecode;
+import deal.manage.bean.UserFund;
 import deal.manage.bean.UserInfo;
 import deal.manage.bean.UserRate;
 import deal.manage.bean.util.PageResult;
 import deal.manage.service.InviteCodeService;
+import deal.manage.service.UserFundService;
 import deal.manage.service.UserInfoService;
 import deal.manage.service.UserRateService;
 import deal.manage.util.SessionUtil;
@@ -42,6 +44,7 @@ public class AgentContorller {
 	@Autowired UserInfoService userinfoServiceImpl;
 	@Autowired AccountApiService accountApiServiceImpl;
 	@Autowired UserRateService userRateServiceImpl;
+	@Autowired UserFundService userFundServiceImpl;
 	/**
 	 * <p>代理商开户</p>
 	 *	 手机端专用
@@ -180,9 +183,9 @@ public class AgentContorller {
 			user.setUserId(userName); 
 		user.setAgent(user2.getUserId());
 		PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
-		List<UserInfo> userList = userinfoServiceImpl.findSunAccount(user);
-		PageInfo<UserInfo> pageInfo = new PageInfo<UserInfo>(userList);
-		PageResult<UserInfo> pageR = new PageResult<UserInfo>();
+		List<UserFund> userList = userFundServiceImpl.findSunAccount(user);
+		PageInfo<UserFund> pageInfo = new PageInfo<UserFund>(userList);
+		PageResult<UserFund> pageR = new PageResult<UserFund>();
 		pageR.setContent(pageInfo.getList());
 		pageR.setPageNum(pageInfo.getPageNum());
 		pageR.setTotal(pageInfo.getTotal());

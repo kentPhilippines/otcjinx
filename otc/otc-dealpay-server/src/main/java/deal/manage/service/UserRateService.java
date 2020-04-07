@@ -35,4 +35,18 @@ public interface UserRateService {
 	 * @param rate
 	 */
 	boolean  add(UserRate rate);
+	/**
+	 * <p>修改一个卡商的入款费率</p>
+	 * @param userId			商户id
+	 * @param fee				费率
+	 * @return
+	 */
+	boolean updateRateR(String userId, String fee);
+	/**
+	 * <p>修改卡商的出款费率</p>
+	 * @param userId
+	 * @param fee
+	 * @return
+	 */
+	boolean updateRateC(String userId, String fee);
 }

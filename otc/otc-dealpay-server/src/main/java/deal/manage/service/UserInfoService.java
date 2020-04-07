@@ -198,4 +198,6 @@ public interface UserInfoService {
 	 * @return
 	 */
 	List<UserFund> findUserFund();
+
+	UserInfo findUserFundKeyId(String userId);
 }

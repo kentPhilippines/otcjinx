@@ -58,62 +58,66 @@ public class UserFund {
 
     private Integer version;
 
-    public Integer getId() {
+    
+    
+    private String fee;
+    private String cardFee;
+    
+    
+    public String getFee() {
+		return fee;
+	}
+	public void setFee(String fee) {
+		this.fee = fee;
+	}
+	public String getCardFee() {
+		return cardFee;
+	}
+	public void setCardFee(String cardFee) {
+		this.cardFee = cardFee;
+	}
+	public Integer getId() {
         return id;
     }
-
     public void setId(Integer id) {
         this.id = id;
     }
-
     public String getUserId() {
         return userId;
     }
-
     public void setUserId(String userId) {
         this.userId = userId == null ? null : userId.trim();
     }
-
     public String getUserName() {
         return userName;
     }
-
     public void setUserName(String userName) {
         this.userName = userName == null ? null : userName.trim();
     }
-
     public BigDecimal getCashBalance() {
         return cashBalance;
     }
-
     public void setCashBalance(BigDecimal cashBalance) {
         this.cashBalance = cashBalance;
     }
-
     public BigDecimal getRechargeNumber() {
         return rechargeNumber;
     }
-
     public void setRechargeNumber(BigDecimal rechargeNumber) {
         this.rechargeNumber = rechargeNumber;
     }
-
     public BigDecimal getFreezeBalance() {
         return freezeBalance;
     }
-
     public void setFreezeBalance(BigDecimal freezeBalance) {
         this.freezeBalance = freezeBalance;
     }
-
     public BigDecimal getAccountBalance() {
         return accountBalance;
     }
-
     public void setAccountBalance(BigDecimal accountBalance) {
         this.accountBalance = accountBalance;
     }
-
     public BigDecimal getSumDealAmountR() {
         return sumDealAmountR;
     }

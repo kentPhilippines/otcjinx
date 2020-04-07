@@ -9,16 +9,16 @@ public class Common {
 	 * <p>用户类型</p>
 	 * @author K
 	 */
-	public class User{
+	public static class User{
 		//用户类型：商户1 码商2
 		/**
-		 * <p>码商</p>
+		 * <p>卡商</p>
 		 */
-		public static final String USER_TYPE_CARD = "2";
+		public static final Integer USER_TYPE_CARD = 2;
 		/**
 		 * <p>商户</p>
 		 */
-		public static final String USER_TYPE_APP = "1";
+		public static final Integer USER_TYPE_APP =1;
 		//是否为代理商:1为代理商 2不为代理商
 		/**
 		 * <p>代理商</p>
@@ -47,6 +47,14 @@ public class Common {
 		 * <p>用户总开关，关闭</p>
 		 */
 		public static final String USER_INFO_OFF = "0";//用户总开关关闭
+		
+		
+		
+		
+		
+		public static final Integer DEAL_FEE =1;//入款费率
+		public static final Integer CAED_FEE =2;//出款费率
+		
 	}
 
 
