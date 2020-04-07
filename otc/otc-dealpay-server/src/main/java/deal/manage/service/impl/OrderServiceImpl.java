@@ -1,17 +1,27 @@
 package deal.manage.service.impl;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.StrUtil;
 import deal.manage.bean.DealOrder;
+import deal.manage.bean.DealOrderExample;
 import deal.manage.bean.Runorder;
 import deal.manage.bean.Withdraw;
+import deal.manage.mapper.DealOrderMapper;
 import deal.manage.service.OrderService;
 import otc.bean.dealpay.Recharge;
 @Component
 public class OrderServiceImpl implements OrderService {
-
+    @Autowired
+     DealOrderMapper dealOrderMapper;
 	@Override
 	public List<DealOrder> findOrderByUser(String userId, String createTime) {
 		// TODO Auto-generated method stub
@@ -26,10 +36,52 @@ public class OrderServiceImpl implements OrderService {
 
 	@Override
 	public List<DealOrder> findOrderByPage(DealOrder order) {
-		// TODO Auto-generated method stub
-		return null;
+		DealOrderExample example=new DealOrderExample();
+		DealOrderExample.Criteria criteria = example.createCriteria();
+		if (StrUtil.isNotBlank(order.getOrderQrUser()))
+			criteria.andOrderQrUserEqualTo(order.getOrderQrUser());
+		if (CollUtil.isNotEmpty(order.getOrderQrUserList()))
+			criteria.andOrderQrUserListEqualTo(order.getOrderQrUserList());
+		if(StrUtil.isNotBlank(order.getTime())) {
+			Date date = getDate(order.getTime());
+			Calendar calendar = new GregorianCalendar();
+			calendar.setTime(date);
+			calendar.set(Calendar.HOUR,0);
+			calendar.set(Calendar.MINUTE,0);
+			calendar.set(Calendar.SECOND,0);
+			calendar.set(Calendar.MILLISECOND,0);
+			System.out.println("开始时间："+calendar.getTime());
+			Date time = calendar.getTime();
+			calendar.set(Calendar.HOUR,23);
+			calendar.set(Calendar.MINUTE,59);
+			calendar.set(Calendar.SECOND,59);
+			calendar.set(Calendar.MILLISECOND,999);
+			System.out.println("结束时间："+calendar.getTime());
+			criteria.andCreateTimeBetween(time, calendar.getTime());
+		}
+		if(StrUtil.isNotBlank(order.getAssociatedId()))
+			criteria.andAssociatedIdEqualTo(order.getAssociatedId());
+		if(StrUtil.isNotBlank(order.getOrderAccount()))
+			criteria.andOrderAccountEqualTo(order.getOrderAccount());
+		if(StrUtil.isNotBlank(order.getOrderStatus()))
+			criteria.andOrderStatusEqualTo(order.getOrderStatus());
+		if(StrUtil.isNotBlank(order.getOrderType()))
+			criteria.andOrderTypeEqualTo(order.getOrderType());
+		if(StrUtil.isNotBlank(order.getOrderId()))
+			criteria.andOrderIdEqualTo(order.getOrderId());
+		example.setOrderByClause("createTime desc");
+		return dealOrderMapper.selectByExample(example);
 	}
-
+	Date getDate(String time){
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		Date dateTime = null;
+		try {
+			dateTime = simpleDateFormat.parse(time);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return dateTime;
+	}
 
 	@Override
 	public DealOrder findOrderByOrderId(String orderId) {

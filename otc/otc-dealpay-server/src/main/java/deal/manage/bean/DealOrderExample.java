@@ -715,7 +715,10 @@ public class DealOrderExample {
             addCriterion("orderQrUser <>", value, "orderQrUser");
             return (Criteria) this;
         }
-
+        public Criteria andOrderQrUserListEqualTo(List value) {
+            addCriterion("orderQrUser in", value, "orderQrUser");
+            return (Criteria) this;
+        }
         public Criteria andOrderQrUserGreaterThan(String value) {
             addCriterion("orderQrUser >", value, "orderQrUser");
             return (Criteria) this;
