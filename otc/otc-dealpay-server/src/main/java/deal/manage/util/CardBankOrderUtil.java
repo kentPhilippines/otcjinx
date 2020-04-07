@@ -57,6 +57,21 @@ public class CardBankOrderUtil {
 	 * @return
 	 */
 	public Result updataOrderStatusSu(String orderId, boolean operation, String ip) {
+		
+		
+		//1,但
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		return null;
 	}
 	/**
@@ -90,7 +105,7 @@ public class CardBankOrderUtil {
 			if(!a)
 				return Result.buildFailMessage("订单状态变更失败");
 			if(order.getOrderType().equals(Common.Order.DealOrder.DEAL_ORDER_R)) {//入款账户变更
-				Result orderAamount = amountUtil.orderAmountR(orderId);
+				Result orderAamount = amountUtil.orderAmountR(orderId,ip,operation);
 				if(!orderAamount.isSuccess())
 					return orderAamount;
 				return Result.buildSuccessMessage("操作成功");

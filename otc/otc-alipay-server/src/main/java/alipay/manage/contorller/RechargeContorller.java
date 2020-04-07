@@ -109,7 +109,7 @@ public class RechargeContorller {
         Recharge createRechrage = createRechrage(param);
         if(ObjectUtil.isNull(createRechrage))
         	return Result.buildFailMessage("充值订单生成失败");
-		Result recharge = null;
+		Result recharge = Result.buildFail();
 		try {
 			recharge = factoryForStrategy.getAmountChannel(MY_RECHARGE).recharge( createRechrage);
 		} catch (Exception e) {
@@ -145,7 +145,7 @@ public class RechargeContorller {
 	   if(ObjectUtil.isNull(userInfo))
 		   return null;
 	   order.setWeight(userInfo.getQrRechargeList());
-	   order.setNotfiy("127.0.0.1:9010/api/rechaege-nutfiy");
+	   order.setNotfiy(RECHARGENO_NOTFIY);
 	   boolean flag =  orderServiceImpl.addRechargeOrder(order);
 	   if(flag)
 		   return order;

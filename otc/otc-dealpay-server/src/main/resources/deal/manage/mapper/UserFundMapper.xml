@@ -310,6 +310,7 @@
   <update id="updateByExampleSelective" parameterType="map" >
     update dealpay_user_fund
     <set >
+     version = version+1,
       <if test="record.id != null" >
         id = #{record.id,jdbcType=INTEGER},
       </if>
@@ -395,7 +396,9 @@
   </update>
   <update id="updateByExample" parameterType="map" >
     update dealpay_user_fund
-    set id = #{record.id,jdbcType=INTEGER},
+    set 
+      version = version+1,
+      id = #{record.id,jdbcType=INTEGER},
       userId = #{record.userId,jdbcType=VARCHAR},
       userName = #{record.userName,jdbcType=VARCHAR},
       cashBalance = #{record.cashBalance,jdbcType=DECIMAL},
@@ -428,6 +431,7 @@
   <update id="updateByPrimaryKeySelective" parameterType="deal.manage.bean.UserFund" >
     update dealpay_user_fund
     <set >
+     version = version+1,
       <if test="userId != null" >
         userId = #{userId,jdbcType=VARCHAR},
       </if>
@@ -504,11 +508,13 @@
         version = #{version,jdbcType=INTEGER},
       </if>
     </set>
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER} and version = #{version,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="deal.manage.bean.UserFund" >
     update dealpay_user_fund
-    set userId = #{userId,jdbcType=VARCHAR},
+    set
+     version = version+1,
+     userId = #{userId,jdbcType=VARCHAR},
       userName = #{userName,jdbcType=VARCHAR},
       cashBalance = #{cashBalance,jdbcType=DECIMAL},
       rechargeNumber = #{rechargeNumber,jdbcType=DECIMAL},
@@ -533,7 +539,7 @@
       submitTime = #{submitTime,jdbcType=TIMESTAMP},
       status = #{status,jdbcType=INTEGER},
       version = #{version,jdbcType=INTEGER}
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER} and version = #{version,jdbcType=INTEGER}
   </update>
   <select id="findSunAccount"  parameterType="deal.manage.bean.UserFund" resultMap="BaseResultMap"> 
   		select  f.* , r.fee AS fee , a.fee AS cardFee from dealpay_user_fund  f

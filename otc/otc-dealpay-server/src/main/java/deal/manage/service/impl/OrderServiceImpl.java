@@ -85,14 +85,13 @@ public class OrderServiceImpl implements OrderService {
 
 	@Override
 	public DealOrder findOrderByOrderId(String orderId) {
-		// TODO Auto-generated method stub
-		return null;
+		return 	dealOrderDao.findOrderByOrderId(orderId);
 	}
 
 	@Override
 	public boolean updateOrderStatus(String orderId, String status, String mag) {
-		// TODO Auto-generated method stub
-		return false;
+		int a = dealOrderDao.updateOrderStatus(orderId,status,mag);
+		return a > 0 && a < 2;
 	}
 
 	@Override
@@ -134,8 +133,8 @@ public class OrderServiceImpl implements OrderService {
 
 	@Override
 	public boolean updateOrderStatus(String orderId, String orderStatusSu) {
-		// TODO Auto-generated method stub
-		return false;
+		int a = dealOrderDao.updateOrder(orderId,orderStatusSu);
+		return a  > 0 && a  < 2;
 	}
 
 }

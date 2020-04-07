@@ -78,7 +78,6 @@ public class UserInfoServiceImpl implements UserInfoService{
 	}
 
 	@Override
-	@Cacheable(cacheNames= {RedisConstant.User.USER} ,  unless="#result == null")
 	public List<String> findSunAccountByUserId(String userId) {
 		// TODO Auto-generated method stub
 		UserInfoExample example = new UserInfoExample();
@@ -228,13 +227,8 @@ public class UserInfoServiceImpl implements UserInfoService{
 
 	@Override
 	public boolean updateproxyByUser(UserInfo user) {
-		System.out.println("Id--->"+user.getId());
-		System.out.println("userId--->"+user.getUserId());
-		System.out.println("isAgant--->"+user.getAgent());
-		System.out.println("isAgant--->"+user.getIsAgent());
 		int results=userInfoMapper.updateproxyByUser(user);
-		System.out.println("results--->" + results);
-		return results>0 && results<2?true:false;
+		return results>0 && results<2;
 	}
 
     @Override

@@ -387,7 +387,7 @@
       createTime = #{record.createTime,jdbcType=TIMESTAMP},
       submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
       status = #{record.status,jdbcType=INTEGER},
-      version = #{record.version,jdbcType=INTEGER} and version = #{version,jdbcType=INTEGER}
+      version = #{record.version,jdbcType=INTEGER}  
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>

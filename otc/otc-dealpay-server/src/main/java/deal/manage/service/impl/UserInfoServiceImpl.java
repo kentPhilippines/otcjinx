@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import cn.hutool.core.util.StrUtil;
 import deal.manage.bean.UserFund;
+import deal.manage.bean.UserFundExample;
 import deal.manage.bean.UserInfo;
 import deal.manage.bean.UserInfoExample;
 import deal.manage.bean.UserInfoExample.Criteria;
@@ -81,8 +82,13 @@ public class UserInfoServiceImpl implements UserInfoService {
 
 	@Override
 	public Boolean updataAmount(UserFund userFund) {
-		// TODO Auto-generated method stub
-		return null;
+		UserFundExample example = new UserFundExample();
+		UserFundExample.Criteria criteria = example.createCriteria();
+		criteria.andUserIdEqualTo(userFund.getUserId());
+		criteria.andVersionEqualTo(userFund.getVersion());
+		userFund.setVersion(null);
+		int updateByExampleSelective = userFundDao.updateByExampleSelective(userFund , example );
+		return updateByExampleSelective > 0 && updateByExampleSelective   < 2;
 	}
 
 	@Override

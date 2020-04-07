@@ -10,9 +10,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import cn.hutool.core.thread.ThreadUtil;
+import cn.hutool.core.util.StrUtil;
+import deal.manage.bean.DealOrder;
 import deal.manage.bean.UserFund;
 import deal.manage.bean.UserInfo;
+import deal.manage.service.OrderService;
 import deal.manage.service.RunOrderService;
+import deal.manage.service.UserFundService;
 import deal.manage.service.UserInfoService;
 import otc.api.alipay.Common;
 import otc.exception.user.UserException;
@@ -25,7 +29,10 @@ import otc.result.Result;
 public class AmountUtil {
 	Logger log = LoggerFactory.getLogger(AmountUtil.class);
 	@Autowired UserInfoService userInfoServiceImpl;
+	@Autowired UserFundService userFundServiceImpl;
 	@Autowired RunOrderService runorderServiceImpl;
+	@Autowired OrderService orderServiceImpl;
+	@Autowired AmountRunUtil amountRunUtil;
 	public static final String ADD_AMOUNT_RECHARGE = "ADD_AMOUNT_RECHARGE";//资金充值
 	public static final String ADD_AMOUNT_PROFIT = "ADD_AMOUNT_PROFIT";//代理利润分成
 	public static final String ADD_AMOUNT = "ADD_AMOUNT";//人工加钱
@@ -43,7 +50,7 @@ public class AmountUtil {
 	 * @return
 	 */
 	public Result addAmounRecharge(UserFund userFund , BigDecimal balance) {
-		return addAmountBalance(userFund, balance, ADD_AMOUNT_RECHARGE,new BigDecimal(0));
+		return addAmountBalance(userFund, balance, ADD_AMOUNT_RECHARGE,new BigDecimal(0),false);
 	}
 	/**
 	 * <p><strong>增加代理商利润</strong></p>
@@ -52,7 +59,7 @@ public class AmountUtil {
 	 * @return
 	 */
 	public Result addAmounProfit(UserFund userFund , BigDecimal balance) {
-		return addAmountBalance(userFund, balance, ADD_AMOUNT_PROFIT,new BigDecimal(0));
+		return addAmountBalance(userFund, balance, ADD_AMOUNT_PROFIT,new BigDecimal(0),false);
 	}
 	/**
 	 * <p><strong>人工加钱</strong></p>
@@ -60,27 +67,19 @@ public class AmountUtil {
 	 * @param balance					当前操作金额
 	 * @return
 	 */
-	public Result addAmountAdd(UserFund userFund , BigDecimal balance) {
-		return addAmountBalance(userFund, balance, ADD_AMOUNT,new BigDecimal(0));
+	public Result addAmountAdd(UserFund userFund , BigDecimal balance ) {
+		return addAmountBalance(userFund, balance, ADD_AMOUNT,new BigDecimal(0),false);
 	}
 	/**
 	 * <p><strong>增加交易分润</strong></p>
 	 * @param userFund							资金账户
 	 * @param balance							记录资金【分润金额】
 	 * @param dealAmount						交易金额【订单金额】
+	 * @param flag						 		true   入款      false  出款
 	 * @return
 	 */
-	public Result addDeal(UserFund userFund , BigDecimal balance, BigDecimal dealAmount) {
-		return addAmountBalance(userFund, balance, ADD_AMOUNT_DEAL,dealAmount);
-	}
-	/**
-	 * <p>下游商户交易时，增加下游商户商户余额</p>
-	 * @param userFund
-	 * @param balance
-	 * @return
-	 */
-	public Result addDealApp(UserFund userFund , BigDecimal balance) {
-		return addAmountBalance(userFund, balance, ADD_AMOUNT_DEAL_APP,new BigDecimal("0"));
+	public Result addDeal(UserFund userFund , BigDecimal balance, BigDecimal dealAmount ,boolean flag) {
+		return addAmountBalance(userFund, balance, ADD_AMOUNT_DEAL,dealAmount , flag);
 	}
 	/**
 	 * <p><strong>减少交易点数【交易订单置为成功调用这个方法】</strong></p>
@@ -127,7 +126,7 @@ public class AmountUtil {
 	 * <p>增加余额</p>
 	 * @return
 	 */
-	public Result addAmountBalance(UserFund userFund1 , BigDecimal balance , String addType  , BigDecimal dealAmount) {
+	public Result addAmountBalance(UserFund userFund1 , BigDecimal balance , String addType  , BigDecimal dealAmount,boolean flag) {
 		UserFund userFund = userInfoServiceImpl.findUserFundByAccount(userFund1.getUserId());
 			if(!clickUserFund(userFund).isSuccess())
 				return Result.buildFailMessage("【资金账户存在问题】");
@@ -150,7 +149,7 @@ public class AmountUtil {
 				log.info("【手动加钱失败，请联系技术人员处理");
 				return 	Result.buildFailMessage("【手动加钱失败，请联系技术人员处理】");
 			}else if(ADD_AMOUNT_DEAL.equals(addType)) {//交易利润分成 ,统计交易笔数
-				Result addAmountDeal = addAmountDeal(userFund,  balance,dealAmount);
+				Result addAmountDeal = addAmountDeal(userFund,  balance,dealAmount,flag);
 				if(addAmountDeal.isSuccess()) 
 					return addAmountDeal;
 				log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
@@ -376,12 +375,13 @@ public class AmountUtil {
 	 * @param userFund			资金账户表			
 	 * @param balance			金额					该笔交易较小【分润】
 	 * @param dealAmount 
+	 * @param dealType      	true 入款 统计			false  出款统计
 	 * @return
 	 * 
 	 * <p>交易利润加钱需要怎加交易利润字段</p>
 	 */
 	@SuppressWarnings("unlikely-arg-type")
-	public Result addAmountDeal(UserFund userFund, BigDecimal balance, BigDecimal dealAmount) {
+	public Result addAmountDeal(UserFund userFund, BigDecimal balance, BigDecimal dealAmount,boolean dealType) {
 		log.info("【当前方法为 【交易利润加钱】，当前交易金额为："+dealAmount+"，当前操作金额为："+balance+"】");
 		UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(userFund.getUserId());
 		if(Common.User.USER_INFO_OFF.equals(userInfo.getSwitchs())) {
@@ -393,22 +393,55 @@ public class AmountUtil {
 		BigDecimal cashBalance = userFund.getCashBalance();//当前利润账户
 		BigDecimal freezeBalance = userFund.getFreezeBalance();//当前冻结账户
 		BigDecimal rechargeNumber = userFund.getRechargeNumber();//当前充值点数
-	//	BigDecimal sumAgentProfit = userFund.getSumAgentProfit();//当前代理商分润  【当前订单为自己接单，不需要该字段】
 		BigDecimal sumProfit = userFund.getSumProfit();//当前当前总的利润
-	//	BigDecimal todayAgentProfit = userFund.getTodayAgentProfit();//今日代理分润  【当前订单为自己接单，无需统计该字段】
 		BigDecimal todayProfit = userFund.getTodayProfit();//今日总利润  =  今日代理分润 + 今日接单分润
+		BigDecimal todayDealAmountC = userFund.getTodayDealAmountC();
+		BigDecimal todayDealAmountR = userFund.getTodayDealAmountR();
+		Integer todayOrderCountC = userFund.getTodayOrderCountC();
+		Integer todayOrderCountR = userFund.getTodayOrderCountR();
+		
+		BigDecimal sumDealAmountC = userFund.getSumDealAmountC();
+		BigDecimal sumDealAmountR = userFund.getSumDealAmountR();
+		Integer sumOrderCountC = userFund.getSumOrderCountC();
+		Integer sumOrderCountR = userFund.getSumOrderCountR();
 		log.info("【金额修改后账户情况：当前账户总比较金额："+accountBalance+"，当前账户充值点数："+rechargeNumber+"，当前账户利润金额："+cashBalance+"，当前账户冻结金额："+freezeBalance+"，当前账户："+userFund.getUserId()+"】");
-	//以上为当前账户情况	
+		//以上为当前账户情况	
 		cashBalance = cashBalance.add(balance);
 		accountBalance = cashBalance.add(rechargeNumber).subtract(freezeBalance);
 		sumProfit = sumProfit.add(balance);
 		todayProfit = todayProfit.add(balance);
+		if(dealType) {//入款统计
+			todayDealAmountR = todayDealAmountR.add(dealAmount);
+			todayOrderCountR += 1;
+			sumDealAmountR = sumDealAmountR.add(dealAmount);
+			sumOrderCountR += 1;
+		} else {
+			todayDealAmountC = todayDealAmountC.add(dealAmount);
+			todayOrderCountC += 1;
+			sumDealAmountC = sumDealAmountC.add(dealAmount);
+			sumOrderCountC += 1;
+		}
+		//当日统计
+		userFund.setTodayDealAmountC(todayDealAmountC);
+		userFund.setTodayDealAmountR(todayDealAmountR);
+		userFund.setTodayOrderCountC(todayOrderCountC);
+		userFund.setTodayOrderCountR(todayOrderCountR);
+		userFund.setTodayProfit(todayProfit);
+		
+		
+		//累计统计
+		userFund.setSumDealAmountC(sumDealAmountC);
+		userFund.setSumDealAmountR(sumDealAmountR);
+		userFund.setSumOrderCountC(sumOrderCountC);
+		userFund.setSumOrderCountR(sumOrderCountR);
+		userFund.setSumProfit(sumProfit);
+		
+		
+		//金额账户
 		userFund.setAccountBalance(accountBalance);
 		userFund.setCashBalance(cashBalance);
 		userFund.setFreezeBalance(freezeBalance);
 		userFund.setRechargeNumber(rechargeNumber);
-		userFund.setSumProfit(sumProfit);
-		userFund.setTodayProfit(todayProfit);
 		Boolean updataAmount = userInfoServiceImpl.updataAmount(userFund);
 		if(updataAmount) 
 			log.info("【金额修改后账户情况：当前账户总比较金额："+accountBalance+"，当前账户充值点数："+rechargeNumber+"，当前账户利润金额："+cashBalance+"，当前账户冻结金额："+freezeBalance+"，当前账户："+userFund.getUserId()+"】");
@@ -542,10 +575,39 @@ public class AmountUtil {
 	/**
 	 * <p>根据订单的账户变更和流水生成【入款订单】</p>
 	 * @param orderId			卡商交易订单号
+	 * @param ip				ip
+	 * @param flag				true 人工操作    false   自然流水
 	 * @return
 	 */
-	public Result orderAmountR(String orderId) {
-		return null;
+	public Result orderAmountR(String orderId,String ip , boolean flag) {
+		if(StrUtil.isBlank(orderId))
+			return Result.buildFailMessage("订单号为空");
+		DealOrder order = orderServiceImpl.findOrderByOrderId(orderId);
+		if(!Common.Order.DealOrder.ORDER_STATUS_SU.equals(order.getOrderStatus()))
+			return Result.buildFailMessage("订单号状态错误");
+		UserFund userFund = new 	UserFund();
+		userFund.setUserId(order.getOrderQrUser());
+		Result deal = deleteDeal(userFund, order.getDealAmount());
+		if(!deal.isSuccess())
+			return Result.buildFailMessage("订单结算失败");
+		Future<Result> execAsync2 = ThreadUtil.execAsync(()->{
+			return amountRunUtil.deleteRechangerNumber(order, ip, flag);
+		});
+		Result addDeal = addDeal(userFund, order.getDealFee(),  order.getDealAmount(),true);
+		if(!addDeal.isSuccess())
+			return Result.buildFailMessage("订单结算失败");
+		Future<Result> execAsync = ThreadUtil.execAsync(()->{
+			return amountRunUtil.addDealAmount(order, ip, flag);
+		});
+		try {
+			Result result2 = execAsync2.get();
+			Result result = execAsync.get();
+			if(result2.isSuccess()&&result.isSuccess()&&addDeal.isSuccess()&&deal.isSuccess())
+				return Result.buildSuccessMessage("订单结算成功");
+		} catch (InterruptedException | ExecutionException e) {
+			return Result.buildFailMessage("订单结算失败");
+		}
+		return Result.buildFailMessage("订单结算失败");
 	}
 	/**
 	 * <p>根据订单的账户变更和流水生成【出款订单】</p>

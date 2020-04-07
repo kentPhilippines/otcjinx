@@ -211,12 +211,9 @@ public class AmountRunUtil {
 	 */
 	public Result addDealAmount( DealOrder order  , String generationIp ,Boolean flag ) {
 		UserFund userFund = userInfoServiceImpl.findUserFundByAccount(order.getOrderQrUser());
-		UserRate rate = userInfoServiceImpl.findUserRateById(order.getFeeId());
-		log.info("当前加入流水账号："+userFund.getUserId() + "，当前流水金额："+order.getDealAmount()+"，当前流水费率："+rate.getFee()+"，");
+		log.info("当前加入流水账号："+userFund.getUserId() + "，当前流水金额："+order.getDealAmount()+"，当前流水费率："+order.getDealFee()+"，");
 		BigDecimal dealAmount = order.getDealAmount();
-		BigDecimal fee = rate.getFee();
-		BigDecimal amount =  dealAmount.multiply(fee);
-		Result add = add(PROFIT_AMOUNT_DEAL, userFund, order.getOrderId(), amount, generationIp, "商正常接单分润", flag?RUNTYPE_ARTIFICIAL:RUNTYPE_NATURAL);
+		Result add = add(PROFIT_AMOUNT_DEAL, userFund, order.getOrderId(), order.getDealFee(), generationIp, "商正常接单分润", flag?RUNTYPE_ARTIFICIAL:RUNTYPE_NATURAL);
 		if(add.isSuccess())
 			return add;
 		return Result.buildFailMessage("流水生成失败");
