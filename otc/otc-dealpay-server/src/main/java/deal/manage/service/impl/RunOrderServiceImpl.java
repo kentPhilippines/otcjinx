@@ -27,6 +27,8 @@ public class RunOrderServiceImpl implements RunOrderService {
 		Criteria criteria = example.createCriteria();
 		if(StrUtil.isNotBlank(order.getOrderAccount()))
 			criteria.andOrderAccountEqualTo(order.getOrderAccount());
+		if(StrUtil.isNotBlank(order.getRunType()))
+			criteria.andRunTypeEqualTo(order.getRunType());
 		if(StrUtil.isNotBlank(order.getOrderId()))
 			criteria.andOrderIdEqualTo(order.getOrderId());
 		if(ObjectUtil.isNotNull(order.getRunOrderType()))
