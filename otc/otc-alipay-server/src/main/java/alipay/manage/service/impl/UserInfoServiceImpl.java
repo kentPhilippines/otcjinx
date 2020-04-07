@@ -1,6 +1,7 @@
 package alipay.manage.service.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -10,6 +11,7 @@ import alipay.manage.bean.UserFund;
 import alipay.manage.bean.UserFundExample;
 import alipay.manage.bean.UserInfo;
 import alipay.manage.bean.UserInfoExample;
+import alipay.manage.bean.UserInfoExample.Criteria;
 import alipay.manage.bean.UserRate;
 import alipay.manage.bean.*;
 import alipay.manage.mapper.FileListMapper;
@@ -21,6 +23,7 @@ import alipay.manage.util.AttributeUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,8 +78,17 @@ public class UserInfoServiceImpl implements UserInfoService{
 	}
 
 	@Override
+	@Cacheable(cacheNames= {RedisConstant.User.USER} ,  unless="#result == null")
 	public List<String> findSunAccountByUserId(String userId) {
-		return null;
+		// TODO Auto-generated method stub
+		UserInfoExample example = new UserInfoExample();
+	    Criteria criteria = example.createCriteria();
+		criteria.andAgentEqualTo(userId);
+		List<UserInfo> selectByExample = userInfoMapper.selectByExample(example);
+		List<String> list = new ArrayList();
+		for(UserInfo user : selectByExample)
+			list.add(user.getUserId());
+		return list;
 	}
 
 	@Override
