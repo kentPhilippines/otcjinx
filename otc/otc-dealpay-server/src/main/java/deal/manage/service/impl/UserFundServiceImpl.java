@@ -27,4 +27,10 @@ public class UserFundServiceImpl implements UserFundService {
 		return userFundDao.findSunAccount(user);
 	}
 
+	@Override
+	public boolean updateIsAgent(String userId) {
+		int a = userFundDao.updateIsAgent(userId);
+		return a > 0 & a < 2;
+	}
+
 }

@@ -9,6 +9,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 @Mapper
 public interface UserFundMapper {
     int countByExample(UserFundExample example);
@@ -37,4 +38,7 @@ public interface UserFundMapper {
 	UserFund findUserFund(@Param("userId")String userId);
 
 	List<UserFund> findSunAccount(UserInfo user);
+
+	@Update("update dealpay_user_fund set isAgent = 1 where userId = #{userId}")
+	int updateIsAgent(@Param("userId")String userId);
 }

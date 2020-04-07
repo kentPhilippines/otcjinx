@@ -37,6 +37,7 @@ import deal.manage.service.UserRateService;
 import deal.manage.util.CardBankOrderUtil;
 import deal.manage.util.SessionUtil;
 import otc.api.dealpay.Common;
+import otc.exception.other.OtherException;
 import otc.result.Result;
 
 @Controller
@@ -250,12 +251,25 @@ public class UserContorller {
 	 */
 	@PostMapping("/updateIsAgent")
 	@ResponseBody
-	public Result updateIsAgent(HttpServletRequest request,String accountId ) throws ParseException {
+	public Result updateIsAgent(HttpServletRequest request,String userId ) throws ParseException {
 		UserInfo user = sessionUtil.getUser(request);
 		if(ObjectUtil.isNull(user)) 
 			return Result.buildFailMessage("当前用户未登录");
-		boolean flag = userInfoServiceImpl.updateIsAgent(accountId);
-		if(flag)
+		boolean flag = false;
+		boolean flag2s = false;
+		Future<Boolean> execAsync = ThreadUtil.execAsync(()->{
+			return userInfoServiceImpl.updateIsAgent(userId);
+		});
+		 Future<Boolean> execAsync2 = ThreadUtil.execAsync(()->{
+			return userFundServiceImpl.updateIsAgent(userId);
+		});
+		 try {
+			 flag = execAsync.get();
+			 flag2s = execAsync2.get();
+		} catch (InterruptedException | ExecutionException e) {
+			throw new OtherException("修改异常",null);
+		}
+		if(flag&& flag2s)
 			return	Result.buildSuccessResult();
 		return Result.buildFailMessage("修改为代理商失败");
 	}

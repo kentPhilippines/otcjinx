@@ -48,15 +48,15 @@ public class UserInfoServiceImpl implements UserInfoService {
 	}
 
 	@Override
-	public boolean updateIsAgent(String accountId) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean updateIsAgent(String userId) {
+		int a = userInfoDao.updateIsAgent(userId);
+		return a > 0 && a < 2;
 	}
 
 	@Override
 	public Boolean updataStatusEr(String userId) {
-		// TODO Auto-generated method stub
-		return null;
+		int a = userInfoDao.updataStatusEr(userId);
+		return a > 0 && a < 2;
 	}
 
 	@Override

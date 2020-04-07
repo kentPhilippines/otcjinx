@@ -22,4 +22,11 @@ public interface UserFundService {
      * @return
      */
 	List<UserFund> findSunAccount(UserInfo user);
+
+	/**
+	 * <p>将账号改变为代理商</p>
+	 * @param userId
+	 * @return
+	 */
+	boolean updateIsAgent(String userId);
 }

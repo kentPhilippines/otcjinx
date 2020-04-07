@@ -107,4 +107,10 @@ public interface UserInfoMapper {
     @Select("select * from dealpay_user_info where id = #{id}")
 	UserInfo findUserFundKeyId(@Param("id") String id);
 
+    @Update("update dealpay_user_info set isAgent = 1 where userId = #{userId}")
+	int updateIsAgent(@Param("userId") String userId);
+
+    @Update("update dealpay_user_info set `switchs` = 0 where userId = #{userId}")
+	int updataStatusEr(@Param("userId") String userId);
+
 }
