@@ -33,7 +33,7 @@
 			<div class="form-details" v-for="myReceiveOrderRecord in myReceiveOrderRecords">
 				<div class="form-details-body">
 					<div class="form-details-item">
-						<label>订单号:</label> <span>{{myReceiveOrderRecord.orderNo}}</span>
+						<label>订单号:</label> <span>{{myReceiveOrderRecord.orderId}}</span>
 					</div>
 					<div class="form-details-item">
 						<label>接单时间:</label> <span>{{myReceiveOrderRecord.createTime   | dateFilter("yyyy-mm-dd hh:mm:ss")    }}</span>
@@ -132,8 +132,8 @@
 						var that = this;
 				//		that.$http.get('/recharge/findEnabledPayType' ).then(function(res) {
 							this.gatheringChannelDictItems = [
-								{payCode:'2',payName:'账户入款'}
-								,{payCode:'1',payName:'账户出款'}
+								{payCode:'1',payName:'账户入款'}
+								,{payCode:'2',payName:'账户出款'}
 							];
 					//	});
 					},
