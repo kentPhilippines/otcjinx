@@ -25,6 +25,14 @@ public class Recharge {
 	    private String chargeReason;
 	    private String weight;
 	    private String Time;
+	    private String charge="1";  //判断页面显示充值 和提现
+	    
+		public String getCharge() {
+			return charge;
+		}
+		public void setCharge(String charge) {
+			this.charge = charge;
+		}
 		public String getTime() {
 			return Time;
 		}
