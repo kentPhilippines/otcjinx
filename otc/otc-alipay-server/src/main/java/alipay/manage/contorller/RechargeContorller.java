@@ -122,7 +122,7 @@ public class RechargeContorller {
     Recharge createRechrage(Recharge param){
 	   Recharge  order = new Recharge();
 	   order.setActualAmount(param.getAmount());
-	   order.setOrderId(Number.getRecharge());
+	   order.setOrderId(Number.getRechargeQr());
 	   order.setAmount(param.getAmount());
 	   order.setRechargeType(param.getRechargeType());
 	   order.setFee(new BigDecimal("0"));
@@ -230,7 +230,7 @@ public class RechargeContorller {
    Withdraw createWit(Map<String, String> map,String ip) {
 	   BigDecimal fee = new BigDecimal("2");
 	   Withdraw wit = new Withdraw();
-	   wit.setOrderId(Number.getWitOrder());
+	   wit.setOrderId(Number.getWitOrderQr());
 	   wit.setAccname(map.get(ACC_NAME).toString());
 	   wit.setAmount(new BigDecimal(map.get(AMOUNT).toString()));
 	   wit.setBankName(map.get(BANK_NAME).toString());

@@ -145,9 +145,20 @@ public class Number {
 	}
 
 
-	public static String getRecharge() {
+	public static String getRechargeQr() {
 		String objectId = IdUtil.objectId().toUpperCase();
 		return Common.Deals.RECHARGE+objectId;
+	}
+
+
+	public static String getWitOrderQr() {
+		 try {
+			  return GetRandom(Common.Deals.ORDERWIT_QR);
+		  } catch (UnknownHostException e) {
+			  String randomString2 = RandomUtil.randomNumbers(15);
+			  String orderId = Common.Deals.ORDERWIT_QR +randomString2 ; 
+			  return orderId;
+		  }
 	}
   
     

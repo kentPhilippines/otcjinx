@@ -33,6 +33,7 @@ public class RedisConstant {
 		public static final String BIZ_QUEUE = "BIZ:QUEUE:STATUS:";// 用户接单标识Key--只做统计人数用
 		public static final String USERPARENT = "USERPARENT:";
 		public static final String USER = "USER:";
+		public static final String SUBMIT_URL = "SUBMIT:URL:";
 	}
 	
 	

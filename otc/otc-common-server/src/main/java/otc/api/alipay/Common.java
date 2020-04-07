@@ -119,7 +119,8 @@ public class Common {
 		public static final String WITDBC = "BDC";//卡商交易出款订单
 		public static final String ORDERRUN = "RUN";//流水订单
 		public static final String ORDERWIT = "WIT";//代付订单
-		public static final String ORDERWIT_APP = "AW";//代付订单
+		public static final String ORDERWIT_APP = "AW";//代付订单【商户】
+		public static final String ORDERWIT_QR = "QRW";//代付订单【码商】
 		public static final String ORDEREXCE = "EXCE";//异常订单
 		public static final String ORDERRECORD = "REX";//所有订单
 		public static final String IMG = "IMG";//所有订单
