@@ -24,7 +24,7 @@ public class BankUtil {
 		 * 3,当前卡商余额够
 		 * 4,获取当前卡商开启的银行卡
 		 * 5,组成银行卡集合
-		 */
+		 */ 
 		return bankListServiceImpl.findDealBank(amount);
 	}
 

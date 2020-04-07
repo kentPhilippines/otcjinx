@@ -106,25 +106,8 @@ var rechargeVM = new Vue({
 				qrRechargeType : that.payType,
 				depositor : that.depositor,
 				amount : that.rechargeAmount,
-				mobile : that.mobile
-			},
-				{
-				emulateJSON : true
-			}).then(function(res) {
-				if (that.selectedPayType.bankCardFlag == 2) {
-					layer.open({
-						title : '提示',
-						icon : '1',
-						closeBtn : 0,
-						btn : [],
-						content : '提交成功,预计30分钟到帐!',
-						time : 1500,
-						end : function() {
-							status = true;
-							window.location.href = '/my-home-page';
-						}
-					});
-				} else {
+				phone : that.mobile
+			}, { emulateJSON : true }).then(function(res)   {
 					if(res){
 						if(res.body.success){
 							layer.open({
@@ -153,7 +136,6 @@ var rechargeVM = new Vue({
 								});
 						}
 					}
-				}
 			});
 		}
 	}

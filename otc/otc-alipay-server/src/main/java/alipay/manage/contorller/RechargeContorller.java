@@ -7,8 +7,10 @@ import alipay.manage.api.config.FactoryForStrategy;
 import alipay.manage.bean.Product;
 import alipay.manage.bean.UserFund;
 import alipay.manage.bean.UserInfo;
+import alipay.manage.service.CorrelationService;
 import alipay.manage.service.OrderService;
 import alipay.manage.service.ProductService;
+import alipay.manage.service.RechargeService;
 import alipay.manage.service.UserFundService;
 import alipay.manage.service.UserInfoService;
 import alipay.manage.service.WithdrawService;
@@ -16,6 +18,7 @@ import alipay.manage.util.LogUtil;
 import alipay.manage.util.SessionUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
@@ -42,6 +45,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 
 @Controller
@@ -56,6 +61,8 @@ public class RechargeContorller {
     @Autowired UserFundService userFundServiceImpl;
     @Autowired UserInfoService userInfoServiceImpl;
     @Autowired WithdrawService withdrawServiceImpl;
+    @Autowired RechargeService rechargeServiceImpl;
+    @Autowired CorrelationService correlationServiceImpl;
     private static final String MY_RECHARGE = "MyChannelRecharge";
     private static final String MY_WITHDRAW = "MyChannelWithdraw";
     private static final String RECHARGENO_NOTFIY = "127.0.0.1:3212/otc/rechaege-notfiy";
@@ -82,6 +89,7 @@ public class RechargeContorller {
     @ResponseBody
     public Result generateRechargeOrder(Recharge param, HttpServletRequest request) {
         UserInfo user = sessionUtil.getUser(request);
+        log.info("【参数信息："+param.toString()+"】");
         if(ObjectUtil.isNull(user))
             return Result.buildFailMessage("当前用户未登陆");
         if(ObjectUtil.isNull(param.getAmount() )
@@ -98,12 +106,12 @@ public class RechargeContorller {
                 "，关联码商账号："+user.getUserId()+"，充值手机号："+ param.getPhone();
         boolean addLog = logUtil.addLog(request, msg, user.getUserId());
         log.info("获取addLog"+addLog);
-        Result createRechrage = createRechrage(param);
-        if(!createRechrage.isSuccess())
+        Recharge createRechrage = createRechrage(param);
+        if(ObjectUtil.isNull(createRechrage))
         	return Result.buildFailMessage("充值订单生成失败");
 		Result recharge = null;
 		try {
-			recharge = factoryForStrategy.getAmountChannel(MY_RECHARGE).recharge(param);
+			recharge = factoryForStrategy.getAmountChannel(MY_RECHARGE).recharge( createRechrage);
 		} catch (Exception e) {
 			 return Result.buildFailMessage("暂无充值渠道");
 		}
@@ -111,9 +119,10 @@ public class RechargeContorller {
         	return Result.buildSuccessResult(recharge.getResult());
         return Result.buildFailMessage("暂无充值渠道");
     }
-   Result createRechrage(Recharge param){
+    Recharge createRechrage(Recharge param){
 	   Recharge  order = new Recharge();
 	   order.setActualAmount(param.getAmount());
+	   order.setOrderId(Number.getRecharge());
 	   order.setAmount(param.getAmount());
 	   order.setRechargeType(param.getRechargeType());
 	   order.setFee(new BigDecimal("0"));
@@ -121,10 +130,26 @@ public class RechargeContorller {
 	   order.setNotfiy(RECHARGENO_NOTFIY);
 	   order.setUserId(param.getUserId());
 	   order.setRetain1(param.getRetain1());
+	   order.setDepositor(param.getDepositor());
+	   order.setPhone(param.getPhone());
+	   Future<UserInfo> execAsync = ThreadUtil.execAsync(()->{
+		   String findAgent = correlationServiceImpl.findAgent(param.getUserId());
+		   return userInfoServiceImpl.findUserInfoByUserId(findAgent);
+	   });
+	   UserInfo userInfo;
+	try {
+		userInfo = execAsync.get();
+	} catch (InterruptedException | ExecutionException e) {
+		  return null;
+	}
+	   if(ObjectUtil.isNull(userInfo))
+		   return null;
+	   order.setWeight(userInfo.getQrRechargeList());
+	   order.setNotfiy("127.0.0.1:9010/api/rechaege-nutfiy");
 	   boolean flag =  orderServiceImpl.addRechargeOrder(order);
 	   if(flag)
-		   return Result.buildSuccess();
-	   return Result.buildFail();
+		   return order;
+	   return null;
     }
    private static final String USER_ID = "USER_ID";
    private static final String ACC_NAME = "ACC_NAME";
@@ -142,7 +167,7 @@ public class RechargeContorller {
 			String moneyPwd,
 			String bankCard,
 			String accountHolder,//开户名
-			String bankCardAccount,
+			String bankcardAccount,
 			String mobile,
 			String type,
 			String userId
@@ -160,7 +185,7 @@ public class RechargeContorller {
 		Map<String, String> map = new HashMap();
 		map.put(ACC_NAME, accountHolder);
 		map.put(BANK_NAME, bankCard);
-		map.put(BANK_NO, bankCardAccount);
+		map.put(BANK_NO, bankcardAccount);
 		map.put(AMOUNT, withdrawAmount);
 		map.put(USER_ID, user.getUserId());
 		map.put(MOBILE,mobile);
@@ -219,6 +244,19 @@ public class RechargeContorller {
 	   wit.setActualAmount(new BigDecimal(map.get(AMOUNT).toString()));
 	   wit.setRetain2(ip);
 	   wit.setRetain1(Common.Order.Wit.WIT_TYPE_CLI);
+	   Future<UserInfo> execAsync = ThreadUtil.execAsync(()->{
+		   String findAgent = correlationServiceImpl.findAgent(map.get(ACC_NAME).toString());
+		   return userInfoServiceImpl.findUserInfoByUserId(findAgent);
+	   });
+	   UserInfo userInfo;
+	try {
+		userInfo = execAsync.get();
+	} catch (InterruptedException | ExecutionException e) {
+		  return null;
+	}
+	   if(ObjectUtil.isNull(userInfo))
+		   return null;
+	   wit.setWeight(userInfo.getQrRechargeList());
 	   boolean addOrder = withdrawServiceImpl.addOrder(wit);
 	   if(addOrder)
 		   return wit;

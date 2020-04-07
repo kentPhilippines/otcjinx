@@ -2,6 +2,8 @@ package deal.manage.mapper;
 
 import deal.manage.bean.BankList;
 import deal.manage.bean.BankListExample;
+
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Delete;
@@ -76,4 +78,12 @@ public interface BankListMapper {
 	BankList findBankInfoNo(@Param("bankNo")String bankNo);
     @Select("select * from dealpay_bank_list where account = #{userId}")
 	List<BankList> findBankCardByQr(@Param("userId")String userId);
+
+    
+    @Select("SELECT * FROM dealpay_bank_list  " + 
+    		" WHERE account IN  ( SELECT userId FROM `dealpay_user_fund` WHERE " + 
+    		"  accountBalance > #{amount}  AND userId IN " + 
+    		"  (SELECT userId FROM `dealpay_user_info` WHERE  `switchs` = 1))" 
+    		 )
+	List<BankList> findDealBank(@Param("amount") BigDecimal amount);
 }

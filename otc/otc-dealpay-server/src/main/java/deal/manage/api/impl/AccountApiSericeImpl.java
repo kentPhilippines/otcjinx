@@ -80,18 +80,13 @@ public class AccountApiSericeImpl implements AccountApiService {
 
     @Override
     public Result login(UserInfo user) {
-        UserInfoExample info = new UserInfoExample();
-        Criteria criteria = info.createCriteria();
-        if (StrUtil.isNotBlank(user.getUserId()))
-            criteria.andUserIdEqualTo(user.getUserId());
-        List<UserInfo> userList = userInfoDao.selectByExample(info);
-        if (userList.size() > 1)
-            return Result.buildFailMessage("当前用户错误，联系技术人员处理");
-        UserInfo first = CollUtil.getFirst(userList);
-        Result password = HashKit.encodePassword(user.getUserId(), user.getPassword(), first.getSalt());
+        UserInfo userInfo = userInfoDao.findUserByUserId(user.getUserId()) ;
+        if(ObjectUtil.isNull(userInfo))
+        	  return Result.buildFailMessage("密码错误，请检查!");
+        Result password = HashKit.encodePassword(user.getUserId(), user.getPassword(), userInfo.getSalt());
         if (!password.isSuccess())
             return Result.buildFailMessage("当前用户错误，联系技术人员处理"); //password.getResult().toString()
-        if (first.getPassword().equals(password.getResult().toString()))
+        if (userInfo.getPassword().equals(password.getResult().toString()))
             return Result.buildSuccess();
         return Result.buildFailMessage("密码错误，请检查!");
     }

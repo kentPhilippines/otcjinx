@@ -89,8 +89,7 @@ public class BankListServiceImpl implements BankListService {
 
 	@Override
 	public List<BankList> findDealBank(BigDecimal amount) {
-		// TODO Auto-generated method stub
-		return null;
+		return bankListDao.findDealBank(amount);
 	}
 
 }

@@ -21,7 +21,7 @@ import otc.bean.dealpay.Recharge;
 @Component
 public class OrderServiceImpl implements OrderService {
     @Autowired
-     DealOrderMapper dealOrderMapper;
+     DealOrderMapper dealOrderDao;
 	@Override
 	public List<DealOrder> findOrderByUser(String userId, String createTime) {
 		// TODO Auto-generated method stub
@@ -70,7 +70,7 @@ public class OrderServiceImpl implements OrderService {
 		if(StrUtil.isNotBlank(order.getOrderId()))
 			criteria.andOrderIdEqualTo(order.getOrderId());
 		example.setOrderByClause("createTime desc");
-		return dealOrderMapper.selectByExample(example);
+		return dealOrderDao.selectByExample(example);
 	}
 	Date getDate(String time){
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -103,8 +103,8 @@ public class OrderServiceImpl implements OrderService {
 
 	@Override
 	public boolean addOrder(DealOrder orderApp) {
-		// TODO Auto-generated method stub
-		return false;
+		int insertSelective = dealOrderDao.insertSelective(orderApp);
+		return insertSelective > 0 && insertSelective < 2;
 	}
 
 	@Override
@@ -115,12 +115,6 @@ public class OrderServiceImpl implements OrderService {
 
 	@Override
 	public boolean updataOrderisNotifyByOrderId(String orderId, String isNotify) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean addRechargeOrder(Recharge order) {
 		// TODO Auto-generated method stub
 		return false;
 	}

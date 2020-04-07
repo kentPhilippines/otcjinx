@@ -11,8 +11,10 @@ public class Recharge {
 	    private String orderStatus;
 	    private String depositor;
 	    private BigDecimal amount;
+	    private String orderType;
 	    private BigDecimal fee;
 	    private BigDecimal actualAmount;
+	    private String isTripartite;
 	    private String chargeBankcard;
 	    private String phone;
 	    private String notfiy;
@@ -25,6 +27,18 @@ public class Recharge {
 	    private String chargeReason;
 	    private String weight;
 	    private String Time;
+		public String getOrderType() {
+			return orderType;
+		}
+		public void setOrderType(String orderType) {
+			this.orderType = orderType;
+		}
+		public String getIsTripartite() {
+			return isTripartite;
+		}
+		public void setIsTripartite(String isTripartite) {
+			this.isTripartite = isTripartite;
+		}
 		public String getTime() {
 			return Time;
 		}
@@ -150,5 +164,15 @@ public class Recharge {
 		}
 		public void setWeight(String weight) {
 			this.weight = weight;
+		}
+		@Override
+		public String toString() {
+			return "Recharge [id=" + id + ", orderId=" + orderId + ", userId=" + userId + ", rechargeType="
+					+ rechargeType + ", orderStatus=" + orderStatus + ", depositor=" + depositor + ", amount=" + amount
+					+ ", fee=" + fee + ", actualAmount=" + actualAmount + ", chargeBankcard=" + chargeBankcard
+					+ ", phone=" + phone + ", notfiy=" + notfiy + ", chargeCard=" + chargeCard + ", chargePerson="
+					+ chargePerson + ", createTime=" + createTime + ", submitTime=" + submitTime + ", status=" + status
+					+ ", retain1=" + retain1 + ", chargeReason=" + chargeReason + ", weight=" + weight + ", Time="
+					+ Time + "]";
 		}
 }

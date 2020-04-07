@@ -1,6 +1,7 @@
 package deal.manage.api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import cn.hutool.core.util.ObjectUtil;
@@ -34,12 +35,13 @@ public class Api {
 	 * @return
 	 */
 	@PostMapping(PayApiConstant.Dealpay.DEAL_API+PayApiConstant.Dealpay.RECHARGE_URL)
-	public Result recharge(Recharge recharge) {
+	public Result recharge(@RequestBody Recharge recharge) {
 		log.info("【接收到下游调用充值渠道】");		
 		if(ObjectUtil.isNull(recharge)) {
 			log.info("【当前调用参数为空】");		
 			return Result.buildFailMessage("充值失败，接口调用参数为空");
 		}
+		log.info("【接收到下游充值参数："+recharge.toString()+"】");
 		Recharge order = new Recharge();
 		order.setOrderId(recharge.getOrderId());
 		order.setActualAmount(recharge.getActualAmount());
@@ -51,6 +53,7 @@ public class Api {
 		order.setRechargeType(Common.Order.Recharge.WIT_ACC);
 		order.setWeight(recharge.getWeight());
 		order.setDepositor(recharge.getDepositor());
+		order.setOrderStatus(recharge.getOrderStatus());
 		boolean a = rechargeServiceImpl.addOrder(order);
 		if(a) {
 			Result createBankOrderR = cardBankOrderUtil.createBankOrderR(recharge.getOrderId());
@@ -66,12 +69,13 @@ public class Api {
 	 * @return
 	 */
 	@PostMapping(PayApiConstant.Dealpay.DEAL_API+PayApiConstant.Dealpay.WITH_PAY)
-	public Result wit(Withdraw  wit) {
+	public Result wit(@RequestBody Withdraw  wit) {
 		log.info("【接收到下游调用代付渠道】");		
 		if(ObjectUtil.isNull(wit)) {
 			log.info("【当前调用参数为空】");		
 			return Result.buildFailMessage("充值失败，接口调用参数为空");
 		}
+		log.info("【接收到下游代付参数："+wit.toString()+"】");
 		deal.manage.bean.Withdraw with = new deal.manage.bean.Withdraw();
 		with.setOrderId(wit.getOrderId());
 		with.setActualAmount(wit.getActualAmount());

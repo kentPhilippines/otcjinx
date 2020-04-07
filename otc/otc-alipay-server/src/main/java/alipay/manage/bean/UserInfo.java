@@ -46,9 +46,21 @@ public class UserInfo implements Serializable{
     private String amount;			//页面展示金额
     private String witip; //代付ip
     private String queueList;//供应队列code  以逗号分隔
-    
-    
-    public String getAmount() {
+    private String qrRechargeList;//卡商匹配标识
+    private String dealUrl;//代付URl
+    public String getQrRechargeList() {
+		return qrRechargeList;
+	}
+	public void setQrRechargeList(String qrRechargeList) {
+		this.qrRechargeList = qrRechargeList;
+	}
+	public String getDealUrl() {
+		return dealUrl;
+	}
+	public void setDealUrl(String dealUrl) {
+		this.dealUrl = dealUrl;
+	}
+	public String getAmount() {
 		return amount;
 	}
 	public void setAmount(String amount) {

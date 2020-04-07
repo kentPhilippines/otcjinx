@@ -146,6 +146,7 @@ public class CardBankOrderUtil {
 		 */
 		UserRate rate = userRateServiceImpl.findUserRateR(clickBnak.getAccount());
 		order.setDealFee(rate.getFee().multiply(recharge.getAmount()));
+		order.setFeeId(rate.getId());
 		boolean addOrder = orderServiceImpl.addOrder(order);
 		if(addOrder)
 			return Result.buildSuccessResult("订单生成成功", clickBnak);

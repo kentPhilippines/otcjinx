@@ -12,12 +12,14 @@ import deal.manage.bean.UserInfo;
 import deal.manage.bean.UserInfoExample;
 import deal.manage.bean.UserInfoExample.Criteria;
 import deal.manage.bean.UserRate;
+import deal.manage.mapper.UserFundMapper;
 import deal.manage.mapper.UserInfoMapper;
 import deal.manage.service.UserInfoService;
 import otc.result.Result;
 @Component
 public class UserInfoServiceImpl implements UserInfoService {
 	@Autowired UserInfoMapper userInfoDao;
+	@Autowired UserFundMapper userFundDao;
 	@Override
 	public List<UserInfo> findSunAccount(UserInfo user) {
 		UserInfoExample example = new UserInfoExample();
@@ -180,19 +182,21 @@ public class UserInfoServiceImpl implements UserInfoService {
 
 	@Override
 	public List<UserFund> findUserByWeight(String[] split) {
-		// TODO Auto-generated method stub
+		//1,根据顶代账号查询所有下线账号   账号总开关开启， 出款接单开启
+		
+		
+		
+		
 		return null;
 	}
 
 	@Override
 	public List<UserFund> findUserFund() {
-		// TODO Auto-generated method stub
-		return null;
+		return userInfoDao.findUserFund();
 	}
 
 	@Override
 	public UserInfo findUserFundKeyId(String userId) {
-		
 		return userInfoDao.findUserFundKeyId(userId);
 	}
 

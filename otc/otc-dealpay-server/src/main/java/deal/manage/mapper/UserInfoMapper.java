@@ -112,5 +112,11 @@ public interface UserInfoMapper {
 
     @Update("update dealpay_user_info set `switchs` = 0 where userId = #{userId}")
 	int updataStatusEr(@Param("userId") String userId);
+   
+    @Select( " SELECT userId ,todayDealAmountC,todayOrderCountR,todayDealAmountC,"
+    		+ "todayDealAmountR,sumOrderCountC,sumOrderCountR,accountBalance "
+    		+ "FROM `dealpay_user_fund` "
+    		+ "WHERE userId IN (SELECT userId FROM dealpay_user_info WHERE `switchs` = 1 AND remitOrderState =1 )")
+	List<UserFund> findUserFund();
 
 }

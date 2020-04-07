@@ -91,6 +91,11 @@ public interface CorrelationService {
 	 */
 	int[][] findOnline(Integer id);
 
-	String findAgent(String qrcodeId);
+	/**
+	 * <p>根据账号查询自己顶代账号</p>
+	 * @param userId
+	 * @return
+	 */
+	String findAgent(String userId);
 
 }

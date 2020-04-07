@@ -11,6 +11,7 @@
     <result column="userType" property="userType" jdbcType="INTEGER" />
     <result column="switchs" property="switchs" jdbcType="INTEGER" />
     <result column="userNode" property="userNode" jdbcType="VARCHAR" />
+    <result column="qrRechargeList" property="qrRechargeList" jdbcType="VARCHAR" />
     <result column="email" property="email" jdbcType="VARCHAR" />
     <result column="agent" property="agent" jdbcType="VARCHAR" />
     <result column="isAgent" property="isAgent" jdbcType="CHAR" />
@@ -18,6 +19,8 @@
     <result column="receiveOrderState" property="receiveOrderState" jdbcType="INTEGER" />
     <result column="remitOrderState" property="remitOrderState" jdbcType="INTEGER" />
     <result column="QQ" property="QQ" jdbcType="VARCHAR" />
+    <result column="queueList" property="queueList" jdbcType="VARCHAR" />
+    <result column="dealUrl" property="dealUrl" jdbcType="VARCHAR" />
     <result column="telegram" property="telegram" jdbcType="VARCHAR" />
     <result column="skype" property="skype" jdbcType="VARCHAR" />
     <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
@@ -27,6 +30,12 @@
     <result column="publicKey" property="publicKey" jdbcType="CHAR" />
     <result column="minAmount" property="minAmount" jdbcType="CHAR" />
     <result column="maxAmount" property="maxAmount" jdbcType="CHAR" />
+    
+    <result column="witip" property="witip" jdbcType="VARCHAR" />
+    <result column="startTime" property="startTime" jdbcType="VARCHAR" />
+    <result column="endTime" property="endTime" jdbcType="VARCHAR" />
+    <result column="timesTotal" property="timesTotal" jdbcType="INTEGER" />
+    <result column="totalAmount" property="totalAmount" jdbcType="DECIMAL" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -89,7 +98,8 @@
   <sql id="Base_Column_List" >
     id, userId, userName, password, payPasword, salt, userType, switchs, userNode, email,
     agent, isAgent, credit, receiveOrderState, remitOrderState, QQ, telegram, skype,
-    createTime, submitTime, status, privateKey, publicKey, minAmount, maxAmount
+    createTime, submitTime, status, privateKey, publicKey, minAmount, maxAmount,
+    qrRechargeList,dealUrl,queueList,		witip,startTime,endTime,timesTotal,totalAmount
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="alipay.manage.bean.UserInfoExample" >
     select
@@ -131,8 +141,9 @@
       agent, isAgent, credit,
       receiveOrderState, remitOrderState, QQ,
       telegram, skype, createTime,
-      submitTime, status, retain1,
-      retain2, retain3, retain4)
+      submitTime, status ,qrRechargeList,dealUrl,queueList,
+      witip,startTime,endTime,timesTotal,totalAmount
+      )
     values (#{userId,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
       #{payPasword,jdbcType=VARCHAR}, #{salt,jdbcType=VARCHAR}, #{userType,jdbcType=INTEGER},
       #{switchs,jdbcType=INTEGER}, #{userNode,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR},
@@ -140,7 +151,9 @@
       #{receiveOrderState,jdbcType=INTEGER}, #{remitOrderState,jdbcType=INTEGER}, #{QQ,jdbcType=VARCHAR},
       #{telegram,jdbcType=VARCHAR}, #{skype,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
       #{submitTime,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, #{privateKey,jdbcType=CHAR},
-      #{publicKey,jdbcType=CHAR}, #{minAmount,jdbcType=CHAR}, #{maxAmount,jdbcType=CHAR})
+      #{publicKey,jdbcType=CHAR}, #{minAmount,jdbcType=CHAR}, #{maxAmount,jdbcType=CHAR},#{qrRechargeList},#{dealUrl},#{queueList}
+      ,#{witip},#{startTime},#{endTime},#{timesTotal},#{totalAmount}
+      )
   </insert>
   <insert id="insertSelective" parameterType="alipay.manage.bean.UserInfo" useGeneratedKeys="true" keyProperty="id" >
     insert into alipay_user_info
@@ -217,6 +230,24 @@
       <if test="maxAmount != null" >
         maxAmount,
       </if>
+      <if test="qrRechargeList != null" >
+        qrRechargeList,
+      </if>
+      <if test="dealUrl != null" >
+        dealUrl = #{dealUrl},
+      </if>
+      <if test="queueList != null" >
+      queueList = #{queueList}
+      </if>
+      
+      
+       <if test="witip != null" >  witip = #{witip}  </if>
+       <if test="startTime != null" >  startTime = #{startTime}  </if>
+       <if test="endTime != null" >  endTime = #{endTime}  </if>
+       <if test="timesTotal != null" >  timesTotal = #{timesTotal}  </if>
+       <if test="totalAmount != null" >  totalAmount = #{totalAmount}  </if>
+      
+      
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="userId != null" >
@@ -291,6 +322,26 @@
       <if test="maxAmount != null" >
         #{maxAmount,jdbcType=CHAR},
       </if>
+      <if test="qrRechargeList != null" >
+        #{qrRechargeList},
+      </if>
+      <if test="dealUrl != null" >
+        dealUrl = #{dealUrl},
+      </if>
+      <if test="queueList != null" > queueList = #{queueList} </if>
+    
+    
+    
+    
+    
+      <if test="witip != null" > witip = #{witip} </if>
+      <if test="startTime != null" > startTime = #{startTime} </if>
+      <if test="endTime != null" > endTime = #{endTime} </if>
+      <if test="timesTotal != null" > timesTotal = #{timesTotal} </if>
+      <if test="totalAmount != null" > totalAmount = #{totalAmount} </if>
+      
+      
+      
     </trim>
   </insert>
   <select id="countByExample" parameterType="alipay.manage.bean.UserInfoExample" resultType="java.lang.Integer" >
@@ -377,6 +428,22 @@
       <if test="record.maxAmount != null" >
         maxAmount = #{record.maxAmount,jdbcType=CHAR},
       </if>
+      <if test="record.qrRechargeList != null" >
+        maxAmount = #{record.qrRechargeList},
+      </if>
+       <if test="qrRechargeList != null" >
+        qrRechargeList = #{qrRechargeList},
+      </if>
+      <if test="dealUrl != null" >
+        dealUrl = #{dealUrl},
+      </if>
+      <if test="queueList != null" > queueList = #{queueList} </if>
+  
+      <if test="witip != null" > witip = #{witip} </if>
+      <if test="startTime != null" > startTime = #{startTime} </if>
+      <if test="endTime != null" > endTime = #{endTime} </if>
+      <if test="timesTotal != null" > timesTotal = #{timesTotal} </if>
+      <if test="totalAmount != null" > totalAmount = #{totalAmount} </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -407,8 +474,20 @@
       status = #{record.status,jdbcType=INTEGER},
     publicKey = #{record.publicKey,jdbcType=CHAR},
     publicKey = #{record.publicKey,jdbcType=CHAR},
-      retain3 = #{record.minAmount,jdbcType=VARCHAR},
-      retain4 = #{record.maxAmount,jdbcType=VARCHAR}
+      minAmount = #{record.minAmount,jdbcType=VARCHAR},
+      maxAmount = #{record.maxAmount,jdbcType=VARCHAR},
+      qrRechargeList = #{record.qrRechargeList},
+      dealUrl = #{record.dealUrl},
+      queueList = #{record.queueList}
+
+
+      ,witip = #{record.witip}
+      ,startTime = #{record.startTime}
+      ,endTime = #{record.endTime}
+      ,timesTotal = #{record.timesTotal}
+      ,timesTotal = #{record.timesTotal}
+      ,totalAmount = #{record.totalAmount}
+      
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -485,6 +564,29 @@
       <if test="maxAmount != null" >
         maxAmount = #{maxAmount,jdbcType=VARCHAR},
       </if>
+      <if test="qrRechargeList != null" >
+        qrRechargeList = #{qrRechargeList},
+      </if>
+      <if test="dealUrl != null" >
+        dealUrl = #{dealUrl},
+      </if>
+      
+      
+      
+      <if test="queueList != null" > queueList = #{queueList}  </if>
+     
+     
+     
+     
+     
+     
+      <if test="witip != null" > witip = #{witip}  </if>
+      <if test="startTime != null" > startTime = #{startTime}  </if>
+      <if test="endTime != null" > endTime = #{endTime}  </if>
+      <if test="timesTotal != null" > timesTotal = #{timesTotal}  </if>
+      <if test="totalAmount != null" > totalAmount = #{totalAmount}  </if>
+            
+      
     </set>
     where id = #{id,jdbcType=INTEGER}
       and userId = #{userId,jdbcType=VARCHAR}
@@ -513,7 +615,17 @@
       privateKey = #{privateKey,jdbcType=CHAR},
       publicKey = #{publicKey,jdbcType=CHAR},
       minAmount = #{minAmount,jdbcType=CHAR},
-      maxAmount = #{maxAmount,jdbcType=CHAR}
+      maxAmount = #{maxAmount,jdbcType=CHAR},
+      qrRechargeList = #{qrRechargeList},
+      dealUrl = #{dealUrl},
+      queueList = #{queueList}
+
+
+,      witip = #{witip}
+,      startTime = #{startTime}
+,      endTime = #{endTime}
+,      timesTotal = #{timesTotal}
+,      totalAmount = #{totalAmount}
     where id = #{id,jdbcType=INTEGER}
       and userId = #{userId,jdbcType=VARCHAR}
   </update>

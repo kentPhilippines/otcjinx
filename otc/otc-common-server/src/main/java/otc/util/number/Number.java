@@ -143,6 +143,12 @@ public class Number {
 		String objectId = IdUtil.objectId().toUpperCase();
 		return Common.Deals.WITDBR+objectId;	
 	}
+
+
+	public static String getRecharge() {
+		String objectId = IdUtil.objectId().toUpperCase();
+		return Common.Deals.RECHARGE+objectId;
+	}
   
     
     

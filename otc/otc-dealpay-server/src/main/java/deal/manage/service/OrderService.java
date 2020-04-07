@@ -61,12 +61,6 @@ public interface OrderService {
 
 	boolean updataOrderisNotifyByOrderId(String orderId, String isNotify);
 
-	/**
-	 * <p>创建充值订单</p>
-	 * @param order
-	 * @return
-	 */
-	boolean addRechargeOrder(Recharge order);
 
 	/**
 	 * <p>修改订单状态</p>
