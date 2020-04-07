@@ -119,4 +119,14 @@ public interface UserInfoMapper {
     		+ "WHERE userId IN (SELECT userId FROM dealpay_user_info WHERE `switchs` = 1 AND remitOrderState =1 )")
 	List<UserFund> findUserFund();
 
+    @Select("select queryChildAgents(#{userId})")
+	String queryChildAgents(@Param("userId") String userId);
+
+    /**
+     * <p>根据权重标识查询</p>
+     * @param asList2
+     * @return
+     */
+	List<UserFund> findUserByWeight(@Param("asList")List<Object> asList);
+
 }

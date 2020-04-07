@@ -129,7 +129,7 @@ public class CardBankOrderUtil {
 		order.setOrderId(Number.getBDR());
 		clickBnak = clickBank(recharge.getAmount(),order.getOrderId(),recharge.getWeight());
 		if(ObjectUtil.isNull(clickBnak))// 无银行卡 订单创建失败
-			return Result.buildFailMessage("暂无充值渠道");
+			return Result.buildFailMessage("暂无入款卡商");
 		order.setAssociatedId(recharge.getOrderId());
 		order.setDealAmount(recharge.getAmount());
 		order.setOrderType(Common.Order.DealOrder.DEAL_ORDER_R);
@@ -265,7 +265,7 @@ public class CardBankOrderUtil {
 		else //根据权重选择卡商出款
 			  userFund = findUserInfo(orderWit.getWeight(), orderWit.getAmount());
 		if(ObjectUtil.isNull(userFund))
-			return Result.buildFailMessage("暂无出款渠道");
+			return Result.buildFailMessage("无法找到符合出款条件卡商");
 		if(StrUtil.isBlank(orderWit.getAppOrderId()))
 			order.setExternalOrderId(orderWit.getOrderId());
 		else
@@ -282,7 +282,8 @@ public class CardBankOrderUtil {
 		//计算当前订单卡商的收益
 		order.setDealFee(fee.multiply(orderWit.getAmount()));
 		order.setOrderQrUser(userId);
-		order.setOrderQr(orderWit.getAccname());//出款银行卡
+		order.setOrderQr(orderWit.getBankNo());//出款银行卡
+		order.setFeeId(rate.getId());
 		boolean addOrder = orderServiceImpl.addOrder(order);
 		if(addOrder)
 			return Result.buildSuccessMessage("订单生成成功");

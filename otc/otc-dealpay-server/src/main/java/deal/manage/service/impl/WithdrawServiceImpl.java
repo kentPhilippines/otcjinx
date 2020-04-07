@@ -36,4 +36,10 @@ public class WithdrawServiceImpl implements WithdrawService {
 		return withdrawDao.selectByExample(example);
 	}
 
+	@Override
+	public boolean updateStatusEr(String orderId, String message) {
+		int a = withdrawDao.updateStatusEr(orderId,message);
+		return a<2 && a > 0;
+	}
+
 }

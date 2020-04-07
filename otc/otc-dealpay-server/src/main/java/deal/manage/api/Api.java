@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
@@ -57,9 +58,15 @@ public class Api {
 		boolean a = rechargeServiceImpl.addOrder(order);
 		if(a) {
 			Result createBankOrderR = cardBankOrderUtil.createBankOrderR(recharge.getOrderId());
-			if(createBankOrderR.isSuccess()) {
+			if(createBankOrderR.isSuccess()) 
 				return Result.buildSuccessResult(DealBean.DealBeanSu("获取充值渠道成功", configServiceClientImpl.getConfig(ConfigFile.DEAL, ConfigFile.Deal.RECHARGE_URL).getResult().toString(), createBankOrderR.getResult()));
-			}
+	
+			ThreadUtil.execute(()->{
+				boolean b = rechargeServiceImpl.updateStatusEr(order.getOrderId(),createBankOrderR.getMessage());
+				log.info("【充值预订单失败的时候，修改订单成功】");		
+			});
+		
+		
 		}
 		return Result.buildFailMessage("暂无充值渠道");
 	}
@@ -94,6 +101,11 @@ public class Api {
 			Result orderW = cardBankOrderUtil.createBankOrderW(with.getOrderId());
 			if(orderW.isSuccess())
 				return orderW;
+			
+			ThreadUtil.execute(()->{
+				boolean a = withdrawServiceImpl.updateStatusEr(wit.getOrderId(),orderW.getMessage());
+				log.info("【代付预订单失败的时候，修改订单成功】");		
+			});
 		}
 		return Result.buildFailMessage("代付失败"); 
 	}

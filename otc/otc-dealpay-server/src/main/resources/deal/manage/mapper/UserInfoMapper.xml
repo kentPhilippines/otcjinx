@@ -701,4 +701,17 @@
       endTime = #{endTime,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  
+  <select id="findUserByWeight" resultType="deal.manage.bean.UserFund">
+  	select * from dealpay_user_fund
+  	 where userId in
+  	  (select userId from 
+  	  dealpay_user_info where `switchs` = 1 
+  	  and receiveOrderState = 1
+  	  and userId in
+  	  <foreach collection="asList" item="list" open="(" separator="," close=")">
+  	  		#{list}
+  	  </foreach>
+  	  )
+  </select>
 </mapper>

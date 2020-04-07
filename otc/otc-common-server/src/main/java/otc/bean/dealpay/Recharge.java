@@ -39,6 +39,14 @@ public class Recharge {
 		public void setIsTripartite(String isTripartite) {
 			this.isTripartite = isTripartite;
 		}
+	    private String charge="1";  //判断页面显示充值 和提现
+	    
+		public String getCharge() {
+			return charge;
+		}
+		public void setCharge(String charge) {
+			this.charge = charge;
+		}
 		public String getTime() {
 			return Time;
 		}

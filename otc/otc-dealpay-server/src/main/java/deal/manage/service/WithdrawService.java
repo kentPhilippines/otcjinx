@@ -23,4 +23,13 @@ public interface WithdrawService {
 
 	List<Withdraw> findWithdrawOrder(Withdraw bean);
 
+
+	/**
+	 * <p>修改订单为失败，说明原因</p>
+	 * @param orderId				订单
+	 * @param message				原因
+	 * @return
+	 */
+	boolean updateStatusEr(String orderId, String message);
+
 }

@@ -136,6 +136,16 @@ public class OrderContorller {
 		}
 		return Result.buildFailResult("无权限，请联系客服人员操作");
 	}
+	
+	/**
+	 * 分页查询我的接单记录
+	 * @param request
+	 * @param receiveOrderTime
+	 * @param pageNum
+	 * @param pageSize
+	 * @param gatheringChannelCode
+	 * @return
+	 */
 	@GetMapping("/findMyReceiveOrderRecordByPage")
 	@ResponseBody
 	@Transactional
@@ -160,6 +170,8 @@ public class OrderContorller {
 		pageR.setTotalPage(pageInfo.getPages());
 		return Result.buildSuccessResult(pageR);
 	}
+	
+	
 	@GetMapping("/enterOrderEr")
 	@ResponseBody
 	@Transactional
@@ -284,7 +296,7 @@ public class OrderContorller {
 			String startTime,
 			String pageNum,
 			String pageSize,
-			String accountChangeTypeCode,
+			String gatheringChannelCode,
 			String userName,
 			String orderState
 			) {
@@ -303,8 +315,8 @@ public class OrderContorller {
 		DealOrder order = new DealOrder();
 		if(StrUtil.isNotBlank(startTime)) 
 			order.setTime(startTime);
-		if(StrUtil.isNotBlank(accountChangeTypeCode))
-			order.setOrderType(accountChangeTypeCode);
+		if(StrUtil.isNotBlank(gatheringChannelCode))
+			order.setOrderType(gatheringChannelCode);
 		if(StrUtil.isNotBlank(orderState))
 			order.setOrderStatus( orderState);
 		order.setOrderQrUserList(userList); 

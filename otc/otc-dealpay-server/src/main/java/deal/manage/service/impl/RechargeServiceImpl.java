@@ -36,4 +36,10 @@ public class RechargeServiceImpl implements RechargeService {
 		return rechargeDao.selectByExample(example);
 	}
 
+	@Override
+	public boolean updateStatusEr(String orderId, String message) {
+		int a = rechargeDao.updateStatusEr(orderId,message);
+		return a > 0 && a < 2;
+	}
+
 }

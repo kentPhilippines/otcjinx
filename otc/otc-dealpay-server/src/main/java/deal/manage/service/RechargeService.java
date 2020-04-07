@@ -24,4 +24,13 @@ public interface RechargeService {
 	
 	List<Recharge> findRechargeOrder(Recharge bean);
 
+
+	/**
+	 * <p>订单置为失败，说明原因</p>
+	 * @param orderId			订单号
+	 * @param message			原因
+	 * @return
+	 */
+	boolean updateStatusEr(String orderId, String message);
+
 }

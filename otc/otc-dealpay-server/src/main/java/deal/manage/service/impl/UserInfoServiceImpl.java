@@ -1,9 +1,14 @@
 package deal.manage.service.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import cn.hutool.core.util.StrUtil;
@@ -15,6 +20,7 @@ import deal.manage.bean.UserRate;
 import deal.manage.mapper.UserFundMapper;
 import deal.manage.mapper.UserInfoMapper;
 import deal.manage.service.UserInfoService;
+import otc.common.RedisConstant;
 import otc.result.Result;
 @Component
 public class UserInfoServiceImpl implements UserInfoService {
@@ -46,7 +52,14 @@ public class UserInfoServiceImpl implements UserInfoService {
 	@Override
 	public List<String> findSunAccountByUserId(String userId) {
 		// TODO Auto-generated method stub
-		return null;
+		UserInfoExample example = new UserInfoExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andAgentEqualTo(userId);
+		List<UserInfo> selectByExample = userInfoDao.selectByExample(example);
+		List<String> list = new ArrayList();
+		for(UserInfo user : selectByExample)
+			list.add(user.getUserId());
+		return list;
 	}
 
 	@Override
@@ -183,11 +196,22 @@ public class UserInfoServiceImpl implements UserInfoService {
 	@Override
 	public List<UserFund> findUserByWeight(String[] split) {
 		//1,根据顶代账号查询所有下线账号   账号总开关开启， 出款接单开启
-		
-		
-		
-		
-		return null;
+		List<String> asList = null;
+		List<List<String>> list = new ArrayList();
+		for(String userId : split) {
+			String userIdList = userInfoDao.queryChildAgents(userId);
+			String[] split2 = userIdList.split(",");
+			asList = Arrays.asList(split2);
+			list.add(asList);
+		}
+		Set<String> set =new  HashSet<String>();
+		for(List<String> userIdList :list) {
+			for(String userId:userIdList) {
+				set.add(userId);
+			}
+		}
+		List<Object> asList2 = Arrays.asList(set.toArray());
+		return userInfoDao.findUserByWeight(asList2);
 	}
 
 	@Override
