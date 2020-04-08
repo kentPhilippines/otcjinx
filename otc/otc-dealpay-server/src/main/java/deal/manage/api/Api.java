@@ -1,25 +1,38 @@
 package deal.manage.api;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
 import deal.config.feign.ConfigServiceClient;
 import deal.config.redis.RedisUtil;
+import deal.manage.bean.DealOrder;
+import deal.manage.service.OrderService;
 import deal.manage.service.RechargeService;
 import deal.manage.service.WithdrawService;
 import deal.manage.util.CardBankOrderUtil;
+import deal.manage.util.LogUtil;
 import otc.api.dealpay.Common;
 import otc.bean.config.ConfigFile;
 import otc.bean.dealpay.Recharge;
 import otc.bean.dealpay.Withdraw;
 import otc.common.PayApiConstant;
+import otc.common.SystemConstants;
 import otc.result.DealBean;
 import otc.result.Result;
+import otc.util.RSAUtils;
 @RestController
 public class Api {
 	private static final Log log = LogFactory.get();
@@ -27,9 +40,67 @@ public class Api {
 	@Autowired RechargeService rechargeServiceImpl;
 	@Autowired WithdrawService withdrawServiceImpl;
 	@Autowired ConfigServiceClient configServiceClientImpl;
+	@Autowired OrderService orderServiceImpl;
+	@Autowired LogUtil logUtil;
 	private static String Url;
+
+
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * <p>后台操作卡商交易订单</p>
+	 * @param param
+	 * @param request
+	 * @return
+	 */
+	@PostMapping(PayApiConstant.Alipay.ORDER_API+PayApiConstant.Alipay.ORDER_ENTER_ORDER+"/{param:.+}")
+	public Result enterOrder(@PathVariable("param") String param, HttpServletRequest request) {
+		log.info("【请求交易的终端用户交易请求参数为："+param+"】");
+		Map<String, Object> stringObjectMap = RSAUtils.retMapDecode(param, SystemConstants.INNER_PLATFORM_PRIVATE_KEY);
+		if(CollUtil.isEmpty(stringObjectMap)) {
+			log.info("【参数解密为空】");
+			return Result.buildFailMessage("参数为空");
+		}
+		Object obj = stringObjectMap.get("orderId");
+		if(ObjectUtil.isNull(obj)) return Result.buildFailMessage("未识别当前订单号");
+		Object sta = stringObjectMap.get("orderStatus");
+		if(ObjectUtil.isNull(sta)) return Result.buildFailMessage("未识别当前订单状态");
+		Object user = stringObjectMap.get("userName");
+		if(ObjectUtil.isNull(user)) return Result.buildFailMessage("未识别当前操作人");
+		String orderId = obj.toString();//订单号
+		String orderstatus = sta.toString();//将要改变订单状态
+		String userop = user.toString();//操作人
+		log.info("【当前调用人工处理订单接口，当前订单号："+orderId+"，当前修改订单状态："+orderstatus+"，当前操作人："+userop+"】");
+		DealOrder order  =  orderServiceImpl.findOrderByOrderId(orderId);
+		String clientIP = HttpUtil.getClientIP(request);
+		if(StrUtil.isBlank(clientIP))
+			return Result.buildFailMessage("当前使用代理服务器 或是操作ip识别出错，不允许操作");
+		if(ObjectUtil.isNull(order))
+			return Result.buildFailMessage("当前订单不存在");
+		if(order.getOrderStatus().equals(Common.Order.DealOrder.ORDER_STATUS_ER.toString()) || order.getOrderStatus().equals(Common.Order.DealOrder.ORDER_STATUS_SU.toString()))
+			return Result.buildFailMessage("当前订单状态不允许操作");
+		if(orderstatus.equals(Common.Order.DealOrder.ORDER_STATUS_ER.toString())) {
+			ThreadUtil.execAsync(()->{
+				logUtil.addLog(request, "后台人员置交易订单失败，操作人："+userop+"", userop);
+			});
+			Result updataOrderErOperation = cardBankOrderUtil.updataOrderErOperation(orderId, userop, clientIP);
+			return updataOrderErOperation;
+		} else if (orderstatus.equals(Common.Order.DealOrder.ORDER_STATUS_SU.toString())) {
+			ThreadUtil.execAsync(()->{
+			 logUtil.addLog(request, "后台人员置交易订单成功，操作人："+userop+"", userop);
+			});
+			Result updateOrderSu = cardBankOrderUtil.updateOrderSu(orderId, clientIP, userop);
+			return updateOrderSu;
+		}
+		return Result.buildFailMessage("操作失败");
+	}
 	/**
 	 * <p>接受充值</p>
 	 * @param recharge
