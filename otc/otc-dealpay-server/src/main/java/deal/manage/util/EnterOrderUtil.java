@@ -83,7 +83,7 @@ public class EnterOrderUtil {
 			boolean operation = true;
 			int code = enterOrderStatus.getCode();
 			if(code != 0 && code == CARD_ORDER_SU) { //卡商确认出款
-				Result updataOrderStatusSu = cardBankOrderUtil.updataOrderStatusSu(orderId, operation, ip);
+				Result updataOrderStatusSu = cardBankOrderUtil.updateOrderSu(orderId, ip);
 				if(updataOrderStatusSu.isSuccess()) 
 					return Result.buildSuccessResult();
 			}
@@ -92,9 +92,9 @@ public class EnterOrderUtil {
 				Result updataOrderStatusSu = Result.buildFail();
 				
 				if(queryByOrderId.getOrderStatusCard().equals(queryByOrderId.getOrderStatusApp()) && StrUtil.isNotBlank(queryByOrderId.getOrderStatusApp()) && queryByOrderId.getOrderStatusApp().equals(Common.Order.DealOrder.ORDER_STATUS_SU.toString()) )
-					updataOrderStatusSu = cardBankOrderUtil.updataOrderStatusSu(orderId, operation, ip);
+					updataOrderStatusSu = cardBankOrderUtil.updateOrderSu(orderId, ip);
 				 else 
-					updataOrderStatusSu = cardBankOrderUtil.updataOrderStatusEr(orderId, operation, ip);
+					updataOrderStatusSu = cardBankOrderUtil.updataOrderEr(orderId, ip);
 				if(updataOrderStatusSu.isSuccess()) 
 					return Result.buildSuccessResult();
 			} else if(code != 0 && code == CODE_ER) {//订单存在争议  ,修改订单状态为人工操作  

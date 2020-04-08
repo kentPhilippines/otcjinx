@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.OrderUtils;
 import org.springframework.stereotype.Component;
 
 import cn.hutool.core.collection.CollUtil;
@@ -48,44 +49,68 @@ public class CardBankOrderUtil {
 	@Autowired BankUtil bankUtil;
 	@Autowired RedisUtil redisUtil;
 	@Autowired BankListService bankListServiceImpl;
+	@Autowired OrderUtil orderUtil;
+	
+	
 	
 	/**
-	 * <p>订单置为成功</p>
+	 * <p>系统成功</p>
+	 * @param orderId			订单号
+	 * @param ip				操作ip
+	 * @return
+	 */
+	public Result updateOrderSu(String orderId, String ip) {
+		return updataOrderStatusSu(orderId, false, "", ip);
+	}
+	
+	
+	/**
+	 * <p>人工置订单为成功</p>
+	 * @param orderId						订单号
+	 * @param ip							订单ip
+	 * @param operation						操作人
+	 * @return
+	 */
+	public Result updateOrderSu(String orderId, String ip,String operation) {
+		return updataOrderStatusSu(orderId, true,operation, ip);
+	}
+	
+	/**
+	 * <p>手动失败</p>
 	 * @param orderId				订单号
-	 * @param operation				是否为人工操作		true  是    false  否
+	 * @param operation				操作人
 	 * @param ip					操作ip
 	 * @return
 	 */
-	public Result updataOrderStatusSu(String orderId, boolean operation, String ip) {
-		
-		
-		//1,但
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		return null;
+	public Result updataOrderErOperation(String orderId,String operation, String ip) { 
+		return updataOrderStatusEr(orderId, true,operation, ip);
 	}
 	/**
-	 * <p>订单置为失败</p>
-	 * @param orderId				订单号
-	 * @param operation				是否为人工操作 true  是    false  否
-	 * @param ip					操作ip
+	 * <p>系统失败</p>
+	 * @param orderId			订单号
+	 * @param ip				ip
 	 * @return
 	 */
-	public Result updataOrderStatusEr(String orderId, boolean operation, String ip) {
-		return null;
+	public Result updataOrderEr(String orderId, String ip) {//系统失败
+		return updataOrderStatusEr(orderId, false,"", ip);
 	}
-	@SuppressWarnings("unlikely-arg-type")
-	private Result updateOrder(String orderId, boolean operation, String ip,String status , String msg) {
+	
+	private  Result updataOrderStatusEr(String orderId,boolean flag, String operation, String ip) {
+		return updateOrder(orderId, flag, operation, ip, ER);
+	}
+	private  Result updataOrderStatusSu(String orderId,boolean flag, String operation, String ip) {
+		return updateOrder(orderId, flag, operation, ip, SU);
+	}
+	/**
+	 * <p>订单操作核心调用类</p>
+	 * @param orderId						订单号	
+	 * @param flag							true  人工操作    false   系统自动操作
+	 * @param operation						如果是人工操作   传参为操作人
+	 * @param ip							操作ip
+	 * @param status						操作 类型  置为成功  置为失败
+	 * @return
+	 */
+	private Result updateOrder(String orderId,boolean flag, String operation, String ip,String status ) {
 		DealOrder order = orderServiceImpl.findOrderByOrderId(orderId);
 		if(ObjectUtil.isNull(order))
 			return Result.buildFailMessage("当前订单不存在");
@@ -101,21 +126,9 @@ public class CardBankOrderUtil {
 			//1>当订单为成功或者失败的时候不可以修改订单状态也无法做订单变更
 			if(order.equals(Common.Order.DealOrder.ORDER_STATUS_ER) || order.equals(Common.Order.DealOrder.ORDER_STATUS_SU)) 
 				return Result.buildFailMessage("当前订单状态不允许改变");
-			boolean a = orderServiceImpl.updateOrderStatus(order.getOrderId(), Common.Order.DealOrder.ORDER_STATUS_SU,msg);
-			if(!a)
-				return Result.buildFailMessage("订单状态变更失败");
-			if(order.getOrderType().equals(Common.Order.DealOrder.DEAL_ORDER_R)) {//入款账户变更
-				Result orderAamount = amountUtil.orderAmountR(orderId,ip,operation);
-				if(!orderAamount.isSuccess())
-					return orderAamount;
-				return Result.buildSuccessMessage("操作成功");
-			}
-			if(order.getOrderType().equals(Common.Order.DealOrder.DEAL_ORDER_C)) {//出款账户变更
-				Result orderAamount = amountUtil.orderAmountC(orderId);
-				if(!orderAamount.isSuccess())
-					return orderAamount;
-				return Result.buildSuccessMessage("操作成功");
-			}
+			Result orderDeal = orderUtil.orderDeal(orderId, flag, operation, ip);
+			if(orderDeal.isSuccess())
+				return orderDeal;
 			return  Result.buildFail();
 		case ER://订单置为失败的方法
 			/**
@@ -123,9 +136,14 @@ public class CardBankOrderUtil {
 			 * 1,修改订单状态
 			 * 4,更新对应缓存规则
 			 */
-			boolean b = orderServiceImpl.updateOrderStatus(order.getOrderId(), Common.Order.DealOrder.ORDER_STATUS_ER,msg);
-			if(b)
-				return Result.buildSuccessMessage("操作成功");
+			boolean updateOrderStatus = false;
+			if(flag && StrUtil.isBlank(operation)) return Result.buildFailMessage("请填写操作人");
+			if(flag) //人工操作
+				updateOrderStatus = orderServiceImpl.updateOrderStatus(orderId, Common.Order.DealOrder.ORDER_STATUS_ER, operation+"，手动操作为成功");
+			else 
+				updateOrderStatus = orderServiceImpl.updateOrderStatus(orderId, Common.Order.DealOrder.ORDER_STATUS_ER);
+			if(!updateOrderStatus)
+				return Result.buildFailMessage("订单变更失败");
 			return Result.buildFailMessage("操作失败");
 		}
 		return Result.buildFail();

@@ -566,12 +566,6 @@ public class AmountUtil {
 			return	Result.buildFail();
 		}
 	}
-	
-	
-	
-	
-	
-	
 	/**
 	 * <p>根据订单的账户变更和流水生成【入款订单】</p>
 	 * @param orderId			卡商交易订单号
@@ -612,14 +606,38 @@ public class AmountUtil {
 	/**
 	 * <p>根据订单的账户变更和流水生成【出款订单】</p>
 	 * @param orderId			卡商交易订单号
+	 * @param ip				ip
+	 * @param flag				true 人工操作    false   自然流水
 	 * @return
 	 */
-	public Result orderAmountC(String orderId) {
-		
-		
-		
-		
-		
-		return null;
+	public Result orderAmountC(String orderId , String ip , boolean flag) {
+		if(StrUtil.isBlank(orderId))
+			return Result.buildFailMessage("订单号为空");
+		DealOrder order = orderServiceImpl.findOrderByOrderId(orderId);
+		if(!Common.Order.DealOrder.ORDER_STATUS_SU.equals(order.getOrderStatus()))
+			return Result.buildFailMessage("订单号状态错误");
+		UserFund userFund = new 	UserFund();
+		userFund.setUserId(order.getOrderQrUser());
+		Result addAmounRecharge = addAmounRecharge(userFund, order.getDealAmount());
+		if(!addAmounRecharge.isSuccess())
+			return Result.buildFailMessage("订单结算错误");
+		Future<Result> execAsync = ThreadUtil.execAsync(()->{
+			return  amountRunUtil.addCardDealC(order, ip, flag);
+		});
+		Result addAmountDeal = addAmountDeal(userFund, order.getDealFee(), order.getDealAmount(),false);
+		if(!addAmountDeal.isSuccess())
+			return Result.buildFailMessage("订单结算错误");
+		Future<Result> execAsync1 = ThreadUtil.execAsync(()->{
+			return amountRunUtil.addCardDealFeeC(order, ip, flag);
+		});
+		try {
+			Result result2 = execAsync.get();
+			Result result = execAsync1.get();
+			if(result2.isSuccess()&& result.isSuccess())
+				return Result.buildSuccessMessage("订单结算成功");
+		} catch (InterruptedException | ExecutionException e) {
+			return Result.buildFailMessage("订单结算失败");
+		}
+		return Result.buildFailMessage("订单结算失败");
 	}
 }

@@ -32,7 +32,7 @@ public class OrderUtil {
 	 * @param operator	操作人
 	 * @return
 	 */
-	public Result orderDealR(String orderId,boolean flag,String operator ,String ip) {
+	public Result orderDeal(String orderId,boolean flag,String operator ,String ip) {
 		if(flag && StrUtil.isBlank(operator)) return Result.buildFailMessage("请填写操作人");
 		/**
 		 * #########################步骤##########################
@@ -46,15 +46,27 @@ public class OrderUtil {
 		if(ObjectUtil.isNotNull(order))
 			return Result.buildFailMessage("当前订单不存在");
 		String orderType = order.getOrderType();
-		if(!Common.Order.DealOrder.DEAL_ORDER_R.equals(orderType))
-			return Result.buildFailMessage("当前订单类型错误");
 		boolean updateOrderStatus = false;
 		if(flag) //人工操作
 			updateOrderStatus = orderServiceImpl.updateOrderStatus(orderId, Common.Order.DealOrder.ORDER_STATUS_SU, operator+"，手动操作为成功");
 		else 
 			updateOrderStatus = orderServiceImpl.updateOrderStatus(orderId, Common.Order.DealOrder.ORDER_STATUS_SU);
-		Result amountR = amountUtil.orderAmountR(order.getOrderId(),ip,flag);
-		return amountR;
+		if(!updateOrderStatus)
+			return Result.buildFailMessage("订单状态变更失败");
+		if(orderType.equals(Common.Order.DealOrder.DEAL_ORDER_R)) {//入款账户变更
+			Result orderAamount = amountUtil.orderAmountR(orderId,ip,flag);
+			if(!orderAamount.isSuccess())
+				return orderAamount;
+			return Result.buildSuccessMessage("操作成功");
+		}
+		if(orderType.equals(Common.Order.DealOrder.DEAL_ORDER_C)) {//出款账户变更
+			Result orderAamount = amountUtil.orderAmountC(orderId,ip,flag);
+			if(!orderAamount.isSuccess())
+				return orderAamount;
+			return Result.buildSuccessMessage("操作成功");
+		}
+//		Result amountR = amountUtil.orderAmountR(order.getOrderId(),ip,flag);
+		return Result.buildFailMessage("结算失败");
 	}
 	
 	

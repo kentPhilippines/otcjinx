@@ -79,6 +79,12 @@ public class AmountRunUtil {
 	
 	
 	
+	private static final Integer ADD_DEAL_CARD_AMOUNT_NUMBER = 19;//卡商交易加款编号
+	private static final String ADD_DEAL_CARD_AMOUNT = "ADD_DEAL_CARD_AMOUNT";//卡商交易加款
+	
+	private static final Integer CARD_C_FEE_NUMBER = 22;//卡商出款交易分润编号
+	private static final String CARD_C_FEE = "CARD_C_FEE";//卡商出款交易分润
+	
 	
 	
 	
@@ -87,6 +93,32 @@ public class AmountRunUtil {
 	
 	private static final String RUNTYPE_ARTIFICIAL = "2";//人工流水
 	private static final String RUNTYPE_NATURAL = "1";//自然流水
+	
+	
+	
+	
+	
+	public Result addCardDealC(DealOrder order,String generationIp,Boolean flag) {
+		UserFund userFund = userInfoServiceImpl.findUserFundByAccount(order.getOrderQrUser()); //当前账户资金
+		Result add = add(ADD_DEAL_CARD_AMOUNT, userFund, order.getOrderId(), order.getDealAmount(), generationIp, "卡商出款加钱",  flag?RUNTYPE_ARTIFICIAL:RUNTYPE_NATURAL);
+		if(add.isSuccess())
+			return add;
+		throw new UserException("账户流水异常", null);
+	}
+	public Result addCardDealFeeC(DealOrder order,String generationIp,Boolean flag) {
+		UserFund userFund = userInfoServiceImpl.findUserFundByAccount(order.getOrderQrUser()); //当前账户资金
+		Result add = add(CARD_C_FEE, userFund, order.getOrderId(), order.getDealFee(), generationIp, "卡商出款分润加钱",  flag?RUNTYPE_ARTIFICIAL:RUNTYPE_NATURAL);
+		if(add.isSuccess())
+			return add;
+		throw new UserException("账户流水异常", null);
+	}
+	
+	
+	
+	
+	
+	
+	
 	/**
 	 * <p>码商代付流水生成</p>
 	 * @param withdraw									代付订单表
@@ -135,7 +167,7 @@ public class AmountRunUtil {
 	 */
 	public Result addAmount(Recharge recharge,String generationIp,Boolean flag) {
 		UserFund userFund = userInfoServiceImpl.findUserFundByAccount(recharge.getUserId()); //当前账户资金
-		Result add = add(RECHANGE_AMOUNT, userFund, recharge.getOrderId(), recharge.getActualAmount(), generationIp, "码商充值",  flag?RUNTYPE_ARTIFICIAL:RUNTYPE_NATURAL);
+		Result add = add(RECHANGE_AMOUNT, userFund, recharge.getOrderId(), recharge.getActualAmount(), generationIp, "卡商充值",  flag?RUNTYPE_ARTIFICIAL:RUNTYPE_NATURAL);
 		if(add.isSuccess())
 			return add;
 		throw new UserException("账户流水异常", null);
@@ -173,7 +205,7 @@ public class AmountRunUtil {
 		if(addAmounProfit.isSuccess())
 			return Result.buildFailMessage("资金账户修改失败");
 		log.info("【当前代理商："+userId3+"，结算分润为："+multiply+"】");
-		Result add = add(PROFIT_AMOUNT_AGENT, userAccount, orderId, multiply, generationIp, "码商代理商，代理分润结算", flag?RUNTYPE_ARTIFICIAL:RUNTYPE_NATURAL);
+		Result add = add(PROFIT_AMOUNT_AGENT, userAccount, orderId, multiply, generationIp, "卡商代理商，代理分润结算", flag?RUNTYPE_ARTIFICIAL:RUNTYPE_NATURAL);
 		if(add.isSuccess()) 
 			return addAmountProfit(orderId, userId3, amount, feeId,  generationIp, flag);
 		else
@@ -405,6 +437,12 @@ public class AmountRunUtil {
 			break;
 		case WITHDRAY_AMOUNT_OPEN:
 			runOrderType = WITHDRAY_AMOUNT_OPEN_NUMBER;
+			break;
+		case ADD_DEAL_CARD_AMOUNT:
+			runOrderType = ADD_DEAL_CARD_AMOUNT_NUMBER;
+			break;
+		case CARD_C_FEE:
+			runOrderType = CARD_C_FEE_NUMBER;
 			break;
 		default:
 			break;
