@@ -106,10 +106,10 @@
 	<div th:replace="common/header::html"></div>
 	<div id="myHomePage" v-cloak>
 		<div class="page-body">
-			<div class="login-or-register" v-show="!isLoggedInFlag">
+			<!-- <div class="login-or-register" v-show="!isLoggedInFlag">
 				<button type="button" class="btn btn-lg btn-danger"
 					v-on:click="footerVM.goTo('/login')">{{loginOrRegisterTxt}}</button>
-			</div>
+			</div> -->
 			<div class="account-info" v-show="isLoggedInFlag">
 				<!-- <div class="user-name">
 					<div>

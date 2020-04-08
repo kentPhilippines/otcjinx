@@ -95,6 +95,14 @@ public class CardBankOrderUtil {
 		return updataOrderStatusEr(orderId, false,"", ip);
 	}
 	
+	/**
+	 * <p>后台手动置为失败</p>
+	 * @param orderId				订单号
+	 * @param flag					
+	 * @param operation
+	 * @param ip
+	 * @return
+	 */
 	private  Result updataOrderStatusEr(String orderId,boolean flag, String operation, String ip) {
 		return updateOrder(orderId, flag, operation, ip, ER);
 	}
@@ -175,6 +183,7 @@ public class CardBankOrderUtil {
 		order.setOrderAccount(recharge.getUserId());
 		order.setOrderQr(clickBnak.getBankcardId());
 		order.setOrderQrUser(clickBnak.getAccount());
+		order.setBack(recharge.getBackUrl());
 		/**
 		 * 卡商入款结算费率
 		 */

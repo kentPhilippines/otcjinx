@@ -612,7 +612,7 @@ public class AmountUtil {
 		if(!addAmounRecharge.isSuccess())
 			return Result.buildFailMessage("订单结算错误");
 		Result addCardDealC = amountRunUtil.addCardDealC(order, ip, flag);
-		Result addAmountDeal = addAmountDeal(userFund, order.getDealFee(), order.getDealAmount(),false);
+		Result addAmountDeal = addDeal(userFund, order.getDealFee(), order.getDealAmount(),false);
 		if(!addAmountDeal.isSuccess())
 			return Result.buildFailMessage("订单结算错误");
 		Result addCardDealFeeC = amountRunUtil.addCardDealFeeC(order, ip, flag);

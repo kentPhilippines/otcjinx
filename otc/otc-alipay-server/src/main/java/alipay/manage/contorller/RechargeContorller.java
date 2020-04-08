@@ -146,6 +146,7 @@ public class RechargeContorller {
 		   return null;
 	   order.setWeight(userInfo.getQrRechargeList());
 	   order.setNotfiy(RECHARGENO_NOTFIY);
+	   order.setBackUrl(userInfo.getDealUrl());//配置的码商访问的页面地址
 	   boolean flag =  orderServiceImpl.addRechargeOrder(order);
 	   if(flag)
 		   return order;

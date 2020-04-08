@@ -86,4 +86,7 @@ public interface BankListMapper {
     		"  (SELECT userId FROM `dealpay_user_info` WHERE  `switchs` = 1))" 
     		 )
 	List<BankList> findDealBank(@Param("amount") BigDecimal amount);
+
+    @Select("select * from dealpay_bank_list where cardType = 1 and status = 1 and isDeal = 2")
+	List<BankList> findSystemBank();
 }

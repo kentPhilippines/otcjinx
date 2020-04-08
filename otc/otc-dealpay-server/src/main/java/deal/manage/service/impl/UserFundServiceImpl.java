@@ -33,4 +33,9 @@ public class UserFundServiceImpl implements UserFundService {
 		return a > 0 & a < 2;
 	}
 
+	@Override
+	public UserFund findUserFundMount(String userId) {
+		return userFundDao.findUserFundMount(userId);
+	}
+
 }

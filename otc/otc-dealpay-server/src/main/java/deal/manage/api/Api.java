@@ -42,7 +42,7 @@ public class Api {
 	@Autowired ConfigServiceClient configServiceClientImpl;
 	@Autowired OrderService orderServiceImpl;
 	@Autowired LogUtil logUtil;
-	private static String Url;
+	private static String Url ;
 	
 	
 	
@@ -118,18 +118,28 @@ public class Api {
 		order.setWeight(recharge.getWeight());
 		order.setDepositor(recharge.getDepositor());
 		order.setOrderStatus(recharge.getOrderStatus());
+		order.setBackUrl(recharge.getBackUrl());
 		boolean a = rechargeServiceImpl.addOrder(order);
 		if(a) {
 			Result createBankOrderR = cardBankOrderUtil.createBankOrderR(recharge.getOrderId());
-			if(createBankOrderR.isSuccess()) 
-				return Result.buildSuccessResult(DealBean.DealBeanSu("获取充值渠道成功", configServiceClientImpl.getConfig(ConfigFile.DEAL, ConfigFile.Deal.RECHARGE_URL).getResult().toString(), createBankOrderR.getResult()));
-	
+			if(createBankOrderR.isSuccess()) {
+				DealOrder reOrder = orderServiceImpl.findOrderByAssociatedId(order.getOrderId());
+				/**
+				 * ################################一下不要修改，如要修改请联系开发人员或是你自己完全搞懂系统#######################
+				 * type = 1   //下游商户 码商 打开付款界面标识
+				 * type = 2   //卡商自己 充值标识
+				 * type = 3   //卡商查看出款  标识
+				 * 
+				 */
+				String url = "orderId="+reOrder.getOrderId()+"&type=1";//异常重要
+				return	Result.buildSuccessResult(DealBean.DealBeanSu("获取充值渠道成功",
+						configServiceClientImpl.getConfig(ConfigFile.DEAL, ConfigFile.Deal.RECHARGE_URL).getResult().toString()+url,
+						createBankOrderR.getResult()));
+			}
 			ThreadUtil.execute(()->{
 				boolean b = rechargeServiceImpl.updateStatusEr(order.getOrderId(),createBankOrderR.getMessage());
 				log.info("【充值预订单失败的时候，修改订单成功】");		
 			});
-		
-		
 		}
 		return Result.buildFailMessage("暂无充值渠道");
 	}
@@ -155,6 +165,7 @@ public class Api {
 		with.setMobile(wit.getMobile());
 		with.setNotify(wit.getNotify());
 		with.setOrderStatus(wit.getOrderStatus());
+		with.setAccname(wit.getAccname());
 		with.setUserId(wit.getUserId());
 		with.setWithdrawType(Integer.valueOf(wit.getWithdrawType()));
 		with.setWeight(wit.getWeight());

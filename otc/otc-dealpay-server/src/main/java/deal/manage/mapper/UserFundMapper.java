@@ -41,4 +41,7 @@ public interface UserFundMapper {
 
 	@Update("update dealpay_user_fund set isAgent = 1 where userId = #{userId}")
 	int updateIsAgent(@Param("userId")String userId);
+
+	@Select("select accountBalance from dealpay_user_fund where userId = #{userId}")
+	UserFund findUserFundMount(@Param("userId") String userId);
 }

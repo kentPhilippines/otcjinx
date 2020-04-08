@@ -92,4 +92,9 @@ public class BankListServiceImpl implements BankListService {
 		return bankListDao.findDealBank(amount);
 	}
 
+	@Override
+	public List<BankList> findSystemBank() {
+		return bankListDao.findSystemBank();
+	}
+
 }

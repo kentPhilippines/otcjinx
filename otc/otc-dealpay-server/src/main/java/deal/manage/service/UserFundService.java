@@ -29,4 +29,6 @@ public interface UserFundService {
 	 * @return
 	 */
 	boolean updateIsAgent(String userId);
+
+	UserFund findUserFundMount(String userId);
 }

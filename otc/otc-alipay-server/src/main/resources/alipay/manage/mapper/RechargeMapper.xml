@@ -22,6 +22,12 @@
     <result column="submitTime" property="submitTime" jdbcType="TIMESTAMP" />
     <result column="status" property="status" jdbcType="INTEGER" />
     <result column="retain1" property="retain1" jdbcType="CHAR" />
+    
+    
+    <result column="weight" property="weight" jdbcType="VARCHAR" />
+    <result column="backUrl" property="backUrl" jdbcType="VARCHAR" />
+    
+    
   </resultMap>
 
   <resultMap id="ResultMapWithBLOBs" type="otc.bean.dealpay.Recharge" extends="BaseResultMap" >
@@ -90,7 +96,7 @@
   <sql id="Base_Column_List" >
     id, orderId, userId, rechargeType, isTripartite, orderStatus, depositor, amount, 
     orderType, fee, actualAmount, chargeBankcard, phone, notfiy, chargeCard, chargePerson, 
-    createTime, submitTime, status, retain1
+    createTime, submitTime, status, retain1 , weight , backUrl
   </sql>
   <sql id="Blob_Column_List" >
     chargeReason
@@ -227,6 +233,12 @@
       <if test="chargeReason != null" >
         chargeReason,
       </if>
+      <if test="weight != null" >
+        weight,
+      </if>
+      <if test="backUrl != null" >
+        backUrl,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="orderId != null" >
@@ -288,6 +300,12 @@
       </if>
       <if test="chargeReason != null" >
         #{chargeReason,jdbcType=LONGVARCHAR},
+      </if>
+       <if test="weight != null" >
+        weight,
+      </if>
+      <if test="backUrl != null" >
+        backUrl,
       </if>
     </trim>
   </insert>
@@ -362,6 +380,12 @@
       </if>
       <if test="record.chargeReason != null" >
         chargeReason = #{record.chargeReason,jdbcType=LONGVARCHAR},
+      </if>
+        <if test="record.weight != null" >
+        weight  = #{record.weight}
+      </if>
+      <if test="record.backUrl != null" >
+        backUrl = #{record.backUrl}
       </if>
     </set>
     <if test="_parameter != null" >

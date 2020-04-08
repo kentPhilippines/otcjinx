@@ -149,6 +149,10 @@ public class Number {
 		String objectId = IdUtil.objectId().toUpperCase();
 		return Common.Deals.RECHARGE+objectId;
 	}
+	public static String getRechargeCa() {
+		String objectId = IdUtil.objectId().toUpperCase();
+		return Common.Deals.RECHARGE_CARD+objectId;
+	}
 
 
 	public static String getWitOrderQr() {

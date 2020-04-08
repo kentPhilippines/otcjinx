@@ -131,6 +131,7 @@ public class Common {
 		public static final String YUCHUANG_FLOW = "ANO";//越创流水
 		public static final String WITDBR = "BDC";
 		public static final String RECHARGE = "RE-Q";//码商充值订单
+		public static final String RECHARGE_CARD = "RE-C";//码商充值订单
 	}
 
 	public static final Integer STATUS_IS_OK = 1;//数据有效

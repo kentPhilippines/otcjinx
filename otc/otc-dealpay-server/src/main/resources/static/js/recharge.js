@@ -14,7 +14,7 @@ var rechargeVM = new Vue({
 		depositDate : dayjs().format('YYYY-MM-DD'),
 		depositTime : dayjs().format('HH:mm'),
 		depositor : '',
-		rechargeAmount : ''
+		amount : ''
 	},
 	computed : {},
 	created : function() {
@@ -41,7 +41,7 @@ var rechargeVM = new Vue({
 		},
 		clickAmount: function(amount){
 			var that = this;
-			that.rechargeAmount = amount;
+			that.amount = amount;
 		},
 		loadAmountList : function(){
 			var that = this;
@@ -81,7 +81,7 @@ var rechargeVM = new Vue({
 					return;
 				}
 			}
-			if (that.rechargeAmount == null || that.rechargeAmount == '') {
+			if (that.amount == null || that.amount == '') {
 				layer.alert('请输入充值金额');
 				return;
 			}
@@ -100,24 +100,11 @@ var rechargeVM = new Vue({
 			that.$http.post('/recharge/generateRechargeOrder', {
 				qrRechargeType : that.payType,
 				depositor : that.depositor,
-				amount : that.rechargeAmount,
-				mobile : that.mobile
+				amount : that.amount,
+				phone : that.mobile
 			}, {
 				emulateJSON : true
 			}).then(function(res) {
-				if (that.selectedPayType.bankCardFlag == 2) {
-					layer.open({
-						title : '提示',
-						icon : '1',
-						closeBtn : 0,
-						btn : [],
-						content : '提交成功,预计30分钟到帐!',
-						time : 1500,
-						end : function() {
-							window.location.href = '/my-home-page';
-						}
-					});
-				} else {
 					if(res){
 						if(res.body.success){
 							layer.open({
@@ -145,7 +132,6 @@ var rechargeVM = new Vue({
 								});
 						}
 					}
-				}
 			});
 		}
 	}

@@ -27,6 +27,13 @@ public class Recharge {
 	    private String chargeReason;
 	    private String weight;
 	    private String Time;
+	    private String backUrl;
+		public String getBackUrl() {
+			return backUrl;
+		}
+		public void setBackUrl(String backUrl) {
+			this.backUrl = backUrl;
+		}
 		public String getOrderType() {
 			return orderType;
 		}

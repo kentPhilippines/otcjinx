@@ -84,6 +84,15 @@ public interface BankListService {
 	
 	List<BankList> findDealBank(BigDecimal amount);
 
+	
+	
+	
+	/**
+	 * <p>获取系统的银行卡</p>
+	 * @return
+	 */
+	List<BankList> findSystemBank();
+
 
 
 }

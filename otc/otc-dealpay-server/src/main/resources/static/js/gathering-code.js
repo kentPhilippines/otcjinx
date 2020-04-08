@@ -268,7 +268,8 @@ var gatheringCodeVM = new Vue({
 					accountHolder : that.editGatheringCode.account,
 					openAccountBank : that.editGatheringCode.bank,
 					bankcode :  that.editGatheringCode.bankCode,
-					phone : that.editGatheringCode.phone
+					phone : that.editGatheringCode.phone,
+					qrcodeNote : that.editGatheringCode.qrcodeNote
 			}
 			that.$http.post('/userAccount/bindBankInfo',  bank ).then(function(res) {
 				if(res.body.success){

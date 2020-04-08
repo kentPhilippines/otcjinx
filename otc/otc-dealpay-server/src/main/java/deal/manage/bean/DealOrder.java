@@ -7,6 +7,12 @@ import java.util.List;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import cn.hutool.core.util.ObjectUtil;
+
+/**
+ * @author hx08
+ *
+ */
 public class DealOrder {
     private Integer id;
 
@@ -208,8 +214,20 @@ public class DealOrder {
     public Date getCreateTime() {
         return createTime;
     }
+    private Date usefulTime;
+    public Date getUsefulTime() {
+		return usefulTime;
+	}
 
-    public void setCreateTime(Date createTime) {
+	public void setUsefulTime(Date usefulTime) {
+		this.usefulTime = usefulTime;
+	}
+
+	public void setCreateTime(Date createTime) {
+		if(ObjectUtil.isNotNull(createTime)){
+			Date afterDate = new Date(createTime .getTime() + 900000);
+			this.setUsefulTime(afterDate);
+		}
         this.createTime = createTime;
     }
 

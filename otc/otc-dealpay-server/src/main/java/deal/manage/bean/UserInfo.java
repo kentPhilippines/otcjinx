@@ -41,6 +41,8 @@ public class UserInfo implements Serializable{
 	    private String witip; //代付ip
 	    private String queueList;//供应队列code  以逗号分隔
 
+	    
+	    private String accountBalance;
 		private String inviteCode;//邀请码，注册专用
 	    private String newPassword;//新的登录密码【修改密码专用】
 	    private String newPayPassword;//新的支付密码【修改支付密码专用】
@@ -51,7 +53,14 @@ public class UserInfo implements Serializable{
 	    private String fee;
 	    private String cardFee;
 	    
-	    
+	public String getAccountBalance() {
+			return accountBalance;
+		}
+
+		public void setAccountBalance(String accountBalance) {
+			this.accountBalance = accountBalance;
+		}
+
 	public String getFee() {
 			return fee;
 		}

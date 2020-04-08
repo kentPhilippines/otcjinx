@@ -6,6 +6,8 @@ import java.text.ParseException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -62,11 +64,29 @@ public class UserContorller {
 		UserInfo user = sessionUtil.getUser(request);
 		if(ObjectUtil.isNull(user)) 
 			return Result.buildFailMessage("当前用户未登录");
+		
+		UserRate rateR = null;
+		UserRate rateC = null;
+		UserFund userFund = null;
 		UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(user.getUserId());
-		UserRate rateR = userRateServiceImpl.findUserRateR(userInfo.getUserId());
-		UserRate rateC = userRateServiceImpl.findUserRateC(userInfo.getUserId());
+		Future<UserRate> execAsync3 = ThreadUtil.execAsync(()->{
+			return userRateServiceImpl.findUserRateR(userInfo.getUserId());
+		});
+		Future<UserRate> execAsync2 = ThreadUtil.execAsync(()->{
+			return userRateServiceImpl.findUserRateC(userInfo.getUserId());
+		});
+		Future<UserFund> execAsync = ThreadUtil.execAsync(()->{
+			return userFundServiceImpl.findUserFundMount(user.getUserId());
+		});
+			try {
+				rateR = execAsync3.get( );
+				rateC = execAsync2.get( );
+				userFund = execAsync.get( );
+			} catch (InterruptedException | ExecutionException e) {
+			}
 		userInfo.setFee(rateR.getFee().toString());
 		userInfo.setCardFee(rateC.getFee().toString());
+		userInfo.setAccountBalance(userFund.getAccountBalance().toString());
 		return Result.buildSuccessResult("数据获取成功",userInfo);
 	}
 	@GetMapping("/getUserFund")
@@ -123,6 +143,7 @@ public class UserContorller {
 		if(ObjectUtil.isNull(user)) 
 			return Result.buildFailMessage("当前用户未登录");
 		bank.setAccount(user.getUserId());
+		bank.setCardType(Common.Bank.BANK_QR);
 		boolean flag  = bankCardServiceImpl.addBankCard(bank);
 		if(flag)
 			return Result.buildSuccessResult();
