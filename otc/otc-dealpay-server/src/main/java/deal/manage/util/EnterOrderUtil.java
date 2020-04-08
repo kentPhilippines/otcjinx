@@ -90,7 +90,6 @@ public class EnterOrderUtil {
 			if(code != 0 && code == CODE_SU) {//双方都确认过订单,改变订单状态为成功   或者订单状态为失败
 				OrderStatus queryByOrderId = orderStatusServiceImpl.queryByOrderId(orderId);
 				Result updataOrderStatusSu = Result.buildFail();
-				
 				if(queryByOrderId.getOrderStatusCard().equals(queryByOrderId.getOrderStatusApp()) && StrUtil.isNotBlank(queryByOrderId.getOrderStatusApp()) && queryByOrderId.getOrderStatusApp().equals(Common.Order.DealOrder.ORDER_STATUS_SU.toString()) )
 					updataOrderStatusSu = cardBankOrderUtil.updateOrderSu(orderId, ip);
 				 else 
@@ -123,7 +122,7 @@ public class EnterOrderUtil {
 	/*	if(order.getDealType().equals(Common.BANK_DEAL_ORDER_W)) //卡商出款订单确认
 			return JsonResult.buildSuccessMessageCode("卡商确认出款成功", CARD_ORDER_SU);*/
 		OrderStatus orderS  = orderStatusServiceImpl.queryByOrderId(orderId);
-		if(Common.User.USER_TYPE_APP.equals(userType)) {//码商确认
+		if(Common.User.USER_TYPE_APP.toString().equals(userType)) {//码商确认
 			if(ObjectUtil.isNull(orderS)) {//状态未记录,该订单首次确认
 				orderS = new OrderStatus();
 				orderS.setOrderStatusApp(orderStatus);
@@ -161,7 +160,7 @@ public class EnterOrderUtil {
 					}
 				}
 			}
-		} else if(Common.User.USER_TYPE_CARD.equals(userType)){//卡商确认
+		} else if(Common.User.USER_TYPE_CARD.toString().equals(userType)){//卡商确认
 			if(ObjectUtil.isNull(orderS)) {//状态未记录,该订单首次确认
 				orderS = new OrderStatus();
 				orderS.setOrderStatusCard(orderStatus);

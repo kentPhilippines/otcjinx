@@ -111,8 +111,7 @@ public class UserInfoServiceImpl implements UserInfoService {
 
 	@Override
 	public UserFund findUserFundByAccount(String userId) {
-		// TODO Auto-generated method stub
-		return null;
+		return userFundDao.findUserFund(userId);
 	}
 
 	@Override

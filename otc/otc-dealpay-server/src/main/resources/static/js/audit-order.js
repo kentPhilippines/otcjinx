@@ -100,7 +100,7 @@ var auditOrderVM = new Vue({
  */
 		showTodayReceiveOrderSituation : function() {
 			//收款
-			var orderType = 'bank_deal_w';
+			var orderType = '1';
 			this.orderType = orderType;
 			var dateTime = this.receiveOrderTime;
 			this.showTodayReceiveOrderSituationFlag = true;
@@ -108,7 +108,7 @@ var auditOrderVM = new Vue({
 		},
 
 		showTotalReceiveOrderSituation : function() {
-			var orderType = 'bank_deal_r';
+			var orderType = '2';
 			this.orderType = orderType;
 			var dateTime = this.receiveOrderTime;
 			//出款
@@ -125,7 +125,7 @@ var auditOrderVM = new Vue({
 		loadPlatformOrder : function(orderType,dateTime) {
 			var that = this;
 			var page = null;
-			if(orderType == 'bank_deal_r')
+			if(orderType == '1')
 				 page = that.pageNum
 			else
 				 page = that.pageNum1
@@ -138,7 +138,7 @@ var auditOrderVM = new Vue({
 				}
 			}).then(function(res) {
 				that.waitConfirmOrders = res.body.result.content;
-				if(orderType == 'bank_deal_r'){
+				if(orderType == '1'){
 					that.pageNum = res.body.result.pageNum;
 					that.totalPage = res.body.result.totalPage;
 				}else{

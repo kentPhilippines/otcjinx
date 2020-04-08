@@ -584,23 +584,13 @@ public class AmountUtil {
 		Result deal = deleteDeal(userFund, order.getDealAmount());
 		if(!deal.isSuccess())
 			return Result.buildFailMessage("订单结算失败");
-		Future<Result> execAsync2 = ThreadUtil.execAsync(()->{
-			return amountRunUtil.deleteRechangerNumber(order, ip, flag);
-		});
+		Result result = amountRunUtil.deleteRechangerNumber(order, ip, flag);
 		Result addDeal = addDeal(userFund, order.getDealFee(),  order.getDealAmount(),true);
 		if(!addDeal.isSuccess())
 			return Result.buildFailMessage("订单结算失败");
-		Future<Result> execAsync = ThreadUtil.execAsync(()->{
-			return amountRunUtil.addDealAmount(order, ip, flag);
-		});
-		try {
-			Result result2 = execAsync2.get();
-			Result result = execAsync.get();
-			if(result2.isSuccess()&&result.isSuccess()&&addDeal.isSuccess()&&deal.isSuccess())
-				return Result.buildSuccessMessage("订单结算成功");
-		} catch (InterruptedException | ExecutionException e) {
-			return Result.buildFailMessage("订单结算失败");
-		}
+		Result result2 = amountRunUtil.addDealAmount(order, ip, flag);
+		if(result2.isSuccess()&&result.isSuccess()&&addDeal.isSuccess()&&deal.isSuccess())
+			return Result.buildSuccessMessage("订单结算成功");
 		return Result.buildFailMessage("订单结算失败");
 	}
 	/**
@@ -621,23 +611,13 @@ public class AmountUtil {
 		Result addAmounRecharge = addAmounRecharge(userFund, order.getDealAmount());
 		if(!addAmounRecharge.isSuccess())
 			return Result.buildFailMessage("订单结算错误");
-		Future<Result> execAsync = ThreadUtil.execAsync(()->{
-			return  amountRunUtil.addCardDealC(order, ip, flag);
-		});
+		Result addCardDealC = amountRunUtil.addCardDealC(order, ip, flag);
 		Result addAmountDeal = addAmountDeal(userFund, order.getDealFee(), order.getDealAmount(),false);
 		if(!addAmountDeal.isSuccess())
 			return Result.buildFailMessage("订单结算错误");
-		Future<Result> execAsync1 = ThreadUtil.execAsync(()->{
-			return amountRunUtil.addCardDealFeeC(order, ip, flag);
-		});
-		try {
-			Result result2 = execAsync.get();
-			Result result = execAsync1.get();
-			if(result2.isSuccess()&& result.isSuccess())
-				return Result.buildSuccessMessage("订单结算成功");
-		} catch (InterruptedException | ExecutionException e) {
-			return Result.buildFailMessage("订单结算失败");
-		}
+		Result addCardDealFeeC = amountRunUtil.addCardDealFeeC(order, ip, flag);
+		if(addCardDealC.isSuccess()&& addCardDealFeeC.isSuccess())
+			return Result.buildSuccessMessage("订单结算成功");
 		return Result.buildFailMessage("订单结算失败");
 	}
 }

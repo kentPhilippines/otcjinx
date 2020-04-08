@@ -110,6 +110,7 @@ public class CardBankOrderUtil {
 	 * @param status						操作 类型  置为成功  置为失败
 	 * @return
 	 */
+	
 	private Result updateOrder(String orderId,boolean flag, String operation, String ip,String status ) {
 		DealOrder order = orderServiceImpl.findOrderByOrderId(orderId);
 		if(ObjectUtil.isNull(order))

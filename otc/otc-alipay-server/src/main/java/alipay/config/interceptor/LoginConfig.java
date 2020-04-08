@@ -9,7 +9,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupp
 @Configuration
 public class LoginConfig extends WebMvcConfigurationSupport{
 	@Autowired
-	MyInterceptor loginInterceptor;
+	SubmitInterceptor loginInterceptor;
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(loginInterceptor).addPathPatterns("/**").

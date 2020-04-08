@@ -28,6 +28,7 @@ import otc.bean.dealpay.Recharge;
 import otc.exception.BusinessException;
 import otc.exception.user.UserException;
 import otc.result.Result;
+import otc.util.number.Number;
 
 /**
  * <p>资金流水处理类</p>
@@ -391,6 +392,7 @@ public class AmountRunUtil {
 			run.setRunType(runType);
 			run.setAmountNow(amountNow);
 			run.setAmount(amount);
+			run.setOrderId(Number.getRunOrderId());
 		    boolean addOrder = runOrderServiceImpl.addOrder(run);
 			if(addOrder)
 				return Result.buildSuccess();

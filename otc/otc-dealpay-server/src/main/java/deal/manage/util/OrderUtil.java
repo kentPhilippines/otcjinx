@@ -2,12 +2,14 @@ package deal.manage.util;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import deal.manage.bean.DealOrder;
 import deal.manage.service.OrderService;
 import otc.api.dealpay.Common;
+import otc.exception.order.OrderException;
 import otc.result.Result;
 
 @Component
@@ -32,6 +34,7 @@ public class OrderUtil {
 	 * @param operator	操作人
 	 * @return
 	 */
+	@Transactional
 	public Result orderDeal(String orderId,boolean flag,String operator ,String ip) {
 		if(flag && StrUtil.isBlank(operator)) return Result.buildFailMessage("请填写操作人");
 		/**
@@ -43,7 +46,7 @@ public class OrderUtil {
 		if(StrUtil.isBlank(orderId))
 			return Result.buildFailMessage("订单号为空");
 		DealOrder order = orderServiceImpl.findOrderByOrderId(orderId);
-		if(ObjectUtil.isNotNull(order))
+		if(ObjectUtil.isNull(order))
 			return Result.buildFailMessage("当前订单不存在");
 		String orderType = order.getOrderType();
 		boolean updateOrderStatus = false;
@@ -62,7 +65,7 @@ public class OrderUtil {
 		if(orderType.equals(Common.Order.DealOrder.DEAL_ORDER_C)) {//出款账户变更
 			Result orderAamount = amountUtil.orderAmountC(orderId,ip,flag);
 			if(!orderAamount.isSuccess())
-				return orderAamount;
+				throw new OrderException("订单结算失败", null);
 			return Result.buildSuccessMessage("操作成功");
 		}
 //		Result amountR = amountUtil.orderAmountR(order.getOrderId(),ip,flag);

@@ -25,8 +25,12 @@ import com.github.pagehelper.PageInfo;
 
 import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpUtil;
+import deal.config.annotion.LogMonitor;
+import deal.config.annotion.Submit;
 import deal.manage.bean.DealOrder;
 import deal.manage.bean.Runorder;
 import deal.manage.bean.UserInfo;
@@ -118,6 +122,9 @@ public class OrderContorller {
 	@Autowired EnterOrderUtil enterOrderUtil;
 	@GetMapping("/userConfirmToPaid")
 	@ResponseBody
+	@Transactional
+	@LogMonitor(required = true)//登录放开
+	@Submit(required = true)
 	public Result userConfirmToPaid(HttpServletRequest request,String orderId) throws NumberFormatException, UnsupportedEncodingException {
 		UserInfo user = sessionUtil.getUser(request);
 		System.out.println("订单号收到款项,状态变更为成功："+orderId);
@@ -126,15 +133,23 @@ public class OrderContorller {
 		DealOrder order = orderServiceImpl.findOrderByOrderId(orderId);
 		Date createTime = order.getCreateTime();
 		String msg = "卡商手动置交易订单为成功，当前交易订单为："+order.getOrderId()+"，当前订单金额为："+order.getDealAmount()+",操作ip为:"+areaIp.getIp();
-		logUtil.addLog(request, msg, user.getUserId());
-		boolean expired = DateUtil.isExpired(createTime,DateField.SECOND,1200,new Date());
+		ThreadUtil.execute(()->{
+			logUtil.addLog(request, msg, user.getUserId());
+		});
+	/*	boolean expired = DateUtil.isExpired(createTime,DateField.SECOND,1200,new Date());
 		if(!expired)
-			return Result.buildFailResult("无权限，请联系客服人员操作");
-		Result enterOrderSu = enterOrderUtil.EnterOrderSu(orderId, user.getUserId(), areaIp.getIp());
-		if(enterOrderSu.isSuccess()) {
+			return Result.buildFailResult("无权限，请联系客服人员操作");*/
+		Result enterOrderSu = Result.buildFailMessage("失败");
+		lock.lock();
+		try {
+			enterOrderSu = enterOrderUtil.EnterOrderSu(orderId, user.getUserId(), HttpUtil.getClientIP(request));
+			log.info("【订单置为成功返回结果："+enterOrderSu.toString()+"】");
+			if(enterOrderSu.isSuccess()) 
 			return enterOrderSu;
-		}
-		return Result.buildFailResult("无权限，请联系客服人员操作");
+		} finally {
+			lock.unlock();
+		}  
+		return Result.buildFailMessage("无权限，请联系客服人员操作");
 	}
 	
 	/**
@@ -175,6 +190,8 @@ public class OrderContorller {
 	@GetMapping("/enterOrderEr")
 	@ResponseBody
 	@Transactional
+	@LogMonitor(required = true)//登录放开
+	@Submit(required = true)
 	public Result enterOrderEr(HttpServletRequest request ,String orderId) throws NumberFormatException, UnsupportedEncodingException {
 		UserInfo user = sessionUtil.getUser(request);
 		DealOrder order = new DealOrder();
@@ -190,7 +207,8 @@ public class OrderContorller {
 		Result enterOrderSu = Result.buildFail();
 		lock.lock();
 		try {
-			enterOrderSu = enterOrderUtil.CardAppEnterOrderEr(orderId, user.getUserId(), areaIp.getIp());
+			enterOrderSu = enterOrderUtil.CardAppEnterOrderEr(orderId, user.getUserId(),HttpUtil.getClientIP(request));
+			log.info("【订单置为失败返回结果："+enterOrderSu.toString()+"】");
 		} finally {
 			lock.unlock();
 		}  

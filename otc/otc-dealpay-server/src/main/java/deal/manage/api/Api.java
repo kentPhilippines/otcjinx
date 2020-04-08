@@ -43,14 +43,6 @@ public class Api {
 	@Autowired OrderService orderServiceImpl;
 	@Autowired LogUtil logUtil;
 	private static String Url;
-
-
-	
-	
-	
-	
-	
-	
 	
 	
 	

@@ -125,10 +125,12 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public List<DealOrder> findOrderByUser(String userId, String orderType, String formatDateTime,
-			String formatDateTime2) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<DealOrder> findOrderByUser(String userId, String orderType, String startTime,
+			String endTime) {
+		List<DealOrder> selectByExample = dealOrderDao.findOrderByUser(userId,orderType,startTime,endTime);
+		return selectByExample;
+		
+		
 	}
 
 	@Override

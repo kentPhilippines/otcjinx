@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 @Mapper
 public interface OrderStatusMapper {
     int countByExample(OrderStatusExample example);
@@ -29,4 +30,7 @@ public interface OrderStatusMapper {
     int updateByPrimaryKeySelective(OrderStatus record);
 
     int updateByPrimaryKey(OrderStatus record);
+    
+    @Select("select * from dealpay_order_status where orderId = #{orderId}")
+	OrderStatus queryByOrderId(@Param("orderId") String orderId);
 }

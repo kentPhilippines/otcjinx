@@ -18,7 +18,7 @@ public class RunOrderServiceImpl implements RunOrderService {
 	@Override
 	public boolean addOrder(Runorder run) {
 		int selective = runorderDao.insertSelective(run);
-		return selective > 1 && selective < 2;
+		return selective > 0 && selective < 2;
 	}
 
 	@Override

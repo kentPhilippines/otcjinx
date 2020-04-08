@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 @Mapper
 public interface DealOrderMapper {
@@ -44,7 +45,7 @@ public interface DealOrderMapper {
      * @param orderStatus		订单状态
      * @return
      */
-    @Update("update dealpay_deal_order set orderStatus = #{orderStatus} where orderId = #{orderId} ")
+    @Update("update dealpay_deal_order set orderStatus = #{orderStatus} , submitTime = NOW() where orderId = #{orderId} ")
 	int updateOrder(@Param("orderId")String orderId,@Param("orderStatus") String orderStatus);
     /**
      * <p>人工修改交易订单状态</p>
@@ -53,7 +54,7 @@ public interface DealOrderMapper {
      * @param msg				记录消息
      * @return
      */
-    @Update("update dealpay_deal_order set orderStatus = #{orderStatus} ,dealDescribe = #{msg} where orderId = #{orderId} ")
+    @Update("update dealpay_deal_order set orderStatus = #{orderStatus} , dealDescribe = #{msg} , submitTime = NOW() where orderId = #{orderId} ")
 	int updateOrderStatus(@Param("orderId")String orderId,@Param("orderStatus") String orderStatus,@Param("msg")  String msg);
     
     /**
@@ -61,5 +62,23 @@ public interface DealOrderMapper {
      * @param orderId				订单号
      * @return
      */
-	DealOrder findOrderByOrderId(String orderId);
+    @Select("select * from dealpay_deal_order where orderId = #{orderId}")
+	DealOrder findOrderByOrderId(@Param("orderId") String orderId);
+
+	
+	@Select(" select r.depositor AS dealDescribe ," + 
+			"	    d.*" + 
+			"      from " + 
+			"      	dealpay_deal_order d" + 
+			"      	left join dealpay_recharge r on r.orderId = d.associatedId" + 
+			"      	left join dealpay_order_status p on d.orderId = p.orderId" + 
+			"      where" + 
+			"      1=1" + 
+			"        and d.createTime between #{startTime} and #{endTime}" + 
+			"        and d.orderType = #{orderType}	" + 
+			"		and d.orderQrUser = #{userId}" + 
+			"		order by d.createTime desc")
+	List<DealOrder> findOrderByUser(
+			@Param("userId")String userId, @Param("orderType")String orderType,
+			@Param("startTime") String startTime,@Param("endTime") String endTime);
 }
