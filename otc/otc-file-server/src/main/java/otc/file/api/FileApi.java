@@ -8,9 +8,13 @@ import java.nio.file.Paths;
 
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -65,4 +69,23 @@ public class FileApi {
 		return null;
 	}
 
+	@GetMapping("/fetch/{id:.+}")
+	public ResponseEntity<Resource> fetch(@PathVariable String id) {
+		try {
+	String fileType = "image/jpeg";
+	MediaType mediaType = MediaType.parseMediaType(fileType);
+	Result config = configServiceClientFeignImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.LOCAL_STORAGE_PATH);
+	String path = config.getResult().toString();
+	Path file = Paths.get(path).resolve(id);
+	Resource resource;
+		resource = new UrlResource(file.toUri());
+		if (resource == null) 
+				return ResponseEntity.notFound().build();
+	return ResponseEntity.ok().contentType(mediaType).body(resource);
+	} catch (MalformedURLException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+		return null;
+	}
 }

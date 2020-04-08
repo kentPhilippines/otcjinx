@@ -615,6 +615,11 @@ public class AmountUtil {
 	 * @return
 	 */
 	public Result orderAmountC(String orderId) {
+		
+		
+		
+		
+		
 		return null;
 	}
 }
