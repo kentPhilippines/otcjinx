@@ -155,18 +155,24 @@ public class OrderContorller {
 	@Transactional
 	public Result findMyAccountChangeLogByPage(HttpServletRequest request,String startTime,
 			String pageNum,String pageSize,String accountChangeTypeCode) {
+		log.info("==========>"+accountChangeTypeCode);
 		RunOrder order = new RunOrder();
 		UserInfo user = sessionUtil.getUser(request);
 		if (ObjectUtil.isNull(user)) {
 	        log.info("当前用户未登陆");
 	        return Result.buildFailMessage("当前用户未登陆");
 	    }
+		List<RunOrder> orderList =null;
 		order.setOrderAccount(user.getUserId());
-		if(StrUtil.isNotBlank(startTime)) 
-			order.setTime(startTime);
-		if(StrUtil.isNotBlank(accountChangeTypeCode))
-			order.setRunType(accountChangeTypeCode);
-		List<RunOrder> orderList = orderServiceImpl.findOrderRunByPage(order);
+		if(accountChangeTypeCode=="" ||startTime=="") {
+			orderList = orderServiceImpl.findAllOrderRunByPage(order);
+		}else {
+				order.setTime(startTime);
+				order.setRunOrderType(Integer.valueOf(accountChangeTypeCode));
+			orderList = orderServiceImpl.findOrderRunByPage(order);
+		}
+	
+		
 		PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
 		PageInfo<RunOrder> pageInfo = new PageInfo<RunOrder>(orderList);
 		PageResult<RunOrder> pageR = new PageResult<RunOrder>();
