@@ -79,7 +79,6 @@ public interface BankListMapper {
     @Select("select * from dealpay_bank_list where account = #{userId}")
 	List<BankList> findBankCardByQr(@Param("userId")String userId);
 
-<<<<<<< HEAD
     
     @Select("SELECT * FROM dealpay_bank_list  " + 
     		" WHERE account IN  ( SELECT userId FROM `dealpay_user_fund` WHERE " + 
@@ -90,7 +89,5 @@ public interface BankListMapper {
 
     @Select("select * from dealpay_bank_list where cardType = 1 and status = 1 and isDeal = 2")
 	List<BankList> findSystemBank();
-=======
 	List<BankList> selectBankCardById(BankList bank);
->>>>>>> branch 'newjob' of https://github.com/kiwi20200315/otc-gateway.git
 }
