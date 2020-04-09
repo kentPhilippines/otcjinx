@@ -227,7 +227,30 @@ public class OrderServiceImpl implements OrderService{
 	 */
 	@Override
 	public List<DealOrder> findMyOrder(DealOrder order) {
-		return dealOrderMapper.findMyOrder(order);
+	     DealOrderExample example=new DealOrderExample();
+         DealOrderExample.Criteria criteria=example.createCriteria();
+     	if(StrUtil.isNotBlank(order.getOrderQrUser()))
+     		criteria.andOrderQrUserEqualTo(order.getOrderQrUser());
+     	if(StrUtil.isNotBlank(order.getRetain1()))
+     		criteria.andOrderRetain1EqualTo(order.getRetain1());
+    	if(StrUtil.isNotBlank(order.getTime())) {
+			Date date = getDate(order.getTime());
+			Calendar calendar = new GregorianCalendar();
+			calendar.setTime(date);
+			calendar.set(Calendar.HOUR,0);
+			calendar.set(Calendar.MINUTE,0);
+			calendar.set(Calendar.SECOND,0);
+			calendar.set(Calendar.MILLISECOND,0);
+			System.out.println("开始时间："+calendar.getTime());
+			Date time = calendar.getTime();
+			calendar.set(Calendar.HOUR,23);
+			calendar.set(Calendar.MINUTE,59);
+			calendar.set(Calendar.SECOND,59);
+			calendar.set(Calendar.MILLISECOND,999);
+			System.out.println("结束时间："+calendar.getTime());
+			criteria.andCreateTimeBetween(time, calendar.getTime());
+		}
+		return dealOrderMapper.selectByExample(example);
 	}
 	@Override
 	public boolean addOrder(DealOrder orderApp) {

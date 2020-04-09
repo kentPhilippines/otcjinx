@@ -26,7 +26,7 @@
 			<div class="input-group" style="padding-bottom: 0.3rem; padding-top: 0.3rem;">
 				<select class="form-control" style="width: 2.2rem; height: 3rem;" v-model="gatheringChannelCode">
 					<option value="">收款渠道</option>
-					<option v-for="dictItem in gatheringChannelDictItems" :value="dictItem.payCode">{{dictItem.productName}}</option>
+					<option v-for="dictItem in gatheringChannelDictItems" :value="dictItem.productId">{{dictItem.productName}}</option>
 				</select><input type="date" class="form-control" style="width: 8rem;" v-model="receiveOrderTime">
 				<div class="input-group-append">
 					<button class="btn btn-outline-secondary" type="button" v-on:click="query">查询</button>
@@ -120,7 +120,7 @@
 				 loadGatheringChannelDictItem : function() {
 						var that = this;
 						that.$http.get('/recharge/findEnabledPayType' ).then(function(res) {
-							//console.log("findEnabledPayType--->",res.body.result);
+							console.log("findEnabledPayType--->",res.body.result);
 							this.gatheringChannelDictItems = res.body.result;
 						});
 					},
@@ -142,11 +142,12 @@
 
 				loadByPage : function() {
 					var that = this;
+					console.log(that.gatheringChannelCode);
 					that.$http.get('/order/findMyReceiveOrderRecordByPage', {
 						params : {
 							pageSize : 5,
 							pageNum : that.pageNum,
-							gatheringChannelCode : that.gatheringChannelCode,
+							productId : that.gatheringChannelCode,
 							receiveOrderTime : that.receiveOrderTime
 						}
 					}).then(function(res) {
