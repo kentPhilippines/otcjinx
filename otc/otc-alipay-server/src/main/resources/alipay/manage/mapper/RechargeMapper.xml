@@ -302,10 +302,10 @@
         #{chargeReason,jdbcType=LONGVARCHAR},
       </if>
        <if test="weight != null" >
-        weight,
+        #{weight},
       </if>
       <if test="backUrl != null" >
-        backUrl,
+         #{backUrl},
       </if>
     </trim>
   </insert>

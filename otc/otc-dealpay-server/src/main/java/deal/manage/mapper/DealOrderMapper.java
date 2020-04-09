@@ -81,4 +81,12 @@ public interface DealOrderMapper {
 	List<DealOrder> findOrderByUser(
 			@Param("userId")String userId, @Param("orderType")String orderType,
 			@Param("startTime") String startTime,@Param("endTime") String endTime);
+
+	/**
+	 * 根据关联订单号查询顶大
+	 * @param orderId
+	 * @return
+	 */
+	@Select("select * from dealpay_deal_order where associatedId = #{orderId}")
+	DealOrder findOrderByAssociatedId(@Param("orderId") String orderId);
 }

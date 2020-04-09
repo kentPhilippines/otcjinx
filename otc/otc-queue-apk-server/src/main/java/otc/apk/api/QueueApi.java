@@ -66,9 +66,7 @@ public class QueueApi {
 		log.info("【远程调用参数："+medium.toString()+"】");
 		log.info("【执行出列操作，出列对象："+medium.getMediumNumber()+"】");
 		boolean deleteNode = queueList.deleteNode(medium.getMediumNumber(),medium.getAttr());
-		if(deleteNode)
-			return Result.buildSuccess();
-		return Result.buildFailMessage("打开失败");
+		return Result.buildSuccess();
 	}
 	
 }

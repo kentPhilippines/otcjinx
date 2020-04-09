@@ -30,8 +30,7 @@ public class OrderServiceImpl implements OrderService {
 
 	@Override
 	public DealOrder findOrderByAssociatedId(String orderId) {
-		// TODO Auto-generated method stub
-		return null;
+		return dealOrderDao.findOrderByAssociatedId(orderId);
 	}
 
 	@Override

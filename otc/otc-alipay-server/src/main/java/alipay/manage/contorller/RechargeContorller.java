@@ -18,10 +18,14 @@ import alipay.manage.util.LogUtil;
 import alipay.manage.util.SessionUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
+import cn.hutool.json.JSON;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +38,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import otc.api.alipay.Common;
 import otc.bean.dealpay.Recharge;
 import otc.bean.dealpay.Withdraw;
+import otc.result.DealBean;
 import otc.result.Result;
 import otc.util.encode.HashKit;
 import otc.util.number.Number;
@@ -43,6 +48,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -87,6 +93,8 @@ public class RechargeContorller {
      */
     @PostMapping("/generateRechargeOrder")
     @ResponseBody
+	@LogMonitor(required = true)//登录放开
+	@Submit(required = true)
     public Result generateRechargeOrder(Recharge param, HttpServletRequest request) {
         UserInfo user = sessionUtil.getUser(request);
         log.info("【参数信息："+param.toString()+"】");
@@ -115,8 +123,13 @@ public class RechargeContorller {
 		} catch (Exception e) {
 			 return Result.buildFailMessage("暂无充值渠道");
 		}
-        if(recharge.isSuccess()) 
-        	return Result.buildSuccessResult(recharge.getResult());
+        if(recharge.isSuccess()) {
+        	Object result = recharge.getResult();
+        	LinkedHashMap<Object, Object> map = (LinkedHashMap<Object, Object>)result;
+        //	Map<String, Object> objectToMap = otc.util.MapUtil.objectToMap(result);
+        	log.info("【json数据："+map.toString()+"】");
+        	return Result.buildSuccessResult(map.get("url"));
+        }
         return Result.buildFailMessage("暂无充值渠道");
     }
     Recharge createRechrage(Recharge param){

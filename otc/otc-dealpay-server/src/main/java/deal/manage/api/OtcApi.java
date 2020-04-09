@@ -220,6 +220,7 @@ public class OtcApi {
 		else
 			userId = findOrderByOrderId.getOrderQrUser();
 		Result enterOrderSu = enterOrderUtil.EnterOrderSu(orderId, userId,HttpUtil.getClientIP(request));
+		log.info("【确认后返回值："+enterOrderSu.toString()+"】");
 		return enterOrderSu ;
 	}
 	long dataSu(Date  timeBe , Date timeEnd) throws ParseException{

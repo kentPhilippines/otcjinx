@@ -20,7 +20,13 @@
     <result column="submitTime" property="submitTime" jdbcType="TIMESTAMP" />
     <result column="status" property="status" jdbcType="INTEGER" />
     <result column="retain1" property="retain1" jdbcType="CHAR" />
+    
+    
+    
+    
     <result column="weight" property="weight" jdbcType="VARCHAR" />
+    <result column="backUrl" property="backUrl" jdbcType="VARCHAR" />
+    
   </resultMap>
   <resultMap id="ResultMapWithBLOBs" type="otc.bean.dealpay.Recharge" extends="BaseResultMap" >
     <result column="chargeReason" property="chargeReason" jdbcType="LONGVARCHAR" />
@@ -85,7 +91,7 @@
   </sql>
   <sql id="Base_Column_List" >
     id, orderId, userId, rechargeType, orderStatus, depositor, amount, fee, actualAmount, 
-    chargeBankcard, phone, notfiy, chargeCard, chargePerson, createTime, submitTime, weight,
+    chargeBankcard, phone, notfiy, chargeCard, chargePerson, createTime, submitTime,, weight , backUrl,
     status, retain1
   </sql>
   <sql id="Blob_Column_List" >
@@ -212,8 +218,11 @@
       <if test="chargeReason != null" >
         chargeReason,
       </if>
-      <if test="weight != null" >
+     <if test="weight != null" >
         weight,
+      </if>
+      <if test="backUrl != null" >
+        backUrl,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -271,8 +280,11 @@
       <if test="chargeReason != null" >
         #{chargeReason,jdbcType=LONGVARCHAR},
       </if>
-      <if test="weight != null" >
+        <if test="weight != null" >
         #{weight},
+      </if>
+      <if test="backUrl != null" >
+         #{backUrl},
       </if>
     </trim>
   </insert>
@@ -342,8 +354,11 @@
       <if test="record.chargeReason != null" >
         chargeReason = #{record.chargeReason,jdbcType=LONGVARCHAR},
       </if>
-      <if test="record.weight != null" >
-        weight = #{record.weight},
+          <if test="record.weight != null" >
+        weight  = #{record.weight}
+      </if>
+      <if test="record.backUrl != null" >
+        backUrl = #{record.backUrl}
       </if>
     </set>
     <if test="_parameter != null" >

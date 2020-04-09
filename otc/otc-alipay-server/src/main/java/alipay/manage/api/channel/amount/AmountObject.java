@@ -25,6 +25,7 @@ public abstract class AmountObject  implements AmountChannel{
 		public Result recharge(Recharge rechaege) {
 			//  返回充值接口
 			Result recharge = dealpayServiceClienImpl.recharge(rechaege);
+			log.info("【充值渠道返回数据："+recharge.toString()+"】");
 			return recharge;
 		}
 		@Override

@@ -73,9 +73,11 @@ public class EnterOrderUtil {
 		if(StrUtil.isBlank(orderId) || StrUtil.isBlank(orderStatus)  || StrUtil.isBlank(userId))  
 			return Result.buildFailResult("必传参数为空");
 		UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(userId);
-		if(ObjectUtil.isNull(userInfo))
-			return Result.buildFailResult("操作用户不存在");
-		String userType = userInfo.getUserType().toString();
+		String userType = null;
+		if(ObjectUtil.isNull(userInfo)) 
+			  userType =  Common.User.USER_TYPE_APP.toString();
+		else
+			userType = userInfo.getUserType().toString();
 		if(StrUtil.isBlank(userType))  //兼容之前的真实数据
 			userType = Common.User.USER_TYPE_CARD.toString();
 		Result enterOrderStatus = EnterOrderStatus(orderId, orderStatus, userType, userId);
