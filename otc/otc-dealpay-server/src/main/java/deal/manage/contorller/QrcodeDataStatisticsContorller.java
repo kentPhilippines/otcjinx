@@ -143,7 +143,7 @@ public class QrcodeDataStatisticsContorller {
 	public Result delMyGatheringCodeById( String id) {
 		boolean flag = bankCardServiceImpl.deleteBankById(id);
 		if(flag) 
-			return	Result.buildSuccessResult();
+			return	Result.buildSuccessMessage("删除成功");
 		return Result.buildFailMessage("删除失败");
 	}
 }
