@@ -120,7 +120,6 @@
 				 loadGatheringChannelDictItem : function() {
 						var that = this;
 						that.$http.get('/recharge/findEnabledPayType' ).then(function(res) {
-							console.log("findEnabledPayType--->",res.body.result);
 							this.gatheringChannelDictItems = res.body.result;
 						});
 					},
@@ -142,7 +141,6 @@
 
 				loadByPage : function() {
 					var that = this;
-					console.log(that.gatheringChannelCode);
 					that.$http.get('/order/findMyReceiveOrderRecordByPage', {
 						params : {
 							pageSize : 5,
@@ -151,7 +149,6 @@
 							receiveOrderTime : that.receiveOrderTime
 						}
 					}).then(function(res) {
-						//console.log("findMyReceiveOrderRecordByPage --- > " ,res.body.result.content);
 						that.myReceiveOrderRecords = res.body.result.content;
 						that.pageNum = res.body.result.pageNum;
 						that.totalPage = res.body.result.totalPage;
