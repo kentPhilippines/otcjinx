@@ -34,6 +34,8 @@ public class BankListServiceImpl implements BankListService {
 
 	@Override
 	public List<BankList> findBankInfoAccount(BankList bank) {
+		System.out.println("------"+bank.getBankcode());
+		System.out.println("------>>>>"+bank.getStatus());
 		BankListExample example = new BankListExample();
 		Criteria criteria = example.createCriteria();
 		if(StrUtil.isNotBlank(bank.getAccount()))
@@ -48,10 +50,26 @@ public class BankListServiceImpl implements BankListService {
 			criteria.andOpenAccountBankEqualTo(bank.getOpenAccountBank());
 		if(StrUtil.isNotBlank(bank.getBankcardAccount()))
 			criteria.andBankcardAccountEqualTo(bank.getBankcardAccount());
+		if(StrUtil.isNotBlank(bank.getBankcode()))
+			criteria.andBankcodeEqualTo(bank.getBankcode());	
+		if(StrUtil.isNotBlank(String.valueOf(bank.getStatus())))
+			criteria.andBankStatusEqualTo(String.valueOf(bank.getStatus()));
+		
 		List<BankList> selectByExample = bankListDao.selectByExample(example);
 		return selectByExample;
 	}
-
+	
+	@Override
+	public List<BankList> findAllBankInfoAccount(BankList bank) {
+		// 查询与自己所有相关的银行卡信息
+		BankListExample example = new BankListExample();
+		Criteria criteria = example.createCriteria();
+		if(StrUtil.isNotBlank(bank.getAccount()))
+			criteria.andAccountEqualTo(bank.getAccount());
+		List<BankList> selectByExample = bankListDao.selectByExample(example);
+		return selectByExample;
+	}
+	
 	@Override
 	public boolean deleteBankById(String id) {
 		int a = bankListDao.deleteId(id);
@@ -92,5 +110,7 @@ public class BankListServiceImpl implements BankListService {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+
 
 }

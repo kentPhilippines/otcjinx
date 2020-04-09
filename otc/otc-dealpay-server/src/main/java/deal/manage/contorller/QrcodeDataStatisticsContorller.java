@@ -93,13 +93,21 @@ public class QrcodeDataStatisticsContorller {
 	 */
 	@GetMapping("/findMyGatheringCodeByPage")
 	@ResponseBody
-	public Result findMyGatheringCodeByPage( BankList bank,HttpServletRequest request,String pageNum,String pageSize) {
+	public Result findMyGatheringCodeByPage(BankList bank,HttpServletRequest request,String pageNum,String pageSize) {
+		log.info("getBankcode "+bank.getBankcode());
+		log.info("getStatus "+bank.getStatus());
 		UserInfo user = sessionUtil.getUser(request);
 		if(ObjectUtil.isNull(user)) 
 			return Result.buildFailMessage("用户未登录");
-		PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
+		List<BankList> bankList =null;
 		bank.setAccount(user.getUserId());
-		List<BankList> bankList = bankCardServiceImpl.findBankInfoAccount(bank);
+		if(StrUtil.isBlank(bank.getBankcode())||StrUtil.isBlank(String.valueOf(bank.getStatus()))) {
+			bankList = bankCardServiceImpl.findAllBankInfoAccount(bank);
+		}else {
+			bankList = bankCardServiceImpl.findBankInfoAccount(bank);
+		}
+		
+		PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
 		PageInfo<BankList> pageInfo = new PageInfo<BankList>(bankList);
 		PageResult<BankList> pageR = new PageResult<BankList>();
 		pageR.setContent(pageInfo.getList());
