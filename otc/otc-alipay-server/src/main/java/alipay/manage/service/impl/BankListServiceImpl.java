@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import alipay.manage.bean.BankList;
 import alipay.manage.service.BankListService;
+import cn.hutool.core.util.StrUtil;
 import otc.api.alipay.Common;
 import otc.util.number.Number;
 
@@ -18,7 +19,11 @@ public class BankListServiceImpl implements BankListService{
 
 	@Override
 	public List<BankList> findBankCardByQr(String userId) {
-		List<BankList> selectByExample = bankListMapper.selectBankCardByQ(userId);
+		BankListExample example = new BankListExample();
+		BankListExample.Criteria criteria = example.createCriteria();
+		if(StrUtil.isBlank(userId))
+			criteria.andAccountEqualTo(userId);
+		List<BankList> selectByExample = bankListMapper.selectByExample(example);
 		return selectByExample;
 	}
 
