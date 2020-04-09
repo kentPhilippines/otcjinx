@@ -76,4 +76,6 @@ public interface BankListMapper {
 	BankList findBankInfoNo(@Param("bankNo")String bankNo);
     @Select("select * from dealpay_bank_list where account = #{userId}")
 	List<BankList> findBankCardByQr(@Param("userId")String userId);
+
+	List<BankList> selectBankCardById(BankList bank);
 }

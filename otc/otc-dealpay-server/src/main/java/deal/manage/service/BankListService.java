@@ -83,11 +83,13 @@ public interface BankListService {
 	 */
 	BankList findBankInfoNo(String cardbank);
 
-	
-	
-	
-	
 	List<BankList> findDealBank(BigDecimal amount);
+     /**
+      * 通过银行卡Id查询关联的用户
+      * @param bank
+      * @return
+      */
+	List<BankList> findBankCardById(BankList bank);
 
 
 

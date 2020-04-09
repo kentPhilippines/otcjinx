@@ -34,8 +34,6 @@ public class BankListServiceImpl implements BankListService {
 
 	@Override
 	public List<BankList> findBankInfoAccount(BankList bank) {
-		System.out.println("------"+bank.getBankcode());
-		System.out.println("------>>>>"+bank.getStatus());
 		BankListExample example = new BankListExample();
 		Criteria criteria = example.createCriteria();
 		if(StrUtil.isNotBlank(bank.getAccount()))
@@ -104,12 +102,19 @@ public class BankListServiceImpl implements BankListService {
 	public BankList findBankInfoNo(String cardbank) {
 		return bankListDao.findBankInfoNo(cardbank);
 	}
+	
+	@Override
+	public List<BankList> findBankCardById(BankList bank) {
+		// 通过银行卡Id查询关联的用户
+		return bankListDao.selectBankCardById(bank);
+	}
 
 	@Override
 	public List<BankList> findDealBank(BigDecimal amount) {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 
 
 
