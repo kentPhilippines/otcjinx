@@ -167,7 +167,7 @@ public class Api {
 		with.setOrderStatus(wit.getOrderStatus());
 		with.setAccname(wit.getAccname());
 		with.setUserId(wit.getUserId());
-		with.setWithdrawType(Integer.valueOf(wit.getWithdrawType()));
+		with.setWithdrawType(Common.Order.Wit.WIT_ACC);
 		with.setWeight(wit.getWeight());
 		with.setAppOrderId(wit.getAppOrderId());
 		boolean order = withdrawServiceImpl.addOrder(with);

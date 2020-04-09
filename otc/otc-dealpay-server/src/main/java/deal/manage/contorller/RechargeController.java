@@ -87,6 +87,13 @@ public class RechargeController {
         Recharge createRechrage = createRechrage(param);
         if(ObjectUtil.isNull(createRechrage))
         	return Result.buildFailMessage("充值订单生成失败");
+        /**
+		 * ################################一下不要修改，如要修改请联系开发人员或是你自己完全搞懂系统#######################
+		 * type = 1   //下游商户 码商 打开付款界面标识
+		 * type = 2   //卡商自己 充值标识
+		 * type = 3   //卡商查看出款  标识
+		 * 
+		 */
         String url = "orderId="+createRechrage.getOrderId()+"&type=2";//异常重要
         return Result.buildSuccessResult(configServiceClientImpl.getConfig(ConfigFile.DEAL, ConfigFile.Deal.RECHARGE_URL).getResult().toString()+url);
     }

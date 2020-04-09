@@ -14,7 +14,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
 import deal.manage.bean.BankList;
@@ -23,6 +26,7 @@ import deal.manage.bean.UserInfo;
 import deal.manage.bean.Withdraw;
 import deal.manage.service.BankListService;
 import deal.manage.service.RechargeService;
+import deal.manage.service.UserFundService;
 import deal.manage.service.UserInfoService;
 import deal.manage.service.WithdrawService;
 import deal.manage.util.LogUtil;
@@ -40,6 +44,7 @@ public class BankCardController {
 	@Autowired RechargeService rechargeSvc;
 	@Autowired UserInfoService userInfoServiceImpl;
 	@Autowired WithdrawService withdrawServiceImpl;
+	@Autowired UserFundService userFundServiceImpl;
 	@Autowired OrderUtil orderUtil;
 	@Autowired SessionUtil sessionUtil;
 	@Autowired LogUtil logUtil;
@@ -70,7 +75,6 @@ public class BankCardController {
 		if(ObjectUtil.isNull(user)) 
 			return Result.buildFailMessage("当前用户未登录");
 		log.info("【用户提现，提现人："+user.getUserId()+"】");
-		String orderId = Number.getWitOrder();
 		BankList  banklist = bankCardSvc.findBankByNo(bankCardAccount);
 		if(ObjectUtil.isNull(banklist)) 
 			return Result.buildFailResult("银行卡信息不正确");
@@ -83,14 +87,17 @@ public class BankCardController {
 		map.put(MOBILE,mobile);
 		map.put(MONEY_PWD,moneyPwd);
 		Result clickWithdraw = isClickWithdraw(map);
-		if(!clickWithdraw.isSuccess()) {
+		if(!clickWithdraw.isSuccess()) 
 			return clickWithdraw;
-		}
 		String msg = "卡商发起提现操作,当前提现参数：开户名："+accountHolder+"，银行名称："+bankCard+
 				"，关联卡商账号："+user.getUserId()+"，提现手机号："+ mobile+"，提现金额："+withdrawAmount+"，提现验证密码："+clickWithdraw.isSuccess();
-		logUtil.addLog(request, msg, user.getUserId());
-		log.info(orderId+"start卡商提现<<");
+		ThreadUtil.execute(()->{
+			logUtil.addLog(request, msg, user.getUserId());
+		});
+		String clientIP = HttpUtil.getClientIP(request);
+		if(StrUtil.isBlank(clientIP)) {log.info("【当前使用代理ip，或者ip无法识别，联系客服处理】");Result.buildFailMessage("当前使用代理ip，或者ip无法识别，联系客服处理");}
 		Withdraw qw = new Withdraw();
+		qw.setOrderId(Number.getWitOrderCa());
 		qw.setAccname(banklist.getAccountHolder());//开户名
 		qw.setActualAmount(new BigDecimal(withdrawAmount));//实际提现金额
 		qw.setAmount(new BigDecimal(withdrawAmount));//提现金额
@@ -101,14 +108,14 @@ public class BankCardController {
 		qw.setUserId(user.getUserId());//提现码商
 		qw.setMobile(mobile);//手机号
 		qw.setWithdrawType(otc.api.dealpay.Common.Order.Wit.WIT_BK);
-		log.info("卡商提现订单号为："+orderId);
+		log.info("卡商提现订单号为："+qw.getOrderId());
 		boolean flag = withdrawServiceImpl.addOrder(qw);
-		log.info(orderId+"卡商提现，生成订单状态："+flag);
+		log.info(qw.getOrderId()+"卡商提现，生成订单状态："+flag);
 		if(!flag) 
 			return Result.buildFailResult("生成提现订单失败");
-		log.info(orderId+"生成流水----扣保证金");
-		Result cardsubRunning = orderUtil.cardsubRunning(orderId);
-		log.info(orderId+"卡商提现end>>");
+		log.info(qw.getOrderId()+"生成流水----扣保证金");
+		Result cardsubRunning = orderUtil.cardsubRunning(qw.getOrderId(),clientIP);
+		log.info(qw.getOrderId()+"卡商提现end>>");
 		if(cardsubRunning.isSuccess())
 			return Result.buildSuccessResult("提现支付订单获取成功", "");
 		return cardsubRunning;
@@ -127,12 +134,11 @@ public class BankCardController {
 			if(!password.getResult().toString().equals(payPasword))
 				return Result.buildFailMessage("资金密码错误");
 		}
-		UserFund userFund = userInfoServiceImpl.findUserFundByAccount(map.get(USERID));
+		UserFund userFund = userFundServiceImpl.findUserFundMount(map.get(USERID));
 		BigDecimal accountbalance = userFund.getAccountBalance();
 		BigDecimal amount = new BigDecimal(map.get(AMOUNT));
 		// TODO   获取当前卡商虚拟冻结金额
-		if(accountbalance.compareTo(amount)== -1)
-			return Result.buildFailResult("当前金额不足，请重新填写金额");
+		if(accountbalance.compareTo(amount)== -1) {	log.info("【当前账户余额不足】"); return Result.buildFailResult("当前金额不足，请重新填写金额");}
 		return Result.buildSuccessResult();
 	}
 	

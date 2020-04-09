@@ -124,7 +124,7 @@ public class AmountRunUtil {
 	 * <p>码商代付流水生成</p>
 	 * @param withdraw									代付订单表
 	 * @param generationIp								ip
-	 * @param flag										true 自然流水     false  人工流水
+	 * @param flag										true 人工流水     false  自然流水
 	 * @return
 	 */
 	public Result deleteAmount(Withdraw withdraw,String generationIp,Boolean flag) {

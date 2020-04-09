@@ -74,7 +74,7 @@
 						<label>提现卡号</label>
 						<select class="form-control" style="width: 13.2rem; height: 3rem;display: inline; "    v-model="withdrawBank">
 							<option value="">请选择</option>
-							<option v-for="bank in bankInfo " :value="bank.bankCardAccount">{{bank.bankcardAccount}} -- {{bank.accountHolder }}</option>
+							<option v-for="bank in bankInfo " :value="bank.bankcardAccount">{{bank.bankcardAccount}} -- {{bank.accountHolder }}</option>
 						</select> 
 						</div>
 				</div>
@@ -166,7 +166,7 @@
 						layer.alert('请输入提现金额');
 						return;
 					}
-					if (that.withdrawAmount > that.cashDeposit + that.cash) {
+					if (that.withdrawAmount > that.cashDeposit ) {
 						layer.alert('提现金额不足');
 						return;
 					}

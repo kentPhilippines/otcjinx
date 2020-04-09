@@ -1,5 +1,7 @@
 package deal.manage.util;
 
+import java.math.BigDecimal;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -7,7 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import deal.manage.bean.DealOrder;
+import deal.manage.bean.UserFund;
+import deal.manage.bean.Withdraw;
+import deal.manage.mapper.WithdrawMapper;
 import deal.manage.service.OrderService;
+import deal.manage.service.WithdrawService;
 import otc.api.dealpay.Common;
 import otc.exception.order.OrderException;
 import otc.result.Result;
@@ -16,14 +22,18 @@ import otc.result.Result;
 public class OrderUtil {
 	@Autowired OrderService orderServiceImpl;
 	@Autowired AmountUtil amountUtil;
+	@Autowired WithdrawMapper withdrawDao;
+	@Autowired WithdrawService withdrawServiceImpl;
+	@Autowired AmountRunUtil amountRunUtil;
 	
 	/**
 	 * <p>卡商代付金额金额扣减及流水生成</p>
 	 * @param orderId		订单号
 	 * @return
 	 */
-	public Result cardsubRunning(String orderId) {
-		return Result.buildFail();
+	public Result cardsubRunning(String orderId,String ip) {
+		Result withrawOrder = withrawOrder(orderId, ip, false);
+		return withrawOrder;
 	}
 
 	
@@ -73,6 +83,33 @@ public class OrderUtil {
 	}
 	
 	
+	/**
+	 * <p>新建代付订单时候账户扣款</p>
+	 * @param orderId				代付订单号
+	 * @return
+	 */
+	private Result withrawOrder(String orderId,String ip,Boolean flag) {
+		if(StrUtil.isBlank(orderId))
+			return Result.buildFailMessage("必传参数为空");
+		Withdraw wit = withdrawServiceImpl.findOrderId(orderId);
+		UserFund userFund = new UserFund();
+		userFund.setUserId(wit.getUserId());
+		Result withdraw = amountUtil.deleteWithdraw(userFund,wit.getAmount());
+		if(!withdraw.isSuccess())
+			return withdraw;
+		Result deleteAmount = amountRunUtil.deleteAmount(wit, ip, flag);
+		if(!deleteAmount.isSuccess())
+			return deleteAmount;
+		if(wit.getFee().compareTo(new BigDecimal("0"))==0)
+			return Result.buildSuccessMessage("代付扣款成功");
+		Result withdraws = amountUtil.deleteWithdraw(userFund,wit.getFee());
+		if(!withdraws.isSuccess())
+			return withdraws;
+		Result deleteAmountFee = amountRunUtil.deleteAmountFee(wit, ip, flag);
+		if(!deleteAmountFee.isSuccess())
+			return deleteAmountFee;
+	return Result.buildSuccess();
+	}
 	
 	
 	
