@@ -40,7 +40,7 @@
 					</div>
 					<div class="form-details-item">
 						<label>收款渠道:</label> <span>{{myReceiveOrderRecord.dealType == 'bank_deal_r' ? '入款交易' : '出款交易'}}</span>
-						<label>收款金额:</label> <span style="display: contents;">{{myReceiveOrderRecord.gatheringAmount | numFilter}}元</span>
+						<label>收款金额:</label> <span style="display: contents;">{{myReceiveOrderRecord.dealAmount | numFilter}}元</span>
 					</div>
 					<div class="form-details-item">
 						<label>状态:</label> <span class="form-details-item-highlight">
