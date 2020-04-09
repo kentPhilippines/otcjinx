@@ -12,20 +12,26 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
         </dependency>
-        <dependency>
-        	<groupId>otc</groupId>
-        	<artifactId>otc-common-server</artifactId>
-        	<version>0.0.1-SNAPSHOT</version>
-        </dependency>
-		<dependency>
-		    <groupId>com.google.guava</groupId>
-		    <artifactId>guava</artifactId>
-		    <version>25.1-jre</version>
-		</dependency>
-		<dependency>
-		    <groupId>com.diffplug.guava</groupId>
-		    <artifactId>guava-cache</artifactId>
-		    <version>19.0.0</version>
-		</dependency>
     </dependencies>
+  <build>
+    <plugins>
+        <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+            <version>1.5.11.RELEASE</version>
+            <configuration><!-- 指定该Main Class为全局的唯一入口 -->
+                <classifier>exec</classifier>
+                <mainClass>otc.eureka.EurekaApplication</mainClass>
+                <layout>ZIP</layout>
+            </configuration>
+            <executions>
+                <execution>
+                    <goals>
+                        <goal>repackage</goal><!--可以把依赖的包都打包到生成的Jar包中-->
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build>
 </project>

@@ -475,10 +475,4 @@
     where id = #{id,jdbcType=INTEGER}
       and bankcardId = #{bankcardId,jdbcType=VARCHAR}
   </update>
-
-  <select id="selectBankCardByQ" parameterType="String" resultType="alipay.manage.bean.BankList">
-    select
-    <include refid="Base_Column_List" />
-    from alipay_bank_list where account = #{userId,jdbcType=VARCHAR} and status=1
-  </select>
 </mapper>

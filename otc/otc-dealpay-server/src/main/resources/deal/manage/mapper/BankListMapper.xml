@@ -475,4 +475,10 @@
     where id = #{id,jdbcType=INTEGER}
       and bankcardId = #{bankcardId,jdbcType=VARCHAR}
   </update>
+  
+  <select id="selectBankCardById" parameterType="deal.manage.bean.BankList" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    from dealpay_bank_list where id = #{id,jdbcType=INTEGER}  and account = #{account,jdbcType=VARCHAR}
+  </select>
 </mapper>

@@ -24,7 +24,8 @@
 	<div id="LowerLevelAccountReceiveOrderRecord" v-cloak>
 		<div class="page-body" style="background: #f2f2f2;">
 			<div class="input-group"　style="padding-top: 0.3rem;">
-				<input type="text" class="form-control" style="width: 8rem;" placeholder="用户名" v-model="userName"><select class="form-control" style="width: 2.2rem; height: 3rem;" v-model="orderState">
+				<input type="text" class="form-control" style="width: 8rem;" placeholder="用户名" v-model="userName">
+				<select class="form-control" style="width: 2.2rem; height: 3rem;" v-model="orderState">
 					<option value="">订单状态</option>
 					<option v-for="dictItem in orderStateDictItems" :value="dictItem.code">{{dictItem.name}}</option>
 				</select>
@@ -32,7 +33,7 @@
 			<div class="input-group" style="padding-bottom: 0.3rem;">
 				<select class="form-control" style="width: 2.2rem; height: 3rem;" v-model="gatheringChannelCode">
 					<option value="">收款渠道</option>
-					<option v-for="dictItem in gatheringChannelDictItems" :value="dictItem.payCode">{{dictItem.payName}}</option>
+					<option v-for="dictItem in gatheringChannelDictItems" :value="dictItem.payCode">{{dictItem.productName}}</option>
 				</select><input type="date" class="form-control" style="width: 8rem;" v-model="receiveOrderTime">
 				<div class="input-group-append">
 					<button class="btn btn-outline-secondary" type="button" v-on:click="query">查询</button>
@@ -41,13 +42,14 @@
 			<div class="form-details" v-for="receiveOrderRecord in receiveOrderRecords">
 				<div class="form-details-body">
 					<div class="form-details-item">
-						<label>订单号:</label> <span>{{receiveOrderRecord.orderNo}}</span>
+						<label>订单号:</label> <span>{{receiveOrderRecord.orderId}}</span>
 					</div>
 					<div class="form-details-item">
 						<label>接单时间:</label> <span>{{receiveOrderRecord.createTime | dateFilter("yyyy-mm-dd hh:mm:ss")}}</span><label class="form-details-item-highlight">{{receiveOrderRecord.receiverUserName}}</label>
 					</div>
 					<div class="form-details-item">
-						<label>收款渠道:</label> <span>{{receiveOrderRecord.dealType == 'alipay_qr' ? '支付宝' :'其他'}}</span><label>收款金额:</label> <span>{{receiveOrderRecord.gatheringAmount}}元</span>
+						<label>收款渠道:</label> <span>{{receiveOrderRecord.retain1 == 'ALIPAY_SCAN' ? '支付宝' :'其他'}}</span>
+						<label>收款金额:</label> <span>{{receiveOrderRecord.dealAmount}}元</span>
 					</div>
 					<div class="form-details-item">
 						<label>状态:</label> <span class="form-details-item-highlight">{{
@@ -161,6 +163,9 @@
 
 				loadByPage : function() {
 					var that = this;
+					console.log("userName::::"+that.userName);
+					console.log("orderState::::"+that.orderState);
+					console.log("gatheringChannelCode::::"+that.gatheringChannelCode);
 					that.$http.get('/order/findLowerLevelAccountReceiveOrderRecordByPage', {
 						params : {
 							pageSize : 5,
@@ -172,6 +177,7 @@
 							endTime : that.receiveOrderTime
 						}
 					}).then(function(res) {
+						console.log(res.body.result.content);
 						that.receiveOrderRecords = res.body.result.content;
 						that.pageNum = res.body.result.pageNum;
 						that.totalPage = res.body.result.totalPage;

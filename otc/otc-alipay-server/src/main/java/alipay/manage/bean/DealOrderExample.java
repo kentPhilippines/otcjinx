@@ -702,8 +702,12 @@ public class DealOrderExample {
         public Criteria andOrderQrUserEqualTo(String value) {
             addCriterion("orderQrUser =", value, "orderQrUser");
             return (Criteria) this;
-        }
-
+        } 
+           
+        public Criteria andOrderRetain1EqualTo(String value) {
+            addCriterion("retain1 =", value, "retain1");
+            return (Criteria) this;
+        } 
         public Criteria andOrderQrUserNotEqualTo(String value) {
             addCriterion("orderQrUser <>", value, "orderQrUser");
             return (Criteria) this;

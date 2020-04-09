@@ -6,8 +6,12 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
   <groupId>otc-task-config-server</groupId>
-  <artifactId>otc-task-config-server</artifactId>
+  <artifactId>task-config</artifactId>
    <dependencies>
+   		<dependency><!-- 注册中心  -->
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
@@ -22,13 +26,25 @@
         	<version>0.0.1-SNAPSHOT</version>
         </dependency>
   </dependencies>
-  <build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>  <!--  打包依赖插件 -->
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-		<finalName>alipay</finalName>
-	</build>
+ <build>
+    <plugins>
+        <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+            <version>1.5.11.RELEASE</version>
+            <configuration><!-- 指定该Main Class为全局的唯一入口 -->
+                <classifier>exec</classifier>
+                <mainClass>otc.ConfigApplication</mainClass>
+                <layout>ZIP</layout>
+            </configuration>
+            <executions>
+                <execution>
+                    <goals>
+                        <goal>repackage</goal><!--可以把依赖的包都打包到生成的Jar包中-->
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build>
 </project>

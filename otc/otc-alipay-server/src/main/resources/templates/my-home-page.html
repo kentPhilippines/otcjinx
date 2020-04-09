@@ -250,7 +250,6 @@
                         .get('/userAccount/getUserAccountInfo')
                         .then(
                             function (res) {
-                                console.log("获取用户账号信息：",res.body)
                                 if (res.body.result != null) {
                                     that.isLoggedInFlag = true;
                                     that.userName = res.body.result.userName;
@@ -266,7 +265,6 @@
                     var that = this;
                     that.$http.get('/statisticalAnalysis/querySubOnline').then(
                         function (res) {
-                            console.log("用户在线 " , res.body)
                             that.onlineStat = res.body.result;
                         }
                     )

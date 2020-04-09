@@ -93,13 +93,18 @@ public class QrcodeDataStatisticsContorller {
 	 */
 	@GetMapping("/findMyGatheringCodeByPage")
 	@ResponseBody
-	public Result findMyGatheringCodeByPage( BankList bank,HttpServletRequest request,String pageNum,String pageSize) {
+	public Result findMyGatheringCodeByPage(BankList bank,HttpServletRequest request,String pageNum,String pageSize) {
 		UserInfo user = sessionUtil.getUser(request);
 		if(ObjectUtil.isNull(user)) 
 			return Result.buildFailMessage("用户未登录");
-		PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
+		List<BankList> bankList =null;
 		bank.setAccount(user.getUserId());
-		List<BankList> bankList = bankCardServiceImpl.findBankInfoAccount(bank);
+		if(StrUtil.isBlank(bank.getBankcode())||StrUtil.isBlank(String.valueOf(bank.getStatus()))) {
+			bankList = bankCardServiceImpl.findAllBankInfoAccount(bank);
+		}else {
+			bankList = bankCardServiceImpl.findBankInfoAccount(bank);
+		}
+		PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
 		PageInfo<BankList> pageInfo = new PageInfo<BankList>(bankList);
 		PageResult<BankList> pageR = new PageResult<BankList>();
 		pageR.setContent(pageInfo.getList());
@@ -109,14 +114,25 @@ public class QrcodeDataStatisticsContorller {
 		return Result.buildSuccessResult(pageR);
 	}
 
-	/*
-	 * @GetMapping("/findMyGatheringCodeById")
-	 * 
-	 * @ResponseBody public Result findMyGatheringCodeById(BankList bank) {
-	 * log.info(bank.toString()); bank.setStatus(null); List<BankCardQrList>
-	 * findBankCardByBankInfo = bankCardServiceImpl.find'B(bank); return
-	 * JsonResult.buildSuccessResult(CollUtil.getFirst(findBankCardByBankInfo)); }
-	 */
+     /**
+      * 通过银行卡Id查询关联的用户
+      * @param request
+      * @param bank
+      * @return
+      */
+	 @GetMapping("/findMyGatheringCodeById")
+	 @ResponseBody
+	 public Result findMyGatheringCodeById(HttpServletRequest request,BankList bank) {
+		log.info("======"+bank.getId());
+	    UserInfo user = sessionUtil.getUser(request);
+     	if(ObjectUtil.isNull(user)) 
+     		return Result.buildFailMessage("用户未登录");
+	      bank.setAccount(user.getUserId());
+		  bank.setStatus(1); 
+		  List<BankList> findBankCardByBankInfo = bankCardServiceImpl.findBankCardById(bank);
+		  return Result.buildSuccessResult(CollUtil.getFirst(findBankCardByBankInfo)); 
+		}
+
 	/**
 	 * <p>删除一个二维码</p>
 	 * @param qr
@@ -127,7 +143,7 @@ public class QrcodeDataStatisticsContorller {
 	public Result delMyGatheringCodeById( String id) {
 		boolean flag = bankCardServiceImpl.deleteBankById(id);
 		if(flag) 
-			return	Result.buildSuccessResult();
+			return	Result.buildSuccessMessage("删除成功");
 		return Result.buildFailMessage("删除失败");
 	}
 }

@@ -62,32 +62,27 @@ public class OrderServiceImpl implements OrderService{
 		RunOrderExample.Criteria criteria = example.createCriteria();
 		if(StrUtil.isNotBlank(order.getOrderAccount()))
 			criteria.andOrderAccountEqualTo(order.getOrderAccount());
-		if(StrUtil.isNotBlank(order.getTime())) {
-			Date date = getDate(order.getTime());
-			order.setCreateTime(DateUtil.date(date));
-//			Calendar calendar = new GregorianCalendar();
-//			calendar.setTime(date);
-//			calendar.set(Calendar.HOUR,0);
-//			calendar.set(Calendar.MINUTE,0);
-//			calendar.set(Calendar.SECOND,0);
-//			calendar.set(Calendar.MILLISECOND,0);
-//			System.out.println("开始时间："+calendar.getTime());
-//			Date time = calendar.getTime();
-//			calendar.set(Calendar.HOUR,23);
-//			calendar.set(Calendar.MINUTE,59);
-//			calendar.set(Calendar.SECOND,59);
-//			calendar.set(Calendar.MILLISECOND,999);
-//			System.out.println("结束时间："+calendar.getTime());
-//			criteria.andCreateTimeBetween(time, calendar.getTime());
-			criteria.andCreateTimeEqualTo(order.getCreateTime());
-		}
-		if(CollUtil.isNotEmpty(order.getOrderAccountList()))
-			criteria.andOrderAccountListEqualTo(order.getOrderAccountList());
 		if(StrUtil.isNotBlank(String.valueOf(order.getRunOrderType())))
 			criteria.andRunOrderTypeEqualTo(order.getRunOrderType());
+		if(StrUtil.isNotBlank(order.getTime())) {
+			Date date = getDate(order.getTime());
+			Calendar calendar = new GregorianCalendar();
+			calendar.setTime(date);
+			calendar.set(Calendar.HOUR,0);
+			calendar.set(Calendar.MINUTE,0);
+			calendar.set(Calendar.SECOND,0);
+			calendar.set(Calendar.MILLISECOND,0);
+			System.out.println("开始时间："+calendar.getTime());
+			Date time = calendar.getTime();
+			calendar.set(Calendar.HOUR,23);
+			calendar.set(Calendar.MINUTE,59);
+			calendar.set(Calendar.SECOND,59);
+			calendar.set(Calendar.MILLISECOND,999);
+			System.out.println("结束时间："+calendar.getTime());
+			criteria.andCreateTimeBetween(time, calendar.getTime());
+		}
 		example.setOrderByClause("createTime desc");
 		List<RunOrder> listRunOrder=runOrderMapper.selectByExample(example);
-		log.info("============》", listRunOrder);
 		return listRunOrder;
 	}
 	Date getDate(String time){
@@ -109,8 +104,6 @@ public class OrderServiceImpl implements OrderService{
 		RunOrderExample.Criteria criteria = example.createCriteria();
 		if(StrUtil.isNotBlank(order.getOrderAccount()))
 			criteria.andOrderAccountEqualTo(order.getOrderAccount());
-		if(CollUtil.isNotEmpty(order.getOrderAccountList()))
-			criteria.andOrderAccountListEqualTo(order.getOrderAccountList());
 		List<RunOrder> listRunOrder=runOrderMapper.selectByExample(example);
 		log.info("======****======》", listRunOrder);
 		return listRunOrder;
@@ -227,7 +220,30 @@ public class OrderServiceImpl implements OrderService{
 	 */
 	@Override
 	public List<DealOrder> findMyOrder(DealOrder order) {
-		return dealOrderMapper.findMyOrder(order);
+	     DealOrderExample example=new DealOrderExample();
+         DealOrderExample.Criteria criteria=example.createCriteria();
+     	if(StrUtil.isNotBlank(order.getOrderQrUser()))
+     		criteria.andOrderQrUserEqualTo(order.getOrderQrUser());
+     	if(StrUtil.isNotBlank(order.getRetain1()))
+     		criteria.andOrderRetain1EqualTo(order.getRetain1());
+    	if(StrUtil.isNotBlank(order.getTime())) {
+			Date date = getDate(order.getTime());
+			Calendar calendar = new GregorianCalendar();
+			calendar.setTime(date);
+			calendar.set(Calendar.HOUR,0);
+			calendar.set(Calendar.MINUTE,0);
+			calendar.set(Calendar.SECOND,0);
+			calendar.set(Calendar.MILLISECOND,0);
+			System.out.println("开始时间："+calendar.getTime());
+			Date time = calendar.getTime();
+			calendar.set(Calendar.HOUR,23);
+			calendar.set(Calendar.MINUTE,59);
+			calendar.set(Calendar.SECOND,59);
+			calendar.set(Calendar.MILLISECOND,999);
+			System.out.println("结束时间："+calendar.getTime());
+			criteria.andCreateTimeBetween(time, calendar.getTime());
+		}
+		return dealOrderMapper.selectByExample(example);
 	}
 	@Override
 	public boolean addOrder(DealOrder orderApp) {

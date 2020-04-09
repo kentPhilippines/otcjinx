@@ -1,7 +1,7 @@
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://47.52.108.99:8761/eureka/
 spring:
   application:
     name: otc-zuul-server

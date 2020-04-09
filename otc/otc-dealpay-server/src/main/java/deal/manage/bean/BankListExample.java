@@ -524,13 +524,16 @@ public class BankListExample {
         public Criteria andBankcodeIsNotNull() {
             addCriterion("bankcode is not null");
             return (Criteria) this;
-        }
-
+        }  
+ 
         public Criteria andBankcodeEqualTo(String value) {
             addCriterion("bankcode =", value, "bankcode");
             return (Criteria) this;
         }
-
+        public Criteria andBankStatusEqualTo(String value) {
+            addCriterion("status =", value, "status");
+            return (Criteria) this;
+        }
         public Criteria andBankcodeNotEqualTo(String value) {
             addCriterion("bankcode <>", value, "bankcode");
             return (Criteria) this;

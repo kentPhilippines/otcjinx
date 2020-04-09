@@ -48,10 +48,26 @@ public class BankListServiceImpl implements BankListService {
 			criteria.andOpenAccountBankEqualTo(bank.getOpenAccountBank());
 		if(StrUtil.isNotBlank(bank.getBankcardAccount()))
 			criteria.andBankcardAccountEqualTo(bank.getBankcardAccount());
+		if(StrUtil.isNotBlank(bank.getBankcode()))
+			criteria.andBankcodeEqualTo(bank.getBankcode());	
+		if(StrUtil.isNotBlank(String.valueOf(bank.getStatus())))
+			criteria.andBankStatusEqualTo(String.valueOf(bank.getStatus()));
+		
 		List<BankList> selectByExample = bankListDao.selectByExample(example);
 		return selectByExample;
 	}
-
+	
+	@Override
+	public List<BankList> findAllBankInfoAccount(BankList bank) {
+		// 查询与自己所有相关的银行卡信息
+		BankListExample example = new BankListExample();
+		Criteria criteria = example.createCriteria();
+		if(StrUtil.isNotBlank(bank.getAccount()))
+			criteria.andAccountEqualTo(bank.getAccount());
+		List<BankList> selectByExample = bankListDao.selectByExample(example);
+		return selectByExample;
+	}
+	
 	@Override
 	public boolean deleteBankById(String id) {
 		int a = bankListDao.deleteId(id);
@@ -86,6 +102,12 @@ public class BankListServiceImpl implements BankListService {
 	public BankList findBankInfoNo(String cardbank) {
 		return bankListDao.findBankInfoNo(cardbank);
 	}
+	
+	@Override
+	public List<BankList> findBankCardById(BankList bank) {
+		// 通过银行卡Id查询关联的用户
+		return bankListDao.selectBankCardById(bank);
+	}
 
 	@Override
 	public List<BankList> findDealBank(BigDecimal amount) {
@@ -96,5 +118,8 @@ public class BankListServiceImpl implements BankListService {
 	public List<BankList> findSystemBank() {
 		return bankListDao.findSystemBank();
 	}
+
+
+
 
 }

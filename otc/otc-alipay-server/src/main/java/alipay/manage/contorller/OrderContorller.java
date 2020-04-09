@@ -119,8 +119,7 @@ public class OrderContorller {
 	@GetMapping("/findMyReceiveOrderRecordByPage")
 	@ResponseBody
 	@Transactional
-	public Result findMyReceiveOrderRecordByPage(HttpServletRequest request,String receiveOrderTime,String pageNum,String pageSize,String productCode) {
-		log.info("获取code " + productCode);
+	public Result findMyReceiveOrderRecordByPage(HttpServletRequest request,String receiveOrderTime,String pageNum,String pageSize,String productId) {
 		UserInfo user = sessionUtil.getUser(request);
 		if(ObjectUtil.isNull(user))
 			throw new UserException("当前用户未登录",null);
@@ -129,8 +128,8 @@ public class OrderContorller {
 		order.setOrderQrUser(user.getUserId());
 		if(StrUtil.isNotBlank(receiveOrderTime)) 
 			order.setTime(receiveOrderTime);
-		if(StrUtil.isNotBlank(productCode))
-			order.setRetain1(productCode);
+		if(StrUtil.isNotBlank(productId))
+			order.setRetain1(productId);
 		List<DealOrder> orderList = orderServiceImpl.findMyOrder(order);
 		
 		PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
@@ -156,18 +155,24 @@ public class OrderContorller {
 	@Transactional
 	public Result findMyAccountChangeLogByPage(HttpServletRequest request,String startTime,
 			String pageNum,String pageSize,String accountChangeTypeCode) {
+		log.info("==========>"+accountChangeTypeCode);
 		RunOrder order = new RunOrder();
 		UserInfo user = sessionUtil.getUser(request);
 		if (ObjectUtil.isNull(user)) {
 	        log.info("当前用户未登陆");
 	        return Result.buildFailMessage("当前用户未登陆");
 	    }
+		List<RunOrder> orderList =null;
 		order.setOrderAccount(user.getUserId());
-		if(StrUtil.isNotBlank(startTime)) 
-			order.setTime(startTime);
-		if(StrUtil.isNotBlank(accountChangeTypeCode))
-			order.setRunType(accountChangeTypeCode);
-		List<RunOrder> orderList = orderServiceImpl.findOrderRunByPage(order);
+		if(accountChangeTypeCode=="" ||startTime=="") {
+			orderList = orderServiceImpl.findAllOrderRunByPage(order);
+		}else {
+				order.setTime(startTime);
+				order.setRunOrderType(Integer.valueOf(accountChangeTypeCode));
+			orderList = orderServiceImpl.findOrderRunByPage(order);
+		}
+	
+		
 		PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
 		PageInfo<RunOrder> pageInfo = new PageInfo<RunOrder>(orderList);
 		PageResult<RunOrder> pageR = new PageResult<RunOrder>();

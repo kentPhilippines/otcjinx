@@ -24,7 +24,7 @@
 	<div id="personalAccountChange" v-cloak>
 		<div class="page-body" style="background: #f2f2f2;">
 			<div class="input-group" style="padding-bottom: 0.3rem; padding-top: 0.3rem;">
-				<select class="form-control" style="width: 2.2rem; height: 3rem;" v-model="accountChangeTypeCode" v-on:click="loadByPage">
+				<select class="form-control" style="width: 2.2rem; height: 3rem;" v-model="accountChangeTypeCode">
 					<option value="">帐变类型</option>
 					<option v-for="dictItem in accountChangeTypeDictItems" :value="dictItem.code">{{dictItem.name}}</option>
 				</select><input type="date" class="form-control" style="width: 8rem;" v-model="accountTime">
@@ -39,20 +39,20 @@
 					</div>
 					<div class="form-details-item">
 						<label>帐变类型:</label> <span>{{
-						accountChangeLog.runType  == 1 ? '充值交易' :
-						accountChangeLog.runType  == 2 ? '系统加款' :
-						accountChangeLog.runType  == 3 ? '交易手续费' :
-						accountChangeLog.runType  == 4 ? '系统扣款' :
-						accountChangeLog.runType  == 5 ? '代付' :
-						accountChangeLog.runType  == 6 ? '代付手续费' :
-						accountChangeLog.runType  == 7 ? '冻结' :
-						accountChangeLog.runType  == 8 ? '解冻' :
-						accountChangeLog.runType  == 9 ? '代付手手续费冻结' :
-						accountChangeLog.runType  == 10 ? '代付冻结' :
-						accountChangeLog.runType  == 11 ? '增加交易点数' :
-						accountChangeLog.runType  == 12 ? '点数扣除' :
-						accountChangeLog.runType  == 13 ? '代理商分润' :
-						accountChangeLog.runType  == 14 ? '码商分润' :''
+						accountChangeLog.runOrderType  == 1 ? '充值交易' :
+						accountChangeLog.runOrderType  == 2 ? '系统加款' :
+						accountChangeLog.runOrderType  == 3 ? '交易手续费' :
+						accountChangeLog.runOrderType  == 4 ? '系统扣款' :
+						accountChangeLog.runOrderType  == 5 ? '代付' :
+						accountChangeLog.runOrderType  == 6 ? '代付手续费' :
+						accountChangeLog.runOrderType  == 7 ? '冻结' :
+						accountChangeLog.runOrderType  == 8 ? '解冻' :
+						accountChangeLog.runOrderType  == 9 ? '代付手手续费冻结' :
+						accountChangeLog.runOrderType  == 10 ? '代付冻结' :
+						accountChangeLog.runOrderType  == 11 ? '增加交易点数' :
+						accountChangeLog.runOrderType  == 12 ? '点数扣除' :
+						accountChangeLog.runOrderType  == 13 ? '代理商分润' :
+						accountChangeLog.runOrderType  == 14 ? '码商分润' :''
 						}}</span>
 					</div>
 					<div class="form-details-item">
@@ -149,6 +149,7 @@
 
 				loadByPage : function() {
 					var that = this;
+					console.log(that.accountChangeTypeCode)
 					that.$http.get('/order/findMyAccountChangeLogByPage', {
 						params : {
 							pageSize : 5,

@@ -8,6 +8,10 @@
   <groupId>otc-dealpay-server</groupId>
   <artifactId>otc-dealpay-server</artifactId>
    <dependencies>
+          <dependency><!-- 注册中心  -->
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
@@ -71,8 +75,26 @@
 	        <groupId>org.springframework.boot</groupId>
 	        <artifactId>spring-boot-starter-thymeleaf</artifactId>
 	      </dependency>
-  </dependencies>
-  	<properties>
-        <java.version>1.8</java.version>
-    </properties>
+  		</dependencies>
+ <!--  <build>
+    <plugins>
+        <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+            <version>1.5.11.RELEASE</version>
+            <configuration>指定该Main Class为全局的唯一入口
+                <classifier>exec</classifier>
+                <mainClass>deal.DealpayApplication</mainClass>
+                <layout>ZIP</layout>
+            </configuration>
+            <executions>
+                <execution>
+                    <goals>
+                        <goal>repackage</goal>可以把依赖的包都打包到生成的Jar包中
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build> -->
 </project>

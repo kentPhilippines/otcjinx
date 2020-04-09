@@ -35,7 +35,12 @@ public interface BankListService {
 	 * @return
 	 */
 	List<BankList> findBankInfoAccount(BankList bank);
-
+    /**
+     * <p>查询与自己所有相关的银行卡信息</p>
+     * @param bank
+     * @return
+     */
+	List<BankList> findAllBankInfoAccount(BankList bank);
 	/**
 	 * <p>删除一个银行卡根据数据id</p>
 	 * @param id
@@ -78,11 +83,14 @@ public interface BankListService {
 	 */
 	BankList findBankInfoNo(String cardbank);
 
-	
-	
-	
-	
 	List<BankList> findDealBank(BigDecimal amount);
+     /**
+      * 通过银行卡Id查询关联的用户
+      * @param bank
+      * @return
+      */
+	List<BankList> findBankCardById(BankList bank);
+
 
 	
 	
