@@ -3,8 +3,16 @@ eureka :
     serviceUrl:
       defaultZone:  http://47.52.108.99:8761/eureka/
   instance:
+    # 是否使用ip注册
     prefer-ip-address : true
-    instance-id : ${spring.cloud.client.ipAddress}:${server.port}
+    # ${spring.cloud.client.ip-address}:${server.port}  局域网这样配置
+    #  本地调试则要直接写死ip 【这个ip为注册时候的 调用ip】
+    instance-id : 47.52.108.99:${server.port}
+    # 注册ip地址
+    ip-address : 47.52.108.99
+    # 注册ip端口
+    non-secure-port : ${server.port}
+    hostname : 47.52.108.99:${server.port}
 spring:
   application:
     name: otc-zuul-server
