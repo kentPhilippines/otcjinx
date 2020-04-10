@@ -31,22 +31,23 @@ public class CacheConfigUtil {
 	}
 	static void alipayMap(){
 		mapAlipay  = new HashMap<String, String>();
-		mapAlipay.put(ConfigFile.Alipay.LOCAL_STORAGE_PATH, "D:/img");
+		mapAlipay.put(ConfigFile.Alipay.LOCAL_STORAGE_PATH, "/img");
 		mapAlipay.put(ConfigFile.Alipay.QR_OUT_TIME, "300");
 		mapAlipay.put(ConfigFile.Alipay.QR_IS_CLICK, "3000");
 		mapAlipay.put(ConfigFile.Alipay.FREEZE_PLAIN_VIRTUAL, "1800");
 		mapAlipay.put(ConfigFile.Alipay.TIBLE_LINK, "跑分");
-		mapAlipay.put(ConfigFile.Alipay.LOCAL_STORAGE_PATH_BAK, "D:/img/bak");
+		mapAlipay.put(ConfigFile.Alipay.NEW_QRCODE_PRIORITY, "3");
+		mapAlipay.put(ConfigFile.Alipay.LOCAL_STORAGE_PATH_BAK, "/img/bak");
 		
 	}
 	static void dealMap(){
 		mapDeal  = new HashMap<String, String>();
 		mapDeal.put(ConfigFile.Deal.TIBLE_LINK, "快马卡商");
-		mapDeal.put(ConfigFile.Deal.RECHARGE_URL, "http://127.0.0.1:7010/otc365?");
+		mapDeal.put(ConfigFile.Deal.RECHARGE_URL, "http://47.52.108.99:7010/otc365?");
 	}
 	static void payMap(){
 		mapPay  = new HashMap<String, String>();
-		mapPay.put(ConfigFile.Alipay.LOCAL_STORAGE_PATH, "D:/img");
+		mapPay.put(ConfigFile.Alipay.LOCAL_STORAGE_PATH, "/img");
 	}
 	public Result getconfig(String system , String key) {
 		Object obj  ; 

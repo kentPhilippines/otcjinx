@@ -1,5 +1,6 @@
 package otc.api;
 
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,5 +23,6 @@ public interface ConfigServiceClientFeign {
 	 * @return							【返回值】
 	 */
 	@PostMapping( PayApiConstant.Config.CONFIG_API+PayApiConstant.Config.CONFIG_API_GET_CONFIG_SYSTEM)
+	@LoadBalanced
 	public Result getConfig(@RequestParam("system") String system ,@RequestParam("key")  String key);
 }

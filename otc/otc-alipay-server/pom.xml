@@ -86,7 +86,7 @@
             <version>1.5.11.RELEASE</version>
             <configuration><!-- 指定该Main Class为全局的唯一入口 -->
                 <classifier>exec</classifier>
-                <mainClass>aliapy.AlipayApplication</mainClass>
+                <mainClass>alipay.AlipayApplication</mainClass>
                 <layout>ZIP</layout>
             </configuration>
             <executions>

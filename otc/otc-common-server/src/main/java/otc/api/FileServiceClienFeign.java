@@ -1,5 +1,6 @@
 package otc.api;
 
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.core.io.Resource;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +21,7 @@ public interface FileServiceClienFeign {
 	 * @return				【文件存储成功后的图片名】
 	 */
 	@PostMapping( PayApiConstant.File.FILE_API+PayApiConstant.File.ADD_FILE)
+	@LoadBalanced
 	public String addFile(@RequestParam("file")String file);
 	/**
 	 * <p>查看文件</p>
@@ -27,6 +29,7 @@ public interface FileServiceClienFeign {
 	 * @return
 	 */
 	@PostMapping( PayApiConstant.File.FILE_API+PayApiConstant.File.FIND_FILE)
+	@LoadBalanced
 	public Resource loadAsResource(@RequestParam("id")String id);
 	
 	
@@ -36,6 +39,7 @@ public interface FileServiceClienFeign {
 	 * @return
 	 */
 	@PostMapping( PayApiConstant.File.FILE_API+PayApiConstant.File.FILE_TASK)
+	@LoadBalanced
 	public void task();
 	
 }
