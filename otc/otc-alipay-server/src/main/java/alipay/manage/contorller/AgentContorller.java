@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
+import alipay.manage.api.AccountApiService;
 import alipay.manage.bean.InviteCode;
 import alipay.manage.bean.UserFund;
 import alipay.manage.bean.UserInfo;
@@ -44,6 +45,7 @@ public class AgentContorller {
 	    @Autowired UserInfoService userInfoService;
 	    @Autowired UserRateService userRateService;
 	    @Autowired CorrelationService correlationServiceImpl;
+		@Autowired AccountApiService accountApiService;
 	    @Autowired UserUtil userUtil;
 	    /**
 	     * <p>代理商开户</p>
@@ -52,16 +54,30 @@ public class AgentContorller {
 	    @RequestMapping(value = "/agentOpenAnAccount",method = RequestMethod.POST)
 	    @ResponseBody
 	public Result agentOpenAnAccount(@RequestBody UserInfo user, HttpServletRequest request) {
-		return null;
-		/*
-		 * user.setPayPasword("zssqaz1234"); UserInfo user2 =
-		 * sessionUtil.getUser(request); log.info("user2-----"+user2.getUserId()); if
-		 * (ObjectUtil.isNull(user2.getUserId())) throw new OtherErrors("未获取到登录用户");
-		 * user.setAgent(user2.getUserId()); user.setIsAgent("1"); Result result =
-		 * agentApi.openAgentAccount(user); log.info("获取开户结果 " + result.isSuccess()); if
-		 * (result.isSuccess()) userUtil.openAccountCorrlation(user.getUserId()); return
-		 * Result.buildSuccessMessage("开户成功!!");
-		 */}
+	    	UserInfo user2 = sessionUtil.getUser(request);
+	    	if(ObjectUtil.isNull(user))
+	    		return Result.buildFailMessage("当前用户未登录");
+	    	user.setAgent(user2.getUserId());
+	    	user.setUserType(Integer.valueOf(Common.User.USER_TYPE_QR));
+			user.setIsAgent(Common.User.USER_IS_MEMBER);
+			UserRate rateR = userRateService.findUserRateR(user2.getUserId());
+			BigDecimal feeR = rateR.getFee();
+			String fee = user.getFee();//入款
+			if(!(feeR.compareTo(new BigDecimal(fee)) > -1)) 
+				return Result.buildFailMessage("入款费率设置违规");
+			Result addAccount = accountApiService.addAccount(user);
+			if(addAccount.isSuccess()) {
+				UserRate rate = new UserRate();
+				rate.setUserId(user.getUserId());
+				rate.setFee(new BigDecimal(user.getFee()));
+				rate.setFeeType(Integer.valueOf(Common.User.ALIPAY_FEE));
+				rate.setUserType(Integer.valueOf(Common.User.USER_TYPE_QR));
+				boolean add = userRateService.add(rate);
+				if(add) 
+					return Result.buildSuccessMessage("开户成功");
+			}
+			 return Result.buildFailMessage("开户失败");
+			}
 	    /**
 	     * <p>密码修改</p>
 	     * 	手机端专用

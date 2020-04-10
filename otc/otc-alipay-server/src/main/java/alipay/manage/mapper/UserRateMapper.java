@@ -7,7 +7,6 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.type.MappedJdbcTypes;
 @Mapper
 public interface UserRateMapper {
     int countByExample(UserRateExample example);
@@ -55,4 +54,19 @@ public interface UserRateMapper {
     
     @Select("select * from alipay_user_rate where userId = #{userId}")
 	UserRate findUserRateInfoByUserId(@Param("userId") String userId);
+	/**
+	 * 查询卡商入款费率
+	 * @param account
+	 * @return
+	 */
+	@Select("select * from  alipay_user_rate where feeType = 1 and userId =  #{userId}")
+	UserRate findUserRateR(@Param("userId") String userId);
+
+	/**
+	 * <p>查询卡商出款费率</p>
+	 * @param userId
+	 * @return
+	 */
+	@Select("select * from  alipay_user_rate where feeType = 2 and userId =  #{userId}")
+	UserRate findUserRateC(@Param("userId") String userId);
 }
