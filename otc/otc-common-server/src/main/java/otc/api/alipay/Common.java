@@ -47,6 +47,7 @@ public class Common {
 		 * <p>用户总开关，关闭</p>
 		 */
 		public static final String USER_INFO_OFF = "0";//用户总开关关闭
+		public static final String ALIPAY_FEE ="1";//入款费率
 	}
 
 

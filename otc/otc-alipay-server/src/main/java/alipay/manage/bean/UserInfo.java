@@ -47,8 +47,15 @@ public class UserInfo implements Serializable{
     private String witip; //代付ip
     private String queueList;//供应队列code  以逗号分隔
     
+    private String fee;
     
-    public String getAmount() {
+    public String getFee() {
+		return fee;
+	}
+	public void setFee(String fee) {
+		this.fee = fee;
+	}
+	public String getAmount() {
 		return amount;
 	}
 	public void setAmount(String amount) {

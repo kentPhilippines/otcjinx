@@ -13,7 +13,6 @@ public class UserRateServiceImpl implements UserRateService {
     @Override
     public UserRate findProductFeeBy(String userId, String productCode) {
         UserRate userRate=userRateMapper.findProductFeeBy(userId,productCode);
-        System.out.println("获取结果---->" + userRate);
         return userRate;
     }
 	@Override
@@ -21,5 +20,21 @@ public class UserRateServiceImpl implements UserRateService {
 		// 查询当前用户的费率值
 		UserRate userRate=userRateMapper.findUserRateInfoByUserId(userId);
 		return userRate;
+	}
+	@Override
+	public UserRate findUserRateR(String userId) {
+		// TODO Auto-generated method stub
+		return userRateMapper.findUserRateR(userId);
+	}
+	@Override
+	public UserRate findUserRateC(String userId) {
+		// TODO Auto-generated method stub
+		return userRateMapper.findUserRateC(userId);
+	}
+	@Override
+	public boolean add(UserRate rate) {
+		// TODO Auto-generated method stub
+		int insertSelective = userRateMapper.insertSelective(rate);
+		return insertSelective > 0 && insertSelective < 2;
 	}
 }

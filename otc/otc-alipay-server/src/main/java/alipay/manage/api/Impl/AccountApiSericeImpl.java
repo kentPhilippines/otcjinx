@@ -41,10 +41,10 @@ public class AccountApiSericeImpl implements AccountApiService {
     public Result addAccount(UserInfo user) {
         if (ObjectUtil.isNull(user))
             return Result.buildFailMessage("实体类为空，请检查传递方法是否正确");
-        if (StrUtil.isBlank(user.getUserId()) || StrUtil.isBlank(user.getUserName())
+        if (StrUtil.isBlank(user.getUserId()) 
+        		|| StrUtil.isBlank(user.getUserName())
                 || ObjectUtil.isNull(user.getUserType())
                 || StrUtil.isBlank(user.getIsAgent())
-                || StrUtil.isBlank(user.getEmail())
         ) {
             return Result.buildFailMessage("必传参数为空");
         }
@@ -54,7 +54,6 @@ public class AccountApiSericeImpl implements AccountApiService {
         String salt = HashKit.randomSalt();
         Result password = HashKit.encodePassword(user.getUserId(), user.getPassword(), salt);
         Result payPasword = HashKit.encodePassword(user.getUserId(), user.getPayPasword(), salt);
-        log.info("payPasword " + payPasword.isSuccess());
         if (!password.isSuccess())
             return Result.buildFailMessage("生成密钥失败");
         if (!payPasword.isSuccess())
