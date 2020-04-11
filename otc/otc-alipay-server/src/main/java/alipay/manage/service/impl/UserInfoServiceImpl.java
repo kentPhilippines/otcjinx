@@ -59,7 +59,7 @@ public class UserInfoServiceImpl implements UserInfoService{
 		UserInfoExample example = new UserInfoExample();
 		UserInfoExample.Criteria criteria = example.createCriteria();
 		if (StrUtil.isNotBlank(user.getUserId()))
-			criteria.andAccountIdEqualTo(user.getUserId());
+			criteria.andUserIdEqualTo(user.getUserId());
 		if (StrUtil.isNotBlank(user.getAgent()))
 			criteria.andAgentEqualTo(user.getAgent());
 		List<UserInfo> userInfos = userInfoMapper.selectByExample(example);
