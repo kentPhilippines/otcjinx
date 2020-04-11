@@ -37,4 +37,10 @@ public class UserRateServiceImpl implements UserRateService {
 		int insertSelective = userRateMapper.insertSelective(rate);
 		return insertSelective > 0 && insertSelective < 2;
 	}
+	@Override
+	public boolean updateRateR(String userId, String fee,String payTypr) {
+		//修改一个码商的入款费率
+		int a = userRateMapper.updateRateR(userId,fee,payTypr);
+		return a > 0 && a < 2;
+	}
 }

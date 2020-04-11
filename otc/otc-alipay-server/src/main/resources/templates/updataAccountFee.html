@@ -13,18 +13,33 @@
 <script src="https://cdn.bootcss.com/layer/2.3/layer.js"></script>
 <script src="/static/js/common/common.js"></script>
 <link href="/static/css/common/common.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+.form-control{
+   width: 299px;
+  }
+</style>
 <div id="updataAccountFee" v-cloak>
 <div class="form-group">
+	 <div class="form-details-item">
+	 	<select class="form-control" style="width: 7.2rem; height: 2.5rem;" v-model="accountChangeTypeCode">
+			<option value="">产品类型</option>
+			<option v-for="dictItem in accountChangeTypeDictItems" :value="dictItem.productId">
+			{{dictItem.productName}}
+			</option>
+		</select>
+	 </div>
 	<div class="form-details-item">
-	 <label>账号</label> <input type="text" class="form-control" placeholder="请输入账号" v-model="accountName">
+	 <label>账号</label>
+	 <input type="text" class="form-control" placeholder="请输入账号" v-model="accountName">
 	</div>
 	<div class="form-details-item">
 	 <label>费率</label>
 	 <span>允许区间   {{agentFee}}   -   {{isfee}}</span>
-	  <input type="text" class="form-control" placeholder="请输入账号" v-model="fee">
+	  <input type="text" class="form-control" placeholder="请输入费率" v-model="fee">
 	 </div>
-	 	<button  class="btn btn-outline-info btn-lg"  type="button"   style="margin: 0.2rem 0.2rem 0.2rem 0.2rem;  width: 7rem; height: 3rem;"  v-on:click="updataAgentFee()"><span>确认修改</span>  </button>		
-	 	<button  class="btn btn-outline-info btn-lg"  type="button"   style="margin: 0.2rem 0.2rem 0.2rem 0.2rem;  width: 7rem; height: 3rem;"  v-on:click="closeAll()"><span>关闭</span>  </button>		
+
+ 	<button  class="btn btn-outline-info btn-lg"  type="button"   style="margin: 0.2rem 0.2rem 0.2rem 0.2rem;  width: 7rem; height: 3rem;"  v-on:click="updataAgentFee()"><span>确认修改</span>  </button>		
+ 	<button  class="btn btn-outline-info btn-lg"  type="button"   style="margin: 0.2rem 0.2rem 0.2rem 0.2rem;  width: 7rem; height: 3rem;"  v-on:click="closeAll()"><span>关闭</span>  </button>		
  </div>
  </div>
  <script type="text/javascript">
@@ -35,7 +50,9 @@
 			accountId : '',
 			accountName : '',
 			agentFee : '',
-			isfee:''
+			isfee:'',
+			accountChangeTypeCode : '',
+			accountChangeTypeDictItems:[]
 		},
 		computed : {},
 		created : function() {
@@ -43,16 +60,23 @@
 		mounted : function() {
 			var accountId = getQueryString('accountId');
 			this.accountId = accountId;
+			this.findAllproduct();
 			this.findUserByAccountId();
 			this.getUserAccountInfo();
 		},
 		methods : {
+			findAllproduct:function(){
+				that=this;
+				that.$http.post('/recharge/findEnabledPayType').then(function(res) {
+					that.accountChangeTypeDictItems = res.body.result;
+				});
+			},
 			findUserByAccountId : function(){
 				that = this;
-				that.$http.post('/userAccount/findUserByAccountId', { accountId : that.accountId }, { emulateJSON : true })
+				that.$http.post('/userAccount/findUserByAccountId', { userId : that.accountId }, { emulateJSON : true })
 				.then(function(res) {
 					that.fee = res.body.result.fee;
-					that.accountName = res.body.result.accountName
+					that.accountName = res.body.result.userName
 				});
 			},
 			getUserAccountInfo : function() {
@@ -79,7 +103,7 @@
 			},
 			updataAgentFee : function(){
 				var that = this;
-				that.$http.post('/userAccount/updataAgentFee',{ fee : that.fee, accountId : that.accountId},{ emulateJSON : true })
+				that.$http.post('/userAccount/updataAgentFee',{ fee : that.fee, userId :that.accountId, payTypr: that.accountChangeTypeCode},{ emulateJSON : true })
 				.then(function(res) {
 							if(res.body.success){
 								parent.layer.closeAll();

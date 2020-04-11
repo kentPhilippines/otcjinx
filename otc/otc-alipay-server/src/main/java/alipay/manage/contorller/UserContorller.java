@@ -1,7 +1,10 @@
 package alipay.manage.contorller;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -26,6 +29,7 @@ import alipay.manage.service.UserInfoService;
 import alipay.manage.service.UserRateService;
 import alipay.manage.util.SessionUtil;
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import otc.exception.user.UserException;
@@ -57,7 +61,9 @@ public class UserContorller {
 	    }
 		UserInfo user2 = userInfoServiceImpl.findUserInfoByUserId(user.getUserId());
 		UserFund userFund = userInfoServiceImpl.findUserFundByAccount(user.getUserId());
+		UserRate rateR = userRateService.findUserRateR(user.getUserId());
 		user2.setAmount(userFund.getAccountBalance().toString());
+		user2.setFee(rateR.getFee().toString());
 		return Result.buildSuccessResult(user2);
 	}
 
@@ -217,46 +223,68 @@ public class UserContorller {
 			return	Result.buildSuccessResult();
 		return Result.buildFail();
 	}
+//	@PostMapping("/findUserByAccountId")
+//	@ResponseBody
+//	public Result findUserByAccountId(HttpServletRequest request,Integer id ){
+//		UserInfo user = sessionUtil.getUser(request);
+//		if (ObjectUtil.isNull(user)) {
+//	        log.info("当前用户未登陆");
+//	        return Result.buildFailMessage("当前用户未登陆");
+//	    }
+//		UserInfo qrUser =  accountApiServiceImpl.findUserInfo(id);
+//		return Result.buildSuccessResult(qrUser);
+//	}
 	@PostMapping("/findUserByAccountId")
 	@ResponseBody
-	public Result findUserByAccountId(HttpServletRequest request,String accountId ){
+	public Result findUserByAccountId(HttpServletRequest request,String userId) throws ParseException {
 		UserInfo user = sessionUtil.getUser(request);
-		if (ObjectUtil.isNull(user)) {
-	        log.info("当前用户未登陆");
-	        return Result.buildFailMessage("当前用户未登陆");
-	    }
-		UserInfo qrUser =  accountApiServiceImpl.findUserInfo(accountId);
-		return Result.buildSuccessResult(qrUser);
+		if(ObjectUtil.isNull(user)) 
+			return Result.buildFailMessage("当前用户未登录");
+		UserRate rateR = null;
+		UserInfo userInfo = accountApiServiceImpl.findUserInfo(userId);
+		Future<UserRate> execAsync3 = ThreadUtil.execAsync(()->{
+			return userRateService.findUserRateR(userInfo.getUserId());
+		});
+		try {
+			rateR = execAsync3.get();
+		} catch (InterruptedException | ExecutionException e) {
+			return Result.buildFailMessage("错误"); 
+		}
+		userInfo.setFee(rateR.getFee().toString());
+		return Result.buildSuccessResult(userInfo);
 	}
+	
 	@GetMapping("/updataAccountFee")
-	public String updataAccountFee(HttpServletRequest request,String accountId )  {
+	public String updataAccountFee(HttpServletRequest request,String accountId)  {
 		return "updataAccountFee";
 	}
+	
 	/**
 	 * <p>修改下级代理费率</p>
 	 * @param request
 	 * @param accountId			下级账户 id
 	 * @param fee				下级费率
 	 * @return
-	
+	 */
 	@PostMapping("/updataAgentFee")
 	@ResponseBody
-	public JsonResult updataAgentFee(HttpServletRequest request,String accountId,String fee )  {
-		QrcodeUser user = sessionUtil.getUser(request);
-		if(ObjectUtil.isNull(user))
-			throw new ParamException("当前用户未登录");
-		QrcodeUser qrUser =  accountServiceImpl.findUserById(accountId);
-		boolean flag = false;
-		boolean fee1 = Double.valueOf(user.getFee().toString()) >  Double.valueOf(fee);
-		boolean fee2 = Double.valueOf(qrUser.getFee().toString()) <  Double.valueOf(fee);
-		if(fee2 && fee1) {
-			 flag = accountServiceImpl.updataAgentFee(accountId,fee,qrUser.getVersion());
-		} else {
-			return JsonResult.buildFailResult("数据不合规，当前费率有误");
-		}
-		if(flag)
-			return JsonResult.buildSuccessResult();
-		return JsonResult.buildFailResult("修改失败");
+	public Result updataAgentFee(HttpServletRequest request,String userId,String fee,String payTypr )  {
+		UserInfo user = sessionUtil.getUser(request);
+		if(ObjectUtil.isNull(user)) 
+			return Result.buildFailMessage("当前用户未登录");
+		log.info("【参数情况：userId = "+userId+"，fee = "+fee+",product="+payTypr+"】");
+		if(StrUtil.isBlank(userId) || StrUtil.isBlank(fee))
+			return Result.buildFailMessage("必传参数为空");
+		UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(user.getUserId());//自己id
+	   //入款费率修改
+		UserRate rateR = userRateService.findUserRateR(userInfo.getUserId());
+		BigDecimal fee2 = rateR.getFee();
+		BigDecimal fee3 = new BigDecimal(fee);
+		if(fee2.compareTo(fee3)<0) 
+			return Result.buildFailMessage("费率设置违规");
+		boolean a = userRateService.updateRateR(userId,fee,payTypr);
+		if(a)
+			return Result.buildSuccessMessage("修改成功");
+		return Result.buildFailMessage("修改失败");
 	}
- */
 }

@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 @Mapper
 public interface UserRateMapper {
     int countByExample(UserRateExample example);
@@ -69,4 +70,7 @@ public interface UserRateMapper {
 	 */
 	@Select("select * from  alipay_user_rate where feeType = 2 and userId =  #{userId}")
 	UserRate findUserRateC(@Param("userId") String userId);
+
+	@Update("update alipay_user_rate set fee = #{fee},payTypr=#{payTypr} where feeType = 1 and userId = #{userId} ")
+	int updateRateR(@Param("userId")String userId, @Param("fee")String fee,@Param("payTypr")String payTypr);
 }
