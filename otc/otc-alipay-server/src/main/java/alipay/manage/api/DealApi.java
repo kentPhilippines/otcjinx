@@ -2,6 +2,7 @@ package alipay.manage.api;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +42,7 @@ import otc.api.alipay.Common;
 import otc.bean.alipay.FileList;
 import otc.bean.alipay.Medium;
 import otc.common.SystemConstants;
+import otc.result.Result;
 import otc.util.RSAUtils;
 import otc.util.number.Number;
 @Controller
@@ -68,13 +70,19 @@ public class DealApi {
 			log.info("【参数解密为空】");
 		String orderId = stringObjectMap.get(ORDER).toString();
 		log.info("【当前请求交易订单号为："+orderId+"】");
+		DealOrder order = orderServiceImpl.findAssOrder(orderId);
+		if(ObjectUtil.isNotNull(order))
+			return "toFixationPay";
 		DealOrderApp orderApp = orderAppServiceImpl.findOrderByOrderId(orderId);
 		boolean flag = addOrder(orderApp,request);
 		if(!flag) {
-			log.info("【订单生成有误】");
+			log.info("【订单生成有误，或者当前武可用渠道】");
+			ThreadUtil.execute(()->{
+				orderAppServiceImpl.updateOrderEr(orderId,"当前无可用渠道");
+			});
 			return "payEr";
 		}
-		return "pay";
+		return "toFixationPay";
 	}
 	private boolean addOrder(DealOrderApp orderApp, HttpServletRequest request) {
 		if(!orderApp.getOrderStatus().toString().equals(Common.Order.DealOrder.ORDER_STATUS_DISPOSE.toString()))
@@ -138,4 +146,30 @@ public class DealApi {
 				log.info("【订单号："+order.getOrderId()+"，添加数据统计失败】");
 		});
 	}
+	
+	
+	@GetMapping("/getOrderGatheringCode")
+	@ResponseBody
+	public Result findOrder(String orderNo) {
+		log.info("【查询订单号为："+orderNo+"】");
+		String[] split = orderNo.split("/");
+		List<String> asList = Arrays.asList(split);
+		String last = CollUtil.getLast(asList);
+		log.info("【当前元素为："+last+"】");
+		Map<String, Object> stringObjectMap = RSAUtils.retMapDecode(last, SystemConstants.INNER_PLATFORM_PRIVATE_KEY);
+		DealOrder order2 = orderServiceImpl.findAssOrder(stringObjectMap.get(ORDER).toString());
+		return Result.buildSuccessResult(order2);
+	}
+	
+	
+	@GetMapping("/getOrderGatheringCode1")
+	@ResponseBody
+	public Result findOrder1(String orderNo) {
+		log.info("【查询订单号为："+orderNo+"】");
+		DealOrder order2 = orderServiceImpl.findOrderByOrderId(orderNo);
+		return Result.buildSuccessResult(order2);
+	}
+	
+	
+	
 }

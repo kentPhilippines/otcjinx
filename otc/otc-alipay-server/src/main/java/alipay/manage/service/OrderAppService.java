@@ -13,4 +13,19 @@ public interface OrderAppService {
 	 */
 	DealOrderApp findOrderByOrderId(String orderId);
 
+	
+	/**
+	 * <p>通过关联订单号查询数据</p>
+	 * @param orderId
+	 * @return
+	 */
+	DealOrderApp findAssOrder(String orderId);
+
+	/**
+	 * <p>修改商户预订单状态</p>
+	 * @param orderId
+	 * @param msg
+	 */
+	void updateOrderEr(String orderId, String msg);
+
 }

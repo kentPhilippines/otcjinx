@@ -2,6 +2,7 @@ package deal.manage.service;
 import java.math.BigDecimal;
 import java.util.List;
 
+import deal.manage.bean.Amount;
 import deal.manage.bean.UserFund;
 import deal.manage.bean.UserInfo;
 import deal.manage.bean.UserRate;

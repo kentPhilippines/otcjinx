@@ -284,6 +284,10 @@ public class OrderServiceImpl implements OrderService{
 		int insertSelective = rechargeDao.insertSelective(order);
 		return insertSelective > 0 && insertSelective < 2;
 	}
+	@Override
+	public DealOrder findAssOrder(String orderId) {
+		return dealOrderMapper.findOrderByAssociatedId(orderId);
+	}
 
 
 }

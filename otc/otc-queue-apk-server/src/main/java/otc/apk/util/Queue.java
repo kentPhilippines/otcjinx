@@ -57,6 +57,7 @@ public class Queue {
     	return 	redisUtil.zRange(REDISKEY_QUEUE, 0, -1);
     	}
     	for(String code : codes) {
+    		log.info("【code 队列标识为  ：" +code+"】");
     		if (!redisUtil.hasKey(REDISKEY_QUEUE+code)) {
     			List<Medium> findIsDealMedium = alipayServiceClienFeignImpl.findIsDealMedium(Common.Medium.MEDIUM_ALIPAY,code);
     			log.info("findIsDealMedium 获取的值是：" +findIsDealMedium);

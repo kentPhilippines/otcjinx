@@ -23,8 +23,8 @@ public interface QueueServiceClienFeign {
 	 * @param code						队列类别
 	 * @return							队列数据
 	 */
-	@PostMapping(PayApiConstant.Queue.QUEUE_API+PayApiConstant.Queue.FIND_QR)
-	public List<String> getQueue(@RequestParam("code")String[] code);
+	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,value = PayApiConstant.Queue.QUEUE_API+PayApiConstant.Queue.FIND_QR)
+	public List<String> getQueue( String[] code);
 
 	/**
 	 * <p>往队列里面添加节点</p>

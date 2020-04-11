@@ -12,6 +12,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import cn.hutool.core.util.StrUtil;
+import deal.manage.bean.Amount;
 import deal.manage.bean.UserFund;
 import deal.manage.bean.UserFundExample;
 import deal.manage.bean.UserInfo;
@@ -228,5 +229,6 @@ public class UserInfoServiceImpl implements UserInfoService {
 	public UserInfo findUserFundKeyId(String userId) {
 		return userInfoDao.findUserFundKeyId(userId);
 	}
+
 
 }

@@ -21,4 +21,14 @@ public class orderAppServiceImpl implements OrderAppService {
 		
 		return dealOrderAppDao.findOrderByOrderId(orderId);
 	}
+
+	@Override
+	public DealOrderApp findAssOrder(String orderId) {
+		return null;
+	}
+
+	@Override
+	public void updateOrderEr(String orderId, String msg) {
+		dealOrderAppDao.updateOrderEr(orderId,msg);
+	}
 }

@@ -42,4 +42,7 @@ public interface DealOrderAppMapper {
 
     @Update("update alipay_deal_order_app set orderStatus = #{orderStatusSu} where orderId = #{orderId}")
 	boolean updateOrderSu(@Param("orderId")String orderId, @Param("orderStatusSu")String orderStatusSu);
+
+    @Update("update alipay_deal_order_app orderStatus = 4 , dealDescribe = #{msg} where orderId = #{orderId}")
+	void updateOrderEr(@Param("orderId") String orderId, @Param("msg") String msg);
 }

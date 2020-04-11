@@ -102,5 +102,12 @@ public interface OrderService {
 	 */
 	boolean addRechargeOrder(Recharge order);
 
+	/**
+	 * <p>通过关联订单号查询订单</p>
+	 * @param orderId			订单号
+	 * @return
+	 */
+	DealOrder findAssOrder(String orderId);
+
 
 }

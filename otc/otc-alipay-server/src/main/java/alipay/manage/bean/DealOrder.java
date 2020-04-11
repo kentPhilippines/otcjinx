@@ -7,6 +7,10 @@ import java.util.List;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import cn.hutool.core.util.ObjectUtil;
 /**
  * <p>码商交易订单</p>
  * @author K
@@ -41,7 +45,15 @@ public class DealOrder implements Serializable{
     private String retain4;
 	private String Time;
 	private List orderQrUserList;
-    public String getPayType() {
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+	private Date usefulTime;
+    public Date getUsefulTime() {
+		return usefulTime;
+	}
+	public void setUsefulTime(Date usefulTime) {
+		this.usefulTime = usefulTime;
+	}
+	public String getPayType() {
 		return payType;
 	}
 	public void setPayType(String payType) {
@@ -159,6 +171,10 @@ public class DealOrder implements Serializable{
         return createTime;
     }
     public void setCreateTime(Date createTime) {
+    	if(ObjectUtil.isNotNull(createTime)){
+			Date afterDate = new Date(createTime .getTime() + 300000);
+			this.setUsefulTime(afterDate);
+		}
         this.createTime = createTime;
     }
     public Date getSubmitTime() {

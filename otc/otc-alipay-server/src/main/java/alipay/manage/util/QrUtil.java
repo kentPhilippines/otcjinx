@@ -9,6 +9,7 @@ import alipay.manage.service.UserInfoService;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import org.slf4j.Logger;
@@ -57,6 +58,10 @@ public class QrUtil {
 		 */
 		// 根据金额获取符合条件的用户
 		List<String> queue = queueServiceClienFeignImpl.getQueue(code);
+		ThreadUtil.execute(()->{
+			for(String cod : queue)
+				log.info("【获取支付宝："+cod+"】");
+		});
 		List<UserFund> userList = userInfoServiceImpl.findUserByAmount(amount);
 		List<FileList> qcList = fileListServiceImpl.findQrByAmount(amount);
 		log.info("【二维码个数："+qcList.size()+"】");
@@ -71,9 +76,11 @@ public class QrUtil {
 			FileList qr = qrCollect.get(alipayAccount);// 所属
 			if (ObjectUtil.isNull(qr))
 				continue;
+			log.info("【二维码数据："+qr.toString()+"】");
 			UserFund qrcodeUser = usercollect.get(qr.getFileholder());// 所属
 			if (ObjectUtil.isNull(qrcodeUser))
 				continue;
+			log.info("【账户数据："+qrcodeUser.toString()+"】");
 			riskUtil.updataUserAmountRedis(qrcodeUser);
 			Object object2 = redisUtil.get(qr.getPhone() + amount.toString());
 		//	Object object = redisUtil.get(qr.getPhone());

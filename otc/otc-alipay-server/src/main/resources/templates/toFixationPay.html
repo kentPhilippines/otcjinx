@@ -10,15 +10,16 @@
     <meta http-equiv="cleartype" content="on">
     <meta name="format-detection" content="telephone=no,email=no,adress=no">
     <meta name="mobile-web-app-capable" content="yes">
-    <script src="https://staticjy.oss-cn-hangzhou.aliyuncs.com/clipboard.min.js"></script>    <script type="text/javascript" src="https://staticjy.oss-cn-hangzhou.aliyuncs.com/networking/js/flexible.js"></script><style>@charset "utf-8";html{color:#000;background:#fff;overflow-y:scroll;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%}html *{outline:0;-webkit-text-size-adjust:none;-webkit-tap-highlight-color:rgba(0,0,0,0)}html,body{font-family:sans-serif}body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td,hr,button,article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{margin:0;padding:0}input,select,textarea{font-size:100%}table{border-collapse:collapse;border-spacing:0}fieldset,img{border:0}abbr,acronym{border:0;font-variant:normal}del{text-decoration:line-through}address,caption,cite,code,dfn,em,th,var{font-style:normal;font-weight:500}ol,ul{list-style:none}caption,th{text-align:left}h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:500}q:before,q:after{content:''}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sup{top:-.5em}sub{bottom:-.25em}a:hover{text-decoration:underline}ins,a{text-decoration:none}</style>
-    <script type="text/javascript" src="https://staticjy.oss-cn-hangzhou.aliyuncs.com/networking/js/zepto.min.js"></script>
+ <!--    <script src="https://staticjy.oss-cn-hangzhou.aliyuncs.com/clipboard.min.js"></script>     -->
+   <!--  <script type="text/javascript" src="https://staticjy.oss-cn-hangzhou.aliyuncs.com/networking/js/flexible.js"></script> -->
+<!--     <script type="text/javascript" src="https://staticjy.oss-cn-hangzhou.aliyuncs.com/networking/js/zepto.min.js"></script> -->
 	<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
 	<script src="https://cdn.staticfile.org/vue/2.4.2/vue.min.js"></script>
 	<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
 	<script src="https://cdn.bootcss.com/layer/2.3/layer.js"></script>
 	<script src="https://cdn.bootcss.com/dayjs/1.7.8/dayjs.min.js"></script>
-	<script src="https://staticjy.oss-cn-hangzhou.aliyuncs.com/clipboard.min.js"></script>
-	<script type="text/javascript" src="/js/clipboard.min.js"></script>
+<!-- 	<script src="https://staticjy.oss-cn-hangzhou.aliyuncs.com/clipboard.min.js"></script> -->
+	<script type="text/javascript" src="/static/js/clipboard.min.js"></script>
 <title>支付宝付款</title> 
 <style type="text/css">
 body {
@@ -51,30 +52,12 @@ body {
 	height: 200px;
 	margin: 0 auto;
 }
-.pc-font{
-	font-weight: 900;
-    	font-size: 1vw;
-    	color: #d85353;
-}
 .price {
-	display: none;
 	margin: 0 0 10px;
 	font-size: 20px;
 	color: #1F1F1F;
 	font-weight: 400;
-}
-.price1 {
-		display: block;
-	    font-size: 52px;
-    	margin-top: -3vw;
-	}
-.phone-font{
 	display: none;
-	}
-.phone-time{
-	font-weight: 500;
-    	font-size:1vw;
-    	margin-top: 1.1rem;
 }
 .info {
 	margin: 0;
@@ -87,16 +70,16 @@ body {
 	}
 	.container {
 		width: 100vw;
-		padding: 10vw 0;
+		padding: 38vw 0;
 	}
 	.aliLogo {
 		display: block;
 		height: 15vw;
-		margin:-10vw 20vw 1rem -6rem;
+		margin: 0 auto;
 		background:
 			url(https://t.alipayobjects.com/images/T11rdgXbFkXXXXXXXX.png)
 			no-repeat center;
-		background-size: auto 6vw;
+		background-size: auto 15vw;
 	}
 	.orderNo {
 		font-size: 4vw;
@@ -110,23 +93,15 @@ body {
 		height: 60vw;
 	}
 	.price {
-		display: block;
-		font-size: 3vw;
-		margin: -20vw 0vw 0 19vw;
-	}
-	.price1 {
-		display: block;
-		font-size: 10vw;
-		margin-top: -13vw;
-	}
-	.pc-font{
-	display: none;
+		font-size: 4vw;
+		margin-top: -5vw 0;
+		display : block;
 	}
 	.openBtn {
 		display: block;
-		width: 30vw;
-    	height: 10vw;
-    	margin: 0vw auto 0;
+		width: 60vw;
+		height: 12vw;
+		margin: 5vw auto 0;
 		font-size: 5vw;
 		font-weight: 700;
 		color: #fff;
@@ -137,24 +112,6 @@ body {
 	.openBtn:disabled {
 		background: #ccc;
 	}
-	.phone{
-	    background-color: #f2f2f2;
-    	height: 0.1rem;
-    	margin-top: 0.2rem;
-    }
-	.phone-font{
-		display: block;
-	 	font-weight: 900;
-    	font-size: 5vw;
-    	color: #d85353;
-    	margin-left: 0.1rem;
-    }
-    .phone-time{
-    	display: block;
-	 	font-weight: 500;
-    	font-size: 5vw;
-    	margin-top: 1.1rem;
-    }
 }
 </style>
 <script>
@@ -162,12 +119,11 @@ body {
 </head>
 <body>
 <div    id="pay"> 
-
 	<div class="container" >
 	<p>
 		<div class="aliLogo"></div>
 		<p class="price">
-			<span id="orderNo" >{{orderNo}}</span>
+			<span id="orderNo" class = "pc-font" >{{orderNo}}</span>
 			<a id="copyCode" class="label" onclick="copyUrl()" data-clipboard-target="#orderNo" style="margin-left:10px;color:#00AAEA;vertical-align:middle;" >复制</a>
 		</br> 
 		</p>
@@ -189,22 +145,80 @@ body {
 				style="position: absolute; top: 40px; right: 200px; width: 400px; height: 530px;" />
 		</p>
 		<input class="openBtn" type="button" id="copyAmount" data-clipboard-target="#dealAmount" value="复制金额" onclick="coptAmount()">
-		<p class="phone"> </p>
-		<p class="phone-font">截图-支付宝-扫一扫</p>
+	<!-- 	<p class="phone-font">截图-支付宝-扫一扫</p>
 		<p class="phone-font">请勿重复扫码和修改金额，付款金额以设定金额为准</p>
-		<!-- <p class="phone-font">避免带来不必要的损失</p> -->
 		<p class="phone-font">遇到无效二维码请返回商户重新下单</p>
 		<p class="phone-font">需要多次付款请重新发起订单</p>
-		<p class="phone-font">不要输入任何备注，以免影响到账</p>
-		<p class="pc-font">截图-支付宝-扫一扫</p>
+		<p class="phone-font">不要输入任何备注，以免影响到账</p> -->
+<!-- 		<p class="pc-font">截图-支付宝-扫一扫</p>
 		<p class="pc-font">请勿重复扫码和修改金额，付款金额以设定金额为准</p>
-	<!-- 	<p class="pc-font">避免带来不必要的损失</p> -->
 		<p class="pc-font">遇到无效二维码请返回商户重新下单</p>
 		<p class="pc-font">需要多次付款请重新发起订单</p>
 		<p class="pc-font">不要输入任何备注，以免影响到账</p>
-		<p class="phone-time">
+ -->		<p class="phone-time">
 		有效时间： <span id="leftTime" style="color: red;">{{countdownMinute}}:{{countdownSecond}}</span><br> 
 		</p>
+<!-- 		
+		
+		<div class="container">
+		<div class="aliLogo"></div>
+		<p class="price">
+			<span id="orderNo" >{{orderNo}}</span>
+			<a id="copyCode" class="label" onclick="copyUrl()" data-clipboard-target="#orderNo" style="margin-left:10px;color:#00AAEA;vertical-align:middle;" >复制</a>
+		</br> 
+		<p class="orderNo">
+			<span class="orderMobile"><font color=red>请在5分钟内完成支付</br>切勿重复支付
+			</font></span><span class="pc"><font color=red>请在5分钟内完成支付</br>切勿重复支付
+			</font></span>
+		</p>
+ 
+		<p class="price">
+			</br>${amount}
+		</p>
+		<p class="info pc">
+			请使用<span style="color: #419bf9;">支付宝</span>扫描二维码
+		</p>
+		<img class="pc"
+			src="https://staticjy.oss-cn-hangzhou.aliyuncs.com/example.png"
+			style="position: absolute; top: 40px; right: 200px; width: 400px; height: 530px;" />
+		</span><span class="pc"><font color=red>请勿擅自修改金额，否则将导致无法上账!!!</font></span>
+		</p>
+		<p class="orderNo">
+			<span class="orderMobile"><font color=red>唤醒失败,请使用截图扫码</font>
+			<p class="phone-time">
+		有效时间： <span id="leftTime" style="color: red;">{{countdownMinute}}:{{countdownSecond}}</span><br> 
+		</p>
+			<input class="openBtn" type="button" id="copyAmount" data-clipboard-target="#dealAmount" value="复制金额" onclick="coptAmount()">
+	</div> -->
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 	</div>
 	    <script type="text/javascript">
 		  function copyUrl() {
@@ -220,7 +234,6 @@ body {
 				  layer.msg("请选择内容进行复制")
 			  })
 		  }
-		  
 		  function coptAmount(){
 			  let amount = document.getElementById("dealAmount").innerText;
 			  let val = document.getElementById("dealAmount");
@@ -259,7 +272,7 @@ var payVM = new Vue({
 	},
 	computed : {},
 	created : function() {
-		var orderNo = this.getQueryString('MD5');
+		var orderNo = this.getQueryString();
 		if (orderNo == null || orderNo == '') {
 			layer.alert('无效的订单号', {
 				title : '提示',
@@ -274,7 +287,7 @@ var payVM = new Vue({
 	methods : {
 		firstLoadGatheringCode : function() {
 			var that = this;
-			that.$http.get('/api/getOrderGatheringCode', {
+			that.$http.get('/pay/getOrderGatheringCode', {
 				params : {
 					orderNo : that.orderNo
 				}
@@ -286,7 +299,7 @@ var payVM = new Vue({
 					that.showbtn = false;
 				}
 				that.orderNo = that.orderInfo.orderId;
-				if (that.orderInfo.orderState != '1') {
+				if (that.orderInfo.orderStatus != '1') {
 					that.paySuccessFlag = true;
 					that.toReturnUrl();
 					return;
@@ -325,7 +338,7 @@ var payVM = new Vue({
 
 		loadGatheringCodeInner : function() {
 			var that = this;
-			that.$http.get('/api/getOrderGatheringCode1', {
+			that.$http.get('/pay/getOrderGatheringCode1', {
 				params : {
 					orderNo : that.orderNo
 				}
@@ -353,7 +366,7 @@ var payVM = new Vue({
 		checkPaySuccess : function() {
 			var that = this;
 			that.checkPaySuccessInterval = window.setInterval(function() {
-				if (that.orderInfo.orderState == '4') {//交易订单状态为4
+				if (that.orderInfo.orderStatus == '4') {//交易订单状态为4
 					that.paySuccessFlag = true;//支付成功状态
 					that.toReturnUrl();
 					if (that.checkPaySuccessInterval != null) {
@@ -372,7 +385,7 @@ var payVM = new Vue({
 
 		checkPaySuccessInner : function() {
 			var that = this;
-			that.$http.get('/api/getOrderGatheringCode1', {
+			that.$http.get('/pay/getOrderGatheringCode1', {
 				params : {
 					orderNo : that.orderNo
 				}
@@ -430,9 +443,9 @@ var payVM = new Vue({
 
 		getQueryString : function(name) {
 			var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
-			var r = window.location.search.substr(1).match(reg);
+			var r = window.location.pathname.substr(1).match();
 			if (r != null)
-				return unescape(r[2]);
+				return  r.input;
 			return null;
 		}
 

@@ -72,4 +72,5 @@ public interface DealOrderMapper {
     
     @Select("select * from alipay_deal_order where associatedId = #{associatedId}")
 	DealOrder findOrderByAssociatedId(@Param("associatedId")String associatedId);
+
 }

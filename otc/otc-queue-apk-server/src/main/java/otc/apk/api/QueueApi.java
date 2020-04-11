@@ -1,5 +1,8 @@
 package otc.apk.api;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -34,13 +37,16 @@ public class QueueApi {
 	 * @return
 	 */
 	@PostMapping(PayApiConstant.Queue.FIND_QR)
-	public Object[] findQr(@RequestBody String[] code) {
-		log.info("【远程调用队列处理方法】");
+	public List findQr(@RequestBody String[] code) {
+		log.info("【远程调用队列处理方法，参数为："+code+"】");
 		Set<Object> list = queueList.getList(code);
 		Object[] array = list.toArray();
-		for(Object obj  : array)
+		List<String> lists = new ArrayList<String>();
+		for(Object obj  : array) {
 			log.info("【队列值为："+obj+"】");
-		return array;
+			lists.add(obj.toString());
+		}
+		return lists;
 	}
 	
 	@PostMapping(PayApiConstant.Queue.UPDATA_QR)
