@@ -53,7 +53,7 @@ public class AgentContorller {
 	     */
 	    @RequestMapping(value = "/agentOpenAnAccount",method = RequestMethod.POST)
 	    @ResponseBody
-	public Result agentOpenAnAccount(@RequestBody UserInfo user, HttpServletRequest request) {
+	   public Result agentOpenAnAccount(@RequestBody UserInfo user, HttpServletRequest request) {
 	    	UserInfo user2 = sessionUtil.getUser(request);
 	    	if(ObjectUtil.isNull(user))
 	    		return Result.buildFailMessage("当前用户未登录");
@@ -72,6 +72,7 @@ public class AgentContorller {
 				rate.setFee(new BigDecimal(user.getFee()));
 				rate.setFeeType(Integer.valueOf(Common.User.ALIPAY_FEE));
 				rate.setUserType(Integer.valueOf(Common.User.USER_TYPE_QR));
+				rate.setPayTypr(Common.User.ALIPAY_PRODUCTID);
 				boolean add = userRateService.add(rate);
 				if(add) 
 					return Result.buildSuccessMessage("开户成功");
