@@ -48,8 +48,16 @@ public class UserInfo implements Serializable{
     private String queueList;//供应队列code  以逗号分隔
     
     private String fee;
-    
-    public String getFee() {
+    private String productId;
+        
+
+	public String getProductId() {
+		return productId;
+	}
+	public void setProductId(String productId) {
+		this.productId = productId;
+	}
+	public String getFee() {
 		return fee;
 	}
 	public void setFee(String fee) {
