@@ -132,12 +132,29 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public List<DealOrder> findOrderByUser(String userId, String orderType, String formatDateTime,
+	public List<DealOrder> findOrderByUser(String userId, String productType, String formatDateTime,
 			String formatDateTime2) {
 		// TODO Auto-generated method stub
-		return null;
+		DealOrderExample example=new DealOrderExample();
+		DealOrderExample.Criteria criteria = example.createCriteria();
+		if(StrUtil.isNotBlank(userId))
+			criteria.andOrderAccountEqualTo(userId);
+		if(StrUtil.isNotBlank(productType))
+			criteria.andProductTypeEqualTo(productType);
+		if(StrUtil.isNotBlank(formatDateTime) && StrUtil.isNotBlank(formatDateTime2))
+			criteria.andCreateTimeBetween(getDate2(formatDateTime), getDate2(formatDateTime2));
+		return dealOrderMapper.selectByExample(example);
 	}
-
+	Date getDate2(String time){
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date dateTime = null;
+		try {
+			dateTime = simpleDateFormat.parse(time);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return dateTime;
+	}
 	@Override
 	public boolean updateOrderStatus(String orderId, String orderStatusSu) {
 		// TODO Auto-generated method stub

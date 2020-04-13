@@ -99,13 +99,17 @@ public class OrderContorller {
 		if(ObjectUtil.isNull(user)) 
 			return Result.buildFailMessage("当前用户未登录");
 		Date date = null;
+		DealOrder dealOrder=new DealOrder();
+		if(StrUtil.isNotBlank(orderType))
+			dealOrder.setProductType(orderType);
 		if(StringUtils.isEmpty(dateTime))
 			date = DateTools.parseStrToDate(DateTools.parseDateToStr(new Date(),DateTools.DATE_FORMAT_YYYY_MM_DD),DateTools.DATE_FORMAT_YYYY_MM_DD);
 		else
 			date = DateTools.parseStrToDate(dateTime,DateTools.DATE_FORMAT_YYYY_MM_DD);
 		PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
 		//按时间段查询
-		List<DealOrder> listOrder = orderServiceImpl.findOrderByUser(user.getUserId(),orderType,DateTools.formatDateTime(DateTools.getDayBeginTime(date)),DateTools.formatDateTime(DateTools.getDayEndTime(new Date())));
+		List<DealOrder> listOrder = orderServiceImpl.findOrderByUser(user.getUserId(),dealOrder.getProductType(),DateTools.formatDateTime(DateTools.getDayBeginTime(date)),DateTools.formatDateTime(DateTools.getDayEndTime(new Date())));
+		
 		PageInfo<DealOrder> pageInfo = new PageInfo<DealOrder>(listOrder);
 		PageResult<DealOrder> pageR = new PageResult<DealOrder>();
 		pageR.setContent(pageInfo.getList());
