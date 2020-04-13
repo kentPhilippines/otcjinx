@@ -123,18 +123,15 @@ public class OrderServiceImpl implements OrderService {
 		return false;
 	}
 
-	@Override
-<<<<<<< HEAD
+	/*@Override
 	public List<DealOrder> findOrderByUser(String userId, String orderType, String startTime,
 			String endTime) {
 		List<DealOrder> selectByExample = dealOrderDao.findOrderByUser(userId,orderType,startTime,endTime);
 		return selectByExample;
+	}*/
 		
-		
-=======
 	public List<DealOrder> findOrderByUser(String userId, String productType, String formatDateTime,
 			String formatDateTime2) {
-		// TODO Auto-generated method stub
 		DealOrderExample example=new DealOrderExample();
 		DealOrderExample.Criteria criteria = example.createCriteria();
 		if(StrUtil.isNotBlank(userId))
@@ -143,8 +140,7 @@ public class OrderServiceImpl implements OrderService {
 			criteria.andProductTypeEqualTo(productType);
 		if(StrUtil.isNotBlank(formatDateTime) && StrUtil.isNotBlank(formatDateTime2))
 			criteria.andCreateTimeBetween(getDate2(formatDateTime), getDate2(formatDateTime2));
-		return dealOrderMapper.selectByExample(example);
->>>>>>> branch 'newjob' of https://github.com/kiwi20200315/otc-gateway.git
+		return dealOrderDao.selectByExample(example);
 	}
 	Date getDate2(String time){
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

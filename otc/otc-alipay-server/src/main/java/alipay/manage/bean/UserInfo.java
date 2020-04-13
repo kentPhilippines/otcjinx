@@ -48,6 +48,8 @@ public class UserInfo implements Serializable{
     private String queueList;//供应队列code  以逗号分隔
     private String qrRechargeList;//卡商匹配标识
     private String dealUrl;//代付URl
+    private String fee;
+    
     public String getQrRechargeList() {
 		return qrRechargeList;
 	}
@@ -60,7 +62,6 @@ public class UserInfo implements Serializable{
 	public void setDealUrl(String dealUrl) {
 		this.dealUrl = dealUrl;
 	}
-    private String fee;
     
     public String getFee() {
 		return fee;
@@ -351,4 +352,8 @@ public class UserInfo implements Serializable{
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
+	public void setFee(String string) {
+		// TODO Auto-generated method stub
+		
+	}
 }
