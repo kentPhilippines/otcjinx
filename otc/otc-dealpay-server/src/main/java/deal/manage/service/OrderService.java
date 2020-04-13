@@ -79,7 +79,7 @@ public interface OrderService {
 	 * @param formatDateTime2
 	 * @return
 	 */
-	List<DealOrder> findOrderByUser(String userId, String orderType, String formatDateTime, String formatDateTime2);
+	List<DealOrder> findOrderByUser(String userId, String productType, String formatDateTime, String formatDateTime2);
 	
 	boolean updateOrderStatus(String orderId, String orderStatusSu);
 

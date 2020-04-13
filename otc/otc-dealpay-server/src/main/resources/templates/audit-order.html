@@ -146,7 +146,7 @@
 							<label>收款卡:</label> <span>{{order.orderQr}}</span>
 						</div>
 						<div class="platform-order-body-item">
-							<label>入款人:</label> <span>{{order.dealDescribe}}</span>
+							<label>入款人:</label> <span>{{order.orderQrUser}}</span>
 						</div>
 						<div class="platform-order-body-item">
 							<label>收款金额:</label> <span class="platform-order-body-item-highlight">{{order.dealAmount}}元</span>
@@ -177,7 +177,8 @@
 							<label>接单时间:</label> <span>{{selectedOrder.createTime | dateFilter("yyyy-mm-dd hh:mm:ss")}}</span>
 						</div>
 						<div class="platform-order-body-item">
-							<label>收款渠道:</label> <span>{{selectedOrder.gatheringChannelName}}</span><label>收款金额:</label> <span class="platform-order-body-item-highlight">{{selectedOrder.gatheringAmount}}元</span>
+							<label>收款渠道:</label> <span>{{selectedOrder.gatheringChannelName}}</span>
+							<label>收款金额:</label> <span class="platform-order-body-item-highlight">{{selectedOrder.gatheringAmount}}元</span>
 						</div>
 					</div>
 				</div>
