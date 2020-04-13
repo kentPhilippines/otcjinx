@@ -113,7 +113,7 @@ var gatheringCodeVM = new Vue({
 					pageSize : 5,
 					pageNum : that.pageNum,
 					status : that.status,
-					bankCode : that.bankCode
+					bankcode : that.gatheringChannelCode
 				}
 			}).then(function(res) {
 				that.gatheringCodes = res.body.result.content;
