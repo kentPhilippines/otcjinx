@@ -1,6 +1,7 @@
 package deal.manage.service.impl;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,7 +86,12 @@ public class BankListServiceImpl implements BankListService {
 		int insertSelective = bankListDao.insertSelective(bank);
 		return insertSelective > 0 && insertSelective < 2;
 	}
-
+	@Override
+	public boolean editBankCard(BankList bank) {
+		// 编辑银行卡
+		int updateSelective=bankListDao.updateByPrimaryKey(bank);
+		return updateSelective>0 && updateSelective<2;
+	}
 	@Override
 	public boolean updataQrStatusEr(String id) {
 		int a = bankListDao.updataQrStatusEr(id);
@@ -106,7 +112,13 @@ public class BankListServiceImpl implements BankListService {
 	@Override
 	public List<BankList> findBankCardById(BankList bank) {
 		// 通过银行卡Id查询关联的用户
-		return bankListDao.selectBankCardById(bank);
+		BankListExample example = new BankListExample();
+		Criteria criteria = example.createCriteria();
+		if(StrUtil.isNotBlank(bank.getAccount()))
+			criteria.andAccountEqualTo(bank.getAccount());
+		if(StrUtil.isNotBlank(String.valueOf(bank.getId())))
+			criteria.andIdEqualTo(bank.getId());
+		return bankListDao.selectByExample(example);
 	}
 
 	@Override
@@ -114,6 +126,8 @@ public class BankListServiceImpl implements BankListService {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+
 
 
 

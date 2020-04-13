@@ -113,6 +113,8 @@
     </if>
     'true' as QUERYID,
     <include refid="Base_Column_List" />
+      ,
+    <include refid="Blob_Column_List" />
     from dealpay_bank_list
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
@@ -155,6 +157,7 @@
       #{status,jdbcType=INTEGER}, #{isDeal,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
       #{submitTime,jdbcType=TIMESTAMP}, #{qrcodeNote,jdbcType=LONGVARCHAR})
   </insert>
+  
   <insert id="insertSelective" parameterType="deal.manage.bean.BankList" useGeneratedKeys="true" keyProperty="id" >
     insert into dealpay_bank_list
     <trim prefix="(" suffix=")" suffixOverrides="," >
@@ -465,20 +468,15 @@
       sysTYpe = #{sysTYpe,jdbcType=INTEGER},
       account = #{account,jdbcType=VARCHAR},
       phone = #{phone,jdbcType=CHAR},
-      limitAmount = #{limitAmount,jdbcType=DECIMAL},
-      bankAmount = #{bankAmount,jdbcType=DECIMAL},
+<!--   limitAmount = #{limitAmount,jdbcType=DECIMAL},
+      bankAmount = #{bankAmount,jdbcType=DECIMAL}, -->
       cardType = #{cardType,jdbcType=INTEGER},
-      status = #{status,jdbcType=INTEGER},
+      `status` = #{status,jdbcType=INTEGER},
       isDeal = #{isDeal,jdbcType=INTEGER},
-      createTime = #{createTime,jdbcType=TIMESTAMP},
+      qrcodeNote = #{qrcodeNote,jdbcType=LONGVARCHAR},
       submitTime = #{submitTime,jdbcType=TIMESTAMP}
-    where id = #{id,jdbcType=INTEGER}
+     where id = #{id,jdbcType=INTEGER}
       and bankcardId = #{bankcardId,jdbcType=VARCHAR}
   </update>
   
-  <select id="selectBankCardById" parameterType="deal.manage.bean.BankList" resultMap="ResultMapWithBLOBs">
-    select
-    <include refid="Base_Column_List" />
-    from dealpay_bank_list where id = #{id,jdbcType=INTEGER}  and account = #{account,jdbcType=VARCHAR}
-  </select>
 </mapper>

@@ -3,6 +3,7 @@ package deal.manage.contorller;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -123,9 +124,16 @@ public class UserContorller {
 		if(ObjectUtil.isNull(user)) 
 			return Result.buildFailMessage("当前用户未登录");
 		bank.setAccount(user.getUserId());
-		boolean flag  = bankCardServiceImpl.addBankCard(bank);
+		bank.setStatus(1);
+		bank.setIsDeal(2);
+		bank.setSubmitTime(new Date());
+		boolean flag = false;
+		if(StrUtil.isNotEmpty(bank.getBankcardId())) 
+			flag  = bankCardServiceImpl.editBankCard(bank);
+		else
+			flag  = bankCardServiceImpl.addBankCard(bank);
 		if(flag)
-			return Result.buildSuccessResult();
+			return Result.buildSuccessMessage("添加银行卡成功");
 		return Result.buildFailMessage("添加银行卡失败");
 	}
 	/**

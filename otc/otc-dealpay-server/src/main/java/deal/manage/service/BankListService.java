@@ -61,7 +61,12 @@ public interface BankListService {
 	 * @return
 	 */
 	boolean addBankCard(BankList bank);
-
+	/**
+	 * <p>编辑银行卡</p>
+	 * @param bank
+	 * @return
+	 */
+	boolean editBankCard(BankList bank);
 	/**
 	 * <p>修改当前银行卡为不可接单</p>
 	 * @param id
@@ -90,6 +95,8 @@ public interface BankListService {
       * @return
       */
 	List<BankList> findBankCardById(BankList bank);
+
+
 
 
 
