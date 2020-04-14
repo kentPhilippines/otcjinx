@@ -61,10 +61,7 @@ public class AgentContorller {
 	    	user.setUserType(Integer.valueOf(Common.User.USER_TYPE_QR));
 			user.setIsAgent(Common.User.USER_IS_MEMBER);
 			UserRate rateR = userRateService.findUserRateR(user2.getUserId());
-			BigDecimal feeR = rateR.getFee();
-			String fee = user.getFee();//入款
-			if(!(feeR.compareTo(new BigDecimal(fee)) > -1)) 
-				return Result.buildFailMessage("入款费率设置违规");
+			user.setFee(rateR.getFee()+"");
 			Result addAccount = accountApiService.addAccount(user);
 			if(addAccount.isSuccess()) {
 				UserRate rate = new UserRate();
