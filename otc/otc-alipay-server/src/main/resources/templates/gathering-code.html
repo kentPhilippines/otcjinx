@@ -92,7 +92,7 @@
 						<label>收款人:</label> <span class="account-change-body-item-highlight">{{medium.mediumHolder}}</span>
 					</div>
 					 <div class="account-change-body-item">
-						<button class="btn btn-outline-info btn-lg" type="button" v-on:click="showQrManage(medium.mediumId)">二维码管理</button>
+						<button class="btn btn-outline-info btn-lg" type="button" v-on:click="showQrManage(medium.mediumId,medium.mediumHolder)">二维码管理</button>
 						<button class="btn btn-outline-info btn-lg" type="button" v-on:click="showEditMediumPage(medium.mediumId)">编辑媒介</button>
 					</div> 
 				</div>
@@ -117,7 +117,7 @@
 						<label> 收款金额: </label> <span class="account-change-body-item-highlight">{{qrcode.fixationAmount == '' || qrcode.fixationAmount == null ? '不固定'  :qrcode.fixationAmount + '元'}}</span> 
 					</div>
 					 <div class="form-group">
-					<button type="button" class="btn btn-secondary   btn-block" style="background-color:#00a0e9" v-on:click="dealeteQr(qrcode.qrcodeId)">删除</button>
+					<button type="button" class="btn btn-secondary   btn-block" style="background-color:#00a0e9" v-on:click="dealeteQr(qrcode.fileId)">删除</button>
 					</div> 
 				</div>
 			</div>
