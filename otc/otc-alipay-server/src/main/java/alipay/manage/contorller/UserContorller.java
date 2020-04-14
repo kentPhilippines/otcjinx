@@ -251,6 +251,7 @@ public class UserContorller {
 			return Result.buildFailMessage("错误"); 
 		}
 		userInfo.setFee(rateR.getFee().toString());
+		userInfo.setProductId(rateR.getPayTypr().toString());
 		return Result.buildSuccessResult(userInfo);
 	}
 	

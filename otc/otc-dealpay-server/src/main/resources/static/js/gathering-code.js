@@ -12,6 +12,8 @@ var gatheringCodeVM = new Vue({
 		showGatheringCodeFlag : true,
 
 		editGatheringCode : {
+			id:'',
+			bankcardId:'',
 			bankCode : '',//银行卡属性
 			status : '',//银行卡状态
 			account : '',//开户人
@@ -111,7 +113,7 @@ var gatheringCodeVM = new Vue({
 					pageSize : 5,
 					pageNum : that.pageNum,
 					status : that.status,
-					bankCode : that.bankCode
+					bankcode : that.gatheringChannelCode
 				}
 			}).then(function(res) {
 				that.gatheringCodes = res.body.result.content;
@@ -178,12 +180,14 @@ var gatheringCodeVM = new Vue({
 						id : gatheringCodeId,
 					}
 				}).then(function(res) {
-					that.editGatheringCode.bankCode  =  res.body.result.bankCode;//银行卡属性
+					that.editGatheringCode.id  =  res.body.result.id;
+					that.editGatheringCode.bankcardId =res.body.result.bankcardId;
+					that.editGatheringCode.bankCode  =  res.body.result.bankcode;//银行卡属性
 					that.editGatheringCode.status  =  res.body.result.status;//银行卡状态
 					that.editGatheringCode.account  =  res.body.result.accountHolder;//开户人
 					that.editGatheringCode.bank   =  res.body.result.openAccountBank;//开户行
 					that.editGatheringCode.phone  =  res.body.result.phone;//开户手机号
-					that.editGatheringCode.bankNo  =  res.body.result.bankCardAccount;//开户银行卡号,
+					that.editGatheringCode.bankNo  =  res.body.result.bankcardAccount;//开户银行卡号,
 					that.editGatheringCode.qrcodeNote   =  res.body.result.qrcodeNote;
 					that.showEditGatheringCodePageInner();
 					that.initFileUploadWidget(res.body.result.qrcodeId);
@@ -264,12 +268,20 @@ var gatheringCodeVM = new Vue({
 		addOrUpdateGatheringCodeInner : function() {
 			var that = this;
 			var bank = {
+					id:that.editGatheringCode.id,
+					bankcardId: that.editGatheringCode.bankcardId,
 					bankcardAccount :  that.editGatheringCode.bankNo,
 					accountHolder : that.editGatheringCode.account,
 					openAccountBank : that.editGatheringCode.bank,
+<<<<<<< HEAD
 					bankcode :  that.editGatheringCode.bankCode,
 					phone : that.editGatheringCode.phone,
 					qrcodeNote : that.editGatheringCode.qrcodeNote
+=======
+					bankcode :  that.editGatheringCode.bankCode=="收款卡"?"R":"W",
+					qrcodeNote: that.editGatheringCode.qrcodeNote,
+					phone : that.editGatheringCode.phone
+>>>>>>> branch 'newjob' of https://github.com/kiwi20200315/otc-gateway.git
 			}
 			that.$http.post('/userAccount/bindBankInfo',  bank ).then(function(res) {
 				if(res.body.success){

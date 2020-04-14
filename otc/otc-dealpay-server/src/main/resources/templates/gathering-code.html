@@ -37,7 +37,7 @@
 .account-change-body-item label {
 	text-align: end;
 	width: 5rem;
-	margin-right: 0.5rem;
+	margin-right: 0.2rem;
 }
 
 .account-change-body-item span {
@@ -67,7 +67,7 @@
 		<div class="page-body" style="background: #f2f2f2;" v-show="showGatheringCodeFlag">
 			<button type="button" style="margin-top: 0.3rem;" class="btn btn-outline-info btn-lg btn-block" v-on:click="showEditGatheringCodePage()">添加银行卡</button>
 			<div class="input-group" style="padding-bottom: 0.3rem; padding-top: 0.3rem;">
-				<select class="form-control" style="width: 2.2rem; height: 3rem;" v-model="status">
+				<select class="form-control" style="width: 3.4rem; height: 3rem;" v-model="status">
 					<option value="">状态</option>
 					<option :value="1">开启</option>
 					<option :value="0">关闭</option>
@@ -86,12 +86,12 @@
 						<label>创建时间:</label> <span>{{gatheringCode.createTime | dateFilter("yyyy-mm-dd hh:mm:ss")}}</span>
 					</div>
 					<div class="account-change-body-item">
-						<label>卡属性:</label> <span>{{gatheringCode.bankCode == 'R' ? '入款卡' :'出款卡'}}</span>
+						<label>卡属性:</label> <span>{{gatheringCode.bankcode == "R" ? '入款卡' :'出款卡'}}</span>
 						<label>状态:</label> <span>{{gatheringCode.status == 1 ? '开启' : '关闭'}}</span>
 					</div>
 					<div class="account-change-body-item">
-						<label>开户人:</label> <span class="account-change-body-item-highlight">{{gatheringCode.accountHolder}}</span>
-						<label>开户手机:</label> <span class="account-change-body-item-highlight">{{gatheringCode.phone}}</span>
+						<label>开户人:</label><span class="account-change-body-item-highlight">{{gatheringCode.accountHolder}}</span>
+						<label>开户手机:</label><span class="account-change-body-item-highlight">{{gatheringCode.phone}}</span>
 					</div>
 					<div class="account-change-body-item">
 						<label>卡号: </label> <span class="account-change-body-item-highlight">{{gatheringCode.bankcardAccount }}</span> 
@@ -117,7 +117,8 @@
 			<div class="container" style="margin-top: 1.3rem;">
 				<form>
 					<div class="form-group">
-						<label>卡属性:</label> <select class="form-control" v-model="editGatheringCode.bankCode">
+						<label>卡属性:</label>
+						 <select class="form-control" v-model="editGatheringCode.bankCode">
 							<option value="">请选择</option>
 							<option v-for="dictItem in gatheringChannelDictItems" :value="dictItem.payCode">{{dictItem.payName}}</option>
 						</select>
