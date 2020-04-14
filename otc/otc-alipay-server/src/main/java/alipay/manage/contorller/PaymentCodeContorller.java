@@ -11,6 +11,7 @@ import alipay.manage.service.MediumService;
 import alipay.manage.service.UserFundService;
 import alipay.manage.service.UserInfoService;
 import alipay.manage.service.impl.CorrelationServiceImpl;
+import alipay.manage.util.QueueQrcodeUtil;
 import alipay.manage.util.SessionUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
@@ -51,6 +52,7 @@ public class PaymentCodeContorller {
     UserInfoService userInfoService;
     @Autowired
     RedisUtil redisUtil;
+    @Autowired QueueQrcodeUtil queueQrcodeUtil;
     @Autowired
     CorrelationServiceImpl correlationService;
     @Autowired
@@ -95,16 +97,21 @@ public class PaymentCodeContorller {
     public Result dealeteQr(HttpServletRequest request, String qrcodeId) {
         UserInfo user = sessionUtil.getUser(request);
         if (ObjectUtil.isNull(user))
-           return Result.buildFailMessage("当前用户未登录");
+            throw new OtherErrors("当前用户未登录");
         if (StrUtil.isBlank(qrcodeId))
             return Result.buildFailResult("参数为空");
         FileList qr = fileListService.findQrByNo(qrcodeId);
         Medium findMediumById = mediumServicel.findMediumById(qr.getConcealId());
+        if (queueQrcodeUtil.getList().contains(findMediumById.getMediumNumber()))
+            return Result.buildFailResult("当前二维码正在接单排队，禁止操作");
         Boolean flag = fileListService.deleteQrByQrcodeId(qrcodeId);
         if (flag)
             return Result.buildSuccessMessage("操作成功");
-        return Result.buildFail();
+        return Result.buildFailMessage("操作失败");
     }
+    
+    
+    
     
     /**
      * <p>累计接单情况</p>
