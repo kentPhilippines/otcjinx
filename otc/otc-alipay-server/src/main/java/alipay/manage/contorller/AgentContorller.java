@@ -30,6 +30,7 @@ import alipay.manage.service.InviteCodeService;
 import alipay.manage.service.UserInfoService;
 import alipay.manage.service.UserRateService;
 import alipay.manage.util.SessionUtil;
+import alipay.manage.util.SettingFile;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
@@ -47,6 +48,7 @@ public class AgentContorller {
 	    @Autowired CorrelationService correlationServiceImpl;
 		@Autowired AccountApiService accountApiService;
 	    @Autowired UserUtil userUtil;
+	    @Autowired SettingFile settingFile;
 	    /**
 	     * <p>代理商开户</p>
 	     *	 手机端专用
@@ -129,7 +131,7 @@ public class AgentContorller {
 	    	bean.setIsDeal(Common.isOk);
 	        boolean flag = inviteCodeServiceImpl.addinviteCode(bean);
 	        if (flag)
-	            return Result.buildSuccessResult("操作成功","从配置中获取的服务器路径：" + createinviteCode);
+	        	return Result.buildSuccessResult("操作成功","127.0.0.1:9010/register?inviteCode="+createinviteCode);
 	        return Result.buildFail();
 	    }
 	    

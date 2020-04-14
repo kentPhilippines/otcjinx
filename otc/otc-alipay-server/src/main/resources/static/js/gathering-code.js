@@ -71,8 +71,7 @@ var gatheringCodeVM = new Vue({
 		that.loadMediumsByPage();
 		
 		$('.gathering-code-pic').on('fileuploaded', function(event, data, previewId, index) {
-		//	 that.qrcodeId = data.response.result.join(',');
-			console.log("===="+that.qrcodeId );
+	    	that.qrcodeId = data.response.result.join(',');
 			that.addQrcodeInfoSu();
 		});
 		
@@ -114,7 +113,6 @@ var gatheringCodeVM = new Vue({
 					status : that.medium.status
 				}
 			}).then(function(res) {
-				console.log(res.body.result.content);
 				that.mediums = res.body.result.content;
 				that.pageNum1 = res.body.result.pageNum;
 				that.totalPage1 = res.body.result.totalPage;
@@ -222,7 +220,6 @@ var gatheringCodeVM = new Vue({
 						mediumId : mediumId,
 					}
 				}).then(function(res) {
-					console.log(res.body.result);
 					that.medium = res.body.result;
 					that.showEditMediumCodePageInner('edit');
 				});
@@ -295,7 +292,6 @@ var gatheringCodeVM = new Vue({
 					amount : amount,
 					flag : flag
 			}} ).then(function(res) {
-				console.log(res.body);
 				if(res.body.success){
 					layer.alert('操作成功!', {
 						icon : 1,
@@ -440,15 +436,11 @@ var gatheringCodeVM = new Vue({
 				});
 			}
 		},
-		showQrManage:function(mediumId,mediumHolder){//二维码管理
-			console.log(mediumId);
-			console.log(mediumHolder);
+		showQrManage:function(mediumId){//二维码管理
 			//获取到所有的二维码
 			var that = this;
-			that.qrcodeId=mediumHolder;
 			var data = { mediumId :mediumId}
 			that.$http.post('/statisticalAnalysis/findQrByMediumId', mediumId ).then(function(res) {//查询当前收款媒介所有的二维码
-				console.log(res.body.result);
 				if(res.body.success){
 					that.qrcodeArray = res.body.result;
 					that.qrManage();
@@ -493,7 +485,6 @@ var gatheringCodeVM = new Vue({
 	});
 		},
 		dealeteQr : function(qrId){
-			console.log(qrId);
 			var that = this;
 			layer.msg('确认这么做', {
 			  	time: 0 //不自动关闭
@@ -504,7 +495,6 @@ var gatheringCodeVM = new Vue({
 					qrcodeId : qrId,
 				}
 			}).then(function(res) {
-				console.log(res.body);
 				if(res.body.success){
 					layer.msg(res.body.message);
 				}else{
