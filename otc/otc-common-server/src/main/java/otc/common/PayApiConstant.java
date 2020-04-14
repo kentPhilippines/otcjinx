@@ -33,7 +33,8 @@ public class PayApiConstant {
 		public static final String GENERATE_ORDER_DEDUCT = "/deduct_order"; //生成扣款订单【扣款订单】
 		public static final String AUDIT_MERCHANT_STATUS = "/audit-merchant-status"; //修改商户的状态
 		
-		
+		public static final String RECHARGE_ORDER = "/recharge_order";//充值订单状态修改接口
+		public static final String WIT_ORDER = "/wit_order";//代付订单状态修改接口
 		
 		
 		public static final String DEAL_API = "/deal-api";// 卡商交易接口

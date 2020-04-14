@@ -32,4 +32,14 @@ public interface WithdrawService {
 	 */
 	boolean updateStatusEr(String orderId, String message);
 
+
+	/**
+	 * <p>订单状态修改成功</p>
+	 * @param orderId			订单号
+	 * @param msg				修改消息
+	 * @return
+	 */
+	boolean updateStatusSu(String orderId, String msg);
+
+
 }

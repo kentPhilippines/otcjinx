@@ -269,9 +269,17 @@ public class UserFund {
     public void setVersion(Integer version) {
         this.version = version;
     }
-
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
-    }
+	@Override
+	public String toString() {
+		return "UserFund [id=" + id + ", userId=" + userId + ", userName=" + userName + ", cashBalance=" + cashBalance
+				+ ", rechargeNumber=" + rechargeNumber + ", freezeBalance=" + freezeBalance + ", accountBalance="
+				+ accountBalance + ", sumDealAmountR=" + sumDealAmountR + ", sumDealAmountC=" + sumDealAmountC
+				+ ", sumProfit=" + sumProfit + ", sumAgentProfit=" + sumAgentProfit + ", sumOrderCountR="
+				+ sumOrderCountR + ", sumOrderCountC=" + sumOrderCountC + ", todayDealAmountR=" + todayDealAmountR
+				+ ", todayDealAmountC=" + todayDealAmountC + ", todayProfit=" + todayProfit + ", todayAgentProfit="
+				+ todayAgentProfit + ", todayOrderCountR=" + todayOrderCountR + ", todayOrderCountC=" + todayOrderCountC
+				+ ", userType=" + userType + ", agent=" + agent + ", isAgent=" + isAgent + ", createTime=" + createTime
+				+ ", submitTime=" + submitTime + ", status=" + status + ", version=" + version + ", fee=" + fee
+				+ ", cardFee=" + cardFee + "]";
+	}
 }

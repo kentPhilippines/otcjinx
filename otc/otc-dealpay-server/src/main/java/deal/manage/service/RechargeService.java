@@ -34,4 +34,12 @@ public interface RechargeService {
 	boolean updateStatusEr(String orderId, String message);
 
 
+	/**
+	 * <p>修改卡商充值订单为成功</p>
+	 * @param orderId			充值订单号
+	 * @return
+	 */
+	boolean updateStatusSu(String orderId,String msg);
+
+
 }

@@ -42,4 +42,10 @@ public class WithdrawServiceImpl implements WithdrawService {
 		return a<2 && a > 0;
 	}
 
+	@Override
+	public boolean updateStatusSu(String orderId, String msg) {
+		int a  = withdrawDao.updateStatusSu(orderId,msg);
+		return a  > 0 && a  < 2;
+	}
+
 }

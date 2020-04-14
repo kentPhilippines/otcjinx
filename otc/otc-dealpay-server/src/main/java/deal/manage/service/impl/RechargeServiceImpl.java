@@ -42,4 +42,10 @@ public class RechargeServiceImpl implements RechargeService {
 		return a > 0 && a < 2;
 	}
 
+	@Override
+	public boolean updateStatusSu(String orderId,String msg) {
+		int a = rechargeDao.updateStatusSu(orderId , msg);
+		return a > 0 && a < 2;
+	}
+
 }

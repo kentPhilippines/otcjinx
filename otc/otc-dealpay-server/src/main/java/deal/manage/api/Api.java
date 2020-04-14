@@ -32,6 +32,7 @@ import deal.manage.util.AmountRunUtil;
 import deal.manage.util.AmountUtil;
 import deal.manage.util.CardBankOrderUtil;
 import deal.manage.util.LogUtil;
+import deal.manage.util.OrderUtil;
 import otc.api.dealpay.Common;
 import otc.bean.config.ConfigFile;
 import otc.bean.dealpay.Recharge;
@@ -56,8 +57,86 @@ public class Api {
 	@Autowired AmountUtil amountUtil;
 	@Autowired AmountRunUtil amountRunUtil;
 	@Autowired LogUtil logUtil;
+	@Autowired OrderUtil orderUtil;
 	private static String Url ;
+	@Transactional
+	@PostMapping(PayApiConstant.Dealpay.ACCOUNT_API+PayApiConstant.Dealpay.WIT_ORDER+"/{param:.+}")
+	public Result witOrder(@PathVariable("param") String param, HttpServletRequest request) {
+		log.info("【后台人员请求代付订单修改方法："+param+"】");
+		Map<String, Object> stringObjectMap = RSAUtils.retMapDecode(param, SystemConstants.INNER_PLATFORM_PRIVATE_KEY);
+		if(CollUtil.isEmpty(stringObjectMap)) {
+			log.info("【参数解密为空】");
+			return Result.buildFailMessage("参数为空");
+		}
+		Object orderId = stringObjectMap.get("orderId");
+		if(ObjectUtil.isNull(orderId))
+			return Result.buildFailMessage("订单号为空");
+		Object orderStatus = stringObjectMap.get("orderStatus");
+		if(ObjectUtil.isNull(orderStatus))
+			return Result.buildFailMessage("订单状态为空");
+		Object userId = stringObjectMap.get("userId");
+		if(ObjectUtil.isNull(userId))
+			return Result.buildFailMessage("操作人为空");
+		String clientIP = HttpUtil.getClientIP(request);
+		if(StrUtil.isBlank(clientIP))
+			return Result.buildFailMessage("当前使用代理服务器 或是操作ip识别出错，不允许操作");
+		deal.manage.bean.Withdraw wit = withdrawServiceImpl.findOrderId(orderId.toString());
+		if(Common.Order.Wit.ORDER_STATUS_SU.toString().equals(orderStatus.toString())) {
+			ThreadUtil.execAsync(()->{
+				log.info("【当前调用代付订单置为成功接口，当前订单号："+orderId+"，当前修改订单状态："+wit.getOrderStatus()+"，当前操作人："+userId+"】");
+				logUtil.addLog(request, "后台人员置代付订单成功，操作人："+userId.toString()+"", userId.toString());
+			});
+			return orderUtil.witSu(wit.getOrderId(), userId+"  置代付订单为成成功，操作ip ："+  clientIP);
+			
+		}else if(Common.Order.Wit.ORDER_STATUS_ER.toString().equals(orderStatus.toString())) {
+			ThreadUtil.execAsync(()->{
+				log.info("【当前调用充值订单置为成功接口，当前订单号："+orderId+"，当前修改订单状态："+wit.getOrderStatus()+"，当前操作人："+userId+"】");
+				logUtil.addLog(request, "后台人员置充值订单成功，操作人："+userId.toString()+"", userId.toString());
+			});
+			return orderUtil.witEr(wit.getOrderId(), clientIP, userId+"  置代付订单为成失败，操作ip ："+  clientIP);
+		}
+		return Result.buildFailMessage("订单修改失败");
+	}
 	
+	@Transactional
+	@PostMapping(PayApiConstant.Dealpay.ACCOUNT_API+PayApiConstant.Dealpay.RECHARGE_ORDER+"/{param:.+}")
+	public Result recharge(@PathVariable("param") String param, HttpServletRequest request) {
+		log.info("【后台人员请求充值订单修改方法："+param+"】");
+		Map<String, Object> stringObjectMap = RSAUtils.retMapDecode(param, SystemConstants.INNER_PLATFORM_PRIVATE_KEY);
+		if(CollUtil.isEmpty(stringObjectMap)) {
+			log.info("【参数解密为空】");
+			return Result.buildFailMessage("参数为空");
+		}
+		Object orderId = stringObjectMap.get("orderId");
+		if(ObjectUtil.isNull(orderId))
+			return Result.buildFailMessage("订单号为空");
+		Object orderStatus = stringObjectMap.get("orderStatus");
+		if(ObjectUtil.isNull(orderStatus))
+			return Result.buildFailMessage("订单状态为空");
+		Object userId = stringObjectMap.get("userId");
+		if(ObjectUtil.isNull(userId))
+			return Result.buildFailMessage("操作人为空");
+		String clientIP = HttpUtil.getClientIP(request);
+		if(StrUtil.isBlank(clientIP))
+			return Result.buildFailMessage("当前使用代理服务器 或是操作ip识别出错，不允许操作");
+		Recharge recharge = rechargeServiceImpl.findOrderId(orderId.toString());
+		if(Common.Order.Recharge.ORDER_STATUS_SU.toString().equals(orderStatus.toString())) {
+			ThreadUtil.execAsync(()->{
+				log.info("【当前调用充值订单置为成功接口，当前订单号："+orderId+"，当前修改订单状态："+recharge.getOrderStatus()+"，当前操作人："+userId+"】");
+				logUtil.addLog(request, "后台人员置充值订单成功，操作人："+userId.toString()+"", userId.toString());
+			});
+			Result rechargeOrderSu = orderUtil.rechargeOrderSu(recharge.getOrderId(), clientIP,userId+"  置充值订单为成功，操作ip ："+  clientIP);
+			return rechargeOrderSu;
+		}else if(Common.Order.Recharge.ORDER_STATUS_ER.toString().equals(orderStatus.toString())) {
+			ThreadUtil.execAsync(()->{
+				log.info("【当前调用充值订单置为失败接口，当前订单号："+orderId+"，当前修改订单状态："+recharge.getOrderStatus()+"，当前操作人："+userId+"】");
+				logUtil.addLog(request, "后台人员置充值订单失败，操作人："+userId.toString()+"", userId.toString());
+			});
+			Result orderEr = orderUtil.rechargeOrderEr(recharge.getOrderId(),userId+"  置充值订单为成失败，操作ip ："+  clientIP);
+			return orderEr;
+		}
+		return Result.buildFailMessage("操作失败");
+	}
 	
 	/****
 	 * <p>人工加扣款接口</p>

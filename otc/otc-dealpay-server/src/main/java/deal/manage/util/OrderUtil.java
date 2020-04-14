@@ -8,23 +8,31 @@ import org.springframework.transaction.annotation.Transactional;
 
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.log.Log;
+import cn.hutool.log.LogFactory;
 import deal.manage.bean.DealOrder;
 import deal.manage.bean.UserFund;
 import deal.manage.bean.Withdraw;
 import deal.manage.mapper.WithdrawMapper;
 import deal.manage.service.OrderService;
+import deal.manage.service.RechargeService;
+import deal.manage.service.UserFundService;
 import deal.manage.service.WithdrawService;
 import otc.api.dealpay.Common;
+import otc.bean.dealpay.Recharge;
 import otc.exception.order.OrderException;
 import otc.result.Result;
 
 @Component
 public class OrderUtil {
+	private static final Log log = LogFactory.get();
 	@Autowired OrderService orderServiceImpl;
 	@Autowired AmountUtil amountUtil;
 	@Autowired WithdrawMapper withdrawDao;
 	@Autowired WithdrawService withdrawServiceImpl;
 	@Autowired AmountRunUtil amountRunUtil;
+	@Autowired RechargeService rechargeServiceImpl;
+	@Autowired UserFundService userFundServiceImpl;
 	
 	/**
 	 * <p>卡商代付金额金额扣减及流水生成</p>
@@ -35,8 +43,105 @@ public class OrderUtil {
 		Result withrawOrder = withrawOrder(orderId, ip, false);
 		return withrawOrder;
 	}
-
 	
+	public Result witSu(String orderId ,  String msg) {
+		if(StrUtil.isBlank(orderId)   ) 
+			return Result.buildFailMessage("必传参数为空");
+		Withdraw wit = withdrawServiceImpl.findOrderId(orderId);
+		if(!wit.getOrderStatus().toString().equals(Common.Order.Wit.ORDER_STATUS_YU.toString()))
+			return Result.buildFailMessage("当前订单状态不允许修改");
+		boolean a = withdrawServiceImpl.updateStatusSu(orderId , msg);
+		if(!a)
+			return Result.buildFailMessage("订单状态修改失败");
+		return Result.buildSuccessMessage("订单状态修改成功");
+	}
+	
+	
+	/**
+	 * <p>代付失败，资金退回</p>
+	 * @param orderId				代付订单号
+	 * @param ip					操作ip
+	 * @return
+	 */
+	public Result witEr(String orderId , String ip , String msg) {
+		if(StrUtil.isBlank(orderId)   ) 
+			return Result.buildFailMessage("必传参数为空");
+		Withdraw wit = withdrawServiceImpl.findOrderId(orderId);
+		if(!wit.getOrderStatus().toString().equals(Common.Order.Wit.ORDER_STATUS_YU.toString()))
+			return Result.buildFailMessage("当前订单状态不允许修改");
+		/**
+		 * ###########################
+		 * 代付失败给该用户退钱
+		 */
+		boolean statusEr = withdrawServiceImpl.updateStatusEr(wit.getOrderId(), msg);
+		if(!statusEr)
+			return Result.buildFailMessage("订单状态修改失败");
+		UserFund userFund = new UserFund();
+		userFund.setUserId(wit.getUserId());
+		Result addAmountAdd = amountUtil.addAmountAdd(userFund, wit.getAmount());
+		if(!addAmountAdd.isSuccess())
+			return addAmountAdd;
+		Result addAmountW = amountRunUtil.addAmountW(wit, ip);
+		if(!addAmountW.isSuccess())
+			return addAmountW;
+		return Result.buildSuccessMessage("代付金额解冻成功");
+	}
+	
+	/**
+	 * <p>充值订单置为成功</p>
+	 * @param orderId				充值订单	号
+	 * @param ip					操作ip
+	 * @return
+	 */
+	public Result rechargeOrderSu(String orderId,String ip,String msg) {
+		Result recharge = rechargeOrderEnter(orderId, ip, false, msg);
+		return recharge;
+	}
+	/**
+	 * <p>充值订单失败</p>
+	 * @param orderId			订单号
+	 * @param msg				描述消息
+	 * @return
+	 */
+	public Result rechargeOrderEr(String orderId,  String msg) {
+		if(StrUtil.isBlankIfStr(orderId) )
+			return Result.buildFailMessage("必传参数为空");
+		Recharge recharge = rechargeServiceImpl.findOrderId(orderId);
+		if(!Common.Order.Recharge.ORDER_STATUS_YU.toString().equals(recharge.getOrderStatus().toString()))
+			return Result.buildFailMessage("当前订单状态不允许操作");
+		boolean a = rechargeServiceImpl.updateStatusEr(orderId, msg);
+		if(!a)
+			return Result.buildFailMessage("订单修改失败");
+		return Result.buildSuccessMessage("账户修改成功");
+	}
+	private Result rechargeOrderEnter(String orderId, String ip, boolean b,String msg) {
+		/**
+		 * 1,修改订单状态
+		 * 2,修改账户状态
+		 * 3,生成流水
+		 */
+		if(StrUtil.isBlankIfStr(orderId) || StrUtil.isBlank(ip))
+			return Result.buildFailMessage("必传参数为空");
+		Recharge recharge = rechargeServiceImpl.findOrderId(orderId);
+		if(!Common.Order.Recharge.ORDER_STATUS_YU.toString().equals(recharge.getOrderStatus().toString()))
+			return Result.buildFailMessage("当前订单状态不允许操作");
+		boolean a = rechargeServiceImpl.updateStatusSu(orderId, msg);
+		if(!a)
+			return Result.buildFailMessage("订单状态修改错误");
+		UserFund userFund = userFundServiceImpl.findUserFund(recharge.getUserId());
+		log.info("【当前充值成功操作卡商账户："+recharge.getUserId()+"】");
+		log.info("【当前充值成功操作卡商账户实体："+userFund.toString()+"】");
+		Result result = amountUtil.addAmountRecharge(userFund, recharge.getActualAmount());
+		log.info("【当前修改账户结果集："+result.toString()+"】");
+		if(!result.isSuccess())
+			return Result.buildFailMessage("账户修改出错");
+		Result amount = amountRunUtil.addAmount(recharge, ip, b);
+		log.info("【当前增加流水结果集："+amount.toString()+"】");
+		if(!amount.isSuccess())
+			return Result.buildFailMessage("资金流水出错");
+		return Result.buildSuccessMessage("账户修改成功");
+	}
+
 	/**
 	 * <p>卡商【入款】订单置为成功</P>
 	 * @param orderId	 交易订单号

@@ -44,4 +44,8 @@ public interface RechargeMapper {
 
     @Update("update dealpay_recharge  set orderStatus = 3 , dealDescribe = #{message} where orderId = #{orderId}")
 	int updateStatusEr(@Param("orderId")  String orderId, @Param("message")  String message);
+
+    
+    @Update("update dealpay_recharge  set orderStatus = 2 , dealDescribe = #{message} where orderId = #{orderId}")
+	int updateStatusSu(@Param("orderId") String orderId, @Param("message")  String msg);
 }
