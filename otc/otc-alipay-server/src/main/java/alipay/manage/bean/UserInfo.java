@@ -49,7 +49,6 @@ public class UserInfo implements Serializable{
     private String qrRechargeList;//卡商匹配标识
     private String dealUrl;//代付URl
     private String fee;
-<<<<<<< HEAD
     
     public String getQrRechargeList() {
 		return qrRechargeList;
@@ -64,8 +63,6 @@ public class UserInfo implements Serializable{
 		this.dealUrl = dealUrl;
 	}
     
-    public String getFee() {
-=======
     private String productId;
         
 
@@ -76,7 +73,6 @@ public class UserInfo implements Serializable{
 		this.productId = productId;
 	}
 	public String getFee() {
->>>>>>> branch 'newjob' of https://github.com/kiwi20200315/otc-gateway.git
 		return fee;
 	}
 	public String getAmount() {

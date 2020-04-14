@@ -144,19 +144,15 @@ public class UserContorller {
 		if(ObjectUtil.isNull(user)) 
 			return Result.buildFailMessage("当前用户未登录");
 		bank.setAccount(user.getUserId());
-<<<<<<< HEAD
 		bank.setCardType(Common.Bank.BANK_QR);
 		boolean flag  = bankCardServiceImpl.addBankCard(bank);
-=======
 		bank.setStatus(1);
 		bank.setIsDeal(2);
 		bank.setSubmitTime(new Date());
-		boolean flag = false;
 		if(StrUtil.isNotEmpty(bank.getBankcardId())) 
 			flag  = bankCardServiceImpl.editBankCard(bank);
 		else
 			flag  = bankCardServiceImpl.addBankCard(bank);
->>>>>>> branch 'newjob' of https://github.com/kiwi20200315/otc-gateway.git
 		if(flag)
 			return Result.buildSuccessMessage("添加银行卡成功");
 		return Result.buildFailMessage("添加银行卡失败");
