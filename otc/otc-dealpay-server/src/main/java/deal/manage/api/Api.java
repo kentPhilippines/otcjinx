@@ -59,6 +59,12 @@ public class Api {
 	@Autowired LogUtil logUtil;
 	@Autowired OrderUtil orderUtil;
 	private static String Url ;
+	/**
+	 * <p>后台人员置卡商代付订单为成功或者失败</p>
+	 * @param param					加密参数
+	 * @param request
+	 * @return
+	 */
 	@Transactional
 	@PostMapping(PayApiConstant.Dealpay.ACCOUNT_API+PayApiConstant.Dealpay.WIT_ORDER+"/{param:.+}")
 	public Result witOrder(@PathVariable("param") String param, HttpServletRequest request) {
@@ -98,6 +104,13 @@ public class Api {
 		return Result.buildFailMessage("订单修改失败");
 	}
 	
+	
+	/**
+	 * <p>后台人员置卡商充值订单为成功或者失败</p>
+	 * @param param					加密参数
+	 * @param request
+	 * @return
+	 */
 	@Transactional
 	@PostMapping(PayApiConstant.Dealpay.ACCOUNT_API+PayApiConstant.Dealpay.RECHARGE_ORDER+"/{param:.+}")
 	public Result recharge(@PathVariable("param") String param, HttpServletRequest request) {

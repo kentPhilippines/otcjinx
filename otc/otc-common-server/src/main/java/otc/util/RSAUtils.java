@@ -3,6 +3,9 @@ package otc.util;
 import cn.hutool.Hutool;
 import cn.hutool.json.JSON;
 import cn.hutool.json.JSONObject;
+import cn.hutool.log.Log;
+import cn.hutool.log.LogFactory;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import org.apache.tomcat.util.codec.binary.Base64;
@@ -29,7 +32,7 @@ public class RSAUtils {
     public static final String RSA_ALGORITHM = "RSA"; //采用RSA加解密算法
     public static final Integer KEY_SIZE = 1024;
     public static final String RSA_ALGORITHM_SIGN = "SHA256WithRSA";
-
+    private static final Log log = LogFactory.get();
     /**
      * 随机生成密钥对
      */
@@ -316,6 +319,7 @@ public class RSAUtils {
      */
     public static Map<String, Object> getDecodePrivateKey(String cipherText, String privateKey) {
         String urlParam = privateDecrypt(cipherText, privateKey);
+        log.info("【解密数据："+urlParam+"】");
         if (StringUtils.isEmpty(urlParam)) 
             throw new BusinessException("解密字符串为空");
         return MapUtil.paramToMap(urlParam);

@@ -141,6 +141,9 @@ public class VendorRequestApi {
             return Result.buildFailMessage("商户不存在");
         log.info("--------------【用户开始RSA解密】----------------");
         String rsaSign = request.getParameter("cipherText");//商户传过来的密文
+        log.info("【获取参数为："+rsaSign+"】");
+        log.info("【获取商户为："+userId+"】");
+        log.info("【获取商户解密秘钥为："+userInfo.getPrivateKey()+"】");
         Map<String, Object> paramMap = RSAUtils.getDecodePrivateKey(rsaSign, userInfo.getPrivateKey());
         log.info("【商户RSA解密的参数：" + paramMap.toString()+"】 " );
         if (CollUtil.isEmpty(paramMap))
