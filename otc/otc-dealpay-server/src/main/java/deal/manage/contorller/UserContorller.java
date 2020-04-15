@@ -36,6 +36,7 @@ import deal.manage.service.UserFundService;
 import deal.manage.service.UserInfoService;
 import deal.manage.service.UserRateService;
 import deal.manage.util.CardBankOrderUtil;
+import deal.manage.util.QrUtil;
 import deal.manage.util.SessionUtil;
 import otc.api.dealpay.Common;
 import otc.exception.other.OtherException;
@@ -50,6 +51,7 @@ public class UserContorller {
 	@Autowired BankListService bankCardServiceImpl;
 	@Autowired InviteCodeService inviteCodeServiceImpl;
 	@Autowired CardBankOrderUtil bankUtil;
+	@Autowired QrUtil qrUtil;
 	@Autowired AccountApiService accountApiServiceImpl;
 	@Autowired UserRateService userRateServiceImpl;
 	@Autowired UserFundService userFundServiceImpl;
@@ -415,4 +417,20 @@ public class UserContorller {
 			return Result.buildSuccessResult();
 		return Result.buildFailResult("状态修改失败");
 	}
+	/**
+	 * 获取用户虚拟冻结资金
+	 * @param request
+	 * @return
+	 * @throws ParseException
+	 */
+	@GetMapping("/virtualAmount")
+	@ResponseBody
+	public Result virtualAmount(HttpServletRequest request ) throws ParseException {
+		UserInfo user = sessionUtil.getUser(request);
+		if(ObjectUtil.isNull(user))
+			return Result.buildFailMessage("当前用户未登录");
+		BigDecimal userAmount = qrUtil.getUserAmount(user.getUserId());
+		return Result.buildSuccessResult(userAmount);
+	}
+	
 }
