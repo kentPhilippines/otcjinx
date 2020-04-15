@@ -59,19 +59,20 @@ var rechargeVM = new Vue({
 		},
 		loadPayType : function() {
 			var that = this;
-			that.$http.get('/recharge/findEnabledPayType').then(function(res) {
-				that.payTypes = res.body.result;
-				that.payChannels = that.payTypes;
-				if (that.payTypes.length > 0) {
-					that.selectedPayType = that.payTypes[0];
-				} else {
-					layer.alert('暂没有可用的充值通道', {
-						title : '提示',
-						icon : 7,
-						time : 3000
-					});
-				}
-			});
+//			that.$http.get('/recharge/findEnabledPayType').then(function(res) {
+//				console.log(res.body.result);
+//				that.payTypes = res.body.result;
+//				that.payChannels = that.payTypes;
+//				if (that.payTypes.length > 0) {
+//					that.selectedPayType = that.payTypes[0];
+//				} else {
+//					layer.alert('暂没有可用的充值通道', {
+//						title : '提示',
+//						icon : 7,
+//						time : 3000
+//					});
+//				}
+//			});
 		},
 		confirmSubmit : function() {
 			var that = this;
