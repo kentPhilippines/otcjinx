@@ -69,7 +69,7 @@ public class FileApi {
 		return null;
 	}
 
-	@GetMapping("/fetch/{id:.+}")
+	@RequestMapping("/fetch/{id:.+}")
 	public ResponseEntity<Resource> fetch(@PathVariable String id) {
 		try {
 	String fileType = "image/jpeg";
