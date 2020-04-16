@@ -38,7 +38,7 @@ public class QrUtil {
 //	QrCodeService qrCodeServiceImpl;
 	
 	private String money = "9999";//非固码查找金额
-	DateFormat formatter = new SimpleDateFormat(Common.User.DATATYPE);
+	DateFormat formatter = new SimpleDateFormat(Common.Order.DATE_TYPE);
 	/**
 	 * <p>
 	 * 输入用户id，查询用户的虚拟冻结金额
