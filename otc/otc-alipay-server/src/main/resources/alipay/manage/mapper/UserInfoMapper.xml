@@ -518,14 +518,6 @@
       and userId = #{userId,jdbcType=VARCHAR}
   </update>
 
-  <select id="selectByUserId" resultType="alipay.manage.bean.UserInfo"  parameterType="String">
-    select
-    <include refid="Base_Column_List" />
-    from alipay_user_info
-    where
-    userId = #{userId,jdbcType=VARCHAR}
-  </select>
-
   <select id="selectByUserName" resultType="alipay.manage.bean.UserInfo"  parameterType="String">
     select
     <include refid="Base_Column_List" />

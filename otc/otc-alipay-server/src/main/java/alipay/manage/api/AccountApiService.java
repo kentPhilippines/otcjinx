@@ -34,7 +34,7 @@ public interface AccountApiService {
 	 * @param accountId
 	 * @return
 	 */
-	boolean updateIsAgent(String accountId);
+	boolean updateIsAgent(Integer id,String userId);
 	/**
 	 * <p>修改 用户详情</p>
 	 * @param user
