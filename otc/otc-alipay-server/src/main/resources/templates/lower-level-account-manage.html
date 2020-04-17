@@ -240,6 +240,7 @@
 							userName : that.userName
 						}
 					}).then(function(res) {
+						console.log(res.body.result.content);
 						that.accounts = res.body.result.content;
 						that.pageNum = res.body.result.pageNum;
 						that.totalPage = res.body.result.totalPage;
