@@ -1,7 +1,7 @@
 eureka : 
   client:
     serviceUrl:
-      defaultZone:  http://47.52.108.99:8761/eureka/
+      defaultZone:  http://120.78.197.211:8761/eureka/
   instance:
     # 是否使用ip注册
     prefer-ip-address : true

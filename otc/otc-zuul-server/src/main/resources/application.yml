@@ -1,18 +1,18 @@
 eureka : 
   client:
     serviceUrl:
-      defaultZone:  http://47.52.108.99:8761/eureka/
+      defaultZone:  http://120.78.197.211:8761/eureka/
   instance:
     # 是否使用ip注册
     prefer-ip-address : true
     # ${spring.cloud.client.ip-address}:${server.port}  局域网这样配置
-    #  本地调试则要直接写死ip 【这个ip为注册时候的 调用ip】
-    instance-id : 47.52.108.99:${server.port}
+    #  本地调试则要直接写死ip 【这个ip为注册时候的 调用ip】  47.52.108.99
+    instance-id : ${spring.cloud.client.ip-address}:${server.port}
     # 注册ip地址
-    ip-address : 47.52.108.99
+    ip-address : ${spring.cloud.client.ip-address}
     # 注册ip端口
     non-secure-port : ${server.port}
-    hostname : 47.52.108.99:${server.port}
+    hostname : ${spring.cloud.client.ip-address}:${server.port}
 spring:
   application:
     name: otc-zuul-server
@@ -25,6 +25,9 @@ zuul:
     api-b:
       path: /api-dealpay/**
       serviceId: otc-dealpay-server
+    api-c:
+      path: /api-file/**
+      serviceId: otc-file-server
   host:
     maxTotalConnections: 6000000
     maxPerRouteConnections: 600000
