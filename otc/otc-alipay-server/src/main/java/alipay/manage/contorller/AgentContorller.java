@@ -7,17 +7,22 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 
-import alipay.config.exception.OtherErrors;
-import alipay.manage.util.UserUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
+import alipay.config.exception.OtherErrors;
 import alipay.manage.api.AccountApiService;
 import alipay.manage.bean.InviteCode;
 import alipay.manage.bean.UserFund;
@@ -27,10 +32,12 @@ import alipay.manage.bean.util.PageResult;
 import alipay.manage.bean.util.UserCountBean;
 import alipay.manage.service.CorrelationService;
 import alipay.manage.service.InviteCodeService;
+import alipay.manage.service.UserFundService;
 import alipay.manage.service.UserInfoService;
 import alipay.manage.service.UserRateService;
 import alipay.manage.util.SessionUtil;
 import alipay.manage.util.SettingFile;
+import alipay.manage.util.UserUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
@@ -44,6 +51,7 @@ public class AgentContorller {
 	    @Autowired SessionUtil sessionUtil;
 	    @Autowired InviteCodeService inviteCodeServiceImpl;
 	    @Autowired UserInfoService userInfoService;
+	    @Autowired UserFundService userFundService;
 	    @Autowired UserRateService userRateService;
 	    @Autowired CorrelationService correlationServiceImpl;
 		@Autowired AccountApiService accountApiService;
@@ -168,8 +176,16 @@ public class AgentContorller {
 	        user.setAgent(user2.getUserId());
 	        PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
 	        List<UserInfo> userList = userInfoService.findSunAccount(user);
-	        for (UserInfo qrUser : userList)
+	        UserRate userRate=null;
+	        UserFund userfund=null;
+	        for (UserInfo qrUser : userList) {
 	            findOnline(qrUser);
+	            userRate=userRateService.findUserRateR(qrUser.getUserId());
+	            qrUser.setFee(userRate.getFee()+"");
+	            userfund=userFundService.findUserInfoByUserId(qrUser.getUserId());
+	            qrUser.setRechargeNumber(userfund.getRechargeNumber());
+	            qrUser.setCashBalance(userfund.getCashBalance());
+	            }
 	        PageInfo<UserInfo> pageInfo = new PageInfo<UserInfo>(userList);
 	        PageResult<UserInfo> pageR = new PageResult<UserInfo>();
 	        pageR.setContent(pageInfo.getList());
@@ -195,7 +211,6 @@ public class AgentContorller {
 	     * @param id
 	     */
 	    private UserCountBean findMyDate(@NotNull Integer id) {
-	    	log.info("获取id "+ id);
 	    	UserCountBean bean = correlationServiceImpl.findMyDateAgen(id);
 	    	UserCountBean bean1 = correlationServiceImpl.findDealDate(id);
 	    	if(ObjectUtil.isNotNull(bean1)) {

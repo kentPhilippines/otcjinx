@@ -49,7 +49,7 @@ public class Common {
 		public static final String USER_INFO_OFF = "0";//用户总开关关闭
 		
 		
-		
+		public static final String DATATYPE = "yyyyMMddHHmmss";//账户未登录错误
 		
 		
 		public static final Integer DEAL_FEE =1;//入款费率

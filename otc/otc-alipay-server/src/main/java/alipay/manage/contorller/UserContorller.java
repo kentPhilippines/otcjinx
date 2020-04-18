@@ -212,16 +212,16 @@ public class UserContorller {
 	 */
 	@PostMapping("/updateIsAgent")
 	@ResponseBody
-	public Result updateIsAgent(HttpServletRequest request,String accountId)   {
+	public Result updateIsAgent(HttpServletRequest request,Integer id,String userId)   {
 		UserInfo user = sessionUtil.getUser(request);
 		if (ObjectUtil.isNull(user)) {
 	        log.info("当前用户未登陆");
 	        return Result.buildFailMessage("当前用户未登陆");
 	    }
-		boolean flag = accountApiServiceImpl.updateIsAgent(accountId);
+		boolean flag = accountApiServiceImpl.updateIsAgent(id,userId);
 		if(flag)
-			return	Result.buildSuccessResult();
-		return Result.buildFail();
+			return	Result.buildSuccessMessage("升级代理成功");
+		return Result.buildFailMessage("升级代理失败");
 	}
 //	@PostMapping("/findUserByAccountId")
 //	@ResponseBody

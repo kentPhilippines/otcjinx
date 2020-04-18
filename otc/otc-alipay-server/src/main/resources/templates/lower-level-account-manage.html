@@ -51,7 +51,7 @@
 			<div class="form-details" v-for="account in accounts">
 				<div class="form-details-body">
 					<div class="form-details-item">
-						<label>用户名:</label> <span>{{account.accountId}}({{60000+account.id}})</span>
+						<label>用户名:</label> <span>{{account.userName}}({{60000+account.id}})</span>
 						<label>总下线人数:<strong class="form-details-item-highlight">{{account.agentCount}}</strong></label>  
 					</div>
 					<div class="form-details-item">
@@ -64,11 +64,12 @@
 					</div>
 					<div class="form-details-item">
 						<label>费率</label> <span class="form-details-item-highlight">{{account.fee}}</span> 
-						<button  class="btn btn-outline-info btn-lg"   type="button"   style="margin: 0.2rem 0.2rem 0.2rem 0.2rem;  width: 7rem; height: 3rem;"  v-on:click="updataAccountFee(account.id)"><span>修改费率</span>  </button>		
+						<button  class="btn btn-outline-info btn-lg"   type="button"   style="margin: 0.2rem 0.2rem 0.2rem 0.2rem;  width: 7rem; height: 3rem;"  v-on:click="updataAccountFee(account.userId)"><span>修改费率</span>  </button>		
 					</div>
 					<div class="form-details-item">
 						<label>账号性质:</label> <span class="form-details-item-highlight">{{account.isAgent == 1 ? '代理商' : '会员'}}</span> 
-						<button  class="btn btn-outline-info btn-lg"  v-show="account.isAgent != 1"  type="button"   style="margin: 0.2rem 0.2rem 0.2rem 0.2rem;  width: 7rem; height: 3rem;"  v-on:click="updateIsAgent(account.id)"><span>升级代理</span>  </button>		
+						<button  class="btn btn-outline-info btn-lg"  v-show="account.isAgent != 1"  type="button"   style="margin: 0.2rem 0.2rem 0.2rem 0.2rem;  width: 7rem; height: 3rem;"  v-on:click="updateIsAgent(account.id,account.userId)"><span>升级代理</span>  
+						</button>		
 					</div>
 					<!-- <div class="form-details-item">
 						<label>接单状态:</label> <span class="form-details-item-highlight">{{account.receiveOrderState ==  1 ? '正常接单' : '暂停接单'}}</span> 
@@ -79,7 +80,7 @@
 						<label>注册时间:</label> <span>{{account.createTime  | dateFilter("yyyy-mm-dd hh:mm:ss")}}</span>
 					</div>
 					<div class="form-details-item">
-						<label>最近登录时间:</label> <span>{{account.loginTime | dateFilter("yyyy-mm-dd hh:mm:ss")}}</span>
+						<label>最近登录时间:</label> <span>{{account.submitTime | dateFilter("yyyy-mm-dd hh:mm:ss")}}</span>
 					</div>
 				</div>
 			</div>
@@ -186,10 +187,11 @@
 						that.loadByPage();
 					});
 				}, */
-				updateIsAgent : function(accountId ) {
+				updateIsAgent : function(id,userId) {
 					var that = this;
 					that.$http.post('/userAccount/updateIsAgent', {
-						accountId : accountId
+						   id : id,
+						userId: userId
 					}, {
 						emulateJSON : true
 					}).then(function(res) {
@@ -209,7 +211,7 @@
 						that.userAgent = res.body.result.userAgent;
 					})
 				},
-				updataAccountFee : function(accountId ) {
+				updataAccountFee : function(userId) {
 					var that = this;
 					layer.open({
 						type: 2,
@@ -220,7 +222,7 @@
 						shade: false,
 						maxmin: true, //开启最大化最小化按钮
 						area: ['25rem','26rem'],
-						content: "/userAccount/updataAccountFee?accountId="+accountId,
+						content: "/userAccount/updataAccountFee?accountId="+userId,
 						success: function(){
 							  },
 						end : function(){
@@ -238,6 +240,7 @@
 							userName : that.userName
 						}
 					}).then(function(res) {
+						console.log(res.body.result.content);
 						that.accounts = res.body.result.content;
 						that.pageNum = res.body.result.pageNum;
 						that.totalPage = res.body.result.totalPage;

@@ -64,8 +64,22 @@ public class UserInfo implements Serializable{
 	}
     
     private String productId;
-        
-
+    private BigDecimal rechargeNumber;   //保证金
+    private BigDecimal cashBalance;	//分润
+    
+    
+	public BigDecimal getRechargeNumber() {
+		return rechargeNumber;
+	}
+	public void setRechargeNumber(BigDecimal rechargeNumber) {
+		this.rechargeNumber = rechargeNumber;
+	}
+	public BigDecimal getCashBalance() {
+		return cashBalance;
+	}
+	public void setCashBalance(BigDecimal cashBalance) {
+		this.cashBalance = cashBalance;
+	}
 	public String getProductId() {
 		return productId;
 	}

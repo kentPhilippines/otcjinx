@@ -46,8 +46,8 @@ public interface UserInfoMapper {
     
     
     
-    
-    UserInfo selectByUserId(String userId);
+    @Select("select * from alipay_user_info where userId = #{userId}")
+    UserInfo selectByUserId(@Param("userId")String userId);
 
     UserInfo selectByUserName(String username);
 

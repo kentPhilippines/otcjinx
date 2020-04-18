@@ -1,11 +1,13 @@
 package alipay.manage.api.Impl;
 
+import java.util.Date;
 import java.util.List;
 
 import alipay.manage.bean.UserRate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Component;
 
 import alipay.manage.api.AccountApiService;
@@ -61,6 +63,7 @@ public class AccountApiSericeImpl implements AccountApiService {
         user.setPassword(password.getResult().toString());
         user.setPayPasword(payPasword.getResult().toString());
         user.setSalt(salt);
+        user.setCreateTime(new Date());
         int insertSelective = userInfoDao.insertSelective(user);
         boolean addUserFund = addUserFund(user);
         if (insertSelective > 0 && insertSelective < 2 && addUserFund)
@@ -139,10 +142,20 @@ public class AccountApiSericeImpl implements AccountApiService {
     }
 
     @Override
-    public boolean updateIsAgent(String accountId) {
-        return false;
+    @CacheEvict(value="user", allEntries=true)
+    public boolean updateIsAgent(Integer id,String userId) {
+    	UserInfo record1 = new UserInfo();
+		record1.setSubmitTime(null);
+		record1.setCreateTime(new Date());
+		record1.setStatus(null);
+		record1.setId(id);
+		record1.setUserId(userId);
+		record1.setIsAgent("1");
+		int updateByPrimaryKey = userInfoDao.updateByPrimaryKeySelective(record1);
+		return updateByPrimaryKey > 0 && updateByPrimaryKey < 2;
     }
 
+    
     @Override
     public Result editAccount(UserInfo user) {
         UserInfoExample example = new UserInfoExample();
