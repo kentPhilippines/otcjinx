@@ -1,20 +1,13 @@
 package otc.util;
 
-import cn.hutool.Hutool;
-import cn.hutool.json.JSON;
-import cn.hutool.json.JSONObject;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
-
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Maps;
-import org.apache.tomcat.util.codec.binary.Base64;
-import org.apache.tomcat.util.http.fileupload.IOUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import otc.common.SystemConstants;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
 import otc.exception.BusinessException;
+
 import javax.crypto.Cipher;
-import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayOutputStream;
 import java.security.*;
 import java.security.interfaces.RSAPrivateKey;
@@ -24,7 +17,6 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.List;
 import java.util.Map;
-import static cn.hutool.json.JSONObject.*;
 
 
 public class RSAUtils {
@@ -200,6 +192,7 @@ public class RSAUtils {
                 offSet = i * maxBlock;
             }
         } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException("加解密阀值为[" + maxBlock + "]的数据时发生异常", e);
         }
         byte[] resultDatas = out.toByteArray();
