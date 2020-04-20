@@ -144,7 +144,7 @@ public class VendorRequestApi {
         log.info("【获取参数为："+rsaSign+"】");
         log.info("【获取商户为："+userId+"】");
         log.info("【获取商户解密秘钥为："+userInfo.getPrivateKey()+"】");
-        Map<String, Object> paramMap = RSAUtils.getDecodePrivateKey(rsaSign, SystemConstants.INNER_PLATFORM_PRIVATE_KEY);//平台之间的加解密用平台私钥
+        Map<String, Object> paramMap = RSAUtils.getDecodePrivateKey(rsaSign, userInfo.getPublicKey());
         log.info("【商户RSA解密的参数：" + paramMap.toString()+"】 " );
         if (CollUtil.isEmpty(paramMap))
             return Result.buildFailMessage("RSA解密参数为空");
