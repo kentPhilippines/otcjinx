@@ -25,16 +25,21 @@ import org.springframework.stereotype.Component;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
+import cn.hutool.log.Log;
+import cn.hutool.log.LogFactory;
 import otc.api.alipay.Common;
 import otc.notfiy.bean.Mms;
+import otc.notfiy.feign.AlipayServiceClien;
 import otc.notfiy.service.MmsService;
+import otc.result.Result;
 @Component
 public class AndroidUtil {
 	final SimpleDateFormat d = new SimpleDateFormat("yyyyMMddHHmmss");
-	Logger log = LoggerFactory.getLogger(AndroidUtil.class);
+	private static final Log log = LogFactory.get();
 	private static final String KEY = "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAKWqdZtT9N9WDeIhyG0dtH6adRNoyNlJj9gb5GquejqYPKg/dDNhEnB7dSGuAz2w3doCoeIRg1f7BYiPw5yoZqfDZGpr216gifd4cWauTCvBqREujJMjvJc2k+FkDJa9wY6oO3GQirZ3ijfFl8lpmSNK/wG7XYfS3XqCasxexaCrAgMBAAECgYA+LzXmECWij5K2hyfMjZHq09+OYY7CwTIVVKLwyH1o8SwTm33qq01Ym37kHYVp6rHb25EYYqqCo9732775VtzxEVo37UtSI/PItDnrQbvf9/N/3tYs8rh1G10CI60YTU1drSdApQFHlTENAcXqgnFPLuF3ew+50BoenF34r/JAAQJBANWJMjeZUHxZKHj5tRLMuBuS05dS+Bw7FIx2hI5Wp2lugstODE+ZZJN5kPKliDk5Ns/aE9Ixh1guZIGYKyqUzAECQQDGnESHzyxekmot+mekP5RpBuyP608taZ5uUVaAIrQyDIA5HomB2/Wp3YMUWhvOGPnh9Ckjn4FFnIi9gefoEVyrAkAbZ7c9MX0F6H9sP0gA+KssRsTHKAvVu7Ngb5mFlxN3UYqRwxuLX7lrv+9dZOc9yN0DAg8HK/od1B5sD3aCyYQBAkEAlJa+8rg9ord5ttJbjdd/aiAjBf1vLDOTs0cpJw5PsA4INDOzfrMYlTBDbAuKN+QZt0GbMaqY5YKaDuXMoaOzpwJATqwHi7gNleA2QBpyCGDuEeHIftw0rAoRFSPYsUpJsDBBwAPAFJ6uebg32VdFBx5gNMqS8TzM6ds7FWXzTzBJDA==";                          
 	DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	@Autowired MmsService mmsServiceImpl;
+	@Autowired AlipayServiceClien alipayServiceClienImpl;
 	public void http2(  Map<Object, Object> postjson,HttpServletRequest request, HttpServletResponse response) throws IOException {
 	String data = postjson.get("data").toString();
 	log.info("接受回调信息data："+data);
@@ -97,30 +102,21 @@ public class AndroidUtil {
 	paramMap.put(Common.Notfiy.ORDER_AMOUNT, number);
 	paramMap.put(Common.Notfiy.ORDER_PHONE, deviceid);
 	paramMap.put(Common.Notfiy.ORDER_ENTER_IP, HttpUtil.getClientIP(request));
-	
-	/*
-	log.info("【正在向后台发起请求，请求参数为："+paramMap.toString()+"，请求URL为："+config.getGatewayUrl()+"】");
-	String result = HttpUtil.post(config.getAlipayToAccount(), paramMap);
-	//当返回的数据有以下两个字段的时候
-	JSONObject parseObj = JSONUtil.parseObj(result);
-	JsonResult bean = JSONUtil.toBean(parseObj, JsonResult.class);
-	log.info("【主服务器响应结果为："+bean.toString()+"】");
-	if(0 == bean.getCode()) {
-		msg.setResult(bean.getMessage());
+	Result enterOrder = alipayServiceClienImpl.enterOrder(paramMap);
+	if(enterOrder.isSuccess()) {
+		msg.setRetain2("Y");
+		msg.setRetain1(enterOrder.getResult().toString());
+		msg.setResult(enterOrder.getMessage());
+		flag = mmsServiceImpl.updataMms(msg);
+	}else {
+		msg.setResult(enterOrder.getMessage());
 		flag = mmsServiceImpl.updataMms(msg);
 	}
-	if(bean.isSuccess()) {//成功
-		msg.setRetain2("Y");
-		msg.setRetain1(bean.getResult().toString());
-		msg.setResult(bean.getMessage());
-		flag = mmsServiceImpl.updataMms(msg);
-//	}
-		*/
 	}
 }
 /**
  * <p>接受回调信息</p>
- * <li>手机版</li>
+ * <li>手机版【短信】</li>
  * @param postjson
  * @param request
  * @param response
@@ -141,24 +137,24 @@ public class AndroidUtil {
 		if(type.equals("alipay")) {
 			if(StrUtil.isBlank(money)) {
 				money = AmountUtil.extractMoney(content);
-			}
-			Mms msg = new Mms();
-			msg.setContent(content);
-			msg.setDeviceid(deviceid);
-			msg.setEncrypt(encrypt);
-			msg.setType(type);
-			msg.setMoney(money);
-			msg.setTitle(title);
-			msg.setTime(time);
-			msg.setRetain2("N");
-			boolean flag  = mmsServiceImpl.addMms(msg);
-			if(flag) 
-				log.info("【短信回调数据记录成功】");	
-			else
-				log.info("【短信回调数据记录失败】");	
-			HashMap<String, Object> paramMap = new HashMap<>();
-			paramMap.put("amount", money);
-			paramMap.put("bankPhone", deviceid);
+		}
+		Mms msg = new Mms();
+		msg.setContent(content);
+		msg.setDeviceid(deviceid);
+		msg.setEncrypt(encrypt);
+		msg.setType(type);
+		msg.setMoney(money);
+		msg.setTitle(title);
+		msg.setTime(time);
+		msg.setRetain2("N");
+		boolean flag  = mmsServiceImpl.addMms(msg);
+		if(flag) 
+			log.info("【短信回调数据记录成功】");	
+		else
+			log.info("【短信回调数据记录失败】");	
+		HashMap<String, Object> paramMap = new HashMap<>();
+		paramMap.put("amount", money);
+		paramMap.put("bankPhone", deviceid);
 			/*
 			log.info("【正在向后台发起请求，请求参数为："+paramMap.toString()+"，请求URL为："+config.getGatewayUrl()+"】");
 			log.info("【主服务器响应结果为："+bean.toString()+"】");

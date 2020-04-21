@@ -44,6 +44,7 @@ import otc.util.enums.DeductStatusEnum;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -73,7 +74,6 @@ public class Api {
 		log.info("【当前接收到远程调用方法，将二维码标记为以剪裁，二维码编号："+fileId+"】");
 		fileListServiceImpl.updataFileIsCut(fileId);
 	};
-	
 	/**
 	 * <p>获取没有剪裁的文件 </p>
 	 * @return
@@ -84,13 +84,6 @@ public class Api {
 		List<FileList> fileList = fileListServiceImpl.findFileNotCut();
 		return fileList;
 	};
-	
-	
-	
-	
-	
-	
-	
 	/**
 	 * <p>关闭收款媒介</p>
 	 * @param mediumNumber
@@ -104,27 +97,19 @@ public class Api {
 		Result pop = queueUtil.pop(medium);
 		return pop;
 	};
-	
-	
-	
 	/**
 	 * <p>系统回调订单成功资金处理</p>
 	 * @param param
 	 * @param request
 	 * @return
 	 */
-	@PostMapping(PayApiConstant.Alipay.ORDER_API+PayApiConstant.Alipay.ORDER_ENTER_ORDER_SYSTEM+"/{param:.+}")
-	public Result enterOrderSystem(@PathVariable("param") String param, HttpServletRequest request) {
-		log.info("【接收到系统回调的方法，参数为："+param+"】");
-		Map<String, Object> stringObjectMap = RSAUtils.retMapDecode(param, SystemConstants.INNER_PLATFORM_PRIVATE_KEY);
-		log.info("【接受系统回调参数为："+stringObjectMap.toString()+"】");
-		if(MapUtil.isEmpty(stringObjectMap)) {
-			log.info("【当前系统订单成功回调参数为空】");
-			return Result.buildFailMessage("必传参数为空");
-		}
-		Object obja = stringObjectMap.get(Common.Notfiy.ORDER_AMOUNT);
-		Object objp = stringObjectMap.get(Common.Notfiy.ORDER_PHONE);
-		Object obji = stringObjectMap.get(Common.Notfiy.ORDER_ENTER_IP);
+	@PostMapping(PayApiConstant.Alipay.ORDER_API+PayApiConstant.Alipay.ORDER_ENTER_ORDER_SYSTEM )
+	public Result enterOrderSystem( HashMap<String, Object> paramMap, HttpServletRequest request) {
+		if(MapUtil.isEmpty(paramMap))
+			return Result.buildFailMessage("未获取到参数");
+		Object obja = paramMap.get(Common.Notfiy.ORDER_AMOUNT);
+		Object objp = paramMap.get(Common.Notfiy.ORDER_PHONE);
+		Object obji = paramMap.get(Common.Notfiy.ORDER_ENTER_IP);
 		if(ObjectUtil.isNull(objp)||ObjectUtil.isNull(obja))
 			return  Result.buildFailMessage("回调设备号或者金额 为空");
 		String amount = obja.toString();

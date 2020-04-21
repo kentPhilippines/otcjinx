@@ -1,5 +1,6 @@
 package otc.api;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.cloud.openfeign.FeignClient;
@@ -64,4 +65,7 @@ public interface AlipayServiceClienFeign {
 	public void updataFileIsDeal(@RequestParam("fileId")String fileId);
 	
 	
+	
+	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,value = PayApiConstant.Alipay.ORDER_API+PayApiConstant.Alipay.ORDER_ENTER_ORDER_SYSTEM)
+	public Result enterOrder(HashMap<String, Object> paramMap);
 }
