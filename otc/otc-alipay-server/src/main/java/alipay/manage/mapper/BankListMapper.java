@@ -6,6 +6,9 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+import org.springframework.web.bind.annotation.PathVariable;
+
 @Mapper
 public interface BankListMapper {
     int countByExample(BankListExample example);
@@ -22,4 +25,7 @@ public interface BankListMapper {
     int updateByPrimaryKeySelective(BankList record);
     int updateByPrimaryKeyWithBLOBs(BankList record);
     int updateByPrimaryKey(BankList record);
+
+    @Select("select * from alipay_bank_list where bankcardAccount = #{bankNo}")
+    BankList selectBankCardByBankNo(@Param("bankNo") String bankNo);
 }

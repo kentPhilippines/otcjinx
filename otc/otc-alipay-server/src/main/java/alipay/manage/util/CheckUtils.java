@@ -56,7 +56,7 @@ public class CheckUtils {
         String mobile = (String) map.get("mobile");
         String bankcode = (String) map.get("bankcode");
         String notifyurl = (String) map.get("notifyurl");
-        String rsasign = (String) map.get("rsasign");
+        String rsasign = (String) map.get("sign");
         if (StrUtil.isBlank(rsasign)
                 || StrUtil.isBlank(notifyurl)
                 || StrUtil.isBlank(bankcode)

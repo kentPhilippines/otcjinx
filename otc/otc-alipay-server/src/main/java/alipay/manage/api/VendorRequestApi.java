@@ -144,7 +144,7 @@ public class VendorRequestApi {
         log.info("【获取参数为："+rsaSign+"】");
         log.info("【获取商户为："+userId+"】");
         log.info("【获取商户解密秘钥为："+userInfo.getPrivateKey()+"】");
-        Map<String, Object> paramMap = RSAUtils.getDecodePrivateKey(rsaSign, userInfo.getPublicKey());
+        Map<String, Object> paramMap = RSAUtils.getDecodePrivateKey(rsaSign, userInfo.getPrivateKey());
         log.info("【商户RSA解密的参数：" + paramMap.toString()+"】 " );
         if (CollUtil.isEmpty(paramMap))
             return Result.buildFailMessage("RSA解密参数为空");
@@ -180,7 +180,7 @@ public class VendorRequestApi {
         BigDecimal limitAmount = bank.getLimitAmount();
         BigDecimal bankAmount = bank.getBankAmount();
         BigDecimal add = bankAmount.add(new BigDecimal(amount));
-        if (add.compareTo(limitAmount) == -1) {
+        if (limitAmount.compareTo(add) == -1) {
             log.info("【当前银行卡超出当日可用金额】");
             return Result.buildFailMessage("当前银行卡超出当日可用金额");
         }

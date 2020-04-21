@@ -116,6 +116,7 @@ public class DealAppApi {
 		String type = "";
 		if(fla)type=Common.Order.Wit.WIT_TYPE_API;else type = Common.Order.Wit.WIT_TYPE_MANAGE;
 		Withdraw witb = new Withdraw();
+		witb.setUserId(wit.getAppid());
 		witb.setAmount(new BigDecimal(wit.getAmount()));
 		witb.setFee(userRate.getFee());
 		witb.setActualAmount(new BigDecimal(wit.getAmount()));

@@ -50,6 +50,6 @@ public class BankListServiceImpl implements BankListService{
 
 	@Override
 	public BankList findBankByNo(String bankNo) {
-		return null;
+		return bankListMapper.selectBankCardByBankNo(bankNo);
 	}
 }
