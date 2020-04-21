@@ -26,6 +26,7 @@ import alipay.manage.mapper.DealOrderAppMapper;
 import alipay.manage.mapper.RechargeMapper;
 import alipay.manage.mapper.UserRateMapper;
 import alipay.manage.mapper.WithdrawMapper;
+import alipay.manage.service.CorrelationService;
 import alipay.manage.service.OrderService;
 import alipay.manage.service.UserInfoService;
 import cn.hutool.core.thread.ThreadUtil;
@@ -51,6 +52,7 @@ public class OrderUtil {
 	@Autowired DealOrderAppMapper dealOrderAppDao;
 	@Autowired UserRateMapper userRateDao;
 	@Autowired RiskUtil riskUtil;
+	@Autowired CorrelationService correlationServiceImpl;
 	/**
 	 * <p>充值订单置为成功</p>
 	 * @param orderId			订单号
@@ -309,29 +311,56 @@ public class OrderUtil {
 	public Result dealAmount(DealOrder order,String ip ,Boolean flag,String msg){
 		if(!orderServiceImpl.updateOrderStatus(order.getOrderId(),OrderDealStatus.成功.getIndex().toString(),msg))
 			return Result.buildFailMessage("订单修改失败，请重新发起成功");
+		//TODO 这里结算模式可选设置为  是否为顶代模式，如果为订单模式 则  只扣减顶代的   账号金额     给当前码商增加利润     
+		//TODO 如果不为顶代模式 则直接按照当前现有模式  结算 
+		String findAgent = correlationServiceImpl.findAgent(order.getOrderQrUser());
+		UserInfo userId = userInfoServiceImpl.findUserInfoByUserId(findAgent);
 		UserFund userFund = new UserFund();
 		userFund.setUserId(order.getOrderQrUser());
-		Result deleteDeal = amountUtil.deleteDeal(userFund, order.getDealAmount());//扣除交易点数账户变动
-		if(!deleteDeal.isSuccess())
-			return deleteDeal;
-		Result deleteRechangerNumber = amountRunUtil.deleteRechangerNumber(order, ip, flag);//扣除交易点数 流水生成
-		if(!deleteRechangerNumber.isSuccess())
-			return deleteRechangerNumber;
-		UserRate findUserRateById = userInfoServiceImpl.findUserRateById(order.getFeeId());
-		BigDecimal dealAmount = order.getDealAmount();
-		log.info("【当前交易金额："+dealAmount+"】");
-		BigDecimal fee = findUserRateById.getFee();
-		BigDecimal multiply = dealAmount.multiply(fee);
-		log.info("【当前分润费率："+fee+"】");
-		log.info("【当前分润金额："+multiply+"】");
-		Result addDeal = amountUtil.addDeal(userFund, multiply, dealAmount);
-		if(!addDeal.isSuccess())
-			return addDeal;
-		Result addDealAmount = amountRunUtil.addDealAmount(order, ip, flag);
-		if(!addDealAmount.isSuccess())
-			return addDealAmount;
-		log.info("【金额修改完毕，流水生成成功】");
-		return Result.buildSuccessResult();
+		if(false) {//非正常结算模式
+			userFund.setUserId(userId.getUserId());
+			Result deleteDeal = amountUtil.deleteDeal(userFund, order.getDealAmount());//扣除交易点数账户变动
+			if(!deleteDeal.isSuccess())
+				return deleteDeal;
+			Result deleteRechangerNumber = amountRunUtil.deleteRechangerNumber(order, ip, flag);//扣除交易点数 流水生成
+			if(!deleteRechangerNumber.isSuccess())
+				return deleteRechangerNumber;
+			UserRate findUserRateById = userInfoServiceImpl.findUserRateById(order.getFeeId());
+			BigDecimal dealAmount = order.getDealAmount();
+			log.info("【当前交易金额："+dealAmount+"】");
+			BigDecimal multiply = new BigDecimal("0"); 
+			Result addDeal = amountUtil.addDeal(userFund, multiply, dealAmount);
+			if(!addDeal.isSuccess())
+				return addDeal;
+			Result addDealAmount = amountRunUtil.addDealAmount(order, ip, flag);
+			if(!addDealAmount.isSuccess())
+				return addDealAmount;
+			log.info("【金额修改完毕，流水生成成功】");
+			return Result.buildSuccessResult();
+		} else {//正常结算模式
+			Result deleteDeal = amountUtil.deleteDeal(userFund, order.getDealAmount());//扣除交易点数账户变动
+			if(!deleteDeal.isSuccess())
+				return deleteDeal;
+			Result deleteRechangerNumber = amountRunUtil.deleteRechangerNumber(order, ip, flag);//扣除交易点数 流水生成
+			if(!deleteRechangerNumber.isSuccess())
+				return deleteRechangerNumber;
+			UserRate findUserRateById = userInfoServiceImpl.findUserRateById(order.getFeeId());
+			BigDecimal dealAmount = order.getDealAmount();
+			log.info("【当前交易金额："+dealAmount+"】");
+			BigDecimal fee = findUserRateById.getFee();
+			BigDecimal multiply = dealAmount.multiply(fee);
+			log.info("【当前分润费率："+fee+"】");
+			log.info("【当前分润金额："+multiply+"】");
+			Result addDeal = amountUtil.addDeal(userFund, multiply, dealAmount);
+			if(!addDeal.isSuccess())
+				return addDeal;
+			Result addDealAmount = amountRunUtil.addDealAmount(order, ip, flag);
+			if(!addDealAmount.isSuccess())
+				return addDealAmount;
+			log.info("【金额修改完毕，流水生成成功】");
+			return Result.buildSuccessResult();
+		}
+		
 	}
 	/**
 	 * <p>充值成功</p>
