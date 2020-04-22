@@ -31,7 +31,7 @@ var rechargeVM = new Vue({
 			});
 		});
 		this.loadRechargeSetting();
-		this.loadPayType();
+	//	this.loadPayType();
 		this.loadAmountList();
 		this.clickAmount();
 	},
@@ -57,8 +57,8 @@ var rechargeVM = new Vue({
 				,{amount : '50000元',code :'50000'}
 			]
 		},
-		loadPayType : function() {
-			var that = this;
+//		loadPayType : function() {
+//			var that = this;
 //			that.$http.get('/recharge/findEnabledPayType').then(function(res) {
 //				console.log(res.body.result);
 //				that.payTypes = res.body.result;
@@ -73,7 +73,7 @@ var rechargeVM = new Vue({
 //					});
 //				}
 //			});
-		},
+//		},
 		confirmSubmit : function() {
 			var that = this;
 			if (that.selectedPayType.bankCardFlag == 1) {

@@ -88,7 +88,6 @@ var auditOrderVM = new Vue({
 					createTime : that.receiveOrderTime
 				}
 			}).then(function(res) {
-				console.log("findMyWaitConfirmOrder -->",res.body.result.content);
 				that.waitConfirmOrders = res.body.result.content;
 				that.pageNum = res.body.result.pageNum;
 				that.totalPage = res.body.result.totalPage;

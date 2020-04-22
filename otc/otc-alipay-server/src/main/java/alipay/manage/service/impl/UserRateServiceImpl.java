@@ -27,11 +27,6 @@ public class UserRateServiceImpl implements UserRateService {
 		return userRateMapper.findUserRateR(userId);
 	}
 	@Override
-	public UserRate findUserRateC(String userId) {
-		// TODO Auto-generated method stub
-		return userRateMapper.findUserRateC(userId);
-	}
-	@Override
 	public boolean add(UserRate rate) {
 		// TODO Auto-generated method stub
 		int insertSelective = userRateMapper.insertSelective(rate);

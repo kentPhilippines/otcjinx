@@ -82,7 +82,7 @@ public class RechargeContorller {
     @ResponseBody
     public Result findEnabledPayType() {
        List<Product> list = productService.findAllProduct();
-        return Result.buildSuccessResult("发送成功",list);
+        return Result.buildSuccessResult(list);
     }
 
     /**

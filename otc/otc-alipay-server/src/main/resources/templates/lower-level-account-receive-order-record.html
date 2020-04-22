@@ -163,9 +163,6 @@
 
 				loadByPage : function() {
 					var that = this;
-					console.log("userName::::"+that.userName);
-					console.log("orderState::::"+that.orderState);
-					console.log("gatheringChannelCode::::"+that.gatheringChannelCode);
 					that.$http.get('/order/findLowerLevelAccountReceiveOrderRecordByPage', {
 						params : {
 							pageSize : 5,
@@ -177,7 +174,6 @@
 							endTime : that.receiveOrderTime
 						}
 					}).then(function(res) {
-						console.log(res.body.result.content);
 						that.receiveOrderRecords = res.body.result.content;
 						that.pageNum = res.body.result.pageNum;
 						that.totalPage = res.body.result.totalPage;

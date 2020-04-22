@@ -171,7 +171,6 @@ public class OrderContorller {
 				order.setRunOrderType(Integer.valueOf(accountChangeTypeCode));
 			orderList = orderServiceImpl.findOrderRunByPage(order);
 		}
-	
 		
 		PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
 		PageInfo<RunOrder> pageInfo = new PageInfo<RunOrder>(orderList);
@@ -245,6 +244,9 @@ public class OrderContorller {
 			String userName,
 			String orderState
 			) {
+		log.info("accountChangeTypeCode :: " + accountChangeTypeCode);
+		log.info("userName :: " + userName);
+		log.info("orderState :: " + orderState);
 		UserInfo user = sessionUtil.getUser(request);
 		if (ObjectUtil.isNull(user)) {
 	        log.info("当前用户未登陆");

@@ -123,13 +123,16 @@ public class QrcodeDataStatisticsContorller {
 	 @GetMapping("/findMyGatheringCodeById")
 	 @ResponseBody
 	 public Result findMyGatheringCodeById(HttpServletRequest request,BankList bank) {
-		log.info("======"+bank.getId());
 	    UserInfo user = sessionUtil.getUser(request);
      	if(ObjectUtil.isNull(user)) 
      		return Result.buildFailMessage("用户未登录");
 	      bank.setAccount(user.getUserId());
 		  bank.setStatus(1); 
+		  bank.setIsDeal(2);
 		  List<BankList> findBankCardByBankInfo = bankCardServiceImpl.findBankCardById(bank);
+		  for (BankList bankList : findBankCardByBankInfo) {
+			log.info("==========>"+bankList.getQrcodeNote());
+		    }
 		  return Result.buildSuccessResult(CollUtil.getFirst(findBankCardByBankInfo)); 
 		}
 

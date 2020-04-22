@@ -32,6 +32,7 @@ public class RegisterSetting {
 	 * <p>订单有效时间，单位：秒</p>
 	 */
 	private String usefulTime;
+	
 	public String getId() {
 		return id;
 	}

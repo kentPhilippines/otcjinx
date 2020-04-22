@@ -459,7 +459,6 @@
 							status : that.status,
 						}
 					}).then(function(res) {
-						console.log("findIsMyQrcodePage -- > " , res.body.result.content);
 						that.gatheringCodes = res.body.result.content;
 						that.pageNum = res.body.result.pageNum;
 						that.totalPage = res.body.result.totalPage;
@@ -497,7 +496,6 @@
 							id : gatheringCodeId,
 						}
 					}).then(function(res) {
-						console.log("updataMediumStatusSu--->",res.body);
 						if(res.body.success)
 							that.loadGatheringCodeByPage();
 						else

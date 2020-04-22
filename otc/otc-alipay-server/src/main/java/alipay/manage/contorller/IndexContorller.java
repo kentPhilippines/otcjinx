@@ -25,6 +25,7 @@ public class IndexContorller {
 	public String login() {
 		return "login";
 	}
+	
 	@GetMapping("/otc365")
 	public String otc365() {
 		return "rechargeChannel/otc365";

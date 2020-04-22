@@ -35,6 +35,7 @@ public class UserFund implements Serializable{
     private Date submitTime;
     private Integer status;
     private Integer version;				//版本号
+    
     public Integer getId() {
         return id;
     }

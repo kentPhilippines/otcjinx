@@ -136,6 +136,7 @@
       #{useName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{submitTime,jdbcType=TIMESTAMP}, 
       #{status,jdbcType=INTEGER}, #{msg,jdbcType=LONGVARCHAR})
   </insert>
+  
   <insert id="insertSelective" parameterType="alipay.manage.bean.Log" useGeneratedKeys="true" keyProperty="id" >
     insert into alipay_log
     <trim prefix="(" suffix=")" suffixOverrides="," >
@@ -191,6 +192,7 @@
       </if>
     </trim>
   </insert>
+  
   <select id="countByExample" parameterType="alipay.manage.bean.LogExample" resultType="java.lang.Integer" >
     select count(*) from alipay_log
     <if test="_parameter != null" >

@@ -273,6 +273,8 @@ public class OrderContorller {
 		}
 		return  null;
 	}
+	
+	
 	@GetMapping("/findLowerLevelAccountChangeLogByPage")
 	@ResponseBody
 	public Result findLowerLevelAccountChangeLogByPage(
@@ -280,7 +282,7 @@ public class OrderContorller {
 			String startTime,
 			String pageNum,
 			String pageSize,
-			String accountChangeTypeCode,
+			String runOrderType,
 			String userName
 			) {
 		UserInfo user = sessionUtil.getUser(request);
@@ -295,12 +297,13 @@ public class OrderContorller {
 			userList.add(userName);
 		} 
 		userList.add(user.getUserId());
+		System.out.println("子账户"+userList.toString());
 		Runorder orderRun = new Runorder();
 		orderRun.setOrderAccountList(userList);
 		if(StrUtil.isNotBlank(startTime))
 			orderRun.setTime(startTime);
-		if(StrUtil.isNotBlank(accountChangeTypeCode))
-			orderRun.setRunType(accountChangeTypeCode);
+		if(StrUtil.isNotBlank(runOrderType))
+			orderRun.setRunType(runOrderType);
 		PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
 		List<Runorder> orderList = runOrderServiceImpl.findOrderRunByPage(orderRun);
 		PageInfo<Runorder> pageInfo = new PageInfo<Runorder>(orderList);
@@ -311,6 +314,8 @@ public class OrderContorller {
 		pageR.setTotalPage(pageInfo.getPages());
 		return Result.buildSuccessResult(pageR);
 	}
+	
+	
 	@GetMapping("/findLowerLevelAccountReceiveOrderRecordByPage")
 	@ResponseBody
 	public Result findLowerLevelAccountReceiveOrderRecordByPage(

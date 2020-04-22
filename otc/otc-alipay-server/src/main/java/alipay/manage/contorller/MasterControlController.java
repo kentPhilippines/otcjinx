@@ -47,8 +47,6 @@ public class MasterControlController {
 	@ResponseBody
 	public Result getSystemSetting() {
 		Result config = configServiceClientFeignImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.TIBLE_LINK);
-		log.info("获取参数config:::"+ config);
-		log.info("获取参数config.getResult():::"+ config.getResult());
 		return Result.buildSuccessResults(config.getResult());
 	}
 
@@ -62,7 +60,6 @@ public class MasterControlController {
 		RegisterSetting bean = new RegisterSetting();
 		bean.setInviteCodeEffectiveDuration(50000000); 
 		Result config = configServiceClientFeignImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.REGISTER_ENABLED);
-		log.info("获取的参数：： " + config);
 		bean.setRegisterEnabled(settingFile.getName(settingFile.REGISTER_ENABLED)!=null?true:false);//是否开放注册功能 config.getResult().toString().equals("1")?true:false
 		bean.setInviteRegisterEnabled(false); 
 		bean.setRegitserDefaultRebate(0.01);

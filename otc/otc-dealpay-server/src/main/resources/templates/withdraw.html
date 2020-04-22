@@ -156,7 +156,8 @@
 				getUservirtualAmount : function() {
 					var that = this;
 					that.$http.get('/userAccount/virtualAmount').then(function(res) {
-						that.Fcash = res.body.result
+						//console.log(res.body.result);
+						that.Fcash = res.body.result;
 					});
 				},
 

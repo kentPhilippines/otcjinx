@@ -56,20 +56,13 @@ public interface UserRateMapper {
     @Select("select * from alipay_user_rate where userId = #{userId}")
 	UserRate findUserRateInfoByUserId(@Param("userId") String userId);
 	/**
-	 * 查询卡商入款费率
+	 * 查询码商入款费率
 	 * @param account
 	 * @return
 	 */
-	@Select("select * from  alipay_user_rate where feeType = 1 and userId =  #{userId}")
+	@Select("select * from alipay_user_rate where feeType = 1 and userId =  #{userId}")
 	UserRate findUserRateR(@Param("userId") String userId);
 
-	/**
-	 * <p>查询卡商出款费率</p>
-	 * @param userId
-	 * @return
-	 */
-	@Select("select * from  alipay_user_rate where feeType = 2 and userId =  #{userId}")
-	UserRate findUserRateC(@Param("userId") String userId);
 
 	@Update("update alipay_user_rate set fee = #{fee},payTypr=#{payTypr} where feeType = 1 and userId = #{userId} ")
 	int updateRateR(@Param("userId")String userId, @Param("fee")String fee,@Param("payTypr")String payTypr);

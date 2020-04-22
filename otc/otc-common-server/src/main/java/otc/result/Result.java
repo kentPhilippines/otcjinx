@@ -93,13 +93,13 @@ public class Result {
 		return new Result(false, message, null,null);
 	}
 	
-	public Result(boolean success, String message, Object result, Integer code) {
-		super();
-		this.success = success;
-		this.message = message;
-		this.result = result;
-		this.code = code;
-	}
+		public Result(boolean success, String message, Object result, Integer code) {
+			super();
+			this.success = success;
+			this.message = message;
+			this.result = result;
+			this.code = code;
+		}
 	public Result() {
 		super();
 	}

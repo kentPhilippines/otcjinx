@@ -107,6 +107,7 @@
 				that.$http.post('/userAccount/updataAgentFee',{ fee : that.fee, userId :that.accountId, payTypr: that.accountChangeTypeCode},{ emulateJSON : true })
 				.then(function(res) {
 							if(res.body.success){
+								layer.msg(res.body.message)
 								parent.layer.closeAll();
 							}else{
 								layer.msg(res.body.message)

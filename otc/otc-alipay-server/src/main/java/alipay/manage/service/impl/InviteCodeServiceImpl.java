@@ -4,8 +4,6 @@ import alipay.manage.bean.InviteCodeExample;
 import alipay.manage.bean.InviteCodeExample.Criteria;
 import alipay.manage.mapper.InviteCodeMapper;
 import cn.hutool.core.collection.CollUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
