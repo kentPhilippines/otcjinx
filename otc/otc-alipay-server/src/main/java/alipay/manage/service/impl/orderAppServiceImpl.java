@@ -31,4 +31,10 @@ public class orderAppServiceImpl implements OrderAppService {
 	public void updateOrderEr(String orderId, String msg) {
 		dealOrderAppDao.updateOrderEr(orderId,msg);
 	}
+
+	@Override
+	public void updateOrderSu(String orderId, String orderStatus) {
+		dealOrderAppDao.updateOrderSu(orderId,orderStatus);
+	}
+
 }

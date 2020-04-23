@@ -129,7 +129,7 @@ public class DealAppApi {
 			return checkOrderl;
 		Object result = checkOrderl.getResult();
 		DealOrder order = MapUtil.mapToBean((Map<String, Object>)result,DealOrder.class);
-		if(order.getOrderStatus().equals("3")) {
+		if(order.getOrderStatus().equals("2")) {
 			//修改订单状态
 			orderAppServiceImpl.updateOrderSu(order.getOrderId(), order.getOrderStatus());
 		}else

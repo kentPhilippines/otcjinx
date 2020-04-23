@@ -28,4 +28,7 @@ public interface OrderAppService {
 	 */
 	void updateOrderEr(String orderId, String msg);
 
+	void updateOrderSu(String orderId,String orderStatus);
+
+
 }
