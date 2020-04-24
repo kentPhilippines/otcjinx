@@ -89,10 +89,17 @@ public class OrderUtil {
 	 * @param orderId
 	 * @return
 	 */
-	public Result withrawOrderSu(String orderId) {
-		if(StrUtil.isBlank(orderId))
-			return Result.buildFailMessage("订单号为空");
+	@Transactional
+	public Result withrawOrderSu(String orderId, String approval, String comment) {
 		Withdraw order = withdrawDao.findWitOrder(orderId);
+		if (order == null) {
+			return Result.buildFailMessage("平台订单号不存在");
+		}
+		if (!Common.Order.Wit.ORDER_STATUS_YU.equals(order.getOrderStatus())) {
+			return Result.buildFailMessage("订单已被处理，不允许操作");
+		}
+		order.setApproval(approval);
+		order.setComment(comment);
 		return withrawOrderSu(order);
 	}
 	
@@ -103,10 +110,17 @@ public class OrderUtil {
 	 * @param ip				操作 ip
 	 * @return
 	 */
-	public Result withrawOrderEr(String orderId , String ip) {
-		if(StrUtil.isBlank(orderId) || StrUtil.isBlank(ip))
-			return Result.buildFailMessage("必传参数为空");
+	@Transactional
+	public Result withrawOrderEr(String orderId, String approval, String comment, String ip) {
 		Withdraw order = withdrawDao.findWitOrder(orderId);
+		if (order == null) {
+			return Result.buildFailMessage("平台订单号不存在");
+		}
+		if (!Common.Order.Wit.ORDER_STATUS_YU.equals(order.getOrderStatus())) {
+			return Result.buildFailMessage("订单已被处理，不允许操作");
+		}
+		order.setApproval(approval);
+		order.setComment(comment);
 		return withrawOrderEr(order,ip);
 	}
 	
@@ -401,12 +415,13 @@ public class OrderUtil {
 	 * <p>代付成功</p>
 	 * @return
 	 */
+	@Transactional
 	public Result withrawOrderSu(Withdraw wit) {
 		/**
 		 * #########################
 		 * 代付成功修改订单状态
 		 */
-		int a = withdrawDao.updataOrderStatus(wit.getOrderId(),Common.Order.Wit.ORDER_STATUS_SU);
+		int a = withdrawDao.updataOrderStatus(wit.getOrderId(),wit.getApproval(),wit.getComment(),Common.Order.Wit.ORDER_STATUS_SU);
 		if(a == 0  || a > 2)
 			return Result.buildFailMessage("订单状态修改失败");
 		return Result.buildSuccessMessage("代付成功");
@@ -415,12 +430,13 @@ public class OrderUtil {
 	 * <p>代付失败</p>
 	 * @return
 	 */
+	@Transactional
 	public Result withrawOrderEr(Withdraw wit,String ip) {
 		/**
 		 * ###########################
 		 * 代付失败给该用户退钱
 		 */
-		int a = withdrawDao.updataOrderStatus(wit.getOrderId(),Common.Order.Wit.ORDER_STATUS_ER);
+		int a = withdrawDao.updataOrderStatus(wit.getOrderId(), wit.getApproval(), wit.getComment(), Common.Order.Wit.ORDER_STATUS_ER);
 		if(a == 0  || a > 2)
 			return Result.buildFailMessage("订单状态修改失败");
 		UserFund userFund = new UserFund();

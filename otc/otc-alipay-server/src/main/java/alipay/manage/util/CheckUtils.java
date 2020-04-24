@@ -1,8 +1,7 @@
 package alipay.manage.util;
 
 import alipay.manage.api.AccountApiService;
-import cn.hutool.core.date.DateField;
-import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -129,7 +128,7 @@ public class CheckUtils {
         if (!flag)
             return Result.buildFailMessage("字符编码错误");
         log.info("--------------【用户开始MD5验签】----------------");
-        boolean vSign = verifySign(paramMap,key);
+        boolean vSign = verifySign(paramMap, key);
         if (!vSign)
             return Result.buildFailMessage("签名验证失败");
         return Result.buildSuccess();
@@ -139,7 +138,7 @@ public class CheckUtils {
      * <p>验签方法调用</p>
      *
      * @param map 签名参数
-     * @param key 
+     * @param key
      * @return 验签是否通过
      */
     public boolean verifySign(Map<String, Object> map, String key) {
@@ -155,17 +154,17 @@ public class CheckUtils {
         }
         return true;
     }
-    
+
      public String getSign(Map<String, Object> map, String key) {
     	 String paramStr = MapUtil.createParam(map);
     	 log.info("【签名前的参数为："+paramStr.toString()+"】");
     	 String md5 = RSAUtils.md5(paramStr+key);
 		return md5;
      }
-    
-    
-    
-    
+
+
+
+
 
     /**
      * 判断时间是否在某个时间段内 一天时间
@@ -235,5 +234,24 @@ public class CheckUtils {
             }
         }
         return resMap;
+    }
+
+    //财务审核商户提现验参
+    public boolean verifyParamNull(Map<String, Object> paramMap) {
+        Object orderId = paramMap.get("orderId");
+        Object userId = paramMap.get("userId");
+        Object orderStatus = paramMap.get("orderStatus");
+        Object approval = paramMap.get("approval");
+        Object comment = paramMap.get("comment");
+        if (paramMap.containsKey("ip")) {
+            Object ip = paramMap.get("ip");
+            if (ObjectUtil.isNull(ip)) {
+                return false;
+            }
+        }
+        if (ObjectUtil.isNull(orderId) || ObjectUtil.isNull(orderStatus) || ObjectUtil.isNull(approval) || ObjectUtil.isNull(comment) || ObjectUtil.isNull(userId)) {
+            return false;
+        }
+        return true;
     }
 }

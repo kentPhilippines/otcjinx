@@ -33,8 +33,13 @@ public interface WithdrawMapper {
 
     int updateByPrimaryKey(Withdraw record);
 
-    @Update("update alipay_withdraw set orderStatus = #{orderStatus} where orderId = #{orderId}")
-	int updataOrderStatus(@Param("orderId")String orderId, @Param("orderStatus")String orderStatus);
+    @Update("update alipay_withdraw set " +
+            "orderStatus = #{orderStatus}, " +
+            "approval = #{approval}," +
+            "comment = #{comment}, " +
+            "submitTime = sysdate() " +
+            "where orderId = #{orderId}")
+	int updataOrderStatus(@Param("orderId")String orderId,  @Param("approval")String approval, @Param("comment")String comment,@Param("orderStatus")String orderStatus);
 
     @Select("select * from alipay_withdraw where orderId = #{orderId}")
 	Withdraw findWitOrder(@Param("orderId")String orderId);

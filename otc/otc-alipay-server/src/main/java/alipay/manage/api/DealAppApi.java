@@ -112,30 +112,30 @@ public class DealAppApi {
 	}
 
 
-	/**
-	 *
-	 * @param request
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	@PostMapping("/check")
-	public Result checkOrder(HttpServletRequest request) {
-		String manage=request.getParameter("manage");
-		boolean flag = false;
-		if(StrUtil.isNotBlank(manage))
-			flag = true;
-		Result checkOrderl = vendorRequestApi.checkOrderl(request);
-		if(!checkOrderl.isSuccess())
-			return checkOrderl;
-		Object result = checkOrderl.getResult();
-		DealOrder order = MapUtil.mapToBean((Map<String, Object>)result,DealOrder.class);
-		if(order.getOrderStatus().equals("2")) {
-			//修改订单状态
-			orderAppServiceImpl.updateOrderSu(order.getOrderId(), order.getOrderStatus());
-		}else
-		    orderAppServiceImpl.updateOrderSu(order.getOrderId(),order.getOrderStatus());
-		return Result.buildSuccessResult();
-	}
+//	/**
+//	 *
+//	 * @param request
+//	 * @return
+//	 */
+//	@SuppressWarnings("unchecked")
+//	@PostMapping("/check")
+//	public Result checkOrder(HttpServletRequest request) {
+//		String manage=request.getParameter("manage");
+//		boolean flag = false;
+//		if(StrUtil.isNotBlank(manage))
+//			flag = true;
+//		Result checkOrderl = vendorRequestApi.checkOrderl(request);
+//		if(!checkOrderl.isSuccess())
+//			return checkOrderl;
+//		Object result = checkOrderl.getResult();
+//		DealOrder order = MapUtil.mapToBean((Map<String, Object>)result,DealOrder.class);
+//		if(order.getOrderStatus().equals("2")) {
+//			//修改订单状态
+//			orderAppServiceImpl.updateOrderSu(order.getOrderId(), order.getOrderStatus());
+//		}else
+//		    orderAppServiceImpl.updateOrderSu(order.getOrderId(),order.getOrderStatus());
+//		return Result.buildSuccessResult();
+//	}
 
 	
 	

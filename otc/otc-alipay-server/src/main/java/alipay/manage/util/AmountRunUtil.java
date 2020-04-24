@@ -108,8 +108,7 @@ public class AmountRunUtil {
 	 */
 	public Result addAmountW(Withdraw withdraw,String generationIp ) {
 		UserFund userFund = userInfoServiceImpl.findUserFundByAccount(withdraw.getUserId()); //当前账户资金
-		add(WITHDRAY_AMOUNT_OPEN, userFund, withdraw.getOrderId(), withdraw.getAmount(), generationIp, "代付失败解冻", RUNTYPE_ARTIFICIAL);
-		return null;
+		return add(WITHDRAY_AMOUNT_OPEN, userFund, withdraw.getOrderId(), withdraw.getAmount(), generationIp, "代付失败解冻", RUNTYPE_ARTIFICIAL);
 	}
 	/**
 	 * <p>代付手续费冻结</p>

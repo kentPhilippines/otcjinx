@@ -33,6 +33,9 @@ public class Withdraw implements Serializable{
     private String Time;	
     private String witType;//  代付产品类型
     private String weight;   //代付用户权重  【一般作为下游商户，这个值为空】
+    private String apply; //商户后台管理员（申请人）
+    private String approval; //订单审核人（后台）
+    private String comment; //审核意见
     public String getAppOrderId() {
 		return appOrderId;
 	}
@@ -165,13 +168,30 @@ public class Withdraw implements Serializable{
     public void setRetain2(String retain2) {
         this.retain2 = retain2 == null ? null : retain2.trim();
     }
-	@Override
+
+    public String getApproval() {
+        return approval;
+    }
+
+    public void setApproval(String approval) {
+        this.approval = approval;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    @Override
 	public String toString() {
 		return "Withdraw [id=" + id + ", orderId=" + orderId + ", userId=" + userId + ", withdrawType=" + withdrawType
 				+ ", bankNo=" + bankNo + ", accname=" + accname + ", orderStatus=" + orderStatus + ", bankName="
 				+ bankName + ", amount=" + amount + ", fee=" + fee + ", actualAmount=" + actualAmount + ", mobile="
 				+ mobile + ", notify=" + notify + ", createTime=" + createTime + ", submitTime=" + submitTime
 				+ ", status=" + status + ", retain1=" + retain1 + ", retain2=" + retain2 + ", Time=" + Time
-				+ ", witType=" + witType + "]";
+				+ ", witType=" + witType + ", approval="+ approval + ", comment=" + comment + "]";
 	}
 }
