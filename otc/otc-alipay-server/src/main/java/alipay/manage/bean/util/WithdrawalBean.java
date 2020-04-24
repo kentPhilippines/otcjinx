@@ -35,13 +35,12 @@ public class WithdrawalBean {
 	private String cnapsname;					//开户支行
 	private String province;					//省
 	private String city;						//市
-	
-	
-	
+
 	private String rsasign;						//签名
 	
-	
 	private String ip;
+
+	private String apply;						//后台申请人
 	
 	public String getIp() {
 		return ip;
@@ -132,5 +131,13 @@ public class WithdrawalBean {
 	}
 	public void setNotifyurl(String notifyurl) {
 		this.notifyurl = notifyurl;
+	}
+
+	public String getApply() {
+		return apply;
+	}
+
+	public void setApply(String apply) {
+		this.apply = apply;
 	}
 }

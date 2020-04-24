@@ -157,6 +157,7 @@ public class DealAppApi {
 		witb.setRetain2(wit.getIp());//代付ip
 		witb.setRetain1(type);
 		witb.setWitType(userRate.getPayTypr());//代付类型
+		witb.setApply(wit.getApply());
 		boolean flag = withdrawServiceImpl.addOrder(witb);
 		if(flag)
 			return witb;

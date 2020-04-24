@@ -186,6 +186,9 @@
       <if test="witType != null" >
         witType,
       </if>
+      <if test="apply != null" >
+        apply,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="orderId != null" >
@@ -241,6 +244,9 @@
       </if>
       <if test="witType != null" >
         #{witType},
+      </if>
+      <if test="apply != null" >
+        #{apply},
       </if>
     </trim>
   </insert>
