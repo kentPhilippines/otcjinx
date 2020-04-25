@@ -49,7 +49,15 @@ public class UserInfo implements Serializable{
     private String qrRechargeList;//卡商匹配标识
     private String dealUrl;//代付URl
     private String fee;
-    
+
+    public String getFee() {
+        return fee;
+    }
+
+    public void setFee(String fee) {
+        this.fee = fee;
+    }
+
     public String getQrRechargeList() {
 		return qrRechargeList;
 	}
@@ -85,9 +93,6 @@ public class UserInfo implements Serializable{
 	}
 	public void setProductId(String productId) {
 		this.productId = productId;
-	}
-	public String getFee() {
-		return fee;
 	}
 	public String getAmount() {
 		return amount;
@@ -375,8 +380,5 @@ public class UserInfo implements Serializable{
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
-	public void setFee(String string) {
-		// TODO Auto-generated method stub
-		
-	}
+
 }
