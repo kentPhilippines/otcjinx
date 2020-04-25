@@ -36,7 +36,13 @@ public class Withdraw implements Serializable{
     private String apply; //商户后台管理员（申请人）
     private String approval; //订单审核人（后台）
     private String comment; //审核意见
-    public String getAppOrderId() {
+    public String getApply() {
+		return apply;
+	}
+	public void setApply(String apply) {
+		this.apply = apply;
+	}
+	public String getAppOrderId() {
 		return appOrderId;
 	}
 	public void setAppOrderId(String appOrderId) {
