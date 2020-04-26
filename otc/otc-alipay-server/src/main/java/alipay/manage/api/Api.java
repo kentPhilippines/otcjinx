@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -63,6 +64,21 @@ public class Api {
 	@Autowired NotifyUtil notifyUtil;
 	@Autowired QueueUtil queueUtil;
 	@Autowired FileListService fileListServiceImpl;
+	
+	/**
+	 * <p>后台调用重新通知的方法</p>
+	 * @param request
+	 * @return
+	 */
+	@GetMapping(PayApiConstant.Notfiy.NOTFIY_API+PayApiConstant.Notfiy.NOTFIY_AGENT)
+	public Result notfiySystem(  HttpServletRequest request) {
+		log.info("【接收到后台重新通知的按钮，当前重新通知订单号为："+request.getParameter("orderId")+" 】");
+		String orderNo = request.getParameter("orderId");
+		if(StrUtil.isBlank(orderNo))
+			return Result.buildFailMessage("必传订单号为空");
+		notifyUtil.sendMsg(orderNo);
+		return Result.buildSuccessMessage("重新通知成功");
+	}
 	
 	@PostMapping(PayApiConstant.File.FILE_API+PayApiConstant.File.OFF_FILE)
 	public void updateFileNotDeal(@RequestParam("fileId")String fileId) {
