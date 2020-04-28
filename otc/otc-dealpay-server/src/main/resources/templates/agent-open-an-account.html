@@ -167,10 +167,10 @@
 						return;
 					}
 					that.$http.post('/agent/agentOpenAnAccount', {
-						accountId : that.userName,
-						accountName : that.accountName,
+						userId : that.userId,
+						userName : that.userName,
 						password : that.password,
-						newPayPassword : that.securityPassword,
+						payPasword : that.newPayPassword,
 						fee : that.rebate,
 						cardFee : that.rebate
 					}).then(function(res) {

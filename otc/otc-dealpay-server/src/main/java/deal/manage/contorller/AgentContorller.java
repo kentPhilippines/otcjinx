@@ -21,6 +21,7 @@ import com.github.pagehelper.PageInfo;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
+import deal.config.feign.ConfigServiceClient;
 import deal.manage.api.AccountApiService;
 import deal.manage.bean.Invitecode;
 import deal.manage.bean.UserFund;
@@ -33,6 +34,7 @@ import deal.manage.service.UserInfoService;
 import deal.manage.service.UserRateService;
 import deal.manage.util.SessionUtil;
 import otc.api.dealpay.Common;
+import otc.bean.config.ConfigFile;
 import otc.result.Result;
 
 @Controller
@@ -45,6 +47,7 @@ public class AgentContorller {
 	@Autowired AccountApiService accountApiServiceImpl;
 	@Autowired UserRateService userRateServiceImpl;
 	@Autowired UserFundService userFundServiceImpl;
+	@Autowired ConfigServiceClient configServiceClientImpl;
 	/**
 	 * <p>代理商开户</p>
 	 *	 手机端专用
@@ -148,8 +151,10 @@ public class AgentContorller {
 		bean.setFee(fee);
 		bean.setCustFee(cardFee);
 		boolean flag = inviteCodeServiceImpl.addinviteCode(bean);
+		Result config = configServiceClientImpl.getConfig(ConfigFile.DEAL, ConfigFile.Deal.URL);
+		String string = config.getResult().toString();
 		if(flag)
-			return Result.buildSuccessResult("操作成功","127.0.0.1:7010/register?inviteCode="+createinviteCode);
+			return Result.buildSuccessResult("操作成功",string+"/register?inviteCode="+createinviteCode);
 		return Result.buildFailMessage("开户失败");
 	}
 	/**

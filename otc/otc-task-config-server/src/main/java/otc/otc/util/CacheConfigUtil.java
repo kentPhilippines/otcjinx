@@ -43,6 +43,7 @@ public class CacheConfigUtil {
 	static void dealMap(){
 		mapDeal  = new HashMap<String, String>();
 		mapDeal.put(ConfigFile.Deal.TIBLE_LINK, "快马卡商");
+		mapDeal.put(ConfigFile.Deal.URL, "http://47.52.108.99:7010");
 		mapDeal.put(ConfigFile.Deal.RECHARGE_URL, "http://47.52.108.99:7010/otc365?");
 	}
 	static void payMap(){

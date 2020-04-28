@@ -273,15 +273,9 @@ var gatheringCodeVM = new Vue({
 					bankcardAccount :  that.editGatheringCode.bankNo,
 					accountHolder : that.editGatheringCode.account,
 					openAccountBank : that.editGatheringCode.bank,
-<<<<<<< HEAD
-					bankcode :  that.editGatheringCode.bankCode,
-					phone : that.editGatheringCode.phone,
-					qrcodeNote : that.editGatheringCode.qrcodeNote
-=======
 					bankcode :  that.editGatheringCode.bankCode=="收款卡"?"R":"W",
 					qrcodeNote: that.editGatheringCode.qrcodeNote,
 					phone : that.editGatheringCode.phone
->>>>>>> branch 'newjob' of https://github.com/kiwi20200315/otc-gateway.git
 			}
 			that.$http.post('/userAccount/bindBankInfo',  bank ).then(function(res) {
 				if(res.body.success){
