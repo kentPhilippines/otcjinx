@@ -259,7 +259,7 @@ public class RechargeContorller {
 	   wit.setRetain2(ip);
 	   wit.setRetain1(Common.Order.Wit.WIT_TYPE_CLI);
 	   Future<UserInfo> execAsync = ThreadUtil.execAsync(()->{
-		   String findAgent = correlationServiceImpl.findAgent(map.get(ACC_NAME).toString());
+		   String findAgent = correlationServiceImpl.findAgent(map.get(USER_ID).toString());
 		   return userInfoServiceImpl.findUserInfoByUserId(findAgent);
 	   });
 	   UserInfo userInfo;

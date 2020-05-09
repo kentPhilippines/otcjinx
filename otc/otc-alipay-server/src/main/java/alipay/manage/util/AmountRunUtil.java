@@ -179,6 +179,24 @@ public class AmountRunUtil {
 	}
 	
 	/**
+	 * <p>商户代理分润计算</p>
+	 * @param orderId
+	 * @param userId
+	 * @param amount
+	 * @param feeId
+	 * @param generationIp
+	 * @param flag
+	 * @return
+	 */
+	public Result addAppProfit(String orderId ,String userId ,BigDecimal amount ,   String generationIp ,Boolean flag ) {
+		UserFund userFund = userInfoServiceImpl.findUserFundByAccount(userId); //当前账户资金
+		Result add = add(PROFIT_AMOUNT_AGENT, userFund, orderId, amount, generationIp, "商户代理商，代理分润结算", flag?RUNTYPE_ARTIFICIAL:RUNTYPE_NATURAL);
+			return add;
+	}
+	
+	
+	
+	/**
 	 * <p>增加商户交易流水</p>
 	 * @param order				商户交易订单
 	 * @param generationIp		商户ip

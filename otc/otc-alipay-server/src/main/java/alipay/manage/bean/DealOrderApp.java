@@ -185,7 +185,12 @@ public class DealOrderApp implements Serializable{
     }
 
     @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
-    }
+	public String toString() {
+		return "DealOrderApp [id=" + id + ", orderId=" + orderId + ", orderType=" + orderType + ", orderAccount="
+				+ orderAccount + ", orderStatus=" + orderStatus + ", orderAmount=" + orderAmount + ", orderIp="
+				+ orderIp + ", appOrderId=" + appOrderId + ", createTime=" + createTime + ", feeId=" + feeId
+				+ ", notify=" + notify + ", back=" + back + ", submitTime=" + submitTime + ", submitSystem="
+				+ submitSystem + ", status=" + status + ", retain1=" + retain1 + ", retain2=" + retain2 + ", retain3="
+				+ retain3 + ", dealDescribe=" + dealDescribe + "]";
+	}
 }

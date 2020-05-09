@@ -52,7 +52,7 @@ public class CheckUtils {
         String amount = (String) map.get("amount");
         String acctno = (String) map.get("acctno");
         String acctname = (String) map.get("acctname");
-        String mobile = (String) map.get("mobile");
+        String mobile = (String) map.get("dpaytype");
         String bankcode = (String) map.get("bankcode");
         String notifyurl = (String) map.get("notifyurl");
         String rsasign = (String) map.get("sign");
@@ -161,12 +161,13 @@ public class CheckUtils {
     	 String md5 = RSAUtils.md5(paramStr+key);
 		return md5;
      }
+ 	private static final String UTF_8 = "utf-8";
+ 	private static final String ENCODE_TYPE = "md5";
 
 
 
 
-
-    /**
+    /** 
      * 判断时间是否在某个时间段内 一天时间
      *
      * @param date      需要判断的时间

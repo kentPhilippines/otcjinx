@@ -71,8 +71,24 @@ public class StorageApi {
 	}
 	return ResponseEntity.ok().contentType(mediaType).body(file);
 	}
-    
-    
+	/**
+	   * <p>查看图片接口</p>
+	   * @param id
+	   * @return
+	   */
+	  @GetMapping("/imgbak/{id:.+}")
+	  public ResponseEntity<Resource> imgbak(@PathVariable String id) {
+	    String fileType = "image/jpeg";
+	    MediaType mediaType = MediaType.parseMediaType(fileType);
+		Resource file = fileServiceClienFeignImpl.loadAsResource(id);
+		log.info("【查看图片id："+id+"】");
+		if (file == null) {
+			file = fileServiceClienFeignImpl.loadAsResource(id);
+			if(file == null) 
+				return ResponseEntity.notFound().build();
+		}
+		return ResponseEntity.ok().contentType(mediaType).body(file);
+		}
     
 	String addFile(MultipartFile file) {
 	    try {

@@ -39,7 +39,7 @@ public class Api {
 	}
 	
 	
-	@PostMapping("/heartbeat")
+	@PostMapping("/payNotfiy")
 	public void notfiyPay(@RequestBody Map<Object, Object> postjson,HttpServletRequest request, HttpServletResponse response) {
 		log.info("【接收到手机监听的回调信息】");
 		try {

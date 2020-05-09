@@ -6,7 +6,6 @@
 		<groupId>otc</groupId>
 		<artifactId>otc</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
-		<relativePath />
 	</parent>
 	<artifactId>otc-common-server</artifactId>
 	<dependencies>

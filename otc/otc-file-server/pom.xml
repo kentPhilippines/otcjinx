@@ -38,6 +38,12 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-redis</artifactId>
 		</dependency>
+		<dependency>
+		<!-- 图片剪裁工具 -->
+        <groupId>com.google.zxing</groupId>
+	        <artifactId>core</artifactId>
+	        <version>3.3.0</version>
+	    </dependency>
 				<!--maven引入外部jar包QRCode -->
 		<dependency>
 			<groupId>qr.qrcode</groupId>

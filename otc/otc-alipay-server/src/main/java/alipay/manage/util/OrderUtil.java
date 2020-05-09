@@ -1,6 +1,8 @@
 package alipay.manage.util;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -314,7 +316,7 @@ public class OrderUtil {
 			return Result.buildSuccess();
 	}
 	/**
-	 * <p>码商交易订单置为成功的时候的资金和流水处理</p>
+	 * <p>码商交易订单【渠道交易订单】置为成功的时候的资金和流水处理</p>
 	 * @param order					交易订单
 	 * @param ip					交易成功回调ip
 	 * @param flag					true 自然流水     false  人工流水
@@ -325,11 +327,24 @@ public class OrderUtil {
 			return Result.buildFailMessage("订单修改失败，请重新发起成功");
 		//TODO 这里结算模式可选设置为  是否为顶代模式，如果为订单模式 则  只扣减顶代的   账号金额     给当前码商增加利润     
 		//TODO 如果不为顶代模式 则直接按照当前现有模式  结算 
-		String findAgent = correlationServiceImpl.findAgent(order.getOrderQrUser());
-		UserInfo userId = userInfoServiceImpl.findUserInfoByUserId(findAgent);
+		UserInfo user = userInfoServiceImpl.findUserInfoByUserId(order.getOrderQrUser());
 		UserFund userFund = new UserFund();
 		userFund.setUserId(order.getOrderQrUser());
-		if(false) {//非正常结算模式
+		if("3".equals(user.getUserType().toString())) {//渠道账户结算
+			log.info("【进入渠道账户结算，当前渠道："+user.getUserId()+"】");
+			userFund.setUserId(user.getUserId());
+			Result deleteDeal = amountUtil.deleteDeal(userFund, order.getDealAmount());//扣除交易点数账户变动
+			if(!deleteDeal.isSuccess())
+				return deleteDeal;
+			Result deleteRechangerNumber = amountRunUtil.deleteRechangerNumber(order, ip, flag);//扣除交易点数 流水生成
+			if(!deleteRechangerNumber.isSuccess())
+				return deleteRechangerNumber;
+			log.info("【金额修改完毕，流水生成成功】");
+			return Result.buildSuccessResult();
+		}
+		String findAgent = correlationServiceImpl.findAgent(order.getOrderQrUser());
+		UserInfo userId = userInfoServiceImpl.findUserInfoByUserId(findAgent);
+		if(true) {//非正常结算模式
 			userFund.setUserId(userId.getUserId());
 			Result deleteDeal = amountUtil.deleteDeal(userFund, order.getDealAmount());//扣除交易点数账户变动
 			if(!deleteDeal.isSuccess())
@@ -510,14 +525,68 @@ public class OrderUtil {
 		if(!deleteDeal.isSuccess())
 			 throw new OrderException("订单修改异常", null);
 		Result feeApp = amountRunUtil.deleteDealAmountFeeApp(orderApp, ip, flag, multiply);
-	//	throw new OrderException("订单修改异常", null);
+		ThreadUtil.execute(()->{
+			log.info("【对当前商户订单的代理商进行结算】");
+			agentDealPay(orderApp,flag,ip);
+		});
 		if(feeApp.isSuccess())
 			return feeApp;
 		return Result.buildFail();
 	}
 	
-	
-	
+	/**
+	 * <p>商户代理商结算</p>
+	 * @param orderApp					商户订单
+	 * @param userRateList				需要结算的费率
+	 * @return
+	 */
+	boolean agentDealPay(DealOrderApp orderApp,boolean flag,String ip){
+		String appId = orderApp.getOrderAccount();
+		UserFund userFund = userInfoServiceImpl.findUserFundByAccount(appId);
+		UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(appId);
+		if(StrUtil.isBlank(userInfo.getAgent())) {
+			log.info("【当前账户无代理商，不进行结算】");
+			boolean flag1 = dealOrderAppDao.updateOrderIsAgent(orderApp.getOrderId(),"YES");
+			return true;
+		}
+		Integer feeId = orderApp.getFeeId();
+		UserRate findFeeById = userRateDao.findFeeById(feeId);
+		Result findUserRateList = findUserRateList(userInfo.getAgent(),findFeeById.getPayTypr(),findFeeById,orderApp,flag,ip);
+		if(findUserRateList.isSuccess()) {
+			log.info("【当前订单代理商结算成功】");
+			boolean flag1 = dealOrderAppDao.updateOrderIsAgent(orderApp.getOrderId(),"YES");
+			return true;
+		  }
+		
+		return false;
+	}
+
+	private Result findUserRateList(String agent, String product, UserRate rate, DealOrderApp orderApp,boolean flag, String ip) {
+		 UserFund userFund = userInfoServiceImpl.findUserFundByAccount (agent);
+		 UserRate userRate = userRateDao.findProductFeeBy(userFund.getUserId(), product);
+		 log.info("【当前代理商为："+userRate.getUserId()+"】");
+		 log.info("【当前代理商结算费率："+userRate.getFee()+"】");
+		 log.info("【当前当前我方："+rate.getUserId()+"】");
+		 log.info("【当前我方结算费率："+rate.getFee()+"】");
+		 BigDecimal fee = userRate.getFee();
+		 BigDecimal fee2 = rate.getFee();
+		 BigDecimal subtract = fee2.subtract(fee);
+		 log.info("【当前结算费率差为："+subtract+"】");
+		 BigDecimal amount = orderApp.getOrderAmount();
+		 BigDecimal multiply = amount.multiply(subtract);
+		 log.info("【当前结算订单金额为："+amount+"，当前结算代理分润为："+multiply+"】");
+		 log.info("【开始结算】");
+		 Result addAmounProfit = amountUtil.addAmounProfit(userFund, multiply);
+		 if(addAmounProfit.isSuccess()) {
+			 Result addAppProfit = amountRunUtil.addAppProfit(orderApp.getOrderIp(), userFund.getUserId(), amount, ip, flag);
+			 if(addAppProfit.isSuccess()) {
+				 log.info("【流水成功】");
+				 if(StrUtil.isNotBlank(userFund.getAgent()))
+					 return findUserRateList(userFund.getAgent(), product, userRate, orderApp, flag, ip);
+			 }
+		 }
+		return Result.buildSuccessMessage("结算成功");
+	}
 	
 	
 	

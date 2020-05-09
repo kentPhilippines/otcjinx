@@ -24,14 +24,14 @@ public class WithdrawalBean {
 	private String appid;						//商户号
 	private String apporderid;					//代付订单号
 	private String ordertime;					//请求时间yyyyMMddHHmmss
-	private String orderbody;					//订单内容
 	private String amount;						//代付金额
 	private String acctno;						//银行卡号 
 	private String acctname;					//银行卡持有者姓名
-	private String mobile;						//手机号
 	private String bankcode;					//银行编码
 	private String notifyurl;					//回调
+	private String dpaytype;					//代付类型    Bankcard     银行卡 			Alipay		  支付宝 			Wechar		  微信
 	//以下为选填
+	private String mobile;						//手机号
 	private String cnapsname;					//开户支行
 	private String province;					//省
 	private String city;						//市
@@ -42,6 +42,13 @@ public class WithdrawalBean {
 
 	private String apply;						//后台申请人
 	
+	
+	public String getDpaytype() {
+		return dpaytype;
+	}
+	public void setDpaytype(String dpaytype) {
+		this.dpaytype = dpaytype;
+	}
 	public String getIp() {
 		return ip;
 	}
@@ -89,12 +96,6 @@ public class WithdrawalBean {
 	}
 	public void setOrdertime(String ordertime) {
 		this.ordertime = ordertime;
-	}
-	public String getOrderbody() {
-		return orderbody;
-	}
-	public void setOrderbody(String orderbody) {
-		this.orderbody = orderbody;
 	}
 	public String getAmount() {
 		return amount;

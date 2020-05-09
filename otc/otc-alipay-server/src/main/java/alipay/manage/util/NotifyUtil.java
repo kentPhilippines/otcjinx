@@ -37,8 +37,8 @@ public class NotifyUtil {
      */
     public void sendMsg(String orderId) {
       log.info("=======[准备向下游商户发送通知]=======");
-      DealOrder order = orderSerciceImpl.findOrderByAssociatedId(orderId);
-      DealOrderApp orderApp = dealOrderAppDao.findOrderByOrderId(orderId);
+      DealOrder order = orderSerciceImpl.findOrderByOrderId(orderId);
+      DealOrderApp orderApp = dealOrderAppDao.findOrderByOrderId(order.getAssociatedId());
       UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(orderApp.getOrderAccount());
       /**
        * 		tradesno			M(5)				网关订单号
@@ -58,9 +58,9 @@ public class NotifyUtil {
       String statusdesc = getOrderMsg(status);
       Map<String, Object> map = new HashMap<String, Object>();
       map.put("apporderid", apporderid);
-      map.put("tradesno", apporderid);
+      map.put("tradesno", order.getOrderId());
       map.put("status", status);
-      map.put("amount", apporderid);
+      map.put("amount", amount);
       map.put("appid", appid);
       map.put("statusdesc", statusdesc);
       String sign = checkUtils.getSign(map, userInfo.getPayPasword());
@@ -74,10 +74,11 @@ public class NotifyUtil {
      * @param msg  发送通知的内容
      */
     private void send(String url,String orderId,Map<String,Object> msg){
+        log.info("【通知参数为："+msg.toString()+"】  "  );
         String result = HttpUtil.post(url, msg,-1);
         log.info("服务器返回结果为: " + result.toString());
         String isNotify="NO";
-        if ("seccess".equalsIgnoreCase(result)) {
+        if ("success".equalsIgnoreCase(result)) {
             isNotify = "YES";
             log.info("【下游商户返回信息为成功,成功收到回调信息】");
         }else

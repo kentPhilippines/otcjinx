@@ -55,6 +55,7 @@ public class VendorRequestApi {
         }
         log.info("--------------【用户开始RSA解密】----------------");
         String rsaSign = request.getParameter("cipherText");//商户传过来的密文
+        log.info("【报文："+rsaSign+"】");
         Map<String, Object> paramMap = RSAUtils.getDecodePrivateKey(rsaSign, userInfo.getPrivateKey());
         log.info("【商户RSA解密的参数：" + paramMap.toString()+"】 " );
         //验证结果

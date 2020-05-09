@@ -57,6 +57,9 @@ public class Result {
 	public static Result buildSuccessResult(String msg ,Object result) {
 		return new Result(true, msg, result,null);
 	}
+	public static Result buildSuccessResultCode(String msg ,Object result,Integer i) {
+		return new Result(true, msg, result,i);
+	}
 	/**
 	 * <p>返回结果为成功,无返回提示,结果集</p>
 	 * <li>boolean success : true // 请求操作成功</li>

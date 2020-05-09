@@ -15,8 +15,8 @@ public class Withdraw implements Serializable{
     private String orderId;			//订单号
     private String userId;			//用户id
     private String withdrawType;	//商户提现1，码商提现2
-    private String bankNo;			//提现银行卡
-    private String accname;			//提现银行账户
+    private String bankNo;			//提现银行卡				或者提现支付账号【登录账号】
+    private String accname;			//提现银行账户				或者提现支付宝昵称【支付宝昵称】
     private String orderStatus;		//提现状态:预下单1处理中2成功3失败
     private String bankName;		//银行姓名
     private BigDecimal amount;		//提现金额
@@ -36,7 +36,14 @@ public class Withdraw implements Serializable{
     private String apply; //商户后台管理员（申请人）
     private String approval; //订单审核人（后台）
     private String comment; //审核意见
-    public String getApply() {
+    private String bankcode;//银行标识号
+	public String getBankcode() {
+		return bankcode;
+	}
+	public void setBankcode(String bankcode) {
+		this.bankcode = bankcode;
+	}
+	public String getApply() {
 		return apply;
 	}
 	public void setApply(String apply) {

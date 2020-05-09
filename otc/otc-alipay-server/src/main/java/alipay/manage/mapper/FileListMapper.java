@@ -76,6 +76,6 @@ public interface FileListMapper {
     @Update("update alipay_file_list set isDeal = 1 and status = 0 where fileId = #{fileId}")
 	void deleteFile(@Param("fileId")String fileId);
 
-    @Select("select * from alipay_file_list set isCut = 'Y' where  fileId = #{fileId}")
+    @Update("update  alipay_file_list set isCut = 'Y' where  fileId = #{fileId}")
 	void updataFileIsCut(@Param("fileId")String fileId);
 }

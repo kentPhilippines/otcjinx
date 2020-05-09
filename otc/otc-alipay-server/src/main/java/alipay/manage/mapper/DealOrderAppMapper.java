@@ -43,6 +43,15 @@ public interface DealOrderAppMapper {
     @Update("update alipay_deal_order_app set orderStatus = #{orderStatusSu} where orderId = #{orderId}")
 	boolean updateOrderSu(@Param("orderId")String orderId, @Param("orderStatusSu")String orderStatusSu);
 
-    @Update("update alipay_deal_order_app orderStatus = 4 , dealDescribe = #{msg} where orderId = #{orderId}")
+    @Update("update alipay_deal_order_app set orderStatus = 4 , dealDescribe = #{msg} where orderId = #{orderId}")
 	void updateOrderEr(@Param("orderId") String orderId, @Param("msg") String msg);
+
+    /**
+     * 代理商结算标记
+     * @param orderId
+     * @param string
+     * @return
+     */
+    @Update("update alipay_deal_order_app set retain2 = #{yse}    where orderId = #{orderId}")
+	boolean updateOrderIsAgent(@Param("orderId")  String orderId, @Param("yse")  String yse);
 }

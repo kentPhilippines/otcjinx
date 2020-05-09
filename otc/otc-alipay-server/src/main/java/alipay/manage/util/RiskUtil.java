@@ -98,14 +98,14 @@ public class RiskUtil {
 	 * @return
 	 */
 	boolean updataRedisOrDate(DealOrder qrcodeDealOrder) {
-		clearAmount(qrcodeDealOrder);
-		updataQr(qrcodeDealOrder);
+	//	clearAmount(qrcodeDealOrder);
+	//	updataQr(qrcodeDealOrder);
 		updateCorrelation(qrcodeDealOrder);
-		try {
-			deleteRedisAmount(qrcodeDealOrder);
-		} catch (ParseException e) {
-			log.info("解锁订单当前码商订单金额发生异常，当前码商改订单金额解锁失败，解锁时间误差时间为20秒");
-		}
+	//	try {
+	//		deleteRedisAmount(qrcodeDealOrder);
+	//	} catch (ParseException e) {
+	//		log.info("解锁订单当前码商订单金额发生异常，当前码商改订单金额解锁失败，解锁时间误差时间为20秒");
+	//	}
 		return true;
 	};
 	/**

@@ -14,5 +14,9 @@ public class WithdrawServiceImpl implements WithdrawService{
 		int insertSelective = withdrawDao.insertSelective(witb);
 		return insertSelective>0 && insertSelective < 2;
 	}
+	@Override
+	public Withdraw findOrderId(String orderId) {
+		return withdrawDao.findWitOrder(orderId);
+	}
 
 }

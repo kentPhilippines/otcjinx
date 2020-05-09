@@ -38,13 +38,13 @@ public class CacheConfigUtil {
 		mapAlipay.put(ConfigFile.Alipay.TIBLE_LINK, "跑分");
 		mapAlipay.put(ConfigFile.Alipay.NEW_QRCODE_PRIORITY, "3");
 		mapAlipay.put(ConfigFile.Alipay.LOCAL_STORAGE_PATH_BAK, "/img/bak");
-		
+		mapAlipay.put( ConfigFile.Alipay.SERVER_IP, "http://182.16.89.146:9010");
 	}
 	static void dealMap(){
 		mapDeal  = new HashMap<String, String>();
 		mapDeal.put(ConfigFile.Deal.TIBLE_LINK, "快马卡商");
-		mapDeal.put(ConfigFile.Deal.URL, "http://47.52.108.99:7010");
-		mapDeal.put(ConfigFile.Deal.RECHARGE_URL, "http://47.52.108.99:7010/otc365?");
+		mapDeal.put(ConfigFile.Deal.URL, "http://112.121.162.162:7010");
+		mapDeal.put(ConfigFile.Deal.RECHARGE_URL, "http://112.121.162.162:7010/otc365?");
 	}
 	static void payMap(){
 		mapPay  = new HashMap<String, String>();

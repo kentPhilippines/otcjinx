@@ -125,6 +125,10 @@ public class Number {
 		String objectId = IdUtil.objectId().toUpperCase();
 		return Common.Deals.ORDERDEAL+objectId;	
 	}
+	public static String getOrderQrCh() {
+		String objectId = IdUtil.objectId().toUpperCase();
+		return Common.Deals.ORDERDEAL_CHANNEL+objectId;	
+	}
 
 
 	public static String getRunOrderId() {

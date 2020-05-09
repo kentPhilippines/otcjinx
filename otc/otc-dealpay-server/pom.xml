@@ -80,13 +80,13 @@
 	        <artifactId>spring-boot-starter-thymeleaf</artifactId>
 	      </dependency>
   		</dependencies>
- <!--  <build>
+  <build>
     <plugins>
         <plugin>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-maven-plugin</artifactId>
             <version>1.5.11.RELEASE</version>
-            <configuration>指定该Main Class为全局的唯一入口
+            <configuration> 
                 <classifier>exec</classifier>
                 <mainClass>deal.DealpayApplication</mainClass>
                 <layout>ZIP</layout>
@@ -94,11 +94,11 @@
             <executions>
                 <execution>
                     <goals>
-                        <goal>repackage</goal>可以把依赖的包都打包到生成的Jar包中
+                        <goal>repackage</goal> 
                     </goals>
                 </execution>
             </executions>
         </plugin>
     </plugins>
-</build> -->
+</build>  
 </project>

@@ -27,7 +27,7 @@
                 <classifier>exec</classifier>
                 <mainClass>otc.eureka.EurekaApplication</mainClass>
                 <layout>ZIP</layout>
-            </configuration>
+       </configuration>  
             <executions>
                 <execution>
                     <goals>

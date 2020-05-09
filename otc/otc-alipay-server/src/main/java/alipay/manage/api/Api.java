@@ -337,8 +337,14 @@ public class Api {
 				return orderDealEr;
 		} else if (orderstatus.equals(Common.Order.DealOrder.ORDER_STATUS_SU.toString())) {
 			Result orderDealSu = orderUtil.orderDealSu(orderId, clientIP, userop);
-			if(orderDealSu.isSuccess())
+			if(orderDealSu.isSuccess()) {
+				ThreadUtil.execute(()->{
+					if(orderDealSu.isSuccess()) {
+						notifyUtil.sendMsg(order.getOrderId());
+					}
+				});				
 				return Result.buildSuccessMessage("操作成功");
+		}
 			else
 				return orderDealSu;
 		}

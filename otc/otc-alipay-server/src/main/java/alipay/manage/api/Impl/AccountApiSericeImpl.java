@@ -203,8 +203,8 @@ public class AccountApiSericeImpl implements AccountApiService {
     }
 
     @Override
-    public UserRate findUserRateWitByUserId(String userId) {
-        return userRateDao.findUserRateWitByUserId(userId);
+    public UserRate findUserRateWitByUserId(String userId ) {
+        return userRateDao.findUserRateWitByUserId(userId );
     }
 
     @Override

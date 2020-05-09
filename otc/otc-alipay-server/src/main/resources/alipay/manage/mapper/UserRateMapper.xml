@@ -345,20 +345,4 @@
       retain4 = #{retain4,jdbcType=CHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
-
-  <select id="findProductFeeBy" parameterType="String" resultType="alipay.manage.bean.UserRate">
-    SELECT
-    r1.id as id,
-    r1.userId
-    FROM alipay_user_rate r1
-    LEFT JOIN alipay_product p1
-    on r1.payTypr = p1.productId
-    WHERE 1=1
-    <if test="userId != null and userId != ''">
-      and r1.userId = #{userId,jdbcType=VARCHAR}
-    </if>
-    <if test="userId != null and userId != ''">
-      and p1.productCode = #{productCode,jdbcType=VARCHAR}
-    </if>
-  </select>
 </mapper>

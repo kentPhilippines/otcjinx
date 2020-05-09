@@ -107,4 +107,8 @@ public interface UserInfoMapper {
     
     @Update("update alipay_user_info set payPasword = #{newPassword} where userId = #{userId}")
 	int updataPayPassword(String userId, String newPayPassword);
+
+    
+    @Update("update alipay_user_info set  todayDealAmount = 0 ,todayProfit = 0,todayOrderCount = 0 , todayAgentProfit = 0 ")
+	void updateUserTime();
 }

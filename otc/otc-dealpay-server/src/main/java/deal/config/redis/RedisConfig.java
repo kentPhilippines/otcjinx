@@ -65,7 +65,7 @@ public class RedisConfig  extends CachingConfigurerSupport {
         JedisPool jedisPool = new JedisPool(jedisPoolConfig, host, port, timeout);
         return jedisPool;
     }
-    
+    //1231111423212312
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
     			log.debug("redisTemplate注入成功！！");
