@@ -26,7 +26,7 @@ public interface UserFundMapper {
     
     
     @Select("select * from alipay_user_fund where userType = 2 and accountBalance > #{amount}  ")
-	List<UserFund> findUserByAmount(BigDecimal amount);
+	List<UserFund> findUserByAmount(@Param("amount") BigDecimal amount);
 
     @Select("select * from alipay_user_fund where userId=#{userId}")
     UserFund findUserFundByUserId(@Param("userId") String userId);
@@ -38,4 +38,9 @@ public interface UserFundMapper {
     @Insert("insert into alipay_amount (orderId, userId, amountType, accname, orderStatus, amount, actualAmount, dealDescribe) " +
             "values (#{orderId}, #{userId},#{amountType},#{accname},#{orderStatus},#{amount},#{amount},#{dealDescribe} )")
     int insetAmountEntity(Amount amount);
+	
+    @Select("select * from  alipay_user_fund WHERE    userId IN ( " + 
+    		"			select childrenName from alipay_correlation WHERE parentName IN ( " + 
+    		"			select userId from alipay_user_info WHERE userType  = 2 AND isAgent = '1' AND agent IS NULL AND accountBalance > #{amount}  ))")
+    List<UserFund> findUserByAmountAgent(@Param("amount") BigDecimal amount);
 }

@@ -342,9 +342,14 @@ public class OrderUtil {
 			log.info("【金额修改完毕，流水生成成功】");
 			return Result.buildSuccessResult();
 		}
-		String findAgent = correlationServiceImpl.findAgent(order.getOrderQrUser());
-		UserInfo userId = userInfoServiceImpl.findUserInfoByUserId(findAgent);
-		if(true) {//非正常结算模式
+		if(true) {//顶代结算模式
+			String findAgent = correlationServiceImpl.findAgent(order.getOrderQrUser());
+			UserInfo userId = userInfoServiceImpl.findUserInfoByUserId(findAgent);
+			/**
+			 * 1,获取顶代账号
+			 * 2,扣减顶代账户余额
+			 * 3,单笔交易分润汇入普通码商账号
+			 */
 			userFund.setUserId(userId.getUserId());
 			Result deleteDeal = amountUtil.deleteDeal(userFund, order.getDealAmount());//扣除交易点数账户变动
 			if(!deleteDeal.isSuccess())
@@ -352,9 +357,15 @@ public class OrderUtil {
 			Result deleteRechangerNumber = amountRunUtil.deleteRechangerNumber(order, ip, flag);//扣除交易点数 流水生成
 			if(!deleteRechangerNumber.isSuccess())
 				return deleteRechangerNumber;
-			UserRate findUserRateById = userInfoServiceImpl.findUserRateById(order.getFeeId());
+		//顶代账户已扣减
+		//下面是对订单交易用户进行账户分润	
+		//	UserRate userRate = userInfoServiceImpl.findUserRateById(order.getFeeId());
 			BigDecimal dealAmount = order.getDealAmount();
-			log.info("【当前交易金额："+dealAmount+"】");
+	//		log.info("【当前交易金额："+dealAmount+"】");
+	//		UserInfo userOrder = userInfoServiceImpl.findUserInfoByUserId(order.getOrderQrUser());//当前接单用户
+	//		log.info("【当前订单交易码商："+userOrder.getUserId()+"】");
+	//		userFund.setUserId(userOrder.getUserId());
+			
 			BigDecimal multiply = new BigDecimal("0"); 
 			Result addDeal = amountUtil.addDeal(userFund, multiply, dealAmount);
 			if(!addDeal.isSuccess())
@@ -364,6 +375,10 @@ public class OrderUtil {
 				return addDealAmount;
 			log.info("【金额修改完毕，流水生成成功】");
 			return Result.buildSuccessResult();
+		
+		
+		
+		
 		} else {//正常结算模式
 			Result deleteDeal = amountUtil.deleteDeal(userFund, order.getDealAmount());//扣除交易点数账户变动
 			if(!deleteDeal.isSuccess())

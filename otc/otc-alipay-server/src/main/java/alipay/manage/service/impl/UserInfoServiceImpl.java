@@ -194,8 +194,23 @@ public class UserInfoServiceImpl implements UserInfoService{
 	}
 
 	@Override
-	public List<UserFund> findUserByAmount(BigDecimal amount) {
-		return userFundDao.findUserByAmount(amount);
+	public List<UserFund> findUserByAmount(BigDecimal amount,boolean flag) {
+		List<UserFund> findUserByAmount = new ArrayList();
+		if(flag) {
+			/**
+			 * ##################顶代模式确定账号###############
+			 * 1,获取所有顶代
+			 * 2,当前金额是否满足顶代金额要求
+			 * 3,选取顶代下所有的账户
+			 * 
+			SELECT * FROM alipay_user_fund WHERE    userId IN (
+			SELECT childrenName FROM alipay_correlation WHERE parentName IN (
+			SELECT userId FROM alipay_user_info WHERE userType  = 2 AND isAgent = '1' AND agent IS NULL AND accountBalance > '2000' ))
+			 */
+			findUserByAmount = userFundDao.findUserByAmountAgent(amount);
+		}else 
+			findUserByAmount = userFundDao.findUserByAmount(amount);
+		return findUserByAmount;
 	}
 
 	@Override

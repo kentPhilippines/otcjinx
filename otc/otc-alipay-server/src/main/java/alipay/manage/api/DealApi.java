@@ -104,7 +104,7 @@ public class DealApi {
 		order.setNotify(orderApp.getNotify());
 		FileList findQr = null ;
 		try {
-			findQr = qrUtil.findQr(orderApp.getOrderId(), orderApp.getOrderAmount(), split);
+			findQr = qrUtil.findQr(orderApp.getOrderId(), orderApp.getOrderAmount(), split,true);
 		} catch (ParseException e) {
 			log.info("【选码出现异常】");
 		}

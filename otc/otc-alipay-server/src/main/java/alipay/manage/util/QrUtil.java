@@ -4,6 +4,7 @@ import alipay.config.redis.RedisUtil;
 import alipay.manage.api.feign.ConfigServiceClient;
 import alipay.manage.api.feign.QueueServiceClien;
 import alipay.manage.bean.UserFund;
+import alipay.manage.service.CorrelationService;
 import alipay.manage.service.FileListService;
 import alipay.manage.service.UserInfoService;
 import cn.hutool.core.collection.CollUtil;
@@ -43,8 +44,18 @@ public class QrUtil {
 	@Autowired QueueServiceClien queueServiceClienFeignImpl;
 	@Autowired FileListService fileListServiceImpl;
 	@Autowired ConfigServiceClient configServiceClientImpl;
+	@Autowired CorrelationService correlationServiceImpl;
 	@Autowired RiskUtil riskUtil;
-	public FileList findQr(String orderNo, BigDecimal amount, String[] code) throws ParseException {
+	/**
+	 * <p>选码的本地方法</p>
+	 * @param orderNo			订单号
+	 * @param amount			金额
+	 * @param code				选吗CODE值
+	 * @param flag				是否为顶代结算模式  true  是     false   否
+	 * @return
+	 * @throws ParseException
+	 */
+	public FileList findQr(String orderNo, BigDecimal amount, String[] code,boolean flag) throws ParseException {
 		/**
 		 * ######################################## 二维码回调逻辑,以及应该要注意的几个问题
 		 * 1,防止出现同一个二维码在10分钟内同时调用 1>解决：在存入时候 先检查是否有相同二维码在缓存内使用 2,回调订单的唯一标识 1>采取策略：金额+手机号
@@ -62,7 +73,7 @@ public class QrUtil {
 			for(String cod : queue)
 				log.info("【获取支付宝："+cod+"】");
 		});
-		List<UserFund> userList = userInfoServiceImpl.findUserByAmount(amount);
+		List<UserFund> userList = userInfoServiceImpl.findUserByAmount(amount,flag);
 		List<FileList> qcList = fileListServiceImpl.findQrByAmount(amount);
 		log.info("【二维码个数："+qcList.size()+"】");
 		if (CollUtil.isEmpty(userList) || CollUtil.isEmpty(qcList))
@@ -81,10 +92,10 @@ public class QrUtil {
 			if (ObjectUtil.isNull(qrcodeUser))
 				continue;
 			log.info("【账户数据："+qrcodeUser.toString()+"】");
-			riskUtil.updataUserAmountRedis(qrcodeUser);
+			riskUtil.updataUserAmountRedis(qrcodeUser,flag);
 			Object object2 = redisUtil.get(qr.getPhone() + amount.toString());
 		//	Object object = redisUtil.get(qr.getPhone());
-			boolean clickAmount = riskUtil.isClickAmount(qr, amount, usercollect);
+			boolean clickAmount = riskUtil.isClickAmount(qr, amount, usercollect,flag);
 			if (ObjectUtil.isNull(object2) && clickAmount) {
 				redisUtil.set(qr.getPhone() + amount.toString(), orderNo,Integer.valueOf( configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.QR_OUT_TIME).getResult().toString()) ); // 核心回调数据
 			//	redisUtil.set(qr.getPhone(), qr.getPhone() + amount.toString(), Integer.valueOf( configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.QR_OUT_TIME).getResult().toString() ));

@@ -113,9 +113,10 @@ public interface UserInfoService {
 	/**
 	 * <p>根据交易金额【查询可用的交易账户】</p>
 	 * @param amount				交易金额
+	 * @param flag 					是否为顶代选码模式  true是  false 否
 	 * @return
 	 */
-	List<UserFund> findUserByAmount(BigDecimal amount);
+	List<UserFund> findUserByAmount(BigDecimal amount, boolean flag);
 
 	/**
 	 * <P>根据用户id和产品类型查询用户交易费率</P>
