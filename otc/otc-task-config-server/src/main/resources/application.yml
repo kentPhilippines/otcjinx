@@ -1,18 +1,18 @@
 eureka : 
   client:
     serviceUrl:
-      defaultZone:  http://120.78.197.211:8761/eureka/
+      defaultZone:  http://182.16.89.146:8761/eureka/
   instance:
     # 是否使用ip注册
     prefer-ip-address : true
     # ${spring.cloud.client.ip-address}:${server.port}  局域网这样配置
     #  本地调试则要直接写死ip 【这个ip为注册时候的 调用ip】
-    instance-id : 47.52.108.99:${server.port}
-    # 注册ip地址 公网注册地址 47.52.108.99
-    ip-address :  47.52.108.99
+    instance-id : 112.121.162.162:${server.port}
+    # 注册ip地址 公网注册地址112.121.162.162
+    ip-address :  112.121.162.162
     # 注册ip端口
     non-secure-port : ${server.port}
-    hostname : 47.52.108.99:${server.port}
+    hostname : 112.121.162.162:${server.port}
    # status-page-url : c.biancheng.net
 spring:
    application:
