@@ -64,6 +64,11 @@ public class PayApiConstant {
 		public static final String FIND_MEDIUM_IS_DEAL = "/find-medium-is-deal";			//查询当前可以交易的媒介
 		public static final String AUDIT_MERCHANT_STATUS = "/audit-merchant-status"; //修改商户的状态
 		public static final String OFF_MEDIUM_QR = "/off-medium-qr"; //将不再队列中的二维码踢出队列
+		
+		public static final String TASK_API = "/task-api";	//定时任务接口
+		public static final String TASK_API_USER = "/user-api";	//账户的定时任务
+		
+		
 	}
 	
 	public class File{

@@ -53,7 +53,7 @@ public class FileApi {
 	public  Resource loadAsResource(String id) {
 		try {
 			log.info("【图片查看接口调用，查看接口参数："+id+"】");
-			Result config = configServiceClientFeignImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.LOCAL_STORAGE_PATH);
+			Result config = configServiceClientFeignImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.LOCAL_STORAGE_PATH_BAK);
 			String path = config.getResult().toString();
 			log.info("【图片查看接口调用，查看图片服务本地路径："+path+"】");
 			Path file = Paths.get(path).resolve(id);
@@ -86,6 +86,25 @@ public class FileApi {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
+		return null;
+	}
+	@RequestMapping("/bak/{id:.+}")
+	public ResponseEntity<Resource> bak(@PathVariable String id) {
+		try {
+			String fileType = "image/jpeg";
+			MediaType mediaType = MediaType.parseMediaType(fileType);
+			Result config = configServiceClientFeignImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.LOCAL_STORAGE_PATH_BAK);
+			String path = config.getResult().toString();
+			Path file = Paths.get(path).resolve(id);
+			Resource resource;
+			resource = new UrlResource(file.toUri());
+			if (resource == null) 
+				return ResponseEntity.notFound().build();
+			return ResponseEntity.ok().contentType(mediaType).body(resource);
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return null;
 	}
 }

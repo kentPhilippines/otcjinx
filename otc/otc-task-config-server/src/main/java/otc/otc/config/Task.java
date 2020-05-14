@@ -6,6 +6,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import otc.otc.feign.AlipayServiceClien;
 import otc.otc.feign.FileServiceClien;
 import otc.otc.feign.QueueServiceClien;
 
@@ -20,11 +21,26 @@ import otc.otc.feign.QueueServiceClien;
 public class Task {
 	@Autowired QueueServiceClien queueServiceClienImpl;
 	@Autowired FileServiceClien fileServiceClienImpl;
+	@Autowired AlipayServiceClien alipayServiceClienImpl;
+	/**
+	 * 每分钟踢人
+	 */
 	@Scheduled(cron = "0 */1 * * * ?")
 	public void queue() {
-	//	queueServiceClienImpl.task();
+		queueServiceClienImpl.task();
+	}
+	/**
+	 * 凌晨一点执行任务
+	 */
+	@Scheduled(cron = "0 0 1 * * ?")
+	public void userTask() {
+		alipayServiceClienImpl.userTask();
+	}
+	/**
+	 * 10秒图片剪裁
+	 */
+	@Scheduled(cron = "*/10 * * * * ?")
+	public void file() {
 		fileServiceClienImpl.task();
 	}
-	
-	
 }

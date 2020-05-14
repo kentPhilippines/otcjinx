@@ -12,7 +12,7 @@ import otc.result.Result;
  * @author kent
  *
  */
-@Component(Common.Deal.PRODUCT_ALIPAY_SCAN)
+//@Component(Common.Deal.PRODUCT_ALIPAY_SCAN)
 public class AlipayScan extends PayOrderService{
 	@Override
 	public Result deal(DealOrderApp dealOrderApp, String payType) {

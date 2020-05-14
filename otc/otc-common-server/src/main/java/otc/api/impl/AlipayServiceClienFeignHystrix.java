@@ -46,4 +46,10 @@ public class AlipayServiceClienFeignHystrix implements AlipayServiceClienFeign {
 		return null;
 	}
 
+	@Override
+	public Result userTask() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

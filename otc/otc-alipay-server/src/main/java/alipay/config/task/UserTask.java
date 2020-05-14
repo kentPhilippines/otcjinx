@@ -13,6 +13,9 @@ public class UserTask {
 	public void userTask() {
 		userInfoDao.updateUserTime();
 	}
+	public void userAddTask() {
+		userInfoDao.bak();
+	}
 	
 	/**
 	 * <p>备份账户表</p>

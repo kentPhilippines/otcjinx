@@ -62,12 +62,6 @@ public abstract class NotfiyChannel {
 		}
 		return Result.buildFail();
 	}
-	
-	
-	
-	
-	
-	
 	/**
 	 * <p>API下游代付通知</p>
 	 */

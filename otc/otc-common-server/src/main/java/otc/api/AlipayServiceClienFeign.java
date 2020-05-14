@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -68,4 +69,10 @@ public interface AlipayServiceClienFeign {
 	
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,value = PayApiConstant.Alipay.ORDER_API+PayApiConstant.Alipay.ORDER_ENTER_ORDER_SYSTEM)
 	public Result enterOrder(HashMap<String, Object> paramMap);
+	
+	
+	@GetMapping(PayApiConstant.Alipay.TASK_API+PayApiConstant.Alipay.TASK_API_USER)
+	public Result userTask();
+	
+	
 }

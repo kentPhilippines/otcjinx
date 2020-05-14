@@ -7,6 +7,8 @@ import alipay.manage.bean.UserInfoExample;
 import java.util.List;
 
 import alipay.manage.bean.UserRate;
+
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -111,4 +113,11 @@ public interface UserInfoMapper {
     
     @Update("update alipay_user_info set  todayDealAmount = 0 ,todayProfit = 0,todayOrderCount = 0 , todayAgentProfit = 0 ")
 	void updateUserTime();
+
+    @Insert("insert into  alipay_user_fund_bak (userId, userName, cashBalance, rechargeNumber, freezeBalance, accountBalance,  " + 
+    		"    sumDealAmount, sumRechargeAmount, sumProfit, sumAgentProfit, sumOrderCount, todayDealAmount,  " + 
+    		"    todayProfit, todayOrderCount, todayAgentProfit, userType, agent, isAgent   )  select userId, userName, cashBalance, rechargeNumber, freezeBalance, accountBalance,  " + 
+    		 "    sumDealAmount, sumRechargeAmount, sumProfit, sumAgentProfit, sumOrderCount, todayDealAmount,  " + 
+    		 "    todayProfit, todayOrderCount, todayAgentProfit, userType, agent, isAgent    FROM alipay_user_fund")
+	void bak();
 }

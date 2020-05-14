@@ -18,6 +18,7 @@ public class CharsetConfig extends WebMvcConfigurerAdapter {
                 Charset.forName("UTF-8"));
         return converter;
     }
+    
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         super.configureMessageConverters(converters);
