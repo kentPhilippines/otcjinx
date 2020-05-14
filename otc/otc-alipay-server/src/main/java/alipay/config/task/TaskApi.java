@@ -18,11 +18,6 @@ public class TaskApi {
 	public Result userTask() {
 		log.info("【开始进行每日账户清算】");
 		userTaskImpl.userAddTask();
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e) {
-			userTaskImpl.userTask();
-		}
 		userTaskImpl.userTask();
 		return Result.buildSuccessMessage("账户清算完成");
 	}

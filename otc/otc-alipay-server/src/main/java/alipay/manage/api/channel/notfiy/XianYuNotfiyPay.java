@@ -1,10 +1,16 @@
 package alipay.manage.api.channel.notfiy;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -15,6 +21,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import alipay.manage.api.config.NotfiyChannel;
 import cn.hutool.http.HttpUtil;
+import cn.hutool.json.JSON;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
 import otc.common.PayApiConstant;
@@ -34,17 +43,53 @@ public class XianYuNotfiyPay extends NotfiyChannel{
 			res.getWriter().write("ip错误");
 			return;
 		}
+		
+		ServletInputStream inputStream = req.getInputStream();
+		 String body;
+		 StringBuilder stringBuilder = new StringBuilder();
+		 BufferedReader bufferedReader = null;
+	try {
+		 if (inputStream != null) {
+	         bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+	         char[] charBuffer = new char[128];
+	         int bytesRead = -1;
+	         while ((bytesRead = bufferedReader.read(charBuffer)) > 0) {
+	             stringBuilder.append(charBuffer, 0, bytesRead);
+	         }
+		 } else {
+	            stringBuilder.append("");
+	     }
+	  } catch (IOException ex) {
+	        throw ex;
+	    } finally {
+	        if (bufferedReader != null) {
+	            try {
+	                bufferedReader.close();
+	            } catch (IOException ex) {
+	                throw ex;
+	            }
+	        }
+	    }
+	    body = stringBuilder.toString();
+	    JSON parse = JSONUtil.parse(body);
+	    JSONObject parseObj = JSONUtil.parseObj(parse);
+	    
+	    Set<String> keySet = parseObj.keySet();
+		log.info("【收到咸鱼支付宝H5支付成功请求，当前请求参数为："+parseObj+"】");
+	    Map<String,Object> decodeParamMap = new ConcurrentHashMap();
+	    for(String key : keySet) 
+	    	decodeParamMap.put(key, parseObj.getObj(key));
 		String queryString = req.getQueryString();
 		log.info("【当前咸鱼请求参数为："+queryString+"】");
-		String getid = req.getParameter("fxid");
-		String getddh = req.getParameter("fxddh");
-		String getorder = req.getParameter("fxorder");
-		String getattch = req.getParameter("fxattch");
-		String getdesc = req.getParameter("fxdesc");
-		String getfee = req.getParameter("fxfee");
-		String getstatus = req.getParameter("fxstatus");
-		String gettime = req.getParameter("fxtime");
-		String getsign = req.getParameter("fxsign");
+		String getid = decodeParamMap.get("fxid").toString();
+		String getddh = decodeParamMap.get("fxddh").toString();
+		String getorder = decodeParamMap.get("fxorder").toString();
+		String getattch = decodeParamMap.get("fxattch").toString();
+		String getdesc = decodeParamMap.get("fxdesc").toString();
+		String getfee = decodeParamMap.get("fxfee").toString();
+		String getstatus = decodeParamMap.get("fxstatus").toString();
+		String gettime = decodeParamMap.get("fxtime").toString();
+		String getsign = decodeParamMap.get("fxsign").toString();
 		String successstatus = "1";
 		if (getstatus.equals(successstatus)!=true) {
 		    res.getWriter().write("状态错误");

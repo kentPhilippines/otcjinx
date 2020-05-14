@@ -50,10 +50,10 @@ public class alipayH5XIanyu {
 		
 		
 		
-		   	String fxnotifyurl = "http://localhost:8084/qzf/notifyUrl.htm";
-		    String fxbackurl = "http://localhost:8084/qzf/backUrl.htm";
-		    String fxattch = "test";
-		    String fxdesc = "desc";
+		   	String fxnotifyurl = "http://182.16.89.146:9010/notfiy-api-pay/xianyu-notfiy";
+		    String fxbackurl = "http://182.16.89.146:9010/notfiy-api-pay/xianyu-notfiy";
+		    String fxattch = "CHESHICHESHICHESHI";
+		    String fxdesc = "aDFJKGHAOIFDGIGIURIUGIJGDFJIKGASDKOJG";
 		    String fxfee = "1000.00";
 		    String fxpay = "zfbh5";
 		    String fxddh =  "CH"+ IdUtil.objectId().toUpperCase(); //订单号
@@ -71,8 +71,9 @@ public class alipayH5XIanyu {
 		    reqMap.put("fxbackurl", fxbackurl);
 		    reqMap.put("fxattch", fxattch);
 		    reqMap.put("fxdesc", fxdesc);
-		    reqMap.put("fxip", "127.0.0.1");
+		    reqMap.put("fxip", "182.16.89.146");
 		    reqMap.put("fxsign", fxsign);
+		    System.out.println(reqMap.toString());
 		    // 支付请求返回结果
 		    String result = null;
 		    result = HttpUtil.post("https://csj.fenvun.com/Pay", reqMap);
