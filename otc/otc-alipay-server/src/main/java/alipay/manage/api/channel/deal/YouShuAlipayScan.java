@@ -31,7 +31,7 @@ public class YouShuAlipayScan extends PayOrderService{
 	@Override
 	public Result deal(DealOrderApp dealOrderApp, String payType) {
 		log.info("【进入优树支付宝个码支付】");
-		String channelId = "PDD303";//配置的渠道账号
+		String channelId = "YOUSHUALIPAYSCAN";//配置的渠道账号
 		String create = create(dealOrderApp, channelId);
 		if(StrUtil.isNotBlank(create)) {
 			log.info("【本地订单创建成功，开始请求远程三方支付】");

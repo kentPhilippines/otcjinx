@@ -234,6 +234,7 @@ public class DealAppApi {
 		BigDecimal fee = userRate.getFee();
 		BigDecimal multiply = money.multiply(fee);
 		dealApp.setRetain3(multiply.toString());
+		dealApp.setBack(dealBean.getPageUrl());
 		boolean add = orderAppServiceImpl.add(dealApp);
 		if(add)
 			return dealApp;

@@ -57,6 +57,7 @@ public abstract class PayOrderService implements PayService{
 		return null;
 	}
 	public boolean orderEr(DealOrderApp orderApp){
+		log.info("【将当前订单置为失败，当前交易订单号："+orderApp.getOrderId()+"】");
 		DealOrder dealOrder = orderServiceImpl.findAssOrder(orderApp.getOrderId());
 		if(ObjectUtil.isNotNull(dealOrder)) {
 			boolean updateOrderStatus = orderServiceImpl.updateOrderStatus(dealOrder.getOrderId(), Common.Order.DealOrder.ORDER_STATUS_ER, "暂无支付渠道");
@@ -90,6 +91,7 @@ public abstract class PayOrderService implements PayService{
 		order.setOrderStatus(Common.Order.DealOrder.ORDER_STATUS_DISPOSE.toString());
 		order.setOrderType(Common.Order.ORDER_TYPE_DEAL.toString());
 		order.setRetain1(userinfo.getUserNode());
+		order.setBack(orderApp.getBack());
 		boolean addOrder = orderServiceImpl.addOrder(order);
 		if(addOrder) {
 			ThreadUtil.execute(()->{
