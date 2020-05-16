@@ -2,6 +2,8 @@ package alipay.manage.api.config;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -35,6 +37,7 @@ public abstract class NotfiyChannel {
     @Autowired UserInfoService userInfoServiceImpl;
     @Autowired OrderService orderServiceImpl;
     @Autowired NotifyUtil notifyUtilImpl;
+    static Lock lock = new  ReentrantLock();
 	public Result witNotfy(String orderId) {
 		log.info("【进入代付回调抽象类，当前代付成功订单号："+orderId+"】");
 		Withdraw wit = withdrawServiceImpl.findOrderId(orderId);
@@ -54,11 +57,16 @@ public abstract class NotfiyChannel {
 			log.info("【当前回调订单不存在，当前回调订单号："+orderId+"】");
 			return Result.buildFailMessage("当前回调订单不存在");
 		}
-		Result dealAmount = orderUtilImpl.updataDealOrderSu(order.getOrderId(), "三方系统回调成功", ip, true );
-		if(dealAmount.isSuccess()) {
-			log.info("【订单修改成功，向下游发送回调："+orderId+"】");
-			notifyUtilImpl.sendMsg(orderId);
-			return Result.buildSuccessMessage("订单修改成功");
+		lock.lock();
+		try {
+			Result dealAmount = orderUtilImpl.updataDealOrderSu(order.getOrderId(), "三方系统回调成功", ip, true );
+			if(dealAmount.isSuccess()) {
+				log.info("【订单修改成功，向下游发送回调："+orderId+"】");
+				notifyUtilImpl.sendMsg(orderId);
+				return Result.buildSuccessMessage("订单修改成功");
+			}
+		} finally {
+			lock.unlock();
 		}
 		return Result.buildFail();
 	}

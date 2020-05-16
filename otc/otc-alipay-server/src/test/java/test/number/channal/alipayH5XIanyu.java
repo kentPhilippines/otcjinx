@@ -1,84 +1,87 @@
 package test.number.channal;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import javax.net.ssl.HttpsURLConnection;
+import javax.servlet.http.HttpUtils;
 
 import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.http.HttpUtil;
+import cn.hutool.json.JSON;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 
 public class alipayH5XIanyu {
-	public static void main(String[] args) {
+	public static void main(String[] args) { 
 		/**
-		 * 	fxid				商务号			是	唯一号，由穿山甲支付-csjPAY提供
-			fxddh				商户订单号			是	仅允许字母或数字类型,不超过22个字符，不要有中文
-			fxdesc				商品名称			是	utf-8编码
-			fxfee				支付金额			是	请求的价格(单位：元) 可以0.01元
-			fxnotifyurl			异步通知地址		是	异步接收支付结果通知的回调地址，通知url必须为外网可访问的url，不能携带参数。
-			fxbackurl			同步通知地址		是	支付成功后跳转到的地址，不参与签名。
-			fxpay				请求类型 【支付宝扫码：zfbsm】【支付宝H5：zfbh5】	是	请求支付的接口类型。
-			fxnotifystyle		异步数据类型		否	异步返回数据的类型，默认1 返回数据为表单数据（Content-Type: multipart/form-data），2 返回post json数据。
-			fxattch				附加信息			否	原样返回，utf-8编码
-			fxsmstyle			扫码模式			否	用于扫码模式（sm），仅带sm接口可用，默认0返回扫码图片，为1则返回扫码跳转地址。
-			fxbankcode			银行类型			否	用于网银直连模式，请求的银行编号，参考银行附录,仅网银接口可用。
-			fxfs				反扫付款码数字		否	用于用户被扫，用户的付款码数字,仅反扫接口可用。
-			fxuserid			快捷模式绑定商户id	否	用于识别用户绑卡信息，仅快捷接口可用。
-			fxsign				签名【md5(商务号+商户订单号+支付金额+异步通知地址+商户秘钥)】	是	通过签名算法计算得出的签名值。
-			fxip				支付用户IP地址	是	用户支付时设备的IP地址
-		 */
+		fxid			商务号				是	唯一号，由穿山甲支付-csjPAY提供
+		fxddh			商户订单号				是	平台返回商户提交的订单号
+		fxaction		商户查询动作			是	商户查询动作，这里填写【orderquery】
+		fxsign			签名【md5(商务号+商户订单号+商户查询动作+商户秘钥)】	是	通过签名算法计算得出的签名值。
+		*/
+		String key = "AHFuoYCUgZcOdpectBxYiPElWMVGljbc";
+		Map<String, Object>  map = new HashMap<String, Object>();
+		String fxid = "2020177";
+		String fxddh = "12365441234";
+		String fxaction = "orderquery";
+		map.put("fxid", fxid);
+		map.put("fxddh", fxddh);
+		map.put("fxaction", fxaction);
+		map.put("fxsign", md5(fxid+fxddh+fxaction+key));
+		String post = HttpUtil.post("https://csj.fenvun.com/Pay"  , map);
+		JSONObject parseObj = JSONUtil.parseObj(post);
+		XianYu bean = JSONUtil.toBean(parseObj, XianYu.class);
+		System.out.println(bean.toString());
+		
+		
+		
+		
+		System.out.println("商户订单："+post);
+		
+		
 		/**
-		 * 		money			是		订单金额
-				part_sn			是		商家平台订单号
-				notify			是		异步回调地址
-				id				是		码商账号id
-				sign			是		签名
+		 * 	money			是		订单金额
+			part_sn			是		商家平台订单号
+			notify			是		异步回调地址
+			id				是		码商账号id
+			sign			是		签名
+				下单请求地址：http://xianyu.tbuoljh.cn/api/order
+				商户key：  8ff661281faf68288666c7fdef535a74
+				商户ID：31
+				回调ip：110.42.1.189
+		String key = "8ff661281faf68288666c7fdef535a74";
+		Map<String, Object>  map = new HashMap<String, Object>();
+		map.put("money", "2000");
+		map.put("part_sn", "222222224422");
+		map.put("notify", "http://182.16.89.146:9010/notfiy-api-pay/xianyu-notfiy");
+		map.put("id", "31");
+		String createParam = createParam(map);
+		String a = key+createParam+key;
+		System.out.println(a);
+		String md5 = md5(key+createParam+key);
+		System.out.println(md5);
+		map.put("sign", md5);
+		beanss ben = new beanss();
+		ben.setId("31");
+		ben.setMoney("2000");
+		ben.setNotify("http://182.16.89.146:9010/notfiy-api-pay/xianyu-notfiy");
+		ben.setPart_sn("222222224422");
+		ben.setSign(md5);
+		JSONObject parseObj = JSONUtil.parseObj(ben);
+		System.out.println(parseObj.toString());
 		
-		String money = "100";
-		String part_sn = UUID.randomUUID().toString();
-		String id = "id";
-		String notify = "http://localhost:8084/qzf/notifyUrl.htm";
-		
-		
-		
-		 */
-		
-		
-		 
-		
-		
-		
-		   	String fxnotifyurl = "http://182.16.89.146:9010/notfiy-api-pay/xianyu-notfiy";
-		    String fxbackurl = "http://182.16.89.146:9010/notfiy-api-pay/xianyu-notfiy";
-		    String fxattch = "CHESHICHESHICHESHI";
-		    String fxdesc = "aDFJKGHAOIFDGIGIURIUGIJGDFJIKGASDKOJG";
-		    String fxfee = "1000.00";
-		    String fxpay = "zfbh5";
-		    String fxddh =  "CH"+ IdUtil.objectId().toUpperCase(); //订单号
-		    String fxid = "2020177";
-		    String key = "AHFuoYCUgZcOdpectBxYiPElWMVGljbc";
-		    //订单签名
-		    String fxsign = md5(fxid + fxddh + fxfee + fxnotifyurl + key); 
-		    fxsign = fxsign.toLowerCase();
-		    Map<String, Object> reqMap = new HashMap<String, Object>();
-		    reqMap.put("fxid", fxid);
-		    reqMap.put("fxddh", fxddh);
-		    reqMap.put("fxfee", fxfee);
-		    reqMap.put("fxpay", fxpay);
-		    reqMap.put("fxnotifyurl", fxnotifyurl);
-		    reqMap.put("fxbackurl", fxbackurl);
-		    reqMap.put("fxattch", fxattch);
-		    reqMap.put("fxdesc", fxdesc);
-		    reqMap.put("fxip", "182.16.89.146");
-		    reqMap.put("fxsign", fxsign);
-		    System.out.println(reqMap.toString());
-		    // 支付请求返回结果
-		    String result = null;
-		    result = HttpUtil.post("https://csj.fenvun.com/Pay", reqMap);
-		    System.out.println(result);
-		    
+		String post = HttpUtil.post("http://xianyu.tbuoljh.cn/api/order", map);
+		System.out.println(post);
+		*/
 	}
 	 public static String md5(String a) {
 	    	String c = "";
@@ -95,5 +98,91 @@ public class alipayH5XIanyu {
 			}
 			return result;
 	    }
+		public static String createParam(Map<String, Object> map) {
+			try {
+				if (map == null || map.isEmpty())
+					return null;
+				Object[] key = map.keySet().toArray();
+				Arrays.sort(key);
+				StringBuffer res = new StringBuffer(128);
+				for (int i = 0; i < key.length; i++) 
+					if(ObjectUtil.isNotNull(map.get(key[i])))
+						res.append(key[i]  + map.get(key[i]).toString()  );
+				String rStr = res.substring(0, res.length() - 1);
+				return rStr;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
 
+
+}
+class XianYu {
+	//{"fxid":"2020177","fxstatus":"1","fxddh":"12365441234","fxorder":"qzf20200516171826589638709215147","fxdesc":"000000","fxfee":"2000.00","fxattch":"test","fxtime":"1589620706","fxsign":"8f31d1ccd2ffeae15885c4e33b08c01c"}
+	private String fxid;
+	private String fxstatus;
+	private String fxddh;
+	private String fxorder;
+	private String fxdesc;
+	private String fxattch;
+	private String fxtime;
+	private String fxsign;
+	public XianYu() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	public String getFxid() {
+		return fxid;
+	}
+	public void setFxid(String fxid) {
+		this.fxid = fxid;
+	}
+	public String getFxstatus() {
+		return fxstatus;
+	}
+	public void setFxstatus(String fxstatus) {
+		this.fxstatus = fxstatus;
+	}
+	public String getFxddh() {
+		return fxddh;
+	}
+	public void setFxddh(String fxddh) {
+		this.fxddh = fxddh;
+	}
+	public String getFxorder() {
+		return fxorder;
+	}
+	public void setFxorder(String fxorder) {
+		this.fxorder = fxorder;
+	}
+	public String getFxdesc() {
+		return fxdesc;
+	}
+	public void setFxdesc(String fxdesc) {
+		this.fxdesc = fxdesc;
+	}
+	public String getFxattch() {
+		return fxattch;
+	}
+	public void setFxattch(String fxattch) {
+		this.fxattch = fxattch;
+	}
+	public String getFxtime() {
+		return fxtime;
+	}
+	public void setFxtime(String fxtime) {
+		this.fxtime = fxtime;
+	}
+	public String getFxsign() {
+		return fxsign;
+	}
+	public void setFxsign(String fxsign) {
+		this.fxsign = fxsign;
+	}
+	@Override
+	public String toString() {
+		return "XianYu [fxid=" + fxid + ", fxstatus=" + fxstatus + ", fxddh=" + fxddh + ", fxorder=" + fxorder
+				+ ", fxdesc=" + fxdesc + ", fxattch=" + fxattch + ", fxtime=" + fxtime + ", fxsign=" + fxsign + "]";
+	}
 }

@@ -109,5 +109,12 @@ public interface OrderService {
 	 */
 	DealOrder findAssOrder(String orderId);
 
+	/**
+	 * <p>咸鱼对接专属接口</p>
+	 * @param orderId
+	 * @param id
+	 */
+	void updataXianyYu(String orderId, String id);
+
 
 }

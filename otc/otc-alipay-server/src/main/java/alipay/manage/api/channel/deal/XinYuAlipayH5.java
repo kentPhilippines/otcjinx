@@ -15,6 +15,9 @@ import alipay.manage.api.feign.ConfigServiceClient;
 import alipay.manage.bean.DealOrder;
 import alipay.manage.bean.DealOrderApp;
 import alipay.manage.service.OrderService;
+import cn.hutool.core.lang.Snowflake;
+import cn.hutool.core.thread.ThreadUtil;
+import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
@@ -77,6 +80,7 @@ public class XinYuAlipayH5 extends PayOrderService{
 	    reqMap.put("fxnotifyurl", fxnotifyurl);
 	    reqMap.put("fxbackurl", fxbackurl);
 	    reqMap.put("fxattch", fxattch);
+	    reqMap.put("fxnotifystyle", "1" );
 	    reqMap.put("fxdesc", fxdesc);
 	    reqMap.put("fxip", "127.0.0.1");
 	    reqMap.put("fxsign", fxsign);
@@ -90,6 +94,13 @@ public class XinYuAlipayH5 extends PayOrderService{
 	    XianYu bean = new XianYu();
 	    if(object.toString().equals("1")) {
 	    	 bean = JSONUtil.toBean(parseObj, XianYu.class);
+	    	 ThreadUtil.execute(()->{
+	    		 Snowflake snowflake = IdUtil.createSnowflake(1, 1);
+	    		 String id = snowflake.nextId()+"";
+	    		 orderServiceImpl.updataXianyYu(order.getOrderId(),id);
+	    	 } );
+	    	 
+	    	 
 	    }else {
 	    	bean.setPayurl(parseObj.get("error").toString());
 	    	bean.setStatus("0");

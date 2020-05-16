@@ -285,6 +285,8 @@ public class OrderServiceImpl implements OrderService{
 	public DealOrder findAssOrder(String orderId) {
 		return dealOrderMapper.findOrderByAssociatedId(orderId);
 	}
-
-
+	@Override
+	public void updataXianyYu(String orderId, String id) {
+		dealOrderMapper.updataXianyYu(orderId,id);
+	}
 }

@@ -72,6 +72,11 @@ public interface DealOrderMapper {
     
     @Select("select * from alipay_deal_order where associatedId = #{associatedId}")
 	DealOrder findOrderByAssociatedId(@Param("associatedId")String associatedId);
+    @Update("update alipay_deal_order set retain2  = #{id}  where  orderId = #{orderId}")
+	void updataXianyYu(@Param("orderId") String orderId, @Param("id") String id);
+    
+    @Select("select retain2 , orderId from alipay_deal_order where createTime > DATE_ADD(NOW(),INTERVAL-3 HOUR)  and orderStatus !=2 and orderStatus != 4 ")
+    List<DealOrder> findXianYuOrder();
 
 
 }
