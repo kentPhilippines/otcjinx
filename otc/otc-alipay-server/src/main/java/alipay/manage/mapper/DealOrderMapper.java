@@ -75,7 +75,7 @@ public interface DealOrderMapper {
     @Update("update alipay_deal_order set retain2  = #{id}  where  orderId = #{orderId}")
 	void updataXianyYu(@Param("orderId") String orderId, @Param("id") String id);
     
-    @Select("select retain2 , orderId from alipay_deal_order where createTime > DATE_ADD(NOW(),INTERVAL-3 HOUR)  and orderStatus !=2 and orderStatus != 4 and orderQrUser = 'XianYuZhifubao'")
+    @Select("select retain2 , orderId from alipay_deal_order where createTime > DATE_ADD(NOW(),INTERVAL-3 HOUR)  and orderStatus = 1 and orderQrUser = 'XianYuZhifubao'")
     List<DealOrder> findXianYuOrder();
 
 
