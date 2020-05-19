@@ -60,13 +60,16 @@ public class XinYuAlipayH5 extends PayOrderService{
 	}
 	private XianYu createOrder(String notfiy, BigDecimal orderAmount, String orderId) {
 		DealOrder order = orderServiceImpl.findOrderByOrderId(orderId);
+    	Snowflake snowflake = IdUtil.createSnowflake(1, 1);
+    	String id = snowflake.nextId()+"";
+    	orderServiceImpl.updataXianyYu(order.getOrderId(),id);
 	   	String fxnotifyurl = notfiy;
 	    String fxbackurl = order.getBack();
 	    String fxattch = "test";
 	    String fxdesc = "desc";
 	    String fxfee = orderAmount.toString();
 	    String fxpay = "zfbh5";
-	    String fxddh =  orderId; //订单号
+	    String fxddh =  id; //订单号
 	    String fxid = "2020177";
 	    String key = "AHFuoYCUgZcOdpectBxYiPElWMVGljbc";
 	    //订单签名
@@ -94,11 +97,7 @@ public class XinYuAlipayH5 extends PayOrderService{
 	    XianYu bean = new XianYu();
 	    if(object.toString().equals("1")) {
 	    	 bean = JSONUtil.toBean(parseObj, XianYu.class);
-	    	 ThreadUtil.execute(()->{
-	    		 Snowflake snowflake = IdUtil.createSnowflake(1, 1);
-	    		 String id = snowflake.nextId()+"";
-	    		 orderServiceImpl.updataXianyYu(order.getOrderId(),id);
-	    	 } );
+	    	
 	    	 
 	    	 
 	    }else {

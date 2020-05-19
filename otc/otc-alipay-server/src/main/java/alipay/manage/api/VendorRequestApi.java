@@ -42,7 +42,6 @@ public class VendorRequestApi {
 
     /**
      * 商户下单支付请求接口
-     *
      * @param request
      * @return
      */

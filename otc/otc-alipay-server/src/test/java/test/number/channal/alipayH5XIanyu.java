@@ -31,7 +31,7 @@ public class alipayH5XIanyu {
 		String key = "AHFuoYCUgZcOdpectBxYiPElWMVGljbc";
 		Map<String, Object>  map = new HashMap<String, Object>();
 		String fxid = "2020177";
-		String fxddh = "12365441234";
+		String fxddh = "1261883409429565440";
 		String fxaction = "orderquery";
 		map.put("fxid", fxid);
 		map.put("fxddh", fxddh);

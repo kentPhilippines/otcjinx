@@ -37,4 +37,9 @@ public class orderAppServiceImpl implements OrderAppService {
 		dealOrderAppDao.updateOrderSu(orderId,orderStatus);
 	}
 
+	@Override
+	public DealOrderApp findOrderByApp(String appId, String appOrderId) {
+		return dealOrderAppDao.findOrderByApp(appId,appOrderId);
+	}
+
 }

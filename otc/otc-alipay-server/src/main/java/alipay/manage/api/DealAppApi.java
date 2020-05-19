@@ -1,13 +1,16 @@
 package alipay.manage.api;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.HttpServletRequest;
 
 import alipay.manage.bean.DealOrder;
 import alipay.manage.util.BankTypeUtil;
+import alipay.manage.util.CheckUtils;
 import alipay.manage.util.OrderUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,11 +24,15 @@ import alipay.manage.api.channel.util.zhaunshi.BankEnum;
 import alipay.manage.api.config.FactoryForStrategy;
 import alipay.manage.bean.DealOrderApp;
 import alipay.manage.bean.Product;
+import alipay.manage.bean.UserFund;
+import alipay.manage.bean.UserInfo;
 import alipay.manage.bean.UserRate;
 import alipay.manage.bean.util.DealBean;
 import alipay.manage.bean.util.WithdrawalBean;
 import alipay.manage.mapper.ProductMapper;
 import alipay.manage.service.OrderAppService;
+import alipay.manage.service.UserFundService;
+import alipay.manage.service.UserInfoService;
 import alipay.manage.service.WithdrawService;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
@@ -52,6 +59,47 @@ public class DealAppApi {
     @Autowired WithdrawService withdrawServiceImpl;
 	@Autowired OrderUtil orderUtil;
 	@Autowired ProductMapper productDao;
+	@Autowired UserFundService userFundServiceImpl;
+	@Autowired UserInfoService userInfoServiceImpl;
+	@Autowired CheckUtils checkUtils;
+	@RequestMapping("/findOrder")
+	public Result findOrder(HttpServletRequest request) {
+		String appId = request.getParameter("appId");
+		String appOrderId = request.getParameter("appOrderId");
+		String sign = request.getParameter("sign");
+		if(StrUtil.isBlank(appId)||StrUtil.isBlank(appOrderId)|| StrUtil.isBlank(sign) ) 
+			return Result.buildFailMessage("必传参数为空");
+		UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(appId);
+		if(ObjectUtil.isNull(userInfo))
+			return Result.buildFailMessage("商户不存在");
+		Map<String,Object> map = new ConcurrentHashMap<String,Object>();
+		map.put("appId", appId);
+		map.put("appOrderId", appOrderId);
+		map.put("sign", sign);
+		boolean verifySign = checkUtils.verifySign(map, userInfo.getPayPasword());
+		map = null;
+		if(!verifySign)
+			return Result.buildFailMessage("签名错误");
+		DealOrderApp orderApp = orderAppServiceImpl.findOrderByApp(appId,appOrderId);
+		Map<String,Object> mapr = new ConcurrentHashMap<String,Object>();
+		mapr.put("appId", appId);
+		mapr.put("appOrderId", orderApp.getAppOrderId());
+		mapr.put("amount", orderApp.getOrderAmount());
+		String sign2 = checkUtils.getSign(mapr, userInfo.getPayPasword());
+		userInfo = null;
+		mapr = null;
+		FundBean fund = new FundBean();
+		fund.setAmount(orderApp.getOrderAmount().toString());
+		fund.setOrderId(orderApp.getAppOrderId());
+		fund.setOrderStatus(orderApp.getOrderStatus());
+		fund.setSign(sign2);
+		return Result.buildSuccessResult(fund);
+	}
+	
+	
+	
+	
+	
 	/**
 	 * <p>下游商户交易接口</p>
 	 * @param request
@@ -277,5 +325,35 @@ class ResultDeal{
 	}
 	public void setReturnUrl(String returnUrl) {
 		this.returnUrl = returnUrl;
+	}
+}
+class FundBean{
+	private String orderId;
+	private String orderStatus;
+	private String amount;
+	private String sign;
+	public String getSign() {
+		return sign;
+	}
+	public void setSign(String sign) {
+		this.sign = sign;
+	}
+	public String getOrderId() {
+		return orderId;
+	}
+	public void setOrderId(String orderId) {
+		this.orderId = orderId;
+	}
+	public String getOrderStatus() {
+		return orderStatus;
+	}
+	public void setOrderStatus(String orderStatus) {
+		this.orderStatus = orderStatus;
+	}
+	public String getAmount() {
+		return amount;
+	}
+	public void setAmount(String amount) {
+		this.amount = amount;
 	}
 }

@@ -54,4 +54,6 @@ public interface DealOrderAppMapper {
      */
     @Update("update alipay_deal_order_app set retain2 = #{yse}    where orderId = #{orderId}")
 	boolean updateOrderIsAgent(@Param("orderId")  String orderId, @Param("yse")  String yse);
+    @Select("select *  from alipay_deal_order_app where appOrderId = #{appOrderId} and  orderAccount = #{appId}")
+	DealOrderApp findOrderByApp(@Param("appId")String appId,@Param("appOrderId") String appOrderId);
 }

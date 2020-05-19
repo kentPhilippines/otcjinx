@@ -66,6 +66,7 @@ public class XianYuNotfiyPay extends NotfiyChannel{
 				map.put("fxaction", fxaction);
 				map.put("fxsign", md5(FX_ID+fxddh+fxaction+KEY));
 				String post = HttpUtil.post("https://csj.fenvun.com/Pay"  , map);
+				log.info("【当前返回数据为：】"+post.toString());
 				JSONObject parseObj = JSONUtil.parseObj(post);
 				XianYu bean = JSONUtil.toBean(parseObj, XianYu.class);
 				log.info("【当前返回数据为：】"+bean.toString());
@@ -85,7 +86,7 @@ public class XianYuNotfiyPay extends NotfiyChannel{
 	String enterOrder(String orderId ,String ip){
 		 Result dealpayNotfiy = dealpayNotfiy(orderId, ip);
 		 if(dealpayNotfiy.isSuccess()) {
-			 log.info("【咸鱼H5 交易成功】 ");
+			 log.info("【咸鱼H5 交易成功】");
 			 return "success";
 		 }
 		return null;
