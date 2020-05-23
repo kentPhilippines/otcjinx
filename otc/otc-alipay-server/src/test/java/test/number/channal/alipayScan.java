@@ -15,7 +15,7 @@ public class alipayScan {
 		test();
 	}
 	static void test(){ 
-		String apiurl = "http://www.qsy123.cn/api/orders/index.html"; // API下单地址
+		String apiurl = "http://www.6278pk.com/api/orders/index.html"; // API下单地址
 		String key = "zfZ2BTd6PHKvwCxU"; // 商户密钥
 		String bankco = "alipay";
 		String moneys = "200";

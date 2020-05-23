@@ -26,6 +26,7 @@ public class WithdrawalBean {
 	private String ordertime;					//请求时间yyyyMMddHHmmss
 	private String amount;						//代付金额
 	private String acctno;						//银行卡号 
+    private String bankName;		//银行姓名
 	private String acctname;					//银行卡持有者姓名
 	private String bankcode;					//银行编码
 	private String notifyurl;					//回调
@@ -35,14 +36,19 @@ public class WithdrawalBean {
 	private String cnapsname;					//开户支行
 	private String province;					//省
 	private String city;						//市
-
+	
 	private String rsasign;						//签名
 	
 	private String ip;
 
 	private String apply;						//后台申请人
 	
-	
+	public String getBankName() {
+		return bankName;
+	}
+	public void setBankName(String bankName) {
+		this.bankName = bankName;
+	}
 	public String getDpaytype() {
 		return dpaytype;
 	}

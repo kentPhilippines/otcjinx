@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.HttpServletRequest;
 
+import alipay.manage.bean.ChannelFee;
 import alipay.manage.bean.DealOrder;
 import alipay.manage.util.BankTypeUtil;
 import alipay.manage.util.CheckUtils;
@@ -29,6 +30,7 @@ import alipay.manage.bean.UserInfo;
 import alipay.manage.bean.UserRate;
 import alipay.manage.bean.util.DealBean;
 import alipay.manage.bean.util.WithdrawalBean;
+import alipay.manage.mapper.ChannelFeeMapper;
 import alipay.manage.mapper.ProductMapper;
 import alipay.manage.service.OrderAppService;
 import alipay.manage.service.UserFundService;
@@ -62,6 +64,7 @@ public class DealAppApi {
 	@Autowired UserFundService userFundServiceImpl;
 	@Autowired UserInfoService userInfoServiceImpl;
 	@Autowired CheckUtils checkUtils;
+	@Autowired ChannelFeeMapper channelFeeDao;
 	@RequestMapping("/findOrder")
 	public Result findOrder(HttpServletRequest request) {
 		String appId = request.getParameter("appId");
@@ -95,11 +98,6 @@ public class DealAppApi {
 		fund.setSign(sign2);
 		return Result.buildSuccessResult(fund);
 	}
-	
-	
-	
-	
-	
 	/**
 	 * <p>下游商户交易接口</p>
 	 * @param request
@@ -123,22 +121,27 @@ public class DealAppApi {
 		if(StrUtil.isBlank(passcode))
 			return Result.buildFailMessage("通道编码为空");
 		log.info("【当前通道编码："+passcode+"】");
-		DealOrderApp dealBean = createDealAppOrder(mapToBean);
-		if(ObjectUtil.isNull(dealBean))
-			return Result.buildFailMessage("交易预订单生成出错");
-		Result deal = null;
-		try {
-			 deal = factoryForStrategy.getStrategy(passcode).deal(dealBean, passcode);
-		} catch (Exception e) {
-			log.info("【当前通道编码对于的实体类不存在】");
-			return Result.buildFailMessage("当前通道编码不存在");
-		}
-		if(ObjectUtil.isNull(deal))
-			return Result.buildFailMessage("其他错误，请联系客服人员处理");
+		log.info("【当前通道编码："+passcode+"】");
+	    UserRate userRate = accountApiServiceImpl.findUserRateByUserId(mapToBean.getAppId(), passcode);
+	    ChannelFee channelFee = channelFeeDao.findImpl(userRate.getChannelId(),userRate.getPayTypr());
+	    if(ObjectUtil.isNull(channelFee)) {
+	      log.info("【通道实体不存在，当前商户订单号："+mapToBean.getOrderId()+"】");
+	      log.info("【通道实体不存在，费率配置错误】");
+	      Result.buildFailMessage("通道实体不存在，费率配置错误");
+	    }
+	    DealOrderApp dealBean = createDealAppOrder(mapToBean);
+	    if(ObjectUtil.isNull(dealBean))
+	      return Result.buildFailMessage("交易预订单生成出错");
+	    Result deal = null;
+	    try {
+	       deal = factoryForStrategy.getStrategy(channelFee.getImpl()).deal(dealBean, channelFee.getChannelId());
+	    } catch (Exception e) {
+	      log.info("【当前通道编码对于的实体类不存在】");
+	      return Result.buildFailMessage("当前通道编码不存在");
+	    }
 		deal.setResult(new ResultDeal(true,0,deal.getCode(),deal.getResult()));
 		return deal;
 	}
-	
 	@SuppressWarnings("unchecked")
 	@PostMapping("/wit")
 	public Result witOrder(HttpServletRequest request) {
@@ -154,35 +157,36 @@ public class DealAppApi {
 		wit.setIp(HttpUtil.getClientIP(request));
 		UserRate userRate = accountApiServiceImpl.findUserRateWitByUserId(wit.getAppid());
 		String dpaytype = wit.getDpaytype();
-		if(StrUtil.isBlank(dpaytype)) {
-			log.info("【必穿参数为空，当前商户："+wit.getAppid()+"，当前订单号:"+ wit.getApporderid()+"】");
-			return Result.buildFailMessage("必传参数为空");
-		}
-		if(!isClick(dpaytype, userRate)) {
-			log.info("【代付类型与当前费率类型符合，当前商户："+wit.getAppid()+"，当前订单号:"+ wit.getApporderid()+"】");
-			return Result.buildFailMessage("代付类型与当前费率类型不符合，请检查费率类型与dpaytype传值是否符合，dpayType传值错误");
-		}
-		String bank2 = BankTypeUtil.getBank(wit.getBankcode());
-		if(StrUtil.isBlank(bank2)) {
-			log.info("【当前银行不支持代付，当前商户："+wit.getAppid()+"，当前订单号:"+ wit.getApporderid()+"】");
-			return Result.buildFailMessage("bankcode错误，当前银行不支持合， bankcode传值错误");
-		}
-		Withdraw bean = createWit(wit,userRate,flag);
-        Result deal = null;
-        if(ObjectUtil.isNull(bean))
-        	return Result.buildFailMessage("代付订单生成失败");
-        try {
-			 deal = factoryForStrategy.getStrategy(userRate.getPayTypr()).withdraw(bean);
-		} catch (Exception e) {
+		ChannelFee channelFee = channelFeeDao.findImpl(userRate.getChannelId(),userRate.getPayTypr());
+	    if(ObjectUtil.isNull(channelFee)) {
+	      log.info("【通道实体不存在，费率配置错误】");
+	      Result.buildFailMessage("通道实体不存在，费率配置错误");
+	    }
+	    String bankcode =BankTypeUtil.getBank(wit.getBankcode());
+	    if(StrUtil.isBlank(bankcode)) {
+	      log.info("【当前银行卡类型不支持】");
+	  	  log.info("【当前银行不支持代付，当前商户："+wit.getAppid()+"，当前订单号:"+ wit.getApporderid()+"】");
+	  	  return Result.buildFailMessage("bankcode错误，当前银行不支持合， bankcode传值错误");
+	    }
+	    wit.setBankcode(bankcode);
+	    Withdraw bean = createWit(wit,userRate,flag,channelFee);
+	        Result deal = null;
+	        if(ObjectUtil.isNull(bean))
+	          return Result.buildFailMessage("代付订单生成失败");
+	        try {
+	       deal = factoryForStrategy.getStrategy(channelFee.getImpl()).withdraw(bean);
+	    } catch (Exception e) {
+	      log.info("【当前通道编码对于的实体类不存在】");
+	      log.error(e.getMessage());
 			log.info("【当前通道编码对于的实体类不存在】");
-			return Result.buildFailMessage("当前通道编码不存在");
-		}
+	      return Result.buildFailMessage("当前通道编码不存在");
+	    }
+	        if(ObjectUtil.isNull(deal))
+	      return Result.buildFailMessage("其他错误，请联系客服人员处理");
         if(ObjectUtil.isNull(deal))
 			return Result.buildFailMessage("其他错误，请联系客服人员处理");
 		return deal;
 	}
-	
-	
 	static final String BANK = "Bankcard",ALIPAY = "Alipay",WECHAR="Wechar";
 	boolean isClick(String type ,UserRate rate){
 		if(type.equals(BANK)) {
@@ -206,88 +210,57 @@ public class DealAppApi {
 		}
 		return false;
 	}
-	
-//	/**
-//	 *
-//	 * @param request
-//	 * @return
-//	 */
-//	@SuppressWarnings("unchecked")
-//	@PostMapping("/check")
-//	public Result checkOrder(HttpServletRequest request) {
-//		String manage=request.getParameter("manage");
-//		boolean flag = false;
-//		if(StrUtil.isNotBlank(manage))
-//			flag = true;
-//		Result checkOrderl = vendorRequestApi.checkOrderl(request);
-//		if(!checkOrderl.isSuccess())
-//			return checkOrderl;
-//		Object result = checkOrderl.getResult();
-//		DealOrder order = MapUtil.mapToBean((Map<String, Object>)result,DealOrder.class);
-//		if(order.getOrderStatus().equals("2")) {
-//			//修改订单状态
-//			orderAppServiceImpl.updateOrderSu(order.getOrderId(), order.getOrderStatus());
-//		}else
-//		    orderAppServiceImpl.updateOrderSu(order.getOrderId(),order.getOrderStatus());
-//		return Result.buildSuccessResult();
-//	}
-
-	
-	
-	private Withdraw createWit(WithdrawalBean wit, UserRate userRate,Boolean fla ) {
-		String type = "";
-		if(fla)type=Common.Order.Wit.WIT_TYPE_API;else type = Common.Order.Wit.WIT_TYPE_MANAGE;
-		Withdraw witb = new Withdraw();
-		witb.setUserId(wit.getAppid());
-		witb.setAmount(new BigDecimal(wit.getAmount()));
-		witb.setFee(userRate.getFee());
-		witb.setActualAmount(new BigDecimal(wit.getAmount()));
-		witb.setMobile(wit.getMobile());
-		witb.setBankNo(wit.getAcctno());
-		witb.setAccname(wit.getAcctname());
-		witb.setWithdrawType(Common.Order.Wit.WIT_ACC);
-		witb.setOrderId(Number.getWitOrder());
-		witb.setOrderStatus(Common.Order.DealOrderApp.ORDER_STATUS_DISPOSE.toString());
-		witb.setNotify(wit.getNotifyurl());
-		witb.setRetain2(wit.getIp());//代付ip
-		witb.setRetain1(type);
-		witb.setWitType(userRate.getPayTypr());//代付类型
-		witb.setApply(wit.getApply());
-		witb.setBankcode(wit.getBankcode());
-		boolean flag = withdrawServiceImpl.addOrder(witb);
-		if(flag)
-			return witb;
-		return null;
-	}
-
-	DealOrderApp createDealAppOrder(DealBean dealBean){
-		DealOrderApp dealApp = new DealOrderApp ();
-		dealApp.setAppOrderId(dealBean.getOrderId());
-		dealApp.setOrderId(Number.getAppOreder()); 
-		dealApp.setNotify(dealBean.getNotifyUrl());
-		BigDecimal money = new BigDecimal(dealBean.getAmount());
-		dealApp.setOrderAmount(money);
-		String userId = dealBean.getAppId();
-		String passcode = dealBean.getPassCode();
-		UserRate userRate = accountApiServiceImpl.findUserRateByUserId(userId, passcode);
-		dealApp.setFeeId(userRate.getId());
-		dealApp.setOrderAccount(userId);
-		if(StrUtil.isNotBlank(dealBean.getIp()))
-			dealApp.setOrderIp(dealBean.getIp());
-		dealApp.setBack(dealBean.getPageUrl());
-		dealApp.setOrderStatus(Common.Order.DealOrder.ORDER_STATUS_DISPOSE.toString());
-		dealApp.setOrderType(Common.Order.ORDER_TYPE_DEAL);
-		dealApp.setDealDescribe("下游商户发起充值交易");
-		dealApp.setRetain1(userRate.getPayTypr());
-		BigDecimal fee = userRate.getFee();
-		BigDecimal multiply = money.multiply(fee);
-		dealApp.setRetain3(multiply.toString());
-		dealApp.setBack(dealBean.getPageUrl());
-		boolean add = orderAppServiceImpl.add(dealApp);
-		if(add)
-			return dealApp;
-		return null;
-	}
+	private Withdraw createWit(WithdrawalBean wit, UserRate userRate,Boolean fla, ChannelFee channelFee ) {
+	    log.info("【当前转换参数 代付实体类为："+wit.toString()+"】");
+	    String type = "";
+	    if(fla)type=Common.Order.Wit.WIT_TYPE_API;else type = Common.Order.Wit.WIT_TYPE_MANAGE;
+	    Withdraw witb = new Withdraw();
+	    witb.setUserId(wit.getAppid());
+	    witb.setAmount(new BigDecimal(wit.getAmount()));
+	    witb.setFee(userRate.getFee());
+	    witb.setActualAmount(new BigDecimal(wit.getAmount()));
+	    witb.setMobile(wit.getMobile());
+	    witb.setBankNo(wit.getAcctno());
+	    witb.setAccname(wit.getAcctname());
+	    witb.setBankName(wit.getBankName());
+	    witb.setWithdrawType(Common.Order.Wit.WIT_ACC);
+	    witb.setOrderId(Number.getWitOrder());
+	    witb.setOrderStatus(Common.Order.DealOrderApp.ORDER_STATUS_DISPOSE.toString());
+	    witb.setNotify(wit.getNotifyurl());
+	    witb.setRetain2(wit.getIp());//代付ip
+	    witb.setRetain1(type);
+	    witb.setWitType(userRate.getPayTypr());//代付类型
+	    witb.setApply(wit.getApply());
+	    witb.setBankcode(wit.getBankcode());
+	    witb.setWitChannel(channelFee.getChannelId());
+	    boolean flag = withdrawServiceImpl.addOrder(witb);
+	    if(flag)
+	      return witb;
+	    return null;
+	  }
+	  DealOrderApp createDealAppOrder(DealBean dealBean){
+	    DealOrderApp dealApp = new DealOrderApp ();
+	    dealApp.setAppOrderId(dealBean.getOrderId());
+	    dealApp.setOrderId(Number.getAppOreder()); 
+	    dealApp.setNotify(dealBean.getNotifyUrl());
+	    dealApp.setOrderAmount(new BigDecimal(dealBean.getAmount()));
+	    String userId = dealBean.getAppId();
+	    String passcode = dealBean.getPassCode();
+	    UserRate userRate = accountApiServiceImpl.findUserRateByUserId(userId, passcode);
+	    dealApp.setFeeId(userRate.getId());
+	    dealApp.setOrderAccount(userId);
+	    if(StrUtil.isNotBlank(dealBean.getIp()))
+	      dealApp.setOrderIp(dealBean.getIp());
+	    dealApp.setBack(dealBean.getPageUrl());
+	    dealApp.setOrderStatus(Common.Order.DealOrder.ORDER_STATUS_DISPOSE.toString());
+	    dealApp.setOrderType(Common.Order.ORDER_TYPE_DEAL);
+	    dealApp.setDealDescribe("下游商户发起充值交易");
+	    dealApp.setRetain1(userRate.getFee().multiply(new BigDecimal(dealBean.getAmount())).toString());
+	    boolean add = orderAppServiceImpl.add(dealApp);
+	    if(add)
+	      return dealApp;
+	    return null;
+	  }
 }
 class ResultDeal{
 	private boolean sussess;	//是否成功	        True 成功  false  失败 

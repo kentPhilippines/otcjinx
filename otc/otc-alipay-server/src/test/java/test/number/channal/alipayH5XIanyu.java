@@ -27,7 +27,7 @@ public class alipayH5XIanyu {
 		fxddh			商户订单号				是	平台返回商户提交的订单号
 		fxaction		商户查询动作			是	商户查询动作，这里填写【orderquery】
 		fxsign			签名【md5(商务号+商户订单号+商户查询动作+商户秘钥)】	是	通过签名算法计算得出的签名值。
-		*/
+	
 		String key = "AHFuoYCUgZcOdpectBxYiPElWMVGljbc";
 		Map<String, Object>  map = new HashMap<String, Object>();
 		String fxid = "2020177";
@@ -43,11 +43,19 @@ public class alipayH5XIanyu {
 		System.out.println(bean.toString());
 		
 		
-		
-		
-		System.out.println("商户订单："+post);
-		
-		
+		 - 【当前回调ip为：202.79.174.113】
+		 2020-05-21 15:53:37.168 [http-nio-9010-exec-8] INFO  a.manage.api.channel.notfiy.YouShuAlipayNotfiy - order_id=175061&out_order_id=9fe76c15-038a-4950-aa2d-3e3a58876ef1&paytime=1590027003&price=300.0000&realprice=300.0000&type=alipay&key=zfZ2BTd6PHKvwCxU
+		 2020-05-21 15:53:37.168 [http-nio-9010-exec-8] INFO  a.manage.api.channel.notfiy.YouShuAlipayNotfiy - 【加密前参数：order_id=175061&out_order_id=9fe76c15-038a-4950-aa2d-3e3a58876ef1&paytime=1590027003&price=300.0000&realprice=300.0000&type=alipay&key=zfZ2BTd6PHKvwCxU】
+		 2020-05-21 15:53:37.168 [http-nio-9010-exec-8] INFO  a.manage.api.channel.notfiy.YouShuAlipayNotfiy - 【优树参数为：8F48C696A8E41A917AAA9C58AAD93114】
+		 2020-05-21 15:53:37.168 [http-nio-9010-exec-8] INFO  a.manage.api.channel.notfiy.YouShuAlipayNotfiy - 【我方验签参数为：8F48C696A8E41A917AAA9C58AAD93114，请求方签名参数为：B0447E1EE6A254808FD710B9B06FE2A9】
+		 2020-05-21 15:53:37.168 [http-nio-9010-exec-8] INFO  a.manage.api.channel.notfiy.YouShuAlipayNotfiy - 【验签失败】
+		 2020-05-21 15:53:42.557 [http-nio-9010-exec-10] INFO  alipay.manage.api.Api - 【当前远程调用，查询所有未剪裁二维码】
+
+			*/
+		String extend = "312|xxx";
+		String ss = "extend="+extend+"&order_id=175061&out_order_id=9fe76c15-038a-4950-aa2d-3e3a58876ef1&paytime=1590027003&price=300.0000&realprice=300.0000&type=alipay&key=zfZ2BTd6PHKvwCxU";
+		String upperCase = md5(ss).toUpperCase();
+		System.out.println(upperCase);
 		/**
 		 * 	money			是		订单金额
 			part_sn			是		商家平台订单号

@@ -29,7 +29,7 @@ import otc.api.alipay.Common;
 import otc.bean.config.ConfigFile;
 import otc.common.PayApiConstant;
 import otc.result.Result;
-@Component(Common.Deal.PRODUCT_ALIPAY_H5)
+@Component("XianYuH5")
 public class XinYuAlipayH5 extends PayOrderService{
 	private static final Log log = LogFactory.get();
 	@Autowired ConfigServiceClient configServiceClientImpl;

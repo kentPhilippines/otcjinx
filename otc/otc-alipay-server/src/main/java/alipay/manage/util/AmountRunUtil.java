@@ -195,7 +195,12 @@ public class AmountRunUtil {
 	}
 	
 	
-	
+	public Result addAppProfit(alipay.manage.bean.DealOrderApp orderApp, String userId, BigDecimal multiply, String ip,
+			boolean flag) {
+		UserFund userFund = userInfoServiceImpl.findUserFundByAccount(userId); //当前账户资金
+		Result add = add(PROFIT_AMOUNT_AGENT, userFund, orderApp.getOrderId(), multiply, orderApp.getOrderIp(), "商户代理商，代理分润结算", flag?RUNTYPE_ARTIFICIAL:RUNTYPE_NATURAL,orderApp.getOrderAccount());
+		return add;
+	}
 	/**
 	 * <p>增加商户交易流水</p>
 	 * @param order				商户交易订单
@@ -317,6 +322,33 @@ public class AmountRunUtil {
 			return amountRun;
 		return Result.buildFailMessage("流水生成失败");
 	}
+	/**
+	 * <p>代理上分润专用</p>
+	 * @param orderType
+	 * @param userFund
+	 * @param associatedId
+	 * @param amount
+	 * @param generationIp
+	 * @param dealDescribe
+	 * @param runType
+	 * @param user
+	 * @return
+	 */
+	public Result add(String orderType, UserFund userFund, String associatedId, BigDecimal amount, String generationIp, String dealDescribe, String runType,String user) {
+		String orderAccount,amountType,acountR ,accountW;
+		Integer runOrderType = null;
+		BigDecimal amountNow ;
+		orderAccount = userFund.getUserId();
+		amountType = AMOUNT_TYPE_R;
+		acountR =  orderAccount;
+		accountW = SYSTEM_APP ; 
+		runOrderType = getRunOrderType(orderType);
+		amountNow = userFund .getAccountBalance();
+		Result amountRun = amountRun(associatedId, orderAccount, runOrderType, amount, generationIp, acountR, accountW, runType, amountType, dealDescribe, amountNow,user);
+		if(amountRun.isSuccess())
+			return amountRun;
+		return Result.buildFailMessage("流水生成失败");
+	}
 	
 	/**
 	 * <p>当前账户扣款流水</p>
@@ -383,6 +415,51 @@ public class AmountRunUtil {
 				return Result.buildSuccess();
 			return Result.buildFail();
 	}
+	/**
+	 * <p>代理分润专用</p>
+	 * @param associatedId
+	 * @param orderAccount
+	 * @param runOrderType
+	 * @param amount
+	 * @param generationIp
+	 * @param acountR
+	 * @param accountW
+	 * @param runType
+	 * @param amountType
+	 * @param dealDescribe
+	 * @param amountNow
+	 * @param user
+	 * @return
+	 */
+	public Result amountRun(String associatedId,String orderAccount,
+			Integer runOrderType,BigDecimal amount,String generationIp,
+			String acountR , String accountW,String runType ,String amountType 
+			,String dealDescribe,BigDecimal amountNow,String user) {
+		if(StrUtil.isBlank(associatedId) || StrUtil.isBlank(orderAccount) 
+				|| StrUtil.isBlank(generationIp)
+				|| StrUtil.isBlank(runType)
+				|| StrUtil.isBlank(amountType)
+				|| StrUtil.isBlank(dealDescribe)
+				)
+			return Result.buildFailMessage("必传参数为空");
+		RunOrder run = new RunOrder();
+		run.setAssociatedId(associatedId);
+		run.setAccountW(accountW);
+		run.setAcountR(acountR);
+		run.setGenerationIp(generationIp);
+		run.setOrderAccount(orderAccount);
+		run.setAmountType(amountType);
+		run.setDealDescribe(dealDescribe);
+		run.setRunOrderType(runOrderType);
+		run.setRunType(runType);
+		run.setAmountNow(amountNow);
+		run.setAmount(amount);
+		run.setRetain4(user);
+		boolean addOrder = runOrderServiceImpl.addOrder(run);
+		if(addOrder)
+			return Result.buildSuccess();
+		return Result.buildFail();
+	}
 	
 	/**
 	 * <p>获取流水订单类型</p>
@@ -430,4 +507,5 @@ public class AmountRunUtil {
 		}
 		return runOrderType;
 	}
+	
 }

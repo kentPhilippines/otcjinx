@@ -38,7 +38,7 @@ public class CacheConfigUtil {
 		mapAlipay.put(ConfigFile.Alipay.TIBLE_LINK, "跑分");
 		mapAlipay.put(ConfigFile.Alipay.NEW_QRCODE_PRIORITY, "3");
 		mapAlipay.put(ConfigFile.Alipay.LOCAL_STORAGE_PATH_BAK, "/img/bak");
-		mapAlipay.put( ConfigFile.Alipay.SERVER_IP, "http://182.16.89.146:9010");
+		mapAlipay.put( ConfigFile.Alipay.SERVER_IP, "http://starpay168.com:5055/api-alipay");
 	}
 	static void dealMap(){
 		mapDeal  = new HashMap<String, String>();

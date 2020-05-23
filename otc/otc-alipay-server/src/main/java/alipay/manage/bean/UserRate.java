@@ -18,6 +18,7 @@ public class UserRate implements Serializable{
     private String payTypr;					//产品类型			
     private BigDecimal fee;					//费率数值
     private Integer feeType;				//费率类型:1交易费率，2代付费率
+    private String channelId;				
     private Date createTime;
     private Date submitTime;
     private Integer status;
@@ -25,7 +26,15 @@ public class UserRate implements Serializable{
     private String retain2;
     private String retain3;
     private String retain4;
-    public Integer getId() {
+    public String getChannelId() {
+		return channelId;
+	}
+
+	public void setChannelId(String channelId) {
+		this.channelId = channelId;
+	}
+
+	public Integer getId() {
         return id;
     }
 

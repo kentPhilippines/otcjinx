@@ -32,7 +32,14 @@ public class Withdraw implements Serializable{
     private String retain2;		//代付 ip
     private String Time;	
     private String witType;//  代付产品类型
-    public String getWitType() {
+    private String witChannel;//代付渠道
+    public String getWitChannel() {
+		return witChannel;
+	}
+	public void setWitChannel(String witChannel) {
+		this.witChannel = witChannel;
+	}
+	public String getWitType() {
 		return witType;
 	}
 	public void setWitType(String witType) {

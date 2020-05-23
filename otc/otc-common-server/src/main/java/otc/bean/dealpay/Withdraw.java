@@ -37,6 +37,13 @@ public class Withdraw implements Serializable{
     private String approval; //订单审核人（后台）
     private String comment; //审核意见
     private String bankcode;//银行标识号
+    private String witChannel;
+	public String getWitChannel() {
+		return witChannel;
+	}
+	public void setWitChannel(String witChannel) {
+		this.witChannel = witChannel;
+	}
 	public String getBankcode() {
 		return bankcode;
 	}

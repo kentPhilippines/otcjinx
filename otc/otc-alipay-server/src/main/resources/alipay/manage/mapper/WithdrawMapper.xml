@@ -12,6 +12,7 @@
     <result column="orderStatus" property="orderStatus" jdbcType="CHAR" />
     <result column="bankName" property="bankName" jdbcType="VARCHAR" />
     <result column="bankcode" property="bankcode" jdbcType="VARCHAR" />
+     <result column="witChannel" property="witChannel"  />
     <result column="amount" property="amount" jdbcType="DECIMAL" />
     <result column="fee" property="fee" jdbcType="DECIMAL" />
     <result column="actualAmount" property="actualAmount" jdbcType="DECIMAL" />
@@ -82,7 +83,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, orderId, userId, withdrawType, bankNo, accname, orderStatus, bankName, amount, 
+    id, orderId, userId, withdrawType, bankNo, accname, orderStatus, bankName, amount, witChannel,
     fee, actualAmount, mobile, notify, createTime, submitTime, status, retain1, retain2,witType,bankcode
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="alipay.manage.bean.WithdrawExample" >
@@ -122,13 +123,13 @@
       bankName, amount, fee, 
       actualAmount, mobile, notify, 
       createTime, submitTime, status, 
-      retain1, retain2,witType,bankcode)
+      retain1, retain2,witType,bankcode,witChannel)
     values (#{orderId,jdbcType=CHAR}, #{userId,jdbcType=VARCHAR}, #{withdrawType,jdbcType=CHAR}, 
       #{bankNo,jdbcType=VARCHAR}, #{accname,jdbcType=VARCHAR}, #{orderStatus,jdbcType=CHAR}, 
       #{bankName,jdbcType=VARCHAR}, #{amount,jdbcType=DECIMAL}, #{fee,jdbcType=DECIMAL}, 
       #{actualAmount,jdbcType=DECIMAL}, #{mobile,jdbcType=CHAR}, #{notify,jdbcType=VARCHAR}, 
       #{createTime,jdbcType=TIMESTAMP}, #{submitTime,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, 
-      #{retain1,jdbcType=CHAR}, #{retain2,jdbcType=CHAR},#{witType},#{bankcode,jdbcType=VARCHAR})
+      #{retain1,jdbcType=CHAR}, #{retain2,jdbcType=CHAR},#{witType},#{bankcode,jdbcType=VARCHAR},#{witChannel})
   </insert>
   <insert id="insertSelective" parameterType="otc.bean.dealpay.Withdraw" useGeneratedKeys="true" keyProperty="id" >
     insert into alipay_withdraw
@@ -162,6 +163,9 @@
       </if>
       <if test="fee != null" >
         fee,
+      </if>
+      <if test="witChannel != null" >
+        witChannel,
       </if>
       <if test="actualAmount != null" >
         actualAmount,
@@ -224,6 +228,9 @@
       </if>
       <if test="fee != null" >
         #{fee,jdbcType=DECIMAL},
+      </if>
+      <if test="witChannel != null" >
+        #{witChannel },
       </if>
       <if test="actualAmount != null" >
         #{actualAmount,jdbcType=DECIMAL},
@@ -299,6 +306,9 @@
       <if test="record.fee != null" >
         fee = #{record.fee,jdbcType=DECIMAL},
       </if>
+      <if test="record.witChannel!= null" >
+        witChannel = #{record.witChannel,jdbcType=DECIMAL},
+      </if>
       <if test="record.actualAmount != null" >
         actualAmount = #{record.actualAmount,jdbcType=DECIMAL},
       </if>
@@ -344,6 +354,7 @@
       bankcode = #{record.bankcode,jdbcType=VARCHAR},
       amount = #{record.amount,jdbcType=DECIMAL},
       fee = #{record.fee,jdbcType=DECIMAL},
+      witChannel = #{record.witChannel },
       actualAmount = #{record.actualAmount,jdbcType=DECIMAL},
       mobile = #{record.mobile,jdbcType=CHAR},
       notify = #{record.notify,jdbcType=VARCHAR},
@@ -390,6 +401,9 @@
       <if test="fee != null" >
         fee = #{fee,jdbcType=DECIMAL},
       </if>
+      <if test="witChannel != null" >
+        witChannel = #{witChannel },
+      </if>
       <if test="actualAmount != null" >
         actualAmount = #{actualAmount,jdbcType=DECIMAL},
       </if>
@@ -432,6 +446,7 @@
       bankcode = #{bankcode,jdbcType=VARCHAR},
       amount = #{amount,jdbcType=DECIMAL},
       fee = #{fee,jdbcType=DECIMAL},
+      witChannel = #{witChannel},
       actualAmount = #{actualAmount,jdbcType=DECIMAL},
       mobile = #{mobile,jdbcType=CHAR},
       notify = #{notify,jdbcType=VARCHAR},

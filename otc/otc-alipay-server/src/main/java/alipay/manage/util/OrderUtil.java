@@ -593,7 +593,7 @@ public class OrderUtil {
 		 log.info("【开始结算】");
 		 Result addAmounProfit = amountUtil.addAmounProfit(userFund, multiply);
 		 if(addAmounProfit.isSuccess()) {
-			 Result addAppProfit = amountRunUtil.addAppProfit(orderApp.getOrderIp(), userFund.getUserId(), amount, ip, flag);
+			 Result addAppProfit = amountRunUtil.addAppProfit(orderApp , userFund.getUserId(), multiply, ip, flag);
 			 if(addAppProfit.isSuccess()) {
 				 log.info("【流水成功】");
 				 if(StrUtil.isNotBlank(userFund.getAgent()))

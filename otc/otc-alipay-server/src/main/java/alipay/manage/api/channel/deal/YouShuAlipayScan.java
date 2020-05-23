@@ -24,7 +24,7 @@ import otc.api.alipay.Common;
 import otc.bean.config.ConfigFile;
 import otc.common.PayApiConstant;
 import otc.result.Result;
-@Component(Common.Deal.PRODUCT_ALIPAY_SCAN)
+@Component("YouSuAlipayScan")
 public class YouShuAlipayScan extends PayOrderService{
 	private static final Log log = LogFactory.get();
 	@Autowired ConfigServiceClient configServiceClientImpl;
@@ -36,6 +36,7 @@ public class YouShuAlipayScan extends PayOrderService{
 		if(StrUtil.isNotBlank(create)) {
 			log.info("【本地订单创建成功，开始请求远程三方支付】");
 			Result config = configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.SERVER_IP);
+			log.info("【回调地址ip为："+config.toString()+"】" );
 			bean createOrder = createOrder(config.getResult()+PayApiConstant.Notfiy.NOTFIY_API_WAI+"/youshu-notfiy", dealOrderApp.getOrderAmount(),create);
 			if(ObjectUtil.isNull(createOrder)) {
 				boolean orderEr = orderEr(dealOrderApp);
@@ -47,11 +48,11 @@ public class YouShuAlipayScan extends PayOrderService{
 		}
 		return  Result.buildFailMessage("支付错误");
 	}
-	bean    createOrder(String notfiy, BigDecimal amount, String create){ 
-		String apiurl = "http://www.qsy123.cn/api/orders/index.html"; // API下单地址
+	bean    createOrder(String notfiy, BigDecimal amount, String orderId){ 
+		log.info("【进入优树支付宝扫码  】" );
+		String apiurl = "http://www.6278pk.com/api/orders/index.html"; // API下单地址
 		String key = "zfZ2BTd6PHKvwCxU"; // 商户密钥
 		String bankco = "alipay";
-		String orderId = UUID.randomUUID().toString();
 		Map<String, Object> parameterMap = new HashMap<String, Object>();
 		parameterMap.put("mch_id", "3362"); // 商户号
 		parameterMap.put("type", bankco ); // 支付类型
@@ -62,6 +63,7 @@ public class YouShuAlipayScan extends PayOrderService{
 		parameterMap.put("extend", "312|xxx"); // 附加数据
 		String stringSignTemp = "extend="+parameterMap.get("extend")+"&mch_id="+parameterMap.get("mch_id")+"&notifyurl="+parameterMap.get("notifyurl")+"&out_order_id="+parameterMap.get("out_order_id")+"&price="+parameterMap.get("price")+"&returnurl="+parameterMap.get("returnurl")+"&type="+parameterMap.get("type")+"&key="+key;
 		parameterMap.put("sign", md5(stringSignTemp).toUpperCase()); // 附加数据
+		log.info("【组合优树参数为："+parameterMap.toString()+"】" );
 		String jsonString = HttpUtil.post(apiurl, parameterMap);
 		log.info(jsonString);
 		//{"code":1,"msg":"success","time":"1589364033","data":{"pay_url":"http:\/\/www.qsy123.cn\/index\/pay\/index\/order_id\/caf9da3d-03d2-4d4d-b2be-de442c2d8abe.html"}}
