@@ -13,10 +13,12 @@ import alipay.manage.bean.DealOrder;
 import alipay.manage.bean.DealOrderApp;
 import alipay.manage.bean.UserFund;
 import alipay.manage.bean.UserInfo;
+import alipay.manage.bean.UserRate;
 import alipay.manage.service.CorrelationService;
 import alipay.manage.service.OrderAppService;
 import alipay.manage.service.OrderService;
 import alipay.manage.service.UserInfoService;
+import alipay.manage.service.UserRateService;
 import alipay.manage.util.AmountRunUtil;
 import alipay.manage.util.AmountUtil;
 import cn.hutool.core.thread.ThreadUtil;
@@ -48,6 +50,7 @@ public abstract class PayOrderService implements PayService{
     @Autowired OrderService orderServiceImpl;
     @Autowired OrderAppService OrderAppServiceImpl;
 	@Autowired CorrelationService correlationServiceImpl;
+	@Autowired UserRateService userRateServiceImpl;
 	@Override
 	public Result deal(DealOrderApp dealOrderApp,String payType) {
 		if(Common.Deal.PRODUCT_ALIPAY_SCAN.equals(payType))
@@ -76,12 +79,13 @@ public abstract class PayOrderService implements PayService{
 		String orderAccount = orderApp.getOrderAccount();//交易商户号
 		UserInfo accountInfo = userInfoServiceImpl.findUserInfoByUserId(orderAccount);//这里有为商户配置的 供应队列属性
 		UserInfo userinfo = userInfoServiceImpl.findUserInfoByUserId(channeId);//查询渠道账户
+		UserRate rate = userRateServiceImpl.findRateFee(orderApp.getFeeId());
 		log.info("【当前交易的产品类型为："+userinfo.getUserNode()+"】");
 		order.setAssociatedId(orderApp.getOrderId());
 		order.setDealDescribe("正常交易订单");
-		order.setActualAmount(orderApp.getOrderAmount());
+		order.setActualAmount(orderApp.getOrderAmount().subtract(new BigDecimal(orderApp.getRetain3())));
 		order.setDealAmount(orderApp.getOrderAmount());
-		order.setDealFee(new BigDecimal("0"));
+		order.setDealFee(new BigDecimal(orderApp.getRetain3()));
 		order.setExternalOrderId(orderApp.getAppOrderId());
 		order.setOrderAccount(orderApp.getOrderAccount());
 		order.setNotify(orderApp.getNotify());
@@ -90,7 +94,7 @@ public abstract class PayOrderService implements PayService{
 		order.setOrderQrUser(userinfo.getUserId());
 		order.setOrderStatus(Common.Order.DealOrder.ORDER_STATUS_DISPOSE.toString());
 		order.setOrderType(Common.Order.ORDER_TYPE_DEAL.toString());
-		order.setRetain1(userinfo.getUserNode());
+		order.setRetain1(rate.getPayTypr());
 		order.setBack(orderApp.getBack());
 		boolean addOrder = orderServiceImpl.addOrder(order);
 		if(addOrder) {

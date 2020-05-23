@@ -38,4 +38,8 @@ public class UserRateServiceImpl implements UserRateService {
 		int a = userRateMapper.updateRateR(userId,fee,payTypr);
 		return a > 0 && a < 2;
 	}
+	@Override
+	public  UserRate findRateFee(Integer feeId) {
+		return userRateMapper.selectByPrimaryKey(feeId);
+	}
 }

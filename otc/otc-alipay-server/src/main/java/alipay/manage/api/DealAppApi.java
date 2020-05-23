@@ -255,7 +255,8 @@ public class DealAppApi {
 	    dealApp.setOrderStatus(Common.Order.DealOrder.ORDER_STATUS_DISPOSE.toString());
 	    dealApp.setOrderType(Common.Order.ORDER_TYPE_DEAL);
 	    dealApp.setDealDescribe("下游商户发起充值交易");
-	    dealApp.setRetain1(userRate.getFee().multiply(new BigDecimal(dealBean.getAmount())).toString());
+	    dealApp.setRetain1(userRate.getPayTypr());
+	    dealApp.setRetain3(userRate.getFee().multiply(new BigDecimal(dealBean.getAmount())).toString());
 	    boolean add = orderAppServiceImpl.add(dealApp);
 	    if(add)
 	      return dealApp;

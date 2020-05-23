@@ -36,4 +36,10 @@ public interface UserRateService {
 	 * @return
 	 */
 	boolean updateRateR(String userId, String fee,String payTypr);
+	/**
+	 * <p>根据费率ID查询费率</p>
+	 * @param feeId
+	 * @return
+	 */
+	 UserRate findRateFee(Integer feeId);
 }
