@@ -43,4 +43,10 @@ public interface WithdrawMapper {
 
     @Select("select * from alipay_withdraw where orderId = #{orderId}")
 	Withdraw findWitOrder(@Param("orderId")String orderId);
+    @Update("update alipay_withdraw set " +
+            "orderStatus = #{orderStatus}, " +
+             "comment = #{comment}, " +
+            "submitTime = sysdate() " +
+            "where orderId = #{orderId}")
+    int updataOrderStatusEr(@Param("orderId")String orderId,  @Param("orderStatus")String orderStatus,  @Param("comment")String comment);
 }

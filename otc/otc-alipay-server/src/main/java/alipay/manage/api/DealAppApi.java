@@ -88,6 +88,7 @@ public class DealAppApi {
 		mapr.put("appId", appId);
 		mapr.put("appOrderId", orderApp.getAppOrderId());
 		mapr.put("amount", orderApp.getOrderAmount());
+		mapr.put("orderStatus", orderApp.getOrderStatus());
 		String sign2 = checkUtils.getSign(mapr, userInfo.getPayPasword());
 		userInfo = null;
 		mapr = null;
@@ -129,6 +130,11 @@ public class DealAppApi {
 	      log.info("【通道实体不存在，费率配置错误】");
 	      Result.buildFailMessage("通道实体不存在，费率配置错误");
 	    }
+	    DealOrderApp orderApp = orderAppServiceImpl.findOrderByApp(mapToBean.getAppId(),mapToBean.getOrderId());
+	    if(ObjectUtil.isNotNull(orderApp)) {
+		  log.info("【当前商户订单号重复："+mapToBean.getOrderId()+"】");
+		  return  Result.buildFailMessage("商户订单号重复");
+	    }
 	    DealOrderApp dealBean = createDealAppOrder(mapToBean);
 	    if(ObjectUtil.isNull(dealBean))
 	      return Result.buildFailMessage("交易预订单生成出错");
@@ -139,7 +145,8 @@ public class DealAppApi {
 	      log.info("【当前通道编码对于的实体类不存在】");
 	      return Result.buildFailMessage("当前通道编码不存在");
 	    }
-		deal.setResult(new ResultDeal(true,0,deal.getCode(),deal.getResult()));
+	    if(deal.isSuccess())
+	    	deal.setResult(new ResultDeal(true,0,deal.getCode(),deal.getResult()));
 		return deal;
 	}
 	@SuppressWarnings("unchecked")
@@ -168,7 +175,6 @@ public class DealAppApi {
 	  	  log.info("【当前银行不支持代付，当前商户："+wit.getAppid()+"，当前订单号:"+ wit.getApporderid()+"】");
 	  	  return Result.buildFailMessage("bankcode错误，当前银行不支持合， bankcode传值错误");
 	    }
-	    wit.setBankcode(bankcode);
 	    Withdraw bean = createWit(wit,userRate,flag,channelFee);
 	        Result deal = null;
 	        if(ObjectUtil.isNull(bean))
@@ -228,6 +234,7 @@ public class DealAppApi {
 	    witb.setOrderStatus(Common.Order.DealOrderApp.ORDER_STATUS_DISPOSE.toString());
 	    witb.setNotify(wit.getNotifyurl());
 	    witb.setRetain2(wit.getIp());//代付ip
+	    witb.setAppOrderId(wit.getApporderid());
 	    witb.setRetain1(type);
 	    witb.setWitType(userRate.getPayTypr());//代付类型
 	    witb.setApply(wit.getApply());

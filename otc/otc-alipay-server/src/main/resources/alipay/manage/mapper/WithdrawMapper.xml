@@ -12,6 +12,7 @@
     <result column="orderStatus" property="orderStatus" jdbcType="CHAR" />
     <result column="bankName" property="bankName" jdbcType="VARCHAR" />
     <result column="bankcode" property="bankcode" jdbcType="VARCHAR" />
+    <result column="appOrderId" property="appOrderId" jdbcType="VARCHAR" />
      <result column="witChannel" property="witChannel"  />
     <result column="amount" property="amount" jdbcType="DECIMAL" />
     <result column="fee" property="fee" jdbcType="DECIMAL" />
@@ -84,7 +85,7 @@
   </sql>
   <sql id="Base_Column_List" >
     id, orderId, userId, withdrawType, bankNo, accname, orderStatus, bankName, amount, witChannel,
-    fee, actualAmount, mobile, notify, createTime, submitTime, status, retain1, retain2,witType,bankcode
+    fee, actualAmount, mobile, notify, createTime, submitTime, status, retain1, retain2,witType,bankcode,appOrderId
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="alipay.manage.bean.WithdrawExample" >
     select
@@ -123,13 +124,13 @@
       bankName, amount, fee, 
       actualAmount, mobile, notify, 
       createTime, submitTime, status, 
-      retain1, retain2,witType,bankcode,witChannel)
+      retain1, retain2,witType,bankcode,witChannel,appOrderId)
     values (#{orderId,jdbcType=CHAR}, #{userId,jdbcType=VARCHAR}, #{withdrawType,jdbcType=CHAR}, 
       #{bankNo,jdbcType=VARCHAR}, #{accname,jdbcType=VARCHAR}, #{orderStatus,jdbcType=CHAR}, 
       #{bankName,jdbcType=VARCHAR}, #{amount,jdbcType=DECIMAL}, #{fee,jdbcType=DECIMAL}, 
       #{actualAmount,jdbcType=DECIMAL}, #{mobile,jdbcType=CHAR}, #{notify,jdbcType=VARCHAR}, 
       #{createTime,jdbcType=TIMESTAMP}, #{submitTime,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, 
-      #{retain1,jdbcType=CHAR}, #{retain2,jdbcType=CHAR},#{witType},#{bankcode,jdbcType=VARCHAR},#{witChannel})
+      #{retain1,jdbcType=CHAR}, #{retain2,jdbcType=CHAR},#{witType},#{bankcode,jdbcType=VARCHAR},#{witChannel},#{appOrderId})
   </insert>
   <insert id="insertSelective" parameterType="otc.bean.dealpay.Withdraw" useGeneratedKeys="true" keyProperty="id" >
     insert into alipay_withdraw
@@ -197,6 +198,9 @@
       <if test="apply != null" >
         apply,
       </if>
+      <if test="appOrderId != null" >
+        appOrderId,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="orderId != null" >
@@ -261,6 +265,9 @@
       </if>
       <if test="apply != null" >
         #{apply},
+      </if>
+      <if test="appOrderId != null" >
+        #{appOrderId},
       </if>
     </trim>
   </insert>
@@ -336,6 +343,9 @@
       <if test="record.witType != null" >
         witType = #{record.witType},
       </if>
+      <if test="record.appOrderId != null" >
+        witType = #{record.appOrderId},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -363,7 +373,8 @@
       status = #{record.status,jdbcType=INTEGER},
       retain1 = #{record.retain1,jdbcType=CHAR},
       retain2 = #{record.retain2,jdbcType=CHAR},
-      witType = #{record.witType}
+      witType = #{record.witType},
+      appOrderId = #{record.appOrderId}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -431,6 +442,9 @@
       <if test="witType != null" >
         witType = #{witType},
       </if>
+      <if test="appOrderId != null" >
+        appOrderId = #{appOrderId},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -455,7 +469,8 @@
       status = #{status,jdbcType=INTEGER},
       retain1 = #{retain1,jdbcType=CHAR},
       retain2 = #{retain2,jdbcType=CHAR},
-      witType = #{witType}
+      witType = #{witType},
+      appOrderId = #{appOrderId}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

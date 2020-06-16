@@ -67,7 +67,8 @@ public class AmountRunUtil {
 	private static final String WITHDRAY_AMOUNT_FEE = "WITHDRAY_AMOUNT_FEE";//代付手续费冻结
 	private static final Integer WITHDRAY_AMOUNT_NUMBER = 10;//代付冻结
 	private static final Integer WITHDRAY_AMOUNT_FEE_NUMBER = 9;//代付手续费冻结
-	
+	private static final String WITHDRAY_AMOUNT_OPEN_FEE = "WITHDRAY_AMOUNT_OPEN_FEE";//代付失败解冻
+	private static final Integer WITHDRAY_AMOUNT_OPEN_FEE_NUMBER = 22;//代付失败手续费解冻
 	private static final String WITHDRAY_AMOUNT_OPEN = "WITHDRAY_AMOUNT_OPEN";//代付失败解冻
 	private static final Integer WITHDRAY_AMOUNT_OPEN_NUMBER = 8;//代付失败解冻
 	
@@ -75,11 +76,15 @@ public class AmountRunUtil {
 	private static final String DELETE_DEAL_FEE_AMOUNT_APP = "ADD_DEAL_FEE_AMOUNT_APP";//下游商户交易手续费扣款
 	private static final Integer ADD_DEAL_AMOUNT_APP_NUMBER = 20;// 下游商户交易加款编号
 	private static final Integer DELETE_DEAL_FEE_AMOUNT_APP_NUMBER = 21;// 下游商户交易手续费扣款编号
-	
-	
-	
-	
-	
+	  
+	  
+	  
+	private static final String CHANNEL_ADD_R = "CHANNEL_ADD_R";// 渠道手续费标识
+	private static final Integer CHANNEL_ADD_R_NUMBER = 24;// 渠道手续费编号
+	private static final Integer CHANNEL_ADD_WIT_NUMBER = 23;// 渠道代付加款成功标识
+	private static final Integer CHANNEL_ADD_WIT_FEE_NUMBER = 25;// 渠道代付加款成功标识手续费
+	private static final String CHANNEL_ADD_WIT  = "CHANNEL_ADD_WIT";// 渠道代付成功标识
+	private static final String CHANNEL_ADD_WIT_FEE  = "CHANNEL_ADD_WIT_FEE";// 渠道代付成功标识手续费
 	
 	private static final String AMOUNT_TYPE_R = "0";//对于当前账户来说是   收入
 	private static final String AMOUNT_TYPE_W = "1";//对于当前账户来说是   支出
@@ -110,6 +115,16 @@ public class AmountRunUtil {
 		UserFund userFund = userInfoServiceImpl.findUserFundByAccount(withdraw.getUserId()); //当前账户资金
 		return add(WITHDRAY_AMOUNT_OPEN, userFund, withdraw.getOrderId(), withdraw.getAmount(), generationIp, "代付失败解冻", RUNTYPE_ARTIFICIAL);
 	}
+	/**
+	   * <p>代付失败手续费解冻</p>
+	   * @param withdraw
+	   * @param generationIp
+	   * @return
+	   */
+	  public Result addAmountWFee(Withdraw withdraw,String generationIp ) {
+	    UserFund userFund = userInfoServiceImpl.findUserFundByAccount(withdraw.getUserId()); //当前账户资金
+	    return add(WITHDRAY_AMOUNT_OPEN_FEE, userFund, withdraw.getOrderId(), withdraw.getFee(), generationIp, "代付失败手续费解冻", RUNTYPE_ARTIFICIAL);
+	  }
 	/**
 	 * <p>代付手续费冻结</p>
 	 * @param withdraw
@@ -502,10 +517,42 @@ public class AmountRunUtil {
 		case WITHDRAY_AMOUNT_OPEN:
 			runOrderType = WITHDRAY_AMOUNT_OPEN_NUMBER;
 			break;
+		case WITHDRAY_AMOUNT_OPEN_FEE:
+		      runOrderType = WITHDRAY_AMOUNT_OPEN_FEE_NUMBER;
+		      break;
+		    case CHANNEL_ADD_WIT:
+		      runOrderType = CHANNEL_ADD_WIT_NUMBER;
+		      break;
+		    case CHANNEL_ADD_R:
+		      runOrderType = CHANNEL_ADD_R_NUMBER;
+		      break;
+		    case CHANNEL_ADD_WIT_FEE:
+		      runOrderType = CHANNEL_ADD_WIT_FEE_NUMBER;
+		      break;
 		default:
 			break;
 		}
 		return runOrderType;
 	}
+	/**
+   * <p>渠道代付手续费</p>
+   * @param withdraw
+   * @param generationIp
+   * @return
+   */
+  public Result addChannelWitFee(Withdraw withdraw,String generationIp,  BigDecimal fee ) {
+    UserFund userFund = userInfoServiceImpl.findUserFundByAccount(withdraw.getWitChannel()); //当前账户资金
+    return add(CHANNEL_ADD_WIT_FEE, userFund, withdraw.getOrderId(), fee, generationIp, "渠道代付手续费流水", RUNTYPE_NATURAL);
+  }
+  /**
+   * <p>渠道代付账户修改，流水生成</p>
+   * @param withdraw
+   * @param generationIp
+   * @return
+   */
+  public Result addChannelWit(Withdraw withdraw,String generationIp ) {
+    UserFund userFund = userInfoServiceImpl.findUserFundByAccount(withdraw.getWitChannel()); //当前账户资金
+    return add(CHANNEL_ADD_WIT, userFund, withdraw.getOrderId(), withdraw.getAmount(), generationIp, "渠道代付成功加款", RUNTYPE_NATURAL);
+  }
 	
 }

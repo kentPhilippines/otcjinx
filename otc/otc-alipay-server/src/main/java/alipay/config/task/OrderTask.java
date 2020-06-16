@@ -5,8 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import alipay.manage.mapper.DealOrderMapper;
 
 public class OrderTask {
-	
-	
 	@Autowired DealOrderMapper dealOrderDao;
 	
 	/**

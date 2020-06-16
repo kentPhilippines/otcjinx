@@ -9,6 +9,7 @@
     <result column="payTypr" property="payTypr" jdbcType="CHAR" />
     <result column="fee" property="fee" jdbcType="DECIMAL" />
     <result column="feeType" property="feeType" jdbcType="INTEGER" />
+    <result column="channelId" property="channelId" jdbcType="VARCHAR" />
     <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
     <result column="submitTime" property="submitTime" jdbcType="TIMESTAMP" />
     <result column="status" property="status" jdbcType="INTEGER" />
@@ -77,7 +78,7 @@
   </sql>
   <sql id="Base_Column_List" >
     id, userId, userType, switchs, payTypr, fee, feeType, createTime, submitTime, status, 
-    retain1, retain2, retain3, retain4
+    retain1, retain2, retain3, retain4,channelId
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="alipay.manage.bean.UserRateExample" >
     select

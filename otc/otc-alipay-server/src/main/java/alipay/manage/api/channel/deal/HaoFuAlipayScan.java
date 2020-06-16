@@ -11,6 +11,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import alipay.manage.api.channel.util.haofu.HaoFuUtil;
 import alipay.manage.api.config.PayOrderService;
 import alipay.manage.api.feign.ConfigServiceClient;
 import alipay.manage.bean.DealOrderApp;
@@ -51,8 +52,8 @@ public class HaoFuAlipayScan  extends PayOrderService{
 	}
 	private String createOrder(String notfiy, BigDecimal orderAmount, String orderId) {
 		Map<String,Object> map = new HashMap<String,Object>();
-		String key  = "afdfasdf16541asdf51asd6f621sd";
-		map.put("partner", "1014634188");
+		String key  = HaoFuUtil.KEY;
+		map.put("partner", HaoFuUtil.APPID);
 		map.put("amount", orderAmount.intValue());
 		map.put("request_time", System.currentTimeMillis()/1000);
 		map.put("trade_no", orderId);
@@ -62,7 +63,7 @@ public class HaoFuAlipayScan  extends PayOrderService{
 		String md5 = md5(createParam+"&"+key);
 		map.put("sign", md5);
 		log.info("【当前豪富请求参数为："+map.toString()+"】");
-		String post = HttpUtil.post("https://mmtnpkedtb.6785151.com/payCenter/aliPay2", map);
+		String post = HttpUtil.post(HaoFuUtil.URL+"/payCenter/aliPay2", map);
 		log.info("【豪富响应参数为："+post+"】");
 		JSONObject parseObj = JSONUtil.parseObj(post);
 		Object object = parseObj.get("is_success");

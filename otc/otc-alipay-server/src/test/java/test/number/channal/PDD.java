@@ -36,9 +36,9 @@ public class PDD {
 			info_order			String(255)			×				参数名称：商品描述
 			pay_type			String(5)			√				参数名称：支付类型
 		 */
-		String key = "asSVQ34AD3431tg54h356hhaf42";
-		String appid  = "202005031538314107";
-		String url = "http://api.whyzs.com/gateway/bankgateway/pay";
+		String key ="dtfysghxiazAIGY2BNEWDPOIL51";
+		String appid  = "202006032221186176";
+		String url = "api.djyq123.com/gateway/bankgateway/pay";
 		Map<String, Object> map = new HashMap();
 		map.put("oid_partner", appid);
 		map.put("notify_url", "www.baidu.com");
@@ -46,9 +46,9 @@ public class PDD {
 		map.put("user_id", IdUtil.objectId());
 		map.put("no_order", UUID.randomUUID().toString());
 		map.put("time_order", d.format(new Date()));
-		map.put("money_order", "299.00");
-		map.put("name_goods", "pdd");
-		map.put("pay_type", "47");//PDD PDD 插件通道
+		map.put("money_order", "313");
+		map.put("name_goods", "alipaycan");
+		map.put("pay_type", "111");//PDD PDD 插件通道
 		map.put("info_order", "info_order");
 		String createParam = createParam(map);
 		 String md5 = md5(createParam+key);

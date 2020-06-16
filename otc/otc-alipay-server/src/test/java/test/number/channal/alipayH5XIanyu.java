@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.servlet.http.HttpUtils;
@@ -52,10 +53,10 @@ public class alipayH5XIanyu {
 		 2020-05-21 15:53:42.557 [http-nio-9010-exec-10] INFO  alipay.manage.api.Api - 【当前远程调用，查询所有未剪裁二维码】
 
 			*/
-		String extend = "312|xxx";
-		String ss = "extend="+extend+"&order_id=175061&out_order_id=9fe76c15-038a-4950-aa2d-3e3a58876ef1&paytime=1590027003&price=300.0000&realprice=300.0000&type=alipay&key=zfZ2BTd6PHKvwCxU";
-		String upperCase = md5(ss).toUpperCase();
-		System.out.println(upperCase);
+	//	String extend = "312|xxx";
+	//	String ss = "extend="+extend+"&order_id=175061&out_order_id=9fe76c15-038a-4950-aa2d-3e3a58876ef1&paytime=1590027003&price=300.0000&realprice=300.0000&type=alipay&key=zfZ2BTd6PHKvwCxU";
+	//	String upperCase = md5(ss).toUpperCase();
+	//	System.out.println(upperCase);
 		/**
 		 * 	money			是		订单金额
 			part_sn			是		商家平台订单号
@@ -90,6 +91,43 @@ public class alipayH5XIanyu {
 		String post = HttpUtil.post("http://xianyu.tbuoljh.cn/api/order", map);
 		System.out.println(post);
 		*/
+		
+		
+		
+	//	1267136389196156928
+		 String KEY = "gCwqqQSkBGKAYHKFOHdToMSLAErLVmeQ";
+		  String FX_ID = "2020183";
+		String ORDER_QUERY = "orderquery";
+		System.out.println("【进入咸鱼支付宝扫码订单查询处理】 ");
+		System.out.println("【当前咸鱼支付宝扫码订单号："+"1267136389196156928"+"】 ");
+		String fxddh = "1267136389196156928";//咸鱼订单号
+		String fxaction = ORDER_QUERY;
+		Map<String, Object>  map = new ConcurrentHashMap<String, Object>();
+		map.put("fxid", FX_ID);
+		map.put("fxddh", fxddh);
+		map.put("fxaction", fxaction);
+		map.put("fxsign", md5(FX_ID+fxddh+fxaction+KEY));
+		String post = HttpUtil.post("https://csj.fenvun.com/Pay"  , map);
+		System.out.println("【当前返回数据为：】"+post.toString());
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 	}
 	 public static String md5(String a) {
 	    	String c = "";

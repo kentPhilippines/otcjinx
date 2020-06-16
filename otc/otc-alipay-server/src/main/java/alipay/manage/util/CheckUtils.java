@@ -52,14 +52,12 @@ public class CheckUtils {
         String amount = (String) map.get("amount");
         String acctno = (String) map.get("acctno");
         String acctname = (String) map.get("acctname");
-        String mobile = (String) map.get("dpaytype");
         String bankcode = (String) map.get("bankcode");
         String notifyurl = (String) map.get("notifyurl");
         String rsasign = (String) map.get("sign");
         if (StrUtil.isBlank(rsasign)
                 || StrUtil.isBlank(notifyurl)
                 || StrUtil.isBlank(bankcode)
-                || StrUtil.isBlank(mobile)
                 || StrUtil.isBlank(acctname)
                 || StrUtil.isBlank(amount)
                 || StrUtil.isBlank(acctno)

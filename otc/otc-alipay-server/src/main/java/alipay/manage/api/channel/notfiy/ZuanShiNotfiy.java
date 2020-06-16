@@ -75,7 +75,7 @@ public class ZuanShiNotfiy extends NotfiyChannel{
 		}
         if (sign.equals(generatedSign) && status.equals("3") && platform_id .equals( Config.PLATFORM_ID)){//我方给下游回调  这里要写一个回调的抽象类  全部继承然后同意记录
             //判断签名是否正确
-        	Result witNotfy = witNotfy(payout_cl_id);
+        	Result witNotfy = witNotfy(payout_cl_id,clientIP);
         	if(witNotfy.isSuccess())
         		log.info("【代付通知成功】");
             //TODO 任意事情

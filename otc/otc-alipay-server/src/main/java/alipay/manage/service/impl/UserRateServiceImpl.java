@@ -10,11 +10,6 @@ import org.springframework.stereotype.Service;
 public class UserRateServiceImpl implements UserRateService {
     @Autowired
     UserRateMapper userRateMapper;
-    @Override
-    public UserRate findProductFeeBy(String userId, String productCode) {
-        UserRate userRate=userRateMapper.findProductFeeBy(userId,productCode);
-        return userRate;
-    }
 	@Override
 	public UserRate findUserRateInfoByUserId(String userId) {
 		// 查询当前用户的费率值

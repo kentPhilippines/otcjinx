@@ -50,8 +50,8 @@ public interface UserRateMapper {
      * @param productCode
      * @return
      */
-    @Select("select * from alipay_user_rate where userId = #{userId} and payTypr = #{payTypr}")
-    UserRate findProductFeeBy(@Param("userId")String userId,@Param("payTypr") String productCode);
+    @Select("select * from alipay_user_rate where userId = #{userId} and payTypr = #{payTypr} and channelId = #{channel}")
+    UserRate findProductFeeBy(@Param("userId")String userId,@Param("payTypr") String productCode,@Param("channel")  String channel);
     
     
     @Select("select * from alipay_user_rate where id = #{id}")

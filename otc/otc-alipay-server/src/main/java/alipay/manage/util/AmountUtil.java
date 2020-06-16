@@ -2,6 +2,8 @@ package alipay.manage.util;
 import java.math.BigDecimal;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -207,6 +209,7 @@ public class AmountUtil {
 		}
 		return Result.buildSuccessResult();
 	}
+	static Lock lock = new  ReentrantLock();
 	/**
 	 * <p>账户减少</p>
 	 * @param userFund
@@ -214,7 +217,10 @@ public class AmountUtil {
 	 * @param addType
 	 * @return
 	 */
+	@Transactional
 	public Result deleteAmountBalance(UserFund userFund , BigDecimal balance , String addType ) {
+		lock.lock();
+	    try {
 		userFund = userInfoServiceImpl.findUserFundByAccount(userFund.getUserId());
 		if(!clickUserFund(userFund).isSuccess())
 			return Result.buildFailMessage("【资金账户存在问题】");
@@ -261,6 +267,9 @@ public class AmountUtil {
 			return 	Result.buildFailMessage("【当前账户余额冻结失败，请联系技术人员查询情况】");
 			
 		}
+	    }  finally {
+	        lock.unlock();
+	    }
 		return Result.buildFailMessage("传参异常");
 	}
 	/**

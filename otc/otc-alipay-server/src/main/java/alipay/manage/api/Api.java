@@ -404,7 +404,7 @@ public class Api {
 		if (userFund == null) {
 			throw new BusinessException("此用户不存在");
 		}
-		BigDecimal balance = userFund.getRechargeNumber();
+		BigDecimal balance = userFund.getAccountBalance();
 		BigDecimal deduct = new BigDecimal(amount.toString());
 		if (balance.compareTo(deduct) > -1) {//余额充足
 //			deduct = deduct.abs().negate();

@@ -111,7 +111,7 @@ public interface UserInfoMapper {
 	int updataPayPassword(String userId, String newPayPassword);
 
     
-    @Update("update alipay_user_info set  todayDealAmount = 0 ,todayProfit = 0,todayOrderCount = 0 , todayAgentProfit = 0 ")
+    @Update("update alipay_user_fund set  todayDealAmount = 0 ,todayProfit = 0,todayOrderCount = 0 , todayAgentProfit = 0 ")
 	void updateUserTime();
 
     @Insert("insert into  alipay_user_fund_bak (userId, userName, cashBalance, rechargeNumber, freezeBalance, accountBalance,  " + 

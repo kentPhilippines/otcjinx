@@ -94,7 +94,7 @@ public class VendorRequestApi {
         Double orderAmount = Double.valueOf(paramMap.get("amount").toString()) ;//商户请求单笔金额
         if(StringUtils.isNotEmpty(userInfo.getMinAmount()) && StringUtils.isNotEmpty(userInfo.getMaxAmount())){
             if(orderAmount <= Double.parseDouble(userInfo.getMinAmount()) || orderAmount >= Double.parseDouble(userInfo.getMaxAmount())){
-                return Result.buildFailResult("单笔交易金额不在区间范围内");
+                return Result.buildFailMessage("单笔交易金额不在区间范围内");
             }
         }
 
@@ -102,13 +102,13 @@ public class VendorRequestApi {
         log.info("--------------【验证单日成功下单次数】----------------");
         if (!"".equals(userInfo.getTimesTotal()) && null != userInfo.getTimesTotal()) {
             if(userFund.getTodayOrderCount() > userInfo.getTimesTotal()){
-                return Result.buildFailResult("今日下单次数已受限");
+                return Result.buildFailMessage("今日下单次数已受限");
             }
         }
         log.info("--------------【验证单日成功下单金额】----------------");
         if (!"".equals(userInfo.getTotalAmount()) && null != userInfo.getTotalAmount()) {
             if(userFund.getTodayDealAmount().add(new BigDecimal(orderAmount)).compareTo(userInfo.getTotalAmount()) == 1){
-                return Result.buildFailResult("今日下单金额已受限");
+                return Result.buildFailMessage("今日下单金额已受限");
             }
         }
         return Result.buildSuccessResult(paramMap);
@@ -163,6 +163,7 @@ public class VendorRequestApi {
             log.info("【商户从后台提现不验证代付ip】");
         String bankNo = paramMap.get("acctno").toString();
         String amount = paramMap.get("amount").toString();
+        /*
         BankList bank = bankListServiceImpl.findBankByNo(bankNo);
         BigDecimal limitAmount = bank.getLimitAmount();
         BigDecimal bankAmount = bank.getBankAmount();
@@ -171,9 +172,10 @@ public class VendorRequestApi {
             log.info("【当前银行卡超出当日可用金额】");
             return Result.buildFailMessage("当前银行卡超出当日可用金额");
         }
+        */
         UserFund userFund = userInfoServiceImpl.findUserFundByAccount(userId);
         BigDecimal accountBalance = userFund.getAccountBalance();
-        if (accountBalance.compareTo(new BigDecimal(amount)) == -1) {
+        if (accountBalance.compareTo(new BigDecimal(amount).add(userRate.getFee())) == -1) {
             log.info("【当前账户金额不足】");
             return Result.buildFailMessage("当前账户金额不足");
         }

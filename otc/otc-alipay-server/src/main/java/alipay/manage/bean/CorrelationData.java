@@ -20,8 +20,38 @@ public class CorrelationData implements Serializable{
     private String qrId;
 
     private BigDecimal amount;
+    
+    private BigDecimal fee;
+    private BigDecimal channelFee;
+    private BigDecimal profit;
 
-    private Integer orderStatus;
+    
+    
+    public BigDecimal getFee() {
+		return fee;
+	}
+
+	public void setFee(BigDecimal fee) {
+		this.fee = fee;
+	}
+
+	public BigDecimal getChannelFee() {
+		return channelFee;
+	}
+
+	public void setChannelFee(BigDecimal channelFee) {
+		this.channelFee = channelFee;
+	}
+
+	public BigDecimal getProfit() {
+		return profit;
+	}
+
+	public void setProfit(BigDecimal profit) {
+		this.profit = profit;
+	}
+
+	private Integer orderStatus;
 
     private Integer status;
 

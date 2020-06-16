@@ -77,6 +77,10 @@ public interface DealOrderMapper {
     
     @Select("select retain2 , orderId from alipay_deal_order where createTime > DATE_ADD(NOW(),INTERVAL-3 HOUR)  and orderStatus = 1 and orderQrUser = 'XianYuZhifubao'")
     List<DealOrder> findXianYuOrder();
+    @Select("SELECT retain2 , orderId FROM alipay_deal_order WHERE createTime > DATE_ADD(NOW(),INTERVAL -20 MINUTE)  AND orderStatus = 1 AND orderQrUser = 'XYALIPAYSCAN' LIMIT 50")
+    List<DealOrder> findXianYuOrder1();
+    @Select("SELECT retain2 , orderId FROM alipay_deal_order WHERE createTime > DATE_ADD(NOW(),INTERVAL -20 MINUTE)  AND orderStatus = 1 AND orderQrUser = 'ChuanShanJia' LIMIT 50")
+    List<DealOrder> findXianYuOrder2();
 
 
 }

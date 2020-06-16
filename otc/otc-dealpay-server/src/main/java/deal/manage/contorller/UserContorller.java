@@ -147,7 +147,7 @@ public class UserContorller {
 			return Result.buildFailMessage("当前用户未登录");
 		bank.setAccount(user.getUserId());
 		bank.setCardType(Common.Bank.BANK_QR);
-		boolean flag  = bankCardServiceImpl.addBankCard(bank);
+		boolean flag  = false;
 		bank.setStatus(1);
 		bank.setIsDeal(2);
 		bank.setSubmitTime(new Date());

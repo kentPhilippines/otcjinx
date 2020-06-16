@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.annotation.Resource;
 
@@ -219,83 +221,34 @@ public class OrderUtil {
 	 * 4，根据不同的类型处理不同资金的流水类型
 	 * 5，订单修改完毕
 	 */
-	
-    @Resource(name = "platformTransactionManager")
-    private PlatformTransactionManager platformTransactionManager;
-	@SuppressWarnings("unused")
+	static Lock lock = new  ReentrantLock();
+	@Transactional
 	public  Result updataDealOrderSu(String orderId,String msg , String ip ,Boolean flag) {
 		if(StrUtil.isBlank(orderId) || StrUtil.isBlank(ip)) 
 			return Result.buildFailMessage("必传参数为空");
+		lock.lock();
+	    try {
 		DealOrder order = orderServiceImpl.findOrderByOrderId(orderId);
 		if(order.getOrderStatus().toString().equals(OrderDealStatus.成功.getIndex().toString()))
 			return Result.buildFailMessage("当前订单不支持修改");
 		if(order.getOrderStatus().toString().equals(OrderDealStatus.失败.getIndex().toString()))
 			return Result.buildFailMessage("当前订单不支持修改");
-		 /**管理线程连接*/
-        ThreadConnection threadConnection = new ThreadConnection();
-        /**事务业务管理*/
-        TransactionBusinessManager tbm = new TransactionBusinessManager();
-        ExecutorService es = Executors.newFixedThreadPool(2); //这里的线程池需要优化
-        es.execute(()->{
-        	try{
-        	Result rs = tbm.execute(new TransactionBusiness<Result>() {
-  				@Override
-  				public PlatformTransactionManager getPlatformTransactionManager() { return platformTransactionManager; }
-  				@Override
-  				public ThreadConnection getThreadConnection() { return threadConnection; }
-  				/**
-  				 * 业务执行
-  				 * @return
-  				 */
-  				@Override
-  				public Result doInTransaction() {
-  					 Result dealAmount = dealAmount(order, ip, flag,msg);
-  					 if(!dealAmount.isSuccess())
-   						throw new OrderException("订单修改异常", null);
-  					 return dealAmount;
-  				}
-  				});
-        	   } catch (Exception e) {
-        		   threadConnection.rollback();
-        	   }
-        	});
-        es.execute(()->{
-        	  	try{
-        	Result rs = tbm.execute(new TransactionBusiness<Result>() {
-  				@Override
-  				public PlatformTransactionManager getPlatformTransactionManager() { return platformTransactionManager; }
-  				@Override
-  				public ThreadConnection getThreadConnection() { return threadConnection; }
-  				/**
-  				 * 业务执行
-  				 * @return
-  				 */
-  				@Override
-  				public Result doInTransaction() {
-  					 Result dealAmount = enterOrderApp(order.getAssociatedId(), ip, flag);
-  					 if(!dealAmount.isSuccess())
-  						throw new OrderException("订单修改异常", null);
-  					return dealAmount;
-  				}
-  				});
-        	    } catch (Exception e) {
-         		   threadConnection.rollback();
-          }
-        });
-        es.shutdown();
-        /**等待所有线程池执行完毕*/
-        for(;;) {
-            if(es.isTerminated()) {
-                break;
-            }
-        }
-        /**事务提交  注意：事务执行回滚操作就不会执行事务提交操作，反之执行事务提交*/
-        threadConnection.commit();
+  		Result dealAmount = dealAmount(order, ip, flag,msg);
+  		if(!dealAmount.isSuccess())
+  			throw new OrderException("订单修改异常", null);
+  		Result dealAmount1 = enterOrderApp(order.getAssociatedId(), ip, flag);
+  		if(!dealAmount1.isSuccess())
+  			throw new OrderException("订单修改异常", null);
         ThreadUtil.execute( ()->{//更新风控数据 统计数据等
         	DealOrder orderSu = orderServiceImpl.findOrderByOrderId(orderId);
         	if(orderSu.getOrderStatus().toString().equals(OrderDealStatus.成功.getIndex().toString()))
         		riskUtil.orderSu(order);
         });
+	    }catch (Exception e) {
+	    	throw new OrderException("订单修改异常", null);
+		}  finally {
+	        lock.unlock();
+	    }
 		return Result.buildSuccess();
 	}
 	
@@ -566,7 +519,7 @@ public class OrderUtil {
 		}
 		Integer feeId = orderApp.getFeeId();
 		UserRate findFeeById = userRateDao.findFeeById(feeId);
-		Result findUserRateList = findUserRateList(userInfo.getAgent(),findFeeById.getPayTypr(),findFeeById,orderApp,flag,ip);
+		Result findUserRateList = findUserRateList(userInfo.getAgent(),findFeeById.getPayTypr(),findFeeById.getChannelId(),findFeeById,orderApp,flag,ip);
 		if(findUserRateList.isSuccess()) {
 			log.info("【当前订单代理商结算成功】");
 			boolean flag1 = dealOrderAppDao.updateOrderIsAgent(orderApp.getOrderId(),"YES");
@@ -576,9 +529,9 @@ public class OrderUtil {
 		return false;
 	}
 
-	private Result findUserRateList(String agent, String product, UserRate rate, DealOrderApp orderApp,boolean flag, String ip) {
+	private Result findUserRateList(String agent, String product, String channelId, UserRate rate, DealOrderApp orderApp,boolean flag, String ip) {
 		 UserFund userFund = userInfoServiceImpl.findUserFundByAccount (agent);
-		 UserRate userRate = userRateDao.findProductFeeBy(userFund.getUserId(), product);
+		 UserRate userRate = userRateDao.findProductFeeBy(userFund.getUserId(), product,channelId);
 		 log.info("【当前代理商为："+userRate.getUserId()+"】");
 		 log.info("【当前代理商结算费率："+userRate.getFee()+"】");
 		 log.info("【当前当前我方："+rate.getUserId()+"】");
@@ -597,12 +550,54 @@ public class OrderUtil {
 			 if(addAppProfit.isSuccess()) {
 				 log.info("【流水成功】");
 				 if(StrUtil.isNotBlank(userFund.getAgent()))
-					 return findUserRateList(userFund.getAgent(), product, userRate, orderApp, flag, ip);
+					 return findUserRateList(userFund.getAgent(), product, channelId,userRate, orderApp, flag, ip);
 			 }
 		 }
 		return Result.buildSuccessMessage("结算成功");
 	}
+
+	@Transactional
+  public Result withrawOrderErBySystem(String orderId , String ip, String msg) {
+    Withdraw order = withdrawDao.findWitOrder(orderId);
+    if (order == null) {
+      return Result.buildFailMessage("平台订单号不存在");
+    }
+    if (!Common.Order.Wit.ORDER_STATUS_YU.equals(order.getOrderStatus())) {
+      return Result.buildFailMessage("订单已被处理，不允许操作");
+    }
+    return withrawOrderErBySystem(order,ip,msg);
+  }
 	
-	
+	/*
+	   * 
+	   * @param wit
+	   * @param ip
+	   * @return
+	   */
+	  @Transactional
+	  public Result withrawOrderErBySystem(Withdraw wit,String ip,String msg) {
+	    /*
+	     * ###########################
+	     * 代付失败给该用户退钱
+	     */
+	    int a = withdrawDao.updataOrderStatusEr(wit.getOrderId(),msg, Common.Order.Wit.ORDER_STATUS_ER);
+	    if(a == 0  || a > 2)
+	      return Result.buildFailMessage("订单状态修改失败");
+	    UserFund userFund = new UserFund();
+	    userFund.setUserId(wit.getUserId());
+	    Result addAmountAdd = amountUtil.addAmountAdd(userFund, wit.getAmount());
+	    if(!addAmountAdd.isSuccess())
+	      return addAmountAdd;
+	    Result addAmountW = amountRunUtil.addAmountW(wit, ip);
+	    if(!addAmountW.isSuccess())
+	      return addAmountW;
+	    Result addFee = amountUtil.addAmountAdd(userFund, wit.getFee());
+	    if(!addFee.isSuccess())
+	      return addFee;
+	    Result addAmountWFee = amountRunUtil.addAmountWFee(wit, ip );
+	    if(!addAmountWFee.isSuccess())
+	      return addAmountWFee;
+	    return Result.buildSuccessMessage("代付金额解冻成功");
+	  }
 	
 }

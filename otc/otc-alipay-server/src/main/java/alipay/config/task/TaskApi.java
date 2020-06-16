@@ -21,5 +21,4 @@ public class TaskApi {
 		userTaskImpl.userTask();
 		return Result.buildSuccessMessage("账户清算完成");
 	}
-
 }

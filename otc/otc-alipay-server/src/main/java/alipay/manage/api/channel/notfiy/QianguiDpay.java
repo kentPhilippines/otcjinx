@@ -47,7 +47,7 @@ public class QianguiDpay extends NotfiyChannel{
 	    String csign = Util.creatSign(map, key);//计算签名
 	    if (csign.equals(sign)){//我方给下游回调  这里要写一个回调的抽象类  全部继承然后同意记录
 	    //判断签名是否正确
-	    Result witNotfy = witNotfy(appOrderNo);
+	    Result witNotfy = witNotfy(appOrderNo,clientIP);
 	    if(witNotfy.isSuccess())
 	    log.info("【代付通知成功】");
 	    //TODO 任意事情

@@ -8,7 +8,10 @@
     <result column="appId" property="appId" jdbcType="VARCHAR" />
     <result column="mediumId" property="mediumId" jdbcType="INTEGER" />
     <result column="qrId" property="qrId" jdbcType="CHAR" />
-    <result column="amount" property="amount" jdbcType="DECIMAL" />
+    <result column="amount" property="amount" jdbcType="DECIMAL" />    
+    <result column="fee" property="fee" jdbcType="DECIMAL" />
+    <result column="channelFee" property="channelFee" jdbcType="DECIMAL" />
+    <result column="profit" property="profit" jdbcType="DECIMAL" />
     <result column="orderStatus" property="orderStatus" jdbcType="INTEGER" />
     <result column="status" property="status" jdbcType="INTEGER" />
     <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
@@ -73,7 +76,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, orderId, userId, mediumId, qrId, amount, orderStatus, status, createTime, submitTime,appId
+    id, orderId, userId, mediumId, qrId, amount, orderStatus, status, createTime, submitTime,appId,    fee ,  channelFee,  profit
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="alipay.manage.bean.CorrelationDataExample" >
     select
@@ -109,11 +112,11 @@
   <insert id="insert" parameterType="alipay.manage.bean.CorrelationData" useGeneratedKeys="true" keyProperty="id" >
     insert into alipay_correlation_data (orderId, userId, mediumId, 
       qrId, amount, orderStatus, 
-      status, createTime, submitTime,appId
+      status, createTime, submitTime,appId,fee ,  channelFee,  profit
       )
     values (#{orderId,jdbcType=CHAR}, #{userId,jdbcType=CHAR}, #{mediumId,jdbcType=INTEGER}, 
       #{qrId,jdbcType=CHAR}, #{amount,jdbcType=DECIMAL}, #{orderStatus,jdbcType=INTEGER}, 
-      #{status,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{submitTime,jdbcType=TIMESTAMP},#{appId}
+      #{status,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{submitTime,jdbcType=TIMESTAMP},#{appId},#{fee} ,  #{channelFee},  #{profit}
       )
   </insert>
   <insert id="insertSelective" parameterType="alipay.manage.bean.CorrelationData" useGeneratedKeys="true" keyProperty="id" >
@@ -149,6 +152,14 @@
       <if test="submitTime != null" >
         submitTime,
       </if>
+         <if test="fee != null" >
+      fee ,   </if>
+      
+         <if test="channelFee != null" >
+      channelFee ,   </if>
+      
+         <if test="profit != null" >
+      profit ,   </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="orderId != null" >
@@ -181,6 +192,14 @@
       <if test="submitTime != null" >
         #{submitTime,jdbcType=TIMESTAMP},
       </if>
+         <if test="fee != null" >
+      #{fee} ,   </if>
+      
+         <if test="channelFee != null" >
+      #{channelFee} ,   </if>
+      
+         <if test="profit != null" >
+      #{profit} ,   </if>
     </trim>
   </insert>
   <select id="countByExample" parameterType="alipay.manage.bean.CorrelationDataExample" resultType="java.lang.Integer" >

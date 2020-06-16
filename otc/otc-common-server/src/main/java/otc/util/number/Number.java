@@ -83,23 +83,11 @@ public class Number {
     
     
   public static  String getAppOreder(){
-			  try {
-				return GetRandom(Common.Deals.YUCHUANG_FLOW);
-			} catch (UnknownHostException e) {
-				String randomString2 = RandomUtil.randomNumbers(15);
-		    	String orderId = Common.Deals.YUCHUANG_FLOW +randomString2 ; 
-				return orderId;
-			}
+	  return  GenerateOrderNo.Generate(Common.Deals.YUCHUANG_FLOW);	
     }
     
   public static  String getWitOrder(){
-	  try {
-		  return GetRandom(Common.Deals.ORDERWIT_APP);
-	  } catch (UnknownHostException e) {
-		  String randomString2 = RandomUtil.randomNumbers(15);
-		  String orderId = Common.Deals.ORDERWIT_APP +randomString2 ; 
-		  return orderId;
-	  }
+	 return  GenerateOrderNo.Generate("W");	
   }
 
 
@@ -126,8 +114,7 @@ public class Number {
 		return Common.Deals.ORDERDEAL+objectId;	
 	}
 	public static String getOrderQrCh() {
-		String objectId = IdUtil.objectId().toUpperCase();
-		return  objectId;	
+		return  GenerateOrderNo.Generate(Common.Deals.ORDERDEAL_CHANNEL);	
 	}
 
 

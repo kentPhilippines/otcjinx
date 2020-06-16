@@ -162,7 +162,7 @@ public class Common {
 		public static final String  PRODUCT_ALIPAY_SCAN  = "ALIPAY_SCAN";//支付宝扫码
 		public static final String  PDD_303  = "PDD_303";//金星拼多多
 		public static final String  PRODUCT_ALIPAY_H5  = "ALIPAY_H5";//支付宝H5
-		public static final String  WITHDRAW_MY  = "WITHDRAW_MY";//系统出款
+		public static final String  WITHDRAW_MY  = "SYSTEM_DP";//系统出款
 		public static final String  WITHDRAW_QAINKUI_ALIPAY  = "WITHDRAW_QAINKUI_ALIPAY";//钱柜alipay代付
 		public static final String  WITHDRAW_ZAHUNSHI_ALIPAY  = "WITHDRAW_ZAHUNSHI_ALIPAY";//钻石alipay代付
 		public static final String  WITHDRAW_DEAL  = "WITHDRAW_DEAL";//三方代付
