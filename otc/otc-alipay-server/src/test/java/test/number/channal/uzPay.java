@@ -5,6 +5,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
+import alipay.manage.api.channel.util.uzpay.UzPayUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
@@ -17,7 +18,7 @@ public class uzPay {
 		String query ="https://www.uz-pay.com/Api/collection/query";
 		String uid =  "55589";
 		String userid = "JX888";
-		Map<String,Object> map = new HashMap<String,Object>();
+		/*	Map<String,Object> map = new HashMap<String,Object>();
 		map.put("uid", uid);
 		map.put("orderid", "asdasdas5654dss1231as55");
 		String createParam = createParam(map);
@@ -36,24 +37,32 @@ public class uzPay {
 			 if("verified".equals(object2.toString())) {
 			 }
 		 }
-		 
+		 */	
 		
 		
 		//订单查询{"success":true,"code":200,"order":{"oid":"I-asdasdas5654dss1231as55","orderid":"asdasdas5654dss1231as55","userid":"JX888","amount":"200.00","status":"processing","created_time":"1591435703","verified_time":null,"type":"remit"}}
 
-	/*	Map<String,Object> map = new HashMap<String,Object>();
+		Map<String,Object> map = new HashMap<String,Object>();
+		
+		map.put("uid", UzPayUtil.UID);
+		map.put("userid", UzPayUtil.USERID);
 		map.put("amount", "200");
-		map.put("orderid", "asdassadsdas5654dss1231as55");
-		map.put("userip", "127.0.0.1");
+		map.put("orderid", "1asdassadsdas5654dss1231as55");
+		map.put("userip", "182.16.89.146");
 		map.put("notify", "www.baidu.com");
-		String createParam = createParam(map);
+		String createParam = UzPayUtil.createParam(map);
 		System.out.println("签名串加密前参数为："+createParam);
-		String md5 = md5(createParam+"&key="+key);
+		String md5 = UzPayUtil.md5(createParam+"&key="+UzPayUtil.KEY);
 		map.put("sign", md5);
-		String createParam2 = createParam(map);
-		String a  = url + "?"+createParam2;
+		String createParam2 = UzPayUtil.createParam(map);
+		String a  = UzPayUtil.URL + "?"+createParam2;
+		
+		
+		
+		
+	 
 		System.out.println(a );
-		*/		
+			
 	}
 	public static String createParam(Map<String, Object> map) {
 		try {
