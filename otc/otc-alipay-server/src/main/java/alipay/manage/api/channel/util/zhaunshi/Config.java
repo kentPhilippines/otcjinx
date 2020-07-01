@@ -1,12 +1,10 @@
 package alipay.manage.api.channel.util.zhaunshi;
 
-import com.squareup.okhttp.MediaType;
 
 public class Config {
     public static final String DOMAIN = "https://best-dpay.com";//请求接口
     public static final String KEY = "hSiupW3xkezvfUHy";//MD5key
     public static final String PLATFORM_ID = "PF0083";//商户号
-    public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     public static final String PAYOUT_SERVICE_ID = "SVC0004"; //服务Id请填入SVC0004(银行卡代付)
     /**
      * 		service_id 枚举列表 			枚举值			类型			说明
