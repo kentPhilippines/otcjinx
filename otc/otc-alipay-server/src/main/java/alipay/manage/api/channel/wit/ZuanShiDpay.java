@@ -10,10 +10,6 @@ import javax.net.ssl.SSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.alibaba.fastjson.JSON;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
 
 import alipay.manage.api.channel.util.zhaunshi.Config;
 import alipay.manage.api.channel.util.zhaunshi.Md5Util;
@@ -29,7 +25,7 @@ import otc.bean.dealpay.Withdraw;
 import otc.common.PayApiConstant;
 import otc.result.Result;
 
-@Component(Common.Deal.WITHDRAW_ZAHUNSHI_ALIPAY)
+//@Component(Common.Deal.WITHDRAW_ZAHUNSHI_ALIPAY)
 public class ZuanShiDpay extends PayOrderService{
 	private static final Log log = LogFactory.get();
 	private   final String URL = "/gateway/api/v2/payouts";//钻石代付接口
@@ -60,7 +56,9 @@ public class ZuanShiDpay extends PayOrderService{
 	 * @param accName			银行卡开户人
 	 * @throws Exception 
 	 */
-	  private   void create(String bankId , String amount , String orderId , String bankAcc ,String accName,String notfiy) throws   Exception {
+	  private   void create(String bankId , String amount ,
+							String orderId , String bankAcc ,
+							String accName,String notfiy) throws   Exception {/*
 		  Result config = configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.SERVER_IP);
 		  String ip = config.getResult().toString();
 		  log.info("【拿到回调值为："+ip+"】");
@@ -88,7 +86,7 @@ public class ZuanShiDpay extends PayOrderService{
             System.setProperty("https.protocols", "TLSv1.2");
 	        String responseBody = new OkHttpClient().newCall(new Request.Builder().url(Config.DOMAIN + URL)
 	                .post(RequestBody.create(Config.JSON, jsonString)).build()).execute().body().string();
-         log.info("响应参数："+responseBody);
+         log.info("响应参数："+responseBody);*/
 	    }
 
 }
