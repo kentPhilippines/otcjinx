@@ -52,7 +52,7 @@ public class ShenLaiFuDeal extends PayOrderService {
     private String createOrder(String notify, BigDecimal orderAmount, String orderId) {
         Map map = new HashMap();
         String key = ShenlaifuUtil.KEY;
-        String memberId = ShenlaifuUtil.KEY;
+        String memberId = ShenlaifuUtil.APPID;
         String amount = orderAmount.intValue()+"";
         String applyDate = sdf.format(new Date());
         String channelCode = "IMA";

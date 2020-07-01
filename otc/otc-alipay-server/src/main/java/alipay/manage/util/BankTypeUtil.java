@@ -22,10 +22,9 @@ public class BankTypeUtil {
 		BANK_MAP.put("Bankcard", "Bankcard");
 		BANK_MAP.put("Alipay", "Alipay");
 		BANK_MAP.put("Wechar", "Wechar");
-		
-		
 		BANK_MAP.put("ABC", BankEnum.ABC.getBankId());
 		BANK_MAP.put("ARCU", BankEnum.ARCU.getBankId());
+		BANK_MAP.put("PSBC", BankEnum.PSBC.getBankId());
 		BANK_MAP.put("ASCB", BankEnum.ASCB.getBankId());
 		BANK_MAP.put("AYCB", BankEnum.AYCB.getBankId());
 		BANK_MAP.put("BANKWF", BankEnum.BANKWF.getBankId());
