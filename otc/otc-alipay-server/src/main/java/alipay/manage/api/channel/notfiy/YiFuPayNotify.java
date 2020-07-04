@@ -16,7 +16,7 @@ import java.util.Map;
 @RequestMapping(PayApiConstant.Notfiy.NOTFIY_API_WAI)
 @RestController
 public class YiFuPayNotify  extends NotfiyChannel {
-        @RequestMapping("/YiFu-notfiy")
+    @RequestMapping("/YiFu-notfiy")
     public String notify(HttpServletRequest request) {
         log.info("【收到YiFu回调】");
         /**
@@ -31,6 +31,11 @@ public class YiFuPayNotify  extends NotfiyChannel {
          */
             log.info("【收到UzPay回调】");
             String clientIP = HttpUtil.getClientIP(request);
+        if(!clientIP.equals("13.229.137.144")) {
+            log.info("【当前回调ip为："+clientIP+"，固定IP登记为："+"13.229.137.144"+"】");
+            log.info("【当前回调ip不匹配】");
+            return "ip errer";
+        }
             String out_trade_no = request.getParameter("out_trade_no");
             String money = request.getParameter("money");
             String money_arrive = request.getParameter("money_arrive");
