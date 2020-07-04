@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import cn.hutool.core.util.RandomUtil;
 import com.netflix.ribbon.proxy.annotation.Http;
 
 import cn.hutool.core.util.ObjectUtil;
@@ -32,7 +33,9 @@ public class YiFu {
 		String key = "kRrgxUk0QCpxz1bS5QVRJXZKEFPGnrqD";
 		String app_id = "-YbBmS2aFEfgBx4mnXI" ;
 		String channel = "1011";
-		String out_trade_no = StrUtil.uuid();
+		int i = RandomUtil.randomInt(1000000000);
+		String out_trade_no =i+"";
+
 		String money = "100";
 		String callback_url = "https://www.uz-pay.com/Api/collection/query";
 		Map<String,Object> map = new HashMap<String,Object>();
@@ -42,9 +45,12 @@ public class YiFu {
 		map.put("money", money);
 		map.put("callback_url", callback_url);
 		String createParam = createParam(map);
+		System.out.println(createParam);
 		String md5 = md5(createParam + "&key="+key);
 		String sign = md5.toUpperCase();
 		map.put("sign", sign);
+		//{"code":200,"msg":"ok","data":{"pay_url":"http://kpay8494.168yuju.cn/pay/gateway/order?c=22&o=2020070411330189354","money":"100"}}
+		//{"code":419,"msg":"签名不正确","data":[]}
 		String post = HttpUtil.post("https://ef.sanbanye.com/pay", map);
 		System.out.println(post);
 	}

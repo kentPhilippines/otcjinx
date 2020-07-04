@@ -36,7 +36,7 @@ import otc.result.Result;
  * @author kent
  */
 public abstract class NotfiyChannel {
-	private static final Log log = LogFactory.get();
+	public static final Log log = LogFactory.get();
 	@Autowired OrderUtil orderUtilImpl;
 	@Autowired WithdrawService withdrawServiceImpl;
 	@Autowired CheckUtils checkUtils;

@@ -275,7 +275,7 @@ class ResultDeal{
 	private Integer cod;	//订单状态码【“0”为成功】	详情请查看响应状态码
 	private Integer openType;//	打开方式	【1】为url打开方式【2】为html浏览器打开方式
 	private String  returnUrl;	//支付内容
-	
+
 	public ResultDeal(boolean sussess, Integer cod, Integer openType, Object returnUrl) {
 		super();
 		this.sussess = sussess;
