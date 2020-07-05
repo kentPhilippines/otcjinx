@@ -1,13 +1,17 @@
 package alipay.manage.api;
 
+import alipay.manage.api.config.FactoryForStrategy;
 import alipay.manage.bean.Amount;
+import alipay.manage.bean.ChannelFee;
 import alipay.manage.bean.DealOrder;
 import alipay.manage.bean.UserFund;
 import alipay.manage.mapper.AmountMapper;
+import alipay.manage.mapper.ChannelFeeMapper;
 import alipay.manage.mapper.DealOrderMapper;
 import alipay.manage.service.FileListService;
 import alipay.manage.service.MediumService;
 import alipay.manage.service.UserInfoService;
+import alipay.manage.service.WithdrawService;
 import alipay.manage.util.AmountRunUtil;
 import alipay.manage.util.AmountUtil;
 import alipay.manage.util.LogUtil;
@@ -24,8 +28,6 @@ import cn.hutool.http.HttpUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,6 +38,7 @@ import org.springframework.web.bind.annotation.RestController;
 import otc.api.alipay.Common;
 import otc.bean.alipay.FileList;
 import otc.bean.alipay.Medium;
+import otc.bean.dealpay.Withdraw;
 import otc.common.PayApiConstant;
 import otc.common.SystemConstants;
 import otc.exception.BusinessException;
@@ -64,7 +67,43 @@ public class Api {
 	@Autowired NotifyUtil notifyUtil;
 	@Autowired QueueUtil queueUtil;
 	@Autowired FileListService fileListServiceImpl;
-	
+	@Autowired FactoryForStrategy factoryForStrategy;
+	@Autowired WithdrawService withdrawServiceImpl;
+	@Autowired ChannelFeeMapper channelFeeDao;
+
+
+
+	/**
+	 * <p>后台调用重新通知的方法</p>
+	 * @param request
+	 * @return
+	 */
+	@GetMapping(PayApiConstant.Alipay.ORDER_API+PayApiConstant.Alipay.WIT_API_ENTER)
+	public Result wit(  HttpServletRequest request) {
+		log.info("【接收到后台确认代付出款的方法调用，："+request.getParameter("orderId")+" 】");
+		String orderId = request.getParameter("orderId");
+		String apply = request.getParameter("apply");
+		if(StrUtil.isBlank(orderId))
+			return  Result.buildFailMessage("订单号为空");
+		if(StrUtil.isBlank(apply))
+			return  Result.buildFailMessage("操作人为空");
+		logUtil.addLog(request,"后台人员确认代付订单，当前代付订单号："+orderId,apply);
+		Withdraw witOrder = withdrawServiceImpl.findOrderId(orderId);
+		String channnel = witOrder.getWitChannel();
+		String witType = witOrder.getWitType();
+		ChannelFee channelFee = channelFeeDao.findChannelFee(channnel, witType);
+		Result withdraw =  Result.buildFail();
+		try {
+			 withdraw = factoryForStrategy.getStrategy(channelFee.getImpl()).withdraw(witOrder);
+		} catch (Exception e) {
+			 return Result.buildFailMessage("代付渠道未接通或渠道配置错误，请联系技术人员处理");
+		}
+		return withdraw;
+	}
+
+
+
+
 	/**
 	 * <p>后台调用重新通知的方法</p>
 	 * @param request

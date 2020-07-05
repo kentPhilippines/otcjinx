@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import alipay.manage.util.OrderUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.collect.Maps;
@@ -57,6 +58,7 @@ public abstract class PayOrderService implements PayService{
 	@Autowired CorrelationService correlationServiceImpl;
 	@Autowired UserRateService userRateServiceImpl;
 	@Autowired ChannelFeeMapper channelFeeDao;
+	@Autowired OrderUtil orderUtilImpl;
 	@Override
 	public Result deal(DealOrderApp dealOrderApp,String payType) {
 		if(Common.Deal.PRODUCT_ALIPAY_SCAN.equals(payType))
@@ -200,5 +202,16 @@ public abstract class PayOrderService implements PayService{
 	    }
 		return Result.buildSuccess();
 		
+	}
+	/**
+	 * <p>代付失败</p>
+	 * @param wit
+	 * @param msg
+	 * @param ip
+	 * @return
+	 */
+	public Result withdrawEr(Withdraw wit,String msg,String ip){
+		Result withrawOrderErBySystem = orderUtilImpl.withrawOrderErBySystem(wit.getOrderId(), ip, msg);
+		return withrawOrderErBySystem;
 	}
 }

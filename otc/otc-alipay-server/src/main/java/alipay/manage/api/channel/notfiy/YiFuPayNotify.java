@@ -20,14 +20,14 @@ public class YiFuPayNotify  extends NotfiyChannel {
     public String notify(HttpServletRequest request) {
         log.info("【收到YiFu回调】");
         /**
-         * out_trade_no	        是	    外部订单号
-         * money	            是	    申请打款金额
-         * money_arrive	        是	    实际打款金额
-         * pay_at	            是	    打款时间
-         * app_id	            是	    APP_ID
-         * status_code	        是	    处理状态码：0 待处理或处理中,1 已打款成功,2 处理失败或已驳回
-         * remark	            否	    处理说明
-         * sign	                否	    签名,详见下方签名方式
+         * trade_no	是	系统订单号
+         * out_trade_no	是	外部订单号
+         * money	是	支付金额
+         * pay_at	是	支付时间
+         * code	是	订单状态："success":成功,其他则失败
+         * app_id	是	APP_ID
+         * remark	否	充值备注，不参与加密！！！！
+         * sign	否	签名,详见下方签名方式
          */
             log.info("【收到UzPay回调】");
             String clientIP = HttpUtil.getClientIP(request);
@@ -36,21 +36,22 @@ public class YiFuPayNotify  extends NotfiyChannel {
             log.info("【当前回调ip不匹配】");
             return "ip errer";
         }
+            String trade_no = request.getParameter("trade_no");
             String out_trade_no = request.getParameter("out_trade_no");
             String money = request.getParameter("money");
-            String money_arrive = request.getParameter("money_arrive");
             String pay_at = request.getParameter("pay_at");
             String app_id = request.getParameter("app_id");
-            String status_code = request.getParameter("status_code");
+            String code = request.getParameter("code");
             String sign = request.getParameter("sign");
             Map map = new HashMap();
+            map.put("trade_no",trade_no);
             map.put("out_trade_no",out_trade_no);
             map.put("money",money);
-            map.put("money_arrive",money_arrive);
             map.put("pay_at",pay_at);
             map.put("app_id",app_id);
-            map.put("status_code",status_code);
+            map.put("code",code);
             String createParam = YiFuUtil.createParam(map);
+            //app_id=-YbBmS2aFEfgBx4mnXI&money=1000&out_trade_no=C1593861094418016017&pay_at=2020-07-04 19:11:36&
             log.info("【易付签名前参数："+createParam+"】");
             String md5 = YiFuUtil.md5(createParam + "key="+YiFuUtil.KEY);
             md5 = md5.toUpperCase();
@@ -62,11 +63,11 @@ public class YiFuPayNotify  extends NotfiyChannel {
                 log.info("【签名失败】");
                 return  "sgin is error";
             }
-            if(!"1".equals(status_code)){
-                log.info("【易付回调状态出错，当前回调状态为："+status_code+"，我方需要状态为："+1+"】");
+            if(!"success".equals(code.toString())){
+                log.info("【易付回调状态出错，当前回调状态为："+code+"，我方需要状态为："+"success"+"】");
                 return "错误 status is error";
             }
-            Result dealpayNotfiy = dealpayNotfiy(out_trade_no, clientIP, "UzPay回调订单成功");
+            Result dealpayNotfiy = dealpayNotfiy(out_trade_no, clientIP, "yifu回调订单成功");
             if(dealpayNotfiy.isSuccess()) {
                 log.info("【订单回调修改成功，订单号为 ："+out_trade_no+" 】");
                 return "success";

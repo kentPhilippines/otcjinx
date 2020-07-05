@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import alipay.manage.api.channel.util.yifu.YiFuUtil;
 import cn.hutool.core.util.RandomUtil;
 import com.netflix.ribbon.proxy.annotation.Http;
 
@@ -30,7 +31,7 @@ public class YiFu {
 	}
 
 	private static void test() {
-		String key = "kRrgxUk0QCpxz1bS5QVRJXZKEFPGnrqD";
+		/*String key = "kRrgxUk0QCpxz1bS5QVRJXZKEFPGnrqD";
 		String app_id = "-YbBmS2aFEfgBx4mnXI" ;
 		String channel = "1011";
 		int i = RandomUtil.randomInt(1000000000);
@@ -52,7 +53,10 @@ public class YiFu {
 		//{"code":200,"msg":"ok","data":{"pay_url":"http://kpay8494.168yuju.cn/pay/gateway/order?c=22&o=2020070411330189354","money":"100"}}
 		//{"code":419,"msg":"签名不正确","data":[]}
 		String post = HttpUtil.post("https://ef.sanbanye.com/pay", map);
-		System.out.println(post);
+		System.out.println(post);*/
+
+
+		//app_id=-YbBmS2aFEfgBx4mnXI&money=1000&out_trade_no=C1593861094418016017&pay_at=2020-07-04 19:11:36&
 	}
 	 public static String md5(String a) {
 	    	String c = "";

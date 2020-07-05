@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.HttpServletRequest;
 
+import alipay.manage.api.config.PayOrderService;
 import alipay.manage.bean.ChannelFee;
 import alipay.manage.bean.DealOrder;
 import alipay.manage.util.BankTypeUtil;
@@ -52,7 +53,7 @@ import otc.util.number.Number;
  */
 @RestController
 @RequestMapping("/deal")
-public class DealAppApi {
+public class DealAppApi extends PayOrderService {
 	@Autowired VendorRequestApi vendorRequestApi;
 	Logger log = LoggerFactory.getLogger(DealAppApi.class);
 	@Autowired FactoryForStrategy factoryForStrategy;
@@ -179,18 +180,15 @@ public class DealAppApi {
 	        Result deal = null;
 	        if(ObjectUtil.isNull(bean))
 	          return Result.buildFailMessage("代付订单生成失败");
-	        try {
-	       deal = factoryForStrategy.getStrategy(channelFee.getImpl()).withdraw(bean);
+	    try {
+			 deal = super.withdraw(bean);
+			//deal = factoryForStrategy.getStrategy(channelFee.getImpl()).withdraw(bean);
 	    } catch (Exception e) {
-	      log.info("【当前通道编码对于的实体类不存在】");
-	      log.error(e.getMessage());
+	     	log.error(e.getMessage());
+			super.withdrawEr(bean,"系统异常，请联系技术人员处理",HttpUtil.getClientIP(request));
 			log.info("【当前通道编码对于的实体类不存在】");
 	      return Result.buildFailMessage("当前通道编码不存在");
 	    }
-	        if(ObjectUtil.isNull(deal))
-	      return Result.buildFailMessage("其他错误，请联系客服人员处理");
-        if(ObjectUtil.isNull(deal))
-			return Result.buildFailMessage("其他错误，请联系客服人员处理");
 		return deal;
 	}
 	static final String BANK = "Bankcard",ALIPAY = "Alipay",WECHAR="Wechar";
