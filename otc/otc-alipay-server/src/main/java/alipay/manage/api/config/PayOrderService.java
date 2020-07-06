@@ -60,10 +60,10 @@ public abstract class PayOrderService implements PayService{
 	@Autowired ChannelFeeMapper channelFeeDao;
 	@Autowired OrderUtil orderUtilImpl;
 	@Override
-	public Result deal(DealOrderApp dealOrderApp,String payType) {
-		if(Common.Deal.PRODUCT_ALIPAY_SCAN.equals(payType))
+	public Result deal(DealOrderApp dealOrderApp,String channel) {
+		if(Common.Deal.PRODUCT_ALIPAY_SCAN.equals(channel))
 			return dealAlipayScan(dealOrderApp);
-		else if(Common.Deal.PRODUCT_ALIPAY_H5.equals(payType)) 
+		else if(Common.Deal.PRODUCT_ALIPAY_H5.equals(channel))
 			return dealAlipayH5(dealOrderApp);
 		return null;
 	}
