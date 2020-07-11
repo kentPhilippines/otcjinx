@@ -17,4 +17,5 @@ public interface WithdrawService {
 	 */
 	Withdraw findOrderId(String orderId);
 
+    Withdraw findOrderByApp(String appId, String appOrderId);
 }

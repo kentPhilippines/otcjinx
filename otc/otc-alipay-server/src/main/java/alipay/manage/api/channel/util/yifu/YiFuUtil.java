@@ -12,8 +12,8 @@ public class YiFuUtil {
     public static final String APPID="-YbBmS2aFEfgBx4mnXI";
     public static final String URL="https://ef.sanbanye.com/pay";
     public static final String KEY="kRrgxUk0QCpxz1bS5QVRJXZKEFPGnrqD";
-    public static final String CHANNEL_KUAIJIE="1011";
-    public static final String CHANNEL_WANGYING="1010";
+    public static final String CHANNEL_KUAIJIE="0202";
+    public static final String CHANNEL_WANGYING="0202";
     public static String md5(String a) {
         String c = "";
         MessageDigest md5;

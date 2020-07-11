@@ -19,4 +19,9 @@ public class WithdrawServiceImpl implements WithdrawService{
 		return withdrawDao.findWitOrder(orderId);
 	}
 
+	@Override
+	public Withdraw findOrderByApp(String appId, String appOrderId) {
+		return withdrawDao.findOrderByApp(appId,appOrderId);
+	}
+
 }

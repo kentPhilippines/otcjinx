@@ -35,6 +35,28 @@ public class MiaoDaNotify extends NotfiyChannel {
             return "ip is error";
         }
         map = null;
+        /**
+         * 【秒达支付 参数：
+         * {
+         * psn=null,
+         * type=ywsell,
+         * body=null,
+         * mno=10334,
+         * trade_sn=10334070610353079572,
+         * money=200.00,
+         * out_order_sn=C1594002928872906919,
+         * accid=13336,
+         * ctime=1594002930,
+         * time=1594002929,
+         * attach=C1594002928872906919,
+         * ptime=1594003097,
+         * order_sn=C1594002928872906919,
+         * status=2,
+         * notice=0,
+         * timestamp=1594003165
+         * }
+         * 】
+         */
         String mno = req.getParameter("mno");
         String type = req.getParameter("type");
         String accid = req.getParameter("accid");
@@ -47,14 +69,11 @@ public class MiaoDaNotify extends NotfiyChannel {
         String out_order_sn = req.getParameter("out_order_sn");
         String money = req.getParameter("money");
         String remark = req.getParameter("remark");
-        String psn = req.getParameter("psn");
-        String body = req.getParameter("body");
         String attach = req.getParameter("attach");
         String notice = req.getParameter("notice");
         String timestamp = req.getParameter("timestamp");
         String sign = req.getParameter("sign");
         Map<String,Object> mapParam = new HashMap<String,Object>();
-        mapParam.put("mno",mno);
         mapParam.put("type",type);
         mapParam.put("accid",accid);
         mapParam.put("time",time);
@@ -65,13 +84,11 @@ public class MiaoDaNotify extends NotfiyChannel {
         mapParam.put("order_sn",order_sn);
         mapParam.put("out_order_sn",out_order_sn);
         mapParam.put("money",money);
-        mapParam.put("psn",psn);
-        mapParam.put("body",body);
         mapParam.put("attach",attach);
         mapParam.put("notice",notice);
         mapParam.put("timestamp",timestamp);
         log.info("【秒达支付 参数："+mapParam.toString()+"】");
-        String param = MiaoDaUtil.createParam(map);
+        String param = MiaoDaUtil.createParam(mapParam);
         log.info("【秒达支付排序后参数："+param+"】");
         String s = MiaoDaUtil.APPID + "&" + param + MiaoDaUtil.KEY;
         log.info("【秒达支付签名前参数："+s+"】");

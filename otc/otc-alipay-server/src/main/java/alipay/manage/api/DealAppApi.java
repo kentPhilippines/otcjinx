@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.HttpServletRequest;
 
+import alipay.config.redis.RedisLock;
 import alipay.manage.api.config.PayOrderService;
 import alipay.manage.bean.ChannelFee;
 import alipay.manage.bean.DealOrder;
@@ -66,10 +67,45 @@ public class DealAppApi extends PayOrderService {
 	@Autowired UserInfoService userInfoServiceImpl;
 	@Autowired CheckUtils checkUtils;
 	@Autowired ChannelFeeMapper channelFeeDao;
+	@RequestMapping("/findFund")
+	public Result findFund(HttpServletRequest request) {
+		String appId = request.getParameter("appId");
+		String sign = request.getParameter("sign");
+		if(StrUtil.isBlank(appId) ||  StrUtil.isBlank(sign)  )
+			return Result.buildFailMessage("必传参数为空");
+		UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(appId);
+		if(ObjectUtil.isNull(userInfo))
+			return Result.buildFailMessage("商户不存在");
+		Map<String,Object> map = new ConcurrentHashMap<String,Object>();
+		map.put("appId", appId);
+		boolean verifySign = checkUtils.verifySign(map, userInfo.getPayPasword());
+		map = null;
+		if(!verifySign)
+			return Result.buildFailMessage("签名错误");
+		UserFund fund = userInfoServiceImpl.findUserFundByAccount(appId);
+		if(ObjectUtil.isNull(fund)) {
+			log.info("【当前查询的商户号不存在，请核实，商户号为："+appId+"】");
+			return Result.buildFailMessage("当前查询的订单不存在，请核实");
+		}
+		Map<String,Object> mapr = new ConcurrentHashMap<String,Object>();
+		mapr.put("userId", fund.getUserId());
+		mapr.put("userName",fund.getUserName());
+		mapr.put("balance", fund.getAccountBalance());
+		String sign2 = checkUtils.getSign(mapr, userInfo.getPayPasword());
+		userInfo = null;
+		mapr = null;
+		Fund fundInfo = new Fund();
+		fundInfo.setBalance( fund.getAccountBalance());
+		fundInfo.setSign(sign2);
+		fundInfo.setUserId(fund.getUserId());
+		fundInfo.setUserName(fund.getUserName());
+		return Result.buildSuccessResult(fundInfo);
+	}
 	@RequestMapping("/findOrder")
 	public Result findOrder(HttpServletRequest request) {
 		String appId = request.getParameter("appId");
 		String appOrderId = request.getParameter("appOrderId");
+		String type = request.getParameter("type");
 		String sign = request.getParameter("sign");
 		if(StrUtil.isBlank(appId)||StrUtil.isBlank(appOrderId)|| StrUtil.isBlank(sign) ) 
 			return Result.buildFailMessage("必传参数为空");
@@ -77,13 +113,44 @@ public class DealAppApi extends PayOrderService {
 		if(ObjectUtil.isNull(userInfo))
 			return Result.buildFailMessage("商户不存在");
 		Map<String,Object> map = new ConcurrentHashMap<String,Object>();
+		if(StrUtil.isBlank(type))
+			type = null;
 		map.put("appId", appId);
 		map.put("appOrderId", appOrderId);
+		map.put("type", type);
 		map.put("sign", sign);
 		boolean verifySign = checkUtils.verifySign(map, userInfo.getPayPasword());
 		map = null;
 		if(!verifySign)
 			return Result.buildFailMessage("签名错误");
+		if("wit".equals(type)) {
+			log.info("【当前进入代付订单查询，订单号为："+appOrderId+"】");
+			Withdraw witb = withdrawServiceImpl.findOrderByApp(appId,appOrderId);
+			if(ObjectUtil.isNull(witb)) {
+				log.info("【当前查询的订单不存在，请核实，订单号为："+appOrderId+"】");
+				return Result.buildFailMessage("当前查询的订单不存在，请核实");
+			}
+			String clientIP = HttpUtil.getClientIP(request);
+			if (StrUtil.isBlank(clientIP))
+				return Result.buildFailMessage("未获取到代付查询ip");
+			Map<String,Object> mapr = new ConcurrentHashMap<String,Object>();
+			String commect = StrUtil.isBlank(witb.getComment())?"代付订单":witb.getComment();
+			mapr.put("appId", appId);
+			mapr.put("appOrderId", witb.getAppOrderId());
+			mapr.put("amount", witb.getAmount());
+			mapr.put("orderStatus", witb.getOrderStatus());
+			mapr.put("msg",commect);
+			String sign2 = checkUtils.getSign(mapr, userInfo.getPayPasword());
+			userInfo = null;
+			mapr = null;
+			FundBean fund = new FundBean();
+			fund.setAmount( witb.getAmount().toString());
+			fund.setOrderId(witb.getAppOrderId());
+			fund.setOrderStatus(witb.getOrderStatus());
+			//fund.setMsg(commect);
+			fund.setSign(sign2);
+			return Result.buildSuccessResult(fund);
+		}
 		DealOrderApp orderApp = orderAppServiceImpl.findOrderByApp(appId,appOrderId);
 		Map<String,Object> mapr = new ConcurrentHashMap<String,Object>();
 		mapr.put("appId", appId);
@@ -152,6 +219,7 @@ public class DealAppApi extends PayOrderService {
 	}
 	@SuppressWarnings("unchecked")
 	@PostMapping("/wit")
+	@RedisLock(waitTime = 0, extraKey = "#userId")
 	public Result witOrder(HttpServletRequest request) {
 		String manage = request.getParameter("manage");
 		boolean flag = false;
@@ -192,28 +260,6 @@ public class DealAppApi extends PayOrderService {
 		return deal;
 	}
 	static final String BANK = "Bankcard",ALIPAY = "Alipay",WECHAR="Wechar";
-	boolean isClick(String type ,UserRate rate){
-		if(type.equals(BANK)) {
-		List<Product> productList =	productDao.findCode(BANK);
-		for( Product p  : productList) {
-			if(p.getProductId().equals(rate.getPayTypr()))
-				return true;
-		}
-		}else if(type.equals(ALIPAY)) {
-			List<Product> productList =	productDao.findCode(ALIPAY);
-			for( Product p  : productList) {
-				if(p.getProductId().equals(rate.getPayTypr()))
-					return true;
-			}
-		}else if(type.equals(ALIPAY)) {
-			List<Product> productList =	productDao.findCode(WECHAR);
-			for( Product p  : productList) {
-				if(p.getProductId().equals(rate.getPayTypr()))
-					return true;
-			}
-		}
-		return false;
-	}
 	private Withdraw createWit(WithdrawalBean wit, UserRate userRate,Boolean fla, ChannelFee channelFee ) {
 	    log.info("【当前转换参数 代付实体类为："+wit.toString()+"】");
 	    String type = "";
@@ -334,5 +380,35 @@ class FundBean{
 	}
 	public void setAmount(String amount) {
 		this.amount = amount;
+	}
+}
+class Fund{
+	private String userId;					//用户id
+	private String userName;				//用户姓名
+	private BigDecimal balance;			//现金账户【分润】
+	private String sign;
+	public String getSign() {
+		return sign;
+	}
+	public void setSign(String sign) {
+		this.sign = sign;
+	}
+	public String getUserId() {
+		return userId;
+	}
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+	public String getUserName() {
+		return userName;
+	}
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+	public BigDecimal getBalance() {
+		return balance;
+	}
+	public void setBalance(BigDecimal balance) {
+		this.balance = balance;
 	}
 }

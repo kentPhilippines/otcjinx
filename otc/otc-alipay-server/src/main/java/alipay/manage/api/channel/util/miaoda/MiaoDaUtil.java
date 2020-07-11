@@ -1,6 +1,7 @@
 package alipay.manage.api.channel.util.miaoda;
 
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
@@ -20,7 +21,7 @@ public class MiaoDaUtil {
             Arrays.sort(key);
             StringBuffer res = new StringBuffer(128);
             for (int i = 0; i < key.length; i++)
-                if(ObjectUtil.isNotNull(map.get(key[i])))
+                if(StrUtil.isNotBlank(map.get(key[i]).toString()))
                     res.append(key[i] + "=" + map.get(key[i]) + "&");
             return res.toString();
         } catch (Exception e) {
