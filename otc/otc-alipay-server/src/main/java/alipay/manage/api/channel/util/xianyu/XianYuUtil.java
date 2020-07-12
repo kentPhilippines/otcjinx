@@ -10,6 +10,7 @@ public class XianYuUtil {
 	public static final String URL = "https://csj.fenvun.com/Pay";
 	public static final String IOSH5 = "zfbh5";
 	public static final String SCANH5 = "zfbsm";
+	public static final String BANK = "bank";
 	 public static String md5(String a) {
 	    	String c = "";
 	    	MessageDigest md5;

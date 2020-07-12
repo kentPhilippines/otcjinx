@@ -1,6 +1,7 @@
 package alipay.manage.api;
 
 import java.math.BigDecimal;
+import java.sql.Struct;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -78,6 +79,7 @@ public class DealAppApi extends PayOrderService {
 			return Result.buildFailMessage("商户不存在");
 		Map<String,Object> map = new ConcurrentHashMap<String,Object>();
 		map.put("appId", appId);
+		map.put("sign", sign);
 		boolean verifySign = checkUtils.verifySign(map, userInfo.getPayPasword());
 		map = null;
 		if(!verifySign)
@@ -107,23 +109,88 @@ public class DealAppApi extends PayOrderService {
 		String appOrderId = request.getParameter("appOrderId");
 		String type = request.getParameter("type");
 		String sign = request.getParameter("sign");
-		if(StrUtil.isBlank(appId)||StrUtil.isBlank(appOrderId)|| StrUtil.isBlank(sign) ) 
-			return Result.buildFailMessage("必传参数为空");
-		UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(appId);
-		if(ObjectUtil.isNull(userInfo))
-			return Result.buildFailMessage("商户不存在");
-		Map<String,Object> map = new ConcurrentHashMap<String,Object>();
-		if(StrUtil.isBlank(type))
-			type = null;
-		map.put("appId", appId);
-		map.put("appOrderId", appOrderId);
-		map.put("type", type);
-		map.put("sign", sign);
-		boolean verifySign = checkUtils.verifySign(map, userInfo.getPayPasword());
-		map = null;
-		if(!verifySign)
-			return Result.buildFailMessage("签名错误");
+		if(StrUtil.isBlank(type) ){
+			if(StrUtil.isBlank(appId)||StrUtil.isBlank(appOrderId)|| StrUtil.isBlank(sign) )
+				return Result.buildFailMessage("必传参数为空");
+			UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(appId);
+			if(ObjectUtil.isNull(userInfo))
+				return Result.buildFailMessage("商户不存在");
+			Map<String,Object> map = new ConcurrentHashMap<String,Object>();
+			if(StrUtil.isBlank(type))
+				type = null;
+			map.put("appId", appId);
+			map.put("appOrderId", appOrderId);
+			map.put("sign", sign);
+			boolean verifySign = checkUtils.verifySign(map, userInfo.getPayPasword());
+			map = null;
+			if(!verifySign)
+				return Result.buildFailMessage("签名错误");
+			DealOrderApp orderApp = orderAppServiceImpl.findOrderByApp(appId,appOrderId);
+			Map<String,Object> mapr = new ConcurrentHashMap<String,Object>();
+			mapr.put("appId", appId);
+			mapr.put("appOrderId", orderApp.getAppOrderId());
+			mapr.put("amount", orderApp.getOrderAmount());
+			mapr.put("orderStatus", orderApp.getOrderStatus());
+			String sign2 = checkUtils.getSign(mapr, userInfo.getPayPasword());
+			userInfo = null;
+			mapr = null;
+			FundBean fund = new FundBean();
+			fund.setAmount(orderApp.getOrderAmount().toString());
+			fund.setOrderId(orderApp.getAppOrderId());
+			fund.setOrderStatus(orderApp.getOrderStatus());
+			fund.setSign(sign2);
+			return Result.buildSuccessResult(fund);
+		}
+		if("pay".equals(type) ){
+			if(StrUtil.isBlank(appId)||StrUtil.isBlank(appOrderId)|| StrUtil.isBlank(sign) )
+				return Result.buildFailMessage("必传参数为空");
+			UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(appId);
+			if(ObjectUtil.isNull(userInfo))
+				return Result.buildFailMessage("商户不存在");
+			Map<String,Object> map = new ConcurrentHashMap<String,Object>();
+			if(StrUtil.isBlank(type))
+				type = null;
+			map.put("appId", appId);
+			map.put("appOrderId", appOrderId);
+			map.put("type", type);
+			map.put("sign", sign);
+			boolean verifySign = checkUtils.verifySign(map, userInfo.getPayPasword());
+			map = null;
+			if(!verifySign)
+				return Result.buildFailMessage("签名错误");
+			DealOrderApp orderApp = orderAppServiceImpl.findOrderByApp(appId,appOrderId);
+			Map<String,Object> mapr = new ConcurrentHashMap<String,Object>();
+			mapr.put("appId", appId);
+			mapr.put("appOrderId", orderApp.getAppOrderId());
+			mapr.put("amount", orderApp.getOrderAmount());
+			mapr.put("orderStatus", orderApp.getOrderStatus());
+			String sign2 = checkUtils.getSign(mapr, userInfo.getPayPasword());
+			userInfo = null;
+			mapr = null;
+			FundBean fund = new FundBean();
+			fund.setAmount(orderApp.getOrderAmount().toString());
+			fund.setOrderId(orderApp.getAppOrderId());
+			fund.setOrderStatus(orderApp.getOrderStatus());
+			fund.setSign(sign2);
+			return Result.buildSuccessResult(fund);
+		}
 		if("wit".equals(type)) {
+			if(StrUtil.isBlank(appId)||StrUtil.isBlank(appOrderId)|| StrUtil.isBlank(sign) )
+				return Result.buildFailMessage("必传参数为空");
+			UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(appId);
+			if(ObjectUtil.isNull(userInfo))
+				return Result.buildFailMessage("商户不存在");
+			Map<String,Object> map = new ConcurrentHashMap<String,Object>();
+			if(StrUtil.isBlank(type))
+				type = null;
+			map.put("appId", appId);
+			map.put("appOrderId", appOrderId);
+			map.put("type", type);
+			map.put("sign", sign);
+			boolean verifySign = checkUtils.verifySign(map, userInfo.getPayPasword());
+			map = null;
+			if(!verifySign)
+				return Result.buildFailMessage("签名错误");
 			log.info("【当前进入代付订单查询，订单号为："+appOrderId+"】");
 			Withdraw witb = withdrawServiceImpl.findOrderByApp(appId,appOrderId);
 			if(ObjectUtil.isNull(witb)) {
@@ -151,21 +218,7 @@ public class DealAppApi extends PayOrderService {
 			fund.setSign(sign2);
 			return Result.buildSuccessResult(fund);
 		}
-		DealOrderApp orderApp = orderAppServiceImpl.findOrderByApp(appId,appOrderId);
-		Map<String,Object> mapr = new ConcurrentHashMap<String,Object>();
-		mapr.put("appId", appId);
-		mapr.put("appOrderId", orderApp.getAppOrderId());
-		mapr.put("amount", orderApp.getOrderAmount());
-		mapr.put("orderStatus", orderApp.getOrderStatus());
-		String sign2 = checkUtils.getSign(mapr, userInfo.getPayPasword());
-		userInfo = null;
-		mapr = null;
-		FundBean fund = new FundBean();
-		fund.setAmount(orderApp.getOrderAmount().toString());
-		fund.setOrderId(orderApp.getAppOrderId());
-		fund.setOrderStatus(orderApp.getOrderStatus());
-		fund.setSign(sign2);
-		return Result.buildSuccessResult(fund);
+		return Result.buildFailMessage("查询失败");
 	}
 	/**
 	 * <p>下游商户交易接口</p>
