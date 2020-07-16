@@ -69,17 +69,17 @@ public interface DealOrderMapper {
     @Update("update alipay_deal_order set orderStatus  = #{status} , dealDescribe   = #{mag}  where  orderId = #{orderId}")
 	int updateOrderStatus(@Param("orderId")String orderId, @Param("status")String status, @Param("mag")String mag);
 
-    
+
     @Select("select * from alipay_deal_order where associatedId = #{associatedId}")
 	DealOrder findOrderByAssociatedId(@Param("associatedId")String associatedId);
     @Update("update alipay_deal_order set retain2  = #{id}  where  orderId = #{orderId}")
 	void updataXianyYu(@Param("orderId") String orderId, @Param("id") String id);
-    
+
     @Select("select retain2 , orderId from alipay_deal_order where createTime > DATE_ADD(NOW(),INTERVAL-3 HOUR)  and orderStatus = 1 and orderQrUser = 'XianYuZhifubao'")
     List<DealOrder> findXianYuOrder();
     @Select("SELECT retain2 , orderId FROM alipay_deal_order WHERE createTime > DATE_ADD(NOW(),INTERVAL -20 MINUTE)  AND orderStatus = 1 AND orderQrUser = 'XYALIPAYSCAN' LIMIT 50")
     List<DealOrder> findXianYuOrder1();
-    @Select("SELECT retain2 , orderId FROM alipay_deal_order WHERE createTime > DATE_ADD(NOW(),INTERVAL -20 MINUTE)  AND orderStatus = 1 AND orderQrUser = 'ChuanShanJia' LIMIT 50")
+    @Select("SELECT retain2 , orderId FROM alipay_deal_order WHERE createTime > DATE_ADD(NOW(),INTERVAL -20 MINUTE)  AND orderStatus = 1 AND orderQrUser = 'ChuanShanJia' LIMIT 100")
     List<DealOrder> findXianYuOrder2();
 
 
