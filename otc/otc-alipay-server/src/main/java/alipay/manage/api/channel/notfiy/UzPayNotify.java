@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,6 +29,7 @@ public class UzPayNotify extends NotfiyChannel{
     @RequestMapping("/UZPAY-notfiy")
 	 public String notify( 
 			 String orderid,
+			 @RequestBody String json,
 			 HttpServletRequest request
 			    )  {
     	log.info("【收到UzPay回调】");
@@ -38,9 +40,12 @@ public class UzPayNotify extends NotfiyChannel{
 			log.info("【当前回调ip不匹配】");
 			return "ip errer";
 		}
+		JSONObject rtJson = JSONUtil.parseObj(json);
+		if(null == rtJson) return "ERROR";
+		orderid = rtJson.getStr("orderid");
 		if(StrUtil.isBlank(orderid)) {
 			log.info("【回调参数异常，订单号为获取到】");
-			return "error";
+			return "ERROR";
 		}
 		Map<String,Object> map = new HashMap<String,Object>();
 		map.put("uid", UzPayUtil.UID);
