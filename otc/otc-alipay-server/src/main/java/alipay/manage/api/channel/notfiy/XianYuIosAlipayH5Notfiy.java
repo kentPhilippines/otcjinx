@@ -1,6 +1,9 @@
 package alipay.manage.api.channel.notfiy;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -33,10 +36,12 @@ public class XianYuIosAlipayH5Notfiy extends NotfiyChannel{
 	private static final String ORDER_QUERY = "orderquery";
 	private static final Log log = LogFactory.get();
     @RequestMapping("/chuanshanjia-notfiy")
-	 public void notify(  
+	 public void notify(
 			 HttpServletRequest request,
 	         HttpServletResponse response
 			    ) throws Exception {
+		param(request);
+		param2(request);
 		log.info("进入 穿山甲 回调处理");
 		String clientIP = HttpUtil.getClientIP(request);
 		log.info("【当前回调ip为："+clientIP+"】");
@@ -89,4 +94,43 @@ public class XianYuIosAlipayH5Notfiy extends NotfiyChannel{
 		 }
 		return null;
 	}
+
+	void param2(HttpServletRequest req){
+		String fxddh = req.getParameter("fxddh");
+		if(StrUtil.isBlank(fxddh))
+			log.info("穿山甲数据获取为空：");
+
+	}
+	void param(HttpServletRequest req) throws IOException {
+		InputStream inputStream = req.getInputStream();
+		String body;
+		StringBuilder stringBuilder = new StringBuilder();
+		BufferedReader bufferedReader = null;
+		try {
+			if (inputStream != null) {
+				bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+				char[] charBuffer = new char[128];
+				int bytesRead = -1;
+				while ((bytesRead = bufferedReader.read(charBuffer)) > 0) {
+					stringBuilder.append(charBuffer, 0, bytesRead);
+				}
+			} else {
+				stringBuilder.append("");
+			}
+		} catch (IOException ex) {
+			throw ex;
+		} finally {
+			if (bufferedReader != null) {
+				try {
+					bufferedReader.close();
+				} catch (IOException ex) {
+					throw ex;
+				}
+			}
+		}
+	 log.info("穿山甲数据："+stringBuilder);
+
+	}
+
+
 }

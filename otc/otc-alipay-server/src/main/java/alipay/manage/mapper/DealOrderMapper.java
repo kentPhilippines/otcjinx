@@ -66,7 +66,7 @@ public interface DealOrderMapper {
      * @param mag					修改备注
      * @return
      */
-    @Update("update alipay_deal_order set orderStatus  = #{status} , dealDescribe   = #{mag}  where  orderId = #{orderId}")
+    @Update("update alipay_deal_order set orderStatus  = #{status} , dealDescribe   = #{mag} ,submitTime = NOW()   where  orderId = #{orderId}")
 	int updateOrderStatus(@Param("orderId")String orderId, @Param("status")String status, @Param("mag")String mag);
 
 
