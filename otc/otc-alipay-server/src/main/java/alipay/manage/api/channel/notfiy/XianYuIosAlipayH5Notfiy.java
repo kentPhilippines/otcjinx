@@ -41,7 +41,7 @@ public class XianYuIosAlipayH5Notfiy extends NotfiyChannel{
 	         HttpServletResponse response
 			    ) throws Exception {
 		param(request);
-		param2(request);
+		String s = param2(request);
 		log.info("进入 穿山甲 回调处理");
 		String clientIP = HttpUtil.getClientIP(request);
 		log.info("【当前回调ip为："+clientIP+"】");
@@ -51,13 +51,14 @@ public class XianYuIosAlipayH5Notfiy extends NotfiyChannel{
 			response.getWriter().write("ip错误");
 			return;
 		}
-		response.getWriter().write("success");
-		List<DealOrder> findXianYuOrder = dealOrderDao.findXianYuOrder2();
+	/*	List<DealOrder> findXianYuOrder = dealOrderDao.findXianYuOrder2();
 		for(DealOrder order : findXianYuOrder) {
-			ThreadUtil.execute(()->{
+			ThreadUtil.execute(()->{*/
+		if(StrUtil.isNotBlank(s)){
+			response.getWriter().write("success");
 				log.info("【进入 穿山甲 订单查询处理】 ");
-				log.info("【当前 穿山甲 订单号："+order.getOrderId()+"】 ");
-				String fxddh = order.getOrderId();//咸鱼订单号
+				log.info("【当前 穿山甲 订单号："+s+"】 ");
+				String fxddh = s;//咸鱼订单号
 				String fxaction = ORDER_QUERY;
 				Map<String, Object>  map = new ConcurrentHashMap<String, Object>();
 				map.put("fxid", XianYuUtil.APPID );
@@ -70,24 +71,23 @@ public class XianYuIosAlipayH5Notfiy extends NotfiyChannel{
 				XianYu bean = JSONUtil.toBean(parseObj, XianYu.class);
 				log.info("【当前返回数据为：】"+bean.toString());
 				if(bean.getFxstatus().equals("1")) {
-					String enterOrder = enterOrder(order.getOrderId(), clientIP);
-					if(StrUtil.isNotBlank(enterOrder)) {
+					String enterOrder = enterOrder(s, clientIP,"收到穿山甲回调成功");
+					/*if(StrUtil.isNotBlank(enterOrder)) {
 						try {
 							response.getWriter().write("success");
 						} catch (IOException e) {
 							log.info("【响应数据出错，当前订单号："+order.getOrderId()+"，穿山甲 订单号："+order.getOrderId()+"】 ");
 						}
-					}
+					}*/
 				}else {
 					map = null;
 					fxddh =null;
 					fxaction = null;
 				}
-			});
-		}
 	}
-	String enterOrder(String orderId ,String ip){
-		 Result dealpayNotfiy = dealpayNotfiy(orderId, ip);
+		}
+	String enterOrder(String orderId ,String ip,String s){
+		 Result dealpayNotfiy = dealpayNotfiy(orderId, ip,s);
 		 if(dealpayNotfiy.isSuccess()) {
 			 log.info("【支付宝扫码 交易成功】");
 			 return "success";
@@ -95,11 +95,14 @@ public class XianYuIosAlipayH5Notfiy extends NotfiyChannel{
 		return null;
 	}
 
-	void param2(HttpServletRequest req){
+	String param2(HttpServletRequest req){
 		String fxddh = req.getParameter("fxddh");
-		if(StrUtil.isBlank(fxddh))
+		if(StrUtil.isBlank(fxddh)){
 			log.info("穿山甲数据获取为空：");
-
+		} else{
+			return fxddh ;
+		}
+		return "";
 	}
 	void param(HttpServletRequest req) throws IOException {
 		InputStream inputStream = req.getInputStream();

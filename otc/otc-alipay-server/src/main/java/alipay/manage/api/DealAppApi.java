@@ -316,6 +316,7 @@ public class DealAppApi extends PayOrderService {
 	private Withdraw createWit(WithdrawalBean wit, UserRate userRate,Boolean fla, ChannelFee channelFee ) {
 	    log.info("【当前转换参数 代付实体类为："+wit.toString()+"】");
 	    String type = "";
+	    String bankName = "";
 	    if(fla)type=Common.Order.Wit.WIT_TYPE_API;else type = Common.Order.Wit.WIT_TYPE_MANAGE;
 	    Withdraw witb = new Withdraw();
 	    witb.setUserId(wit.getAppid());
@@ -325,7 +326,10 @@ public class DealAppApi extends PayOrderService {
 	    witb.setMobile(wit.getMobile());
 	    witb.setBankNo(wit.getAcctno());
 	    witb.setAccname(wit.getAcctname());
-	    witb.setBankName(wit.getBankName());
+		bankName = wit.getBankName();
+	    if(StrUtil.isBlank(bankName));
+			bankName = BankTypeUtil.getBankName(wit.getBankcode());
+	    witb.setBankName(bankName);
 	    witb.setWithdrawType(Common.Order.Wit.WIT_ACC);
 	    witb.setOrderId(Number.getWitOrder());
 	    witb.setOrderStatus(Common.Order.DealOrderApp.ORDER_STATUS_DISPOSE.toString());
@@ -345,7 +349,7 @@ public class DealAppApi extends PayOrderService {
 	  DealOrderApp createDealAppOrder(DealBean dealBean){
 	    DealOrderApp dealApp = new DealOrderApp ();
 	    dealApp.setAppOrderId(dealBean.getOrderId());
-	    dealApp.setOrderId(Number.getAppOreder()); 
+	    dealApp.setOrderId(Number.getAppOreder());
 	    dealApp.setNotify(dealBean.getNotifyUrl());
 	    dealApp.setOrderAmount(new BigDecimal(dealBean.getAmount()));
 	    String userId = dealBean.getAppId();
@@ -368,7 +372,7 @@ public class DealAppApi extends PayOrderService {
 	  }
 }
 class ResultDeal{
-	private boolean sussess;	//是否成功	        True 成功  false  失败 
+	private boolean sussess;	//是否成功	        True 成功  false  失败
 	private Integer cod;	//订单状态码【“0”为成功】	详情请查看响应状态码
 	private Integer openType;//	打开方式	【1】为url打开方式【2】为html浏览器打开方式
 	private String  returnUrl;	//支付内容

@@ -10,8 +10,9 @@ import cn.hutool.log.LogFactory;
 public class BankTypeUtil {
 	private static final Log log = LogFactory.get();
 	static   Map BANK_MAP = new ConcurrentHashMap();
-	
-	
+	static   Map BANK_MAP_NAME = new ConcurrentHashMap();
+
+
 	static {
 		initbank();
 	}
@@ -19,6 +20,7 @@ public class BankTypeUtil {
 
 	private static void initbank() {
 		log.info("【初始化银行卡code】");
+
 		BANK_MAP.put("Bankcard", "Bankcard");
 		BANK_MAP.put("Alipay", "Alipay");
 		BANK_MAP.put("Wechar", "Wechar");
@@ -56,12 +58,12 @@ public class BankTypeUtil {
 		BANK_MAP.put("CEB", BankEnum.CEB.getBankId());
 		BANK_MAP.put("CGNB", BankEnum.CGNB.getBankId());
 		BANK_MAP.put("CIB", BankEnum.CIB.getBankId());
-		
-		
-		
-		
-		
-		
+
+
+
+
+
+
 		BANK_MAP.put("CITIC", BankEnum.CITIC.getBankId());
 		BANK_MAP.put("CMB", BankEnum.CMB.getBankId());
 		BANK_MAP.put("CMBC", BankEnum.CMBC.getBankId());
@@ -100,16 +102,16 @@ public class BankTypeUtil {
 		BANK_MAP.put("HBHSBANK", BankEnum.HBHSBANK.getBankId());
 		BANK_MAP.put("HBRCU", BankEnum.HBRCU.getBankId());
 
-		
-		
+
+
 		BANK_MAP.put("HBYCBANK", BankEnum.HBYCBANK.getBankId());
 		BANK_MAP.put("HZCCB", BankEnum.HZCCB.getBankId());
 		BANK_MAP.put("HDBANK", BankEnum.HDBANK.getBankId());
 		BANK_MAP.put("HKB", BankEnum.HKB.getBankId());
 		BANK_MAP.put("HKBEA", BankEnum.HKBEA.getBankId());
 		BANK_MAP.put("HNRCC", BankEnum.HNRCC.getBankId());
-		
-		
+
+
 		BANK_MAP.put("HRXJB", BankEnum.HRXJB.getBankId());
 		BANK_MAP.put("HZCB", BankEnum.HZCB.getBankId());
 		BANK_MAP.put("ICBC", BankEnum.ICBC.getBankId());
@@ -121,7 +123,7 @@ public class BankTypeUtil {
 		BANK_MAP.put("JRCB", BankEnum.JRCB.getBankId());
 		BANK_MAP.put("JSB", BankEnum.JSB.getBankId());
 		BANK_MAP.put("JSBANK", BankEnum.JSBANK.getBankId());
-		
+
 		BANK_MAP.put("NJCB", BankEnum.NJCB.getBankId());
 		BANK_MAP.put("MTBANK", BankEnum.MTBANK.getBankId());
 		BANK_MAP.put("NBBANK", BankEnum.NBBANK.getBankId());
@@ -134,16 +136,16 @@ public class BankTypeUtil {
 		BANK_MAP.put("NYNB", BankEnum.NYNB.getBankId());
 		BANK_MAP.put("ORBANK", BankEnum.ORBANK.getBankId());
 
-		
-		
+
+
 		BANK_MAP.put("TACCB", BankEnum.TACCB.getBankId());
 		BANK_MAP.put("TCCB", BankEnum.TCCB.getBankId());
 		BANK_MAP.put("TCRCB", BankEnum.TCRCB.getBankId());
 		BANK_MAP.put("TZCB", BankEnum.TZCB.getBankId());
 		BANK_MAP.put("URMQCCB", BankEnum.URMQCCB.getBankId());
-		
-		
-		
+
+
+
 		BANK_MAP.put("WHCCB", BankEnum.WHCCB.getBankId());
 		BANK_MAP.put("WHRCB", BankEnum.WHRCB.getBankId());
 		BANK_MAP.put("WJRCB", BankEnum.WJRCB.getBankId());
@@ -151,9 +153,9 @@ public class BankTypeUtil {
 		BANK_MAP.put("WRCB", BankEnum.WRCB.getBankId());
 		BANK_MAP.put("WZCB", BankEnum.WZCB.getBankId());
 		BANK_MAP.put("ZBCB", BankEnum.ZBCB.getBankId());
-		
-		
-		
+
+
+
 		BANK_MAP.put("ZBCB", BankEnum.ZBCB.getBankId());
 		BANK_MAP.put("ZGCCB", BankEnum.ZGCCB.getBankId());
 		BANK_MAP.put("ZJKCCB", BankEnum.ZJKCCB.getBankId());
@@ -162,17 +164,166 @@ public class BankTypeUtil {
 		BANK_MAP.put("ZRCBANK", BankEnum.ZRCBANK.getBankId());
 		BANK_MAP.put("ZYCBANK", BankEnum.ZYCBANK.getBankId());
 		BANK_MAP.put("ZZBANK", BankEnum.ZZBANK.getBankId());
+
+
+
+
+
+
+		BANK_MAP_NAME.put("ABC", BankEnum.ABC.getBankNameCn());
+		BANK_MAP_NAME.put("ARCU", BankEnum.ARCU.getBankNameCn());
+		BANK_MAP_NAME.put("PSBC", BankEnum.PSBC.getBankNameCn());
+		BANK_MAP_NAME.put("ASCB", BankEnum.ASCB.getBankNameCn());
+		BANK_MAP_NAME.put("AYCB", BankEnum.AYCB.getBankNameCn());
+		BANK_MAP_NAME.put("BANKWF", BankEnum.BANKWF.getBankNameCn());
+		BANK_MAP_NAME.put("BGB", BankEnum.BGB.getBankNameCn());
+		BANK_MAP_NAME.put("BHB", BankEnum.BHB.getBankNameCn());
+		BANK_MAP_NAME.put("BJBANK", BankEnum.BJBANK.getBankNameCn());
+		BANK_MAP_NAME.put("BJRCB", BankEnum.BJRCB.getBankNameCn());
+		BANK_MAP_NAME.put("BOC", BankEnum.BOC.getBankNameCn());
+		BANK_MAP_NAME.put("BOCD", BankEnum.BOCD.getBankNameCn());
+		BANK_MAP_NAME.put("BOCY", BankEnum.BOCY.getBankNameCn());
+		BANK_MAP_NAME.put("BOD", BankEnum.BOD.getBankNameCn());
+		BANK_MAP_NAME.put("BOHAIB", BankEnum.BOHAIB.getBankNameCn());
+		BANK_MAP_NAME.put("BOJZ", BankEnum.BOJZ.getBankNameCn());
+		BANK_MAP_NAME.put("BOP", BankEnum.BOP.getBankNameCn());
+		BANK_MAP_NAME.put("BOQH", BankEnum.BOQH.getBankNameCn());
+		BANK_MAP_NAME.put("BOSZ", BankEnum.BOSZ.getBankNameCn());
+		BANK_MAP_NAME.put("BOYK", BankEnum.BOYK.getBankNameCn());
+		BANK_MAP_NAME.put("BOZK", BankEnum.BOZK.getBankNameCn());
+		BANK_MAP_NAME.put("BSB", BankEnum.BSB.getBankNameCn());
+		BANK_MAP_NAME.put("BZMD", BankEnum.BZMD.getBankNameCn());
+		BANK_MAP_NAME.put("CBBQS", BankEnum.CBBQS.getBankNameCn());
+		BANK_MAP_NAME.put("CBKF", BankEnum.CBKF.getBankNameCn());
+		BANK_MAP_NAME.put("CCAB", BankEnum.CCAB.getBankNameCn());
+		BANK_MAP_NAME.put("CCB", BankEnum.CCB.getBankNameCn());
+		BANK_MAP_NAME.put("CCQTGB", BankEnum.CCQTGB.getBankNameCn());
+		BANK_MAP_NAME.put("CDB", BankEnum.CDB.getBankNameCn());
+		BANK_MAP_NAME.put("CDCB", BankEnum.CDCB.getBankNameCn());
+		BANK_MAP_NAME.put("CDRCB", BankEnum.CDRCB.getBankNameCn());
+		BANK_MAP_NAME.put("CEB", BankEnum.CEB.getBankNameCn());
+		BANK_MAP_NAME.put("CGNB", BankEnum.CGNB.getBankNameCn());
+		BANK_MAP_NAME.put("CIB", BankEnum.CIB.getBankNameCn());
+
+
+
+
+
+
+		BANK_MAP_NAME.put("CITIC", BankEnum.CITIC.getBankNameCn());
+		BANK_MAP_NAME.put("CMB", BankEnum.CMB.getBankNameCn());
+		BANK_MAP_NAME.put("CMBC", BankEnum.CMBC.getBankNameCn());
+		BANK_MAP_NAME.put("COMM", BankEnum.COMM.getBankNameCn());
+		BANK_MAP_NAME.put("CQBANK", BankEnum.CQBANK.getBankNameCn());
+		BANK_MAP_NAME.put("CRCBANK", BankEnum.CRCBANK.getBankNameCn());
+		BANK_MAP_NAME.put("CSCB", BankEnum.CSCB.getBankNameCn());
+		BANK_MAP_NAME.put("CSRCB", BankEnum.CSRCB.getBankNameCn());
+		BANK_MAP_NAME.put("CZBANK", BankEnum.CZBANK.getBankNameCn());
+		BANK_MAP_NAME.put("CZCB", BankEnum.CZCB.getBankNameCn());
+		BANK_MAP_NAME.put("CZRCB", BankEnum.CZRCB.getBankNameCn());
+		BANK_MAP_NAME.put("DAQINGB", BankEnum.DAQINGB.getBankNameCn());
+		BANK_MAP_NAME.put("DLB", BankEnum.DLB.getBankNameCn());
+		BANK_MAP_NAME.put("DRCBCL", BankEnum.DRCBCL.getBankNameCn());
+		BANK_MAP_NAME.put("DYCB", BankEnum.DYCB.getBankNameCn());
+		BANK_MAP_NAME.put("DYCCB", BankEnum.DYCCB.getBankNameCn());
+		BANK_MAP_NAME.put("DZBANK", BankEnum.DZBANK.getBankNameCn());
+		BANK_MAP_NAME.put("EGBANK", BankEnum.EGBANK.getBankNameCn());
+		BANK_MAP_NAME.put("FDB", BankEnum.FDB.getBankNameCn());
+		BANK_MAP_NAME.put("FJHXBC", BankEnum.FJHXBC.getBankNameCn());
+		BANK_MAP_NAME.put("FJNX", BankEnum.FJNX.getBankNameCn());
+		BANK_MAP_NAME.put("FSCB", BankEnum.FSCB.getBankNameCn());
+		BANK_MAP_NAME.put("GCB", BankEnum.GCB.getBankNameCn());
+		BANK_MAP_NAME.put("GDB", BankEnum.GDB.getBankNameCn());
+		BANK_MAP_NAME.put("GDRCC", BankEnum.GDRCC.getBankNameCn());
+		BANK_MAP_NAME.put("GLBANK", BankEnum.GLBANK.getBankNameCn());
+		BANK_MAP_NAME.put("GRCB", BankEnum.GRCB.getBankNameCn());
+		BANK_MAP_NAME.put("GSRCU", BankEnum.GSRCU.getBankNameCn());
+		BANK_MAP_NAME.put("GXRCU", BankEnum.GXRCU.getBankNameCn());
+		BANK_MAP_NAME.put("GYCB", BankEnum.GYCB.getBankNameCn());
+		BANK_MAP_NAME.put("GZB", BankEnum.GZB.getBankNameCn());
+		BANK_MAP_NAME.put("GZRCU", BankEnum.GZRCU.getBankNameCn());
+		BANK_MAP_NAME.put("HBC", BankEnum.HBC.getBankNameCn());
+		BANK_MAP_NAME.put("HANABANK", BankEnum.HANABANK.getBankNameCn());
+		BANK_MAP_NAME.put("H3CB", BankEnum.H3CB.getBankNameCn());
+		BANK_MAP_NAME.put("HBHSBANK", BankEnum.HBHSBANK.getBankNameCn());
+		BANK_MAP_NAME.put("HBRCU", BankEnum.HBRCU.getBankNameCn());
+
+
+
+		BANK_MAP_NAME.put("HBYCBANK", BankEnum.HBYCBANK.getBankNameCn());
+		BANK_MAP_NAME.put("HZCCB", BankEnum.HZCCB.getBankNameCn());
+		BANK_MAP_NAME.put("HDBANK", BankEnum.HDBANK.getBankNameCn());
+		BANK_MAP_NAME.put("HKB", BankEnum.HKB.getBankNameCn());
+		BANK_MAP_NAME.put("HKBEA", BankEnum.HKBEA.getBankNameCn());
+		BANK_MAP_NAME.put("HNRCC", BankEnum.HNRCC.getBankNameCn());
+
+
+		BANK_MAP_NAME.put("HRXJB", BankEnum.HRXJB.getBankNameCn());
+		BANK_MAP_NAME.put("HZCB", BankEnum.HZCB.getBankNameCn());
+		BANK_MAP_NAME.put("ICBC", BankEnum.ICBC.getBankNameCn());
+		BANK_MAP_NAME.put("JHBANK", BankEnum.JHBANK.getBankNameCn());
+		BANK_MAP_NAME.put("JINCHB", BankEnum.JINCHB.getBankNameCn());
+		BANK_MAP_NAME.put("JLBANK", BankEnum.JLBANK.getBankNameCn());
+		BANK_MAP_NAME.put("JLRCU", BankEnum.JLRCU.getBankNameCn());
+		BANK_MAP_NAME.put("JNBANK", BankEnum.JNBANK.getBankNameCn());
+		BANK_MAP_NAME.put("JRCB", BankEnum.JRCB.getBankNameCn());
+		BANK_MAP_NAME.put("JSB", BankEnum.JSB.getBankNameCn());
+		BANK_MAP_NAME.put("JSBANK", BankEnum.JSBANK.getBankNameCn());
+
+		BANK_MAP_NAME.put("NJCB", BankEnum.NJCB.getBankNameCn());
+		BANK_MAP_NAME.put("MTBANK", BankEnum.MTBANK.getBankNameCn());
+		BANK_MAP_NAME.put("NBBANK", BankEnum.NBBANK.getBankNameCn());
+		BANK_MAP_NAME.put("NBYZ", BankEnum.NBYZ.getBankNameCn());
+		BANK_MAP_NAME.put("NCB", BankEnum.NCB.getBankNameCn());
+		BANK_MAP_NAME.put("NHB", BankEnum.NHB.getBankNameCn());
+		BANK_MAP_NAME.put("NHQS", BankEnum.NHQS.getBankNameCn());
+		BANK_MAP_NAME.put("NJCB", BankEnum.NJCB.getBankNameCn());
+		BANK_MAP_NAME.put("NXBANK", BankEnum.NXBANK.getBankNameCn());
+		BANK_MAP_NAME.put("NYNB", BankEnum.NYNB.getBankNameCn());
+		BANK_MAP_NAME.put("ORBANK", BankEnum.ORBANK.getBankNameCn());
+
+
+
+		BANK_MAP_NAME.put("TACCB", BankEnum.TACCB.getBankNameCn());
+		BANK_MAP_NAME.put("TCCB", BankEnum.TCCB.getBankNameCn());
+		BANK_MAP_NAME.put("TCRCB", BankEnum.TCRCB.getBankNameCn());
+		BANK_MAP_NAME.put("TZCB", BankEnum.TZCB.getBankNameCn());
+		BANK_MAP_NAME.put("URMQCCB", BankEnum.URMQCCB.getBankNameCn());
+
+
+
+		BANK_MAP_NAME.put("WHCCB", BankEnum.WHCCB.getBankNameCn());
+		BANK_MAP_NAME.put("WHRCB", BankEnum.WHRCB.getBankNameCn());
+		BANK_MAP_NAME.put("WJRCB", BankEnum.WJRCB.getBankNameCn());
+		BANK_MAP_NAME.put("WRCB", BankEnum.WRCB.getBankNameCn());
+		BANK_MAP_NAME.put("WRCB", BankEnum.WRCB.getBankNameCn());
+		BANK_MAP_NAME.put("WZCB", BankEnum.WZCB.getBankNameCn());
+		BANK_MAP_NAME.put("ZBCB", BankEnum.ZBCB.getBankNameCn());
+
+
+
+		BANK_MAP_NAME.put("ZBCB", BankEnum.ZBCB.getBankNameCn());
+		BANK_MAP_NAME.put("ZGCCB", BankEnum.ZGCCB.getBankNameCn());
+		BANK_MAP_NAME.put("ZJKCCB", BankEnum.ZJKCCB.getBankNameCn());
+		BANK_MAP_NAME.put("ZJNX", BankEnum.ZJNX.getBankNameCn());
+		BANK_MAP_NAME.put("ZJTLCB", BankEnum.ZJTLCB.getBankNameCn());
+		BANK_MAP_NAME.put("ZRCBANK", BankEnum.ZRCBANK.getBankNameCn());
+		BANK_MAP_NAME.put("ZYCBANK", BankEnum.ZYCBANK.getBankNameCn());
+		BANK_MAP_NAME.put("ZZBANK", BankEnum.ZZBANK.getBankNameCn());
 	}
 
 
 	public static String getBank(String bankcode) {
 		return (String) BANK_MAP.get(bankcode);
 	}
+	public static String getBankName(String bankcode) {
+		return (String) BANK_MAP_NAME.get(bankcode);
+	}
 
-	
-	
-	
-	
-	
+
+
+
+
+
 
 }
