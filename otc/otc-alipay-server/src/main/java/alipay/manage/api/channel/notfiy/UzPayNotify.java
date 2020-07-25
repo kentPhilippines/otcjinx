@@ -27,7 +27,7 @@ import otc.result.Result;
 public class UzPayNotify extends NotfiyChannel{
 	private static final Log log = LogFactory.get();
     @RequestMapping("/UZPAY-notfiy")
-	 public String notify( 
+	 public String notify(
 			 String orderid,
 			 @RequestBody String json,
 			 HttpServletRequest request
@@ -67,6 +67,7 @@ public class UzPayNotify extends NotfiyChannel{
 				 Result dealpayNotfiy = dealpayNotfiy(orderid, clientIP, "UzPay回调订单成功");
 				 if(dealpayNotfiy.isSuccess()) {
 					 log.info("【订单回调修改成功，订单号为 ："+orderid+" 】");
+					 return "success";
 				 }
 			 }
 		 }

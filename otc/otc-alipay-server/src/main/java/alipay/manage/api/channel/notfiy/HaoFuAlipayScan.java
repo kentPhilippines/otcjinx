@@ -89,7 +89,7 @@ public class HaoFuAlipayScan extends NotfiyChannel{
 			return "errer";
 		}
 		if(status.equals("1")) {
-			Result dealpayNotfiy = dealpayNotfiy(out_trade_no, clientIP);
+			Result dealpayNotfiy = dealpayNotfiy(out_trade_no, clientIP,"豪富回调成功");
 			if(dealpayNotfiy.isSuccess()) {
 				return "success";
 			}
@@ -103,7 +103,7 @@ public class HaoFuAlipayScan extends NotfiyChannel{
 			Object[] key = map.keySet().toArray();
 			Arrays.sort(key);
 			StringBuffer res = new StringBuffer(128);
-			for (int i = 0; i < key.length; i++) 
+			for (int i = 0; i < key.length; i++)
 				if(ObjectUtil.isNotNull(map.get(key[i])))
 					res.append(key[i] + "=" + map.get(key[i]) + "&");
 			String rStr = res.substring(0, res.length() - 1);
