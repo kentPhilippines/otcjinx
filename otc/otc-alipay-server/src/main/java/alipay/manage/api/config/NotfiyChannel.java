@@ -28,6 +28,7 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
+import otc.api.alipay.Common;
 import otc.bean.dealpay.Withdraw;
 import otc.result.Result;
 
@@ -50,6 +51,10 @@ public abstract class NotfiyChannel {
     public Result witNotfy(String orderId, String ip) {
         log.info("【进入代付回调抽象类，当前代付成功订单号："+orderId+"】");
         Withdraw wit = withdrawServiceImpl.findOrderId(orderId);
+        if(!wit.getStatus().equals(Common.Order.Wit.ORDER_STATUS_YU)){
+            log.info("【 当前代付回调重复，当前代付订单号："+orderId+"】");
+            return Result.buildFailMessage("当前代付回调重复");
+        }
         wit.setComment("代付成功");
         Result withrawOrderSu = orderUtilImpl.withrawOrderSu(wit);
         if(withrawOrderSu.isSuccess()) {

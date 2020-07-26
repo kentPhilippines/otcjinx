@@ -53,7 +53,7 @@ public class HaoFuAlipayToBank extends PayOrderService{
 		map.put("partner", HaoFuUtil.APPID);
 		map.put("amount", orderAmount.toString());
 		map.put("request_time", System.currentTimeMillis()/1000);
-		map.put("trade_no", StrUtil.uuid());
+		map.put("trade_no", orderId);
 		map.put("type",  "ali");
 		map.put("result_type",  "json");
 		map.put("notify_url",notfiy);
