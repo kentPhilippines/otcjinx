@@ -33,8 +33,6 @@ public class HaoFuDpay extends PayOrderService{
 	@Autowired ConfigServiceClient configServiceClientImpl;
 	@Override
 	public Result withdraw(Withdraw wit) {
-		Result withdraw = super.withdraw(wit);
-		if(withdraw.isSuccess()) {
 			log.info("【进入豪富代付】");
 				try {
 					log.info("【本地订单创建成功，开始请求远程三方代付接口】");
@@ -51,9 +49,6 @@ public class HaoFuDpay extends PayOrderService{
 					return  Result.buildFailMessage("代付失败");
 					}
 		}
-		return  Result.buildSuccessMessage("代付成功等待处理");
-	}
-	
 	String createDpay(String notify ,String orderId , String money,String bankcode ,String accname,String bankNo) {
 		Map<String,Object> map = new HashMap<String,Object>();
 		/**
@@ -68,7 +63,7 @@ public class HaoFuDpay extends PayOrderService{
 				bank_province		10			是	是			省
 				bank_city			3			是	是			城市
 				bank_account_no		256			是	是			账户账号
-				remark				20			否	是	
+				remark				20			否	是
 				bus_type			20			否	是			交易类型:固定值0
 				bank_mobile_no		13			是	是			手机号
 				sign				64			是	否			签名字符串
@@ -131,7 +126,7 @@ public class HaoFuDpay extends PayOrderService{
 			Object[] key = map.keySet().toArray();
 			Arrays.sort(key);
 			StringBuffer res = new StringBuffer(128);
-			for (int i = 0; i < key.length; i++) 
+			for (int i = 0; i < key.length; i++)
 				if(ObjectUtil.isNotNull(map.get(key[i])) && map.get(key[i]) != "")
 					res.append(key[i] + "=" + map.get(key[i]) + "&");
 			String rStr = res.substring(0, res.length() - 1);

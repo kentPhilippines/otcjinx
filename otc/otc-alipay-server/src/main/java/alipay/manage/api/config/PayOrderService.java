@@ -60,7 +60,7 @@ public abstract class PayOrderService implements PayService{
 	@Autowired ChannelFeeMapper channelFeeDao;
 	@Autowired OrderUtil orderUtilImpl;
 	@Override
-	public Result deal(DealOrderApp dealOrderApp,String channel) {
+	public Result deal(DealOrderApp dealOrderApp,String channel) throws Exception {
 		if(Common.Deal.PRODUCT_ALIPAY_SCAN.equals(channel))
 			return dealAlipayScan(dealOrderApp);
 		else if(Common.Deal.PRODUCT_ALIPAY_H5.equals(channel))
@@ -114,18 +114,18 @@ public abstract class PayOrderService implements PayService{
 		BigDecimal multiply = orderAmount.multiply(fee);
 		log.info("【当前渠道收取手续费："+multiply+"】");
 		log.info("【当前收取商户手续费："+orderApp.getRetain3()+"】");
-		BigDecimal subtract = new BigDecimal(orderApp.getRetain3()).subtract(multiply); 
+		BigDecimal subtract = new BigDecimal(orderApp.getRetain3()).subtract(multiply);
 		log.info("【当前订单系统盈利："+subtract+"】");
 		order.setRetain3(subtract.toString());
 		boolean addOrder = orderServiceImpl.addOrder(order);
 		if(addOrder) {
 			ThreadUtil.execute(()->{
-				corr(order,rate,channelFee); 
+				corr(order,rate,channelFee);
 			});
 		}
 		return orderQrCh;
 	};
-	
+
 	/**
 	 * <p>数据数据统计</p>
 	 */
@@ -141,7 +141,7 @@ public abstract class PayOrderService implements PayService{
 			corr.setChannelFee(new BigDecimal(channelFee.getChannelRFee() ));
 			corr.setProfit(new BigDecimal(order.getRetain3()));
 			boolean addCorrelationDate = correlationServiceImpl.addCorrelationDate(corr);
-			if(addCorrelationDate) 
+			if(addCorrelationDate)
 				log.info("【订单号："+order.getOrderId()+"，添加数据统计成功】");
 			else
 				log.info("【订单号："+order.getOrderId()+"，添加数据统计失败】");
@@ -201,7 +201,7 @@ public abstract class PayOrderService implements PayService{
 	        lock.unlock();
 	    }
 		return Result.buildSuccess();
-		
+
 	}
 	/**
 	 * <p>代付失败</p>
