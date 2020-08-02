@@ -20,7 +20,7 @@ public class PDD {
 	public static void main(String[] args) {
 		test();
 	}
-	
+
 	static SimpleDateFormat d = new SimpleDateFormat("yyyyMMddHHmmss");
 	static void test(){
 		/**
@@ -36,9 +36,9 @@ public class PDD {
 			info_order			String(255)			×				参数名称：商品描述
 			pay_type			String(5)			√				参数名称：支付类型
 		 */
-		String key ="dtfysghxiazAIGY2BNEWDPOIL51";
-		String appid  = "202006032221186176";
-		String url = "api.djyq123.com/gateway/bankgateway/pay";
+		String key ="ASDASFQ4FRQEGRGQewfewrevrtboscdnoodmvoMmoeviVIVH9ERUERVURH9UHUBHBUHURHTB9RTBH9RHBTGHHGIRHFIjejiji";
+		String appid  = "202007301750003675";
+		String url = "http://api.zdjs1688.cn/gateway/bankgateway/getpayurl";
 		Map<String, Object> map = new HashMap();
 		map.put("oid_partner", appid);
 		map.put("notify_url", "www.baidu.com");
@@ -48,7 +48,7 @@ public class PDD {
 		map.put("time_order", d.format(new Date()));
 		map.put("money_order", "313");
 		map.put("name_goods", "alipaycan");
-		map.put("pay_type", "111");//PDD PDD 插件通道
+		map.put("pay_type", "56111");//PDD PDD 插件通道
 		map.put("info_order", "info_order");
 		String createParam = createParam(map);
 		 String md5 = md5(createParam+key);
@@ -57,12 +57,12 @@ public class PDD {
 		System.out.println(post);
 		PddBean bean = JSONUtil.toBean(post, PddBean.class);
 		System.out.println(bean.toString());
-		
-		
-		
-		
-		
-		
+
+
+
+
+
+
 	}
 	 public static String md5(String str) {
 	        MessageDigest md5 = null;
@@ -94,7 +94,7 @@ public class PDD {
 			Object[] key = map.keySet().toArray();
 			Arrays.sort(key);
 			StringBuffer res = new StringBuffer(128);
-			for (int i = 0; i < key.length; i++) 
+			for (int i = 0; i < key.length; i++)
 				if(ObjectUtil.isNotNull(map.get(key[i])))
 					res.append(key[i] + "=" + map.get(key[i]) + "&");
 			String rStr = res.substring(0, res.length() - 1);
@@ -161,6 +161,6 @@ class PddBean{
 				+ ", redirect_url=" + redirect_url + ", ret_code=" + ret_code + ", ret_msg=" + ret_msg + ", sign="
 				+ sign + "]";
 	}
-	
+
 }
 

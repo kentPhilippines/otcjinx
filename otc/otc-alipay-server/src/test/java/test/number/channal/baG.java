@@ -1,22 +1,11 @@
 package test.number.channal;
 
 import alipay.manage.api.channel.util.baG.BaGPayUtil;
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpUtil;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import com.google.gson.JsonObject;
-import org.apache.http.client.utils.HttpClientUtils;
 import otc.util.MapUtil;
-import otc.util.StringUtils;
-import org.apache.commons.codec.binary.Base64;
-import java.io.*;
-import java.net.URLEncoder;
-import java.security.KeyFactory;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.Signature;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
 import java.util.*;
 
 public class baG {
@@ -55,8 +44,8 @@ public class baG {
             paramsMap.put("order_no", orderI);
             paramsMap.put("amount", amount);
             paramsMap.put("method", paytype);
-            paramsMap.put("notify_url", HttpUtil.encode("http://www.baidu.com", "UTF-8"));
-            paramsMap.put("return_url",  HttpUtil.encode("http://www.baidu.com", "UTF-8"));
+            paramsMap.put("notify_url",  "http://www.baidu.com" );
+            paramsMap.put("return_url",  "http://www.baidu.com" );
             paramsMap.put("version", "2.0");
             String param = MapUtil.createParam(paramsMap);
             //   String paramsString = getURL(paramsMap);
@@ -64,16 +53,20 @@ public class baG {
             String PRIVATE_KEY="MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAMDfWK+cCRqM9Qam ps49XpZ6+/MfvuRw8z/Hx+CQwkZ7R9hrDEwrtMoUVaUPEMcvtC5I6XuTR+X07hw8 dmRXPUXQHmpe8U5tkoaEl6XoBWt/w9KZXcDknOCfMjJYbIiKEsPRIu925pZUvGH3 JuMtPEH43C2YaHZS1vXqXeUc7t5RAgMBAAECgYEArEcT5ZBfxVqBBxbWykOg+JMT 97+0eEK31JGz5NAI6IH308USr/seOp7dPVluqCzhKbKw81PEFhCom4oaSlhufh8s Bfwor2dMxkEsa1sySi0szYIN5ZhOkwgmS9hQfPfQxZd/TLcqxBdh3BJvU5UqqRM9 nyK1EJo/uvMxYEhqD40CQQDn4dDG8r0Tm2496A0Ooyk85wjrxH3zA6gUxHQ2YZ5Z Smq5OSYi80N3GZMMJfNOINZL1G0g42NR1KVOfMvKbbfPAkEA1O7YOah/TtAZ84Xq CvR+1OmozSdQ79t1o6bO2U+vjvEtqZZ6GPRdBiGvQC2FbmI3biZpDOxgIKN7cJ1A cgdv3wJBANQpBbfyAtN8xBo6RjAdUy7ZCI2HY+HEd7ZApT/Yg2SZNRqx0lXqE9FW Aff8hSf33XrWKt8LjiUiFfnBL0jQqHsCQCHXlCYV0aYFDRrXPctf8IiGWn3Asext RNUtvdJsB8sAKfG6KM2uiNpgoCnjEkHo+kZXdHrJVr3ZPdU4KPX2mKECQHYhSozr ZOcBu0MQBgn1lQcxDAenAO2DkzIvpdMXzjcSZ6SmTxb+/lPxUnLRtHfQtCEs1lWQ ROm9gf0bMK7zfXA=";
             String sign =  BaGPayUtil.sign(param.getBytes("UTF-8"),PRIVATE_KEY);
             System.out.println("sign" +sign);
-            JsonObject jsobObject = new JsonObject();
-            jsobObject.addProperty("merchant_id", appid);
-            jsobObject.addProperty("order_no", orderI);
-            jsobObject.addProperty("amount",amount);
-            jsobObject.addProperty("method", paytype);
-            jsobObject.addProperty("notify_url", "http://www.baidu.com");
-            jsobObject.addProperty("return_url", "http://www.baidu.com");
-            jsobObject.addProperty("version", "2.0");
-            jsobObject.addProperty("sign", sign);
-            String result2 = HttpUtil.post("https://www.yfyfyfypay.com/gateway/build",jsobObject.toString());
+
+
+            Map jsobObject = new HashMap();
+            jsobObject.put("merchant_id", appid);
+            jsobObject.put("order_no", orderI);
+            jsobObject.put("amount",amount);
+            jsobObject.put("method", paytype);
+            jsobObject.put("notify_url", "http://www.baidu.com");
+            jsobObject.put("return_url", "http://www.baidu.com");
+            jsobObject.put("version", "2.0");
+            jsobObject.put("sign", sign);
+            JSONObject jsonObject2 = JSONUtil.parseObj(jsobObject);
+            System.out.println(jsonObject2.toString());
+            String result2 = HttpUtil.post("https://www.yfyfyfypay.com/gateway/build",jsonObject2.toString());
             System.out.println(result2);
         } catch (Exception e) {
             e.printStackTrace();

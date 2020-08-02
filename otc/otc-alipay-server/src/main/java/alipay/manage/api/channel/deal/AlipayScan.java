@@ -15,14 +15,14 @@ import otc.result.Result;
 //@Component(Common.Deal.PRODUCT_ALIPAY_SCAN)
 public class AlipayScan extends PayOrderService{
 	@Override
-	public Result deal(DealOrderApp dealOrderApp, String channel) {
+	public Result deal(DealOrderApp dealOrderApp, String channel) throws Exception {
 		return super.deal(dealOrderApp, channel);
 	}
-	
+
 	@Override
 	public Result dealAlipayScan(DealOrderApp dealOrderApp) {
 		// TODO Auto-generated method stub
 		return super.dealAlipayScan(dealOrderApp);
 	}
-	
+
 }

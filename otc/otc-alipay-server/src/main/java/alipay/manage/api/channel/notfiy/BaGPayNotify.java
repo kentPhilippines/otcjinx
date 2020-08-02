@@ -4,9 +4,16 @@ import alipay.manage.api.channel.util.baG.BaGPayUtil;
 import alipay.manage.api.config.NotfiyChannel;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.http.HttpUtil;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import otc.common.PayApiConstant;
 import otc.result.Result;
 import otc.util.MapUtil;
 
@@ -14,11 +21,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
-
+@RequestMapping(PayApiConstant.Notfiy.NOTFIY_API_WAI)
+@RestController
 public class BaGPayNotify extends NotfiyChannel {
     private static final Log log = LogFactory.get();
     @PostMapping("/baG-notfiy")
-    public String notify(HttpServletRequest req, HttpServletResponse res) throws Exception {
+    public String notify(HttpServletRequest req, HttpServletResponse res,@RequestBody Map<String,Object> data) throws Exception {
         String clientIP = HttpUtil.getClientIP(req);
         log.info("【当前回调ip为："+clientIP+"】");
         Map map = new HashMap();
@@ -39,30 +47,43 @@ public class BaGPayNotify extends NotfiyChannel {
          * 支付时间	pay_time	    是	    2020123123123	String	支付时间
          * 签名值	sign	        是	    xxxxxxxxxxxxxx	String	RSA2签名值
          */
-        String merchant_id = req.getParameter("merchant_id");
-        String order_id = req.getParameter("order_id");
-        String pay_status = req.getParameter("pay_status");
-        String paid_money = req.getParameter("paid_money");
-        String pay_time = req.getParameter("pay_time");
-        String sign = req.getParameter("sign");
-        String PRIVATE_KEY= BaGPayUtil.PRIVATE_KEY;
+        log.info("【8G回调数据："+data.toString()+"】");
+        //：{errorCode=200, message=操作成功,
+        // data={
+        // merchant_id=114210057,
+        // order_id=C1596027488302398437,
+        // paid_money=500.0000,
+        // pay_status=2,
+        // pay_time=2020-07-29 21:00:48,
+        // sign=vdvn6dzK5qQiaCzTIitmbjfygWZCkk9L2yiSmovcJkbmuli6L7QEhb86aghI59ebGoXhrjl5yck0NvDL+2+ySCQ77yFdVa/5hKrROTKsJKA1o3IBkIhYJUrfTCK+vh+nQ/+1xwqlDZzXx9a5faVuSCuA86OaeC/oLBAAzdCmoOs=}}
+        Object data1 = data.get("data");
+        log.info("【8G回调json参数为："+data1+"】");
+        JSONObject jsonObject = JSONUtil.parseObj(data1);
+        String merchant_id = jsonObject.getStr("merchant_id");
+        String order_id = jsonObject.getStr("order_id");
+        String pay_status = jsonObject.getStr("pay_status");
+        String paid_money = jsonObject.getStr("paid_money");
+        String pay_time = jsonObject.getStr("pay_time");
+        String sign = jsonObject.getStr("sign");
+        String PUBLIC_KEY= BaGPayUtil.PUBLIC_KEY;
         Map map1 = new HashMap();
         map1.put("merchant_id",merchant_id);
         map1.put("order_id",order_id);
         map1.put("pay_status",pay_status);
         map1.put("paid_money",paid_money);
-        map1.put("pay_time",pay_time);
+        String encode = HttpUtil.encode(pay_time, "UTF-8");
+        map1.put("pay_time",encode.toUpperCase());
         log.info("【8Gpay回调参数为："+map1.toString()+"】");
         String param = MapUtil.createParam(map1);
-        String sign1 =  BaGPayUtil.sign(param.getBytes("UTF-8"),PRIVATE_KEY);
-        if(sign.equals(sign1)) {
+        log.info("【8Gpay回调参数为："+map1.toString()+"】");
+        if(BaGPayUtil.verify(param.getBytes("UTF-8"),PUBLIC_KEY,sign)) {
             log.info("【验签成功】");
         }else{
-            log.info("【验签失败，我方系统签名未："+sign1+"，对方系统签名为："+sign+"】");
+            log.info("【验签失败， 对方系统签名为："+sign+"】");
             return "sign is error";
         }
         if(pay_status.equals("2")) {
-            Result dealpayNotfiy = dealpayNotfiy(order_id, clientIP,"豪富回调成功");
+            Result dealpayNotfiy = dealpayNotfiy(order_id, clientIP,"8G回调成功");
             if(dealpayNotfiy.isSuccess()) {
                 return "success";
             }
