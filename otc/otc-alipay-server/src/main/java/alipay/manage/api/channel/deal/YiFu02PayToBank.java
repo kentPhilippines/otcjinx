@@ -20,8 +20,9 @@ import otc.result.Result;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
-@Component("YiFu02PayToBank")
-public class YiFu02Pay extends PayOrderService {
+
+@Component("YiFu02PayBankToBank")
+public class YiFu02PayToBank extends PayOrderService {
     //private static final Log log = LogFactory.get();
     @Autowired
     ConfigServiceClient configServiceClientImpl;
@@ -50,7 +51,7 @@ public class YiFu02Pay extends PayOrderService {
         String merchant_id = YiFu02Util.APPID;
         String order_id = orderId;
         String amount = orderAmount.intValue()+"00.00";
-        String pay_type = "alipaytb";
+        String pay_type = "bank2";
         String notify_url = notify;
         String user_id = RandomUtil.randomString(10).toUpperCase();
         String user_ip = dealOrderApp.getOrderIp();

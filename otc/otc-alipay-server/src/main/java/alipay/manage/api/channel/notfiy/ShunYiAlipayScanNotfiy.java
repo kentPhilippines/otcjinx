@@ -30,10 +30,12 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequestMapping(PayApiConstant.Notfiy.NOTFIY_API_WAI)
 @RestController
 public class ShunYiAlipayScanNotfiy extends NotfiyChannel{
+	private static final String KEY = "ASDASFQ4FRQEGRGQewfewrevrtboscdnoodmvoMmoeviVIVH9ERUERVURH9UHUBHBUHURHTB9RTBH9RHBTGHHGIRHFIjejiji";
+
 	private static final Log log = LogFactory.get();
 	@PostMapping("/shunyi-notfiy")
 	 public KinpayNotfiyBean notify(HttpServletRequest req, HttpServletResponse res) throws IOException {
-		log.info("【收到金星拼多多支付成功回调】");
+		log.info("【收到顺易支付成功回调】");
 		 InputStream inputStream = req.getInputStream();
 		 String body;
 		 StringBuilder stringBuilder = new StringBuilder();
@@ -96,7 +98,7 @@ public class ShunYiAlipayScanNotfiy extends NotfiyChannel{
 		String sign =   (String) decodeParamMap.get("sign");
 		String remove =   (String) decodeParamMap.remove("sign");
 		String createParam = payUtil.createParam(decodeParamMap);
-		String md5 = PayUtil.md5(createParam+payUtil.KEY);
+		String md5 = PayUtil.md5(createParam+KEY);
 		if(md5.equals(sign)) {
 			log.info("【当前支付成功回调签名参数："+sign+"，当前我方验证签名结果："+md5+"】");
 			log.info("【签名成功】");
