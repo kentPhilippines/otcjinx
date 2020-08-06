@@ -2,7 +2,6 @@ package alipay.manage.api.channel.notfiy;
 
 import alipay.manage.api.channel.util.yifu.YiFuUtil;
 import alipay.manage.api.config.NotfiyChannel;
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,20 +28,20 @@ public class YiFuPayNotify  extends NotfiyChannel {
          * remark	否	充值备注，不参与加密！！！！
          * sign	否	签名,详见下方签名方式
          */
-            log.info("【收到UzPay回调】");
-            String clientIP = HttpUtil.getClientIP(request);
-        if(!clientIP.equals("13.229.137.144")) {
-            log.info("【当前回调ip为："+clientIP+"，固定IP登记为："+"13.229.137.144"+"】");
+        log.info("【收到UzPay回调】");
+        String clientIP = HttpUtil.getClientIP(request);
+        if (!clientIP.equals("13.250.191.201")) {
+            log.info("【当前回调ip为：" + clientIP + "，固定IP登记为：" + "13.250.191.201" + "】");
             log.info("【当前回调ip不匹配】");
             return "ip errer";
         }
-            String trade_no = request.getParameter("trade_no");
-            String out_trade_no = request.getParameter("out_trade_no");
-            String money = request.getParameter("money");
-            String pay_at = request.getParameter("pay_at");
-            String app_id = request.getParameter("app_id");
-            String code = request.getParameter("code");
-            String sign = request.getParameter("sign");
+        String trade_no = request.getParameter("trade_no");
+        String out_trade_no = request.getParameter("out_trade_no");
+        String money = request.getParameter("money");
+        String pay_at = request.getParameter("pay_at");
+        String app_id = request.getParameter("app_id");
+        String code = request.getParameter("code");
+        String sign = request.getParameter("sign");
             Map map = new HashMap();
             map.put("trade_no",trade_no);
             map.put("out_trade_no",out_trade_no);
