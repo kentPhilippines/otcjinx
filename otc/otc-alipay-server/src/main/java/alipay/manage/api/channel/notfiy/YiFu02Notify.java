@@ -27,6 +27,7 @@ public class YiFu02Notify  extends NotfiyChannel {
         map.put("202.46.44.42", "202.46.44.42");
         map.put(" 202.46.38.133", " 202.46.38.133");
         map.put("202.46.44.35", "202.46.44.35");
+        map.put("154.204.33.81", "154.204.33.81");
         Object object = map.get(clientIP);
         if(ObjectUtil.isNull(object)) {
             log.info("【当前回调ip为："+clientIP+"，固定IP登记为："+map.toString()+"】");

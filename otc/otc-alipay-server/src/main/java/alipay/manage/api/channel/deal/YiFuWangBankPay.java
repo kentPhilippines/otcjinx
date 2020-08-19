@@ -5,7 +5,6 @@ import alipay.manage.api.config.PayOrderService;
 import alipay.manage.api.feign.ConfigServiceClient;
 import alipay.manage.bean.DealOrderApp;
 import alipay.manage.service.OrderService;
-import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
@@ -36,10 +35,10 @@ public class YiFuWangBankPay extends PayOrderService {
                 log.info("【回调地址ip为："+config.toString()+"】" );
                 log.info("【本地订单创建成功，开始请求远程三方支付】");
                 String url = createOrder(dealOrderApp,config.getResult()+PayApiConstant.Notfiy.NOTFIY_API_WAI+"/YiFu-notfiy", dealOrderApp.getOrderAmount(),orderId);
-                if(ObjectUtil.isNull(url))
-                        return Result.buildFailMessage("支付失败");
+                if (StrUtil.isBlank(url))
+                    return Result.buildFailMessage("支付失败");
                 else
-                        return Result.buildSuccessResultCode("支付处理中", url,1);
+                    return Result.buildSuccessResultCode("支付处理中", url, 1);
                 }
             return Result.buildFailMessage("支付失败");
         }

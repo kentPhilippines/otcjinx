@@ -1,15 +1,5 @@
 package alipay.manage.api.config;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.netflix.discovery.converters.Auto;
-
 import alipay.manage.bean.ChannelFee;
 import alipay.manage.bean.DealOrder;
 import alipay.manage.bean.UserFund;
@@ -18,29 +8,36 @@ import alipay.manage.mapper.ChannelFeeMapper;
 import alipay.manage.service.OrderService;
 import alipay.manage.service.UserInfoService;
 import alipay.manage.service.WithdrawService;
-import alipay.manage.util.AmountRunUtil;
-import alipay.manage.util.AmountUtil;
-import alipay.manage.util.CheckUtils;
-import alipay.manage.util.NotifyUtil;
-import alipay.manage.util.OrderUtil;
+import alipay.manage.util.*;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import otc.api.alipay.Common;
 import otc.bean.dealpay.Withdraw;
 import otc.result.Result;
 
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 /**
  * <p>代付成功的抽象类</p>
+ *
  * @author kent
  */
 public abstract class NotfiyChannel {
-	public static final Log log = LogFactory.get();
-	@Autowired OrderUtil orderUtilImpl;
-	@Autowired WithdrawService withdrawServiceImpl;
-	@Autowired CheckUtils checkUtils;
+    public static final Log log = LogFactory.get();
+    @Autowired
+    OrderUtil orderUtilImpl;
+    @Autowired
+    WithdrawService withdrawServiceImpl;
+    @Autowired
+    CheckUtils checkUtils;
     @Autowired UserInfoService userInfoServiceImpl;
     @Autowired OrderService orderServiceImpl;
     @Autowired NotifyUtil notifyUtilImpl;
@@ -93,38 +90,45 @@ public abstract class NotfiyChannel {
         });
         return withrawOrderSu;
       }
+
     public Result witNotfyEr(String orderId, String ip,String msg) {
         log.info("【进入代付失败回调 抽象类："+orderId+"】");
         Withdraw wit = withdrawServiceImpl.findOrderId(orderId);
         Result result = orderUtilImpl.withrawOrderErBySystem(orderId, ip,msg);
         if(result.isSuccess()) {
-          ThreadUtil.execute(()->{
-            wit(orderId);
-          });
+            ThreadUtil.execute(()->{
+                wit(orderId);
+            });
         }
         return Result.buildFail();
-      }
-	public Result dealpayNotfiy(String orderId,String ip,String msg) {
-		log.info("【进入支付成功回调处理类："+orderId+"】");
-		DealOrder order = orderServiceImpl.findOrderByOrderId(orderId);
-		if(ObjectUtil.isNull(order)) {
-			log.info("【当前回调订单不存在，当前回调订单号："+orderId+"】");
-			return Result.buildFailMessage("当前回调订单不存在");
-		}
-		lock.lock();
-		try {
-			Result dealAmount = orderUtilImpl.updataDealOrderSu(order.getOrderId(), msg, ip, false );
-			if(dealAmount.isSuccess()) {
-				log.info("【订单修改成功，向下游发送回调："+orderId+"】");
-				notifyUtilImpl.sendMsg(orderId);
-				return Result.buildSuccessMessage("订单修改成功");
-			}
-		} finally {
-			lock.unlock();
-		}
-		return Result.buildFail();
-	}
-	public Result dealpayNotfiy(String orderId,String ip) {
+    }
+
+
+    public Result dealpayNotfiy(String orderId,String ip,String msg) {
+        log.info("【进入支付成功回调处理类："+orderId+"】");
+        DealOrder order = orderServiceImpl.findOrderByOrderId(orderId);
+        if(ObjectUtil.isNull(order)) {
+            log.info("【当前回调订单不存在，当前回调订单号："+orderId+"】");
+            return Result.buildFailMessage("当前回调订单不存在");
+        }
+        lock.lock();
+        try {
+            Result dealAmount = orderUtilImpl.updataDealOrderSu(order.getOrderId(), msg, ip, false );
+            if(dealAmount.isSuccess()) {
+                log.info("【订单修改成功，向下游发送回调：" + orderId + "】");
+                ThreadUtil.execute(() -> {
+                    notifyUtilImpl.sendMsg(orderId);
+                });
+                return Result.buildSuccessMessage("订单修改成功");
+            }
+        } finally {
+            lock.unlock();
+        }
+        return Result.buildFail();
+    }
+
+
+    public Result dealpayNotfiy(String orderId,String ip) {
 	 return dealpayNotfiy(orderId,ip,"三方系统回调成功");
 	}
 	/**

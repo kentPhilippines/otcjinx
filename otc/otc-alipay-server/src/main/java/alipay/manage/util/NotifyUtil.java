@@ -7,13 +7,11 @@ import alipay.manage.mapper.DealOrderAppMapper;
 import alipay.manage.service.OrderService;
 import alipay.manage.service.UserInfoService;
 import cn.hutool.http.HttpUtil;
-import otc.api.alipay.Common;
-import otc.util.RSAUtils;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import otc.api.alipay.Common;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -75,7 +73,7 @@ public class NotifyUtil {
      */
     private void send(String url,String orderId,Map<String,Object> msg){
         log.info("【通知参数为："+msg.toString()+"】  "  );
-        String result = HttpUtil.post(url, msg,-1);
+        String result = HttpUtil.post(url, msg, 2000);
         log.info("服务器返回结果为: " + result.toString());
         String isNotify="NO";
         if ("success".equalsIgnoreCase(result)) {
@@ -99,7 +97,6 @@ public class NotifyUtil {
 		}
 		return SU_MSG;
     }
-    
-    
-    
+
+
 }
