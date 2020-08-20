@@ -1,15 +1,5 @@
 package alipay.manage.api.channel.deal;
 
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import alipay.manage.api.channel.util.kinpay.PayUtil;
 import alipay.manage.api.channel.util.shenfu.payUtil;
 import alipay.manage.api.config.PayOrderService;
 import alipay.manage.api.feign.ConfigServiceClient;
@@ -21,9 +11,17 @@ import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import otc.bean.config.ConfigFile;
 import otc.common.PayApiConstant;
 import otc.result.Result;
+
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 @Component("shenfuAlipayScan")
 public class ShenFuAlipayScan  extends PayOrderService{
 	private static final Log log = LogFactory.get();
@@ -37,8 +35,8 @@ public class ShenFuAlipayScan  extends PayOrderService{
 			Result config = configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.SERVER_IP);
 			PddBean createOrder = createOrder(config.getResult()+PayApiConstant.Notfiy.NOTFIY_API_WAI+"/shenfuAlipay-notfiy", dealOrderApp.getOrderAmount(),create);
 			if(ObjectUtil.isNull(createOrder)) {
-				boolean orderEr = orderEr(dealOrderApp);
-				if(orderEr)
+				boolean orderEr = orderEr(dealOrderApp, createOrder.getRet_msg());
+				if (orderEr)
 					return Result.buildFailMessage("支付失败");
 			}else {
 				return Result.buildSuccessResultCode("支付处理中", createOrder.getRedirect_url(),1);
@@ -61,8 +59,8 @@ public class ShenFuAlipayScan  extends PayOrderService{
 		info_order			String(255)			×				参数名称：商品描述
 		pay_type			String(5)			√				参数名称：支付类型
 	 */
-	
-	Map<String, Object> map = new HashMap();
+
+		Map<String, Object> map = new HashMap();
 	map.put("oid_partner", payUtil.APPID);
 	map.put("notify_url", notfiy);
 	map.put("sign_type", "MD5");

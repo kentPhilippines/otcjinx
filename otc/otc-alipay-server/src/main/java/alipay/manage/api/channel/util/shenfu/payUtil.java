@@ -1,5 +1,7 @@
 package alipay.manage.api.channel.util.shenfu;
 
+import cn.hutool.core.util.ObjectUtil;
+
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -7,12 +9,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import cn.hutool.core.util.ObjectUtil;
-
 public class payUtil {
-	public static final String KEY ="dtfysghxiazAIGY2BNEWDPOIL51";
-	public static final String APPID  = "202006032221186176";
-	public static final String URL = "api.djyq123.com/gateway/bankgateway/pay";
+	public static final String KEY = "dtfysghxiazAIGY2BNEWDPOIL51";
+	public static final String APPID = "202006032221186176";
+	public static final String URL = "http://api.shishengclub.com/gateway/bankgateway/pay";
+
 	public static String createParam(Map<String, Object> map) {
 		try {
 			if (map == null || map.isEmpty())
@@ -20,8 +21,8 @@ public class payUtil {
 			Object[] key = map.keySet().toArray();
 			Arrays.sort(key);
 			StringBuffer res = new StringBuffer(128);
-			for (int i = 0; i < key.length; i++) 
-				if(ObjectUtil.isNotNull(map.get(key[i])))
+			for (int i = 0; i < key.length; i++)
+				if (ObjectUtil.isNotNull(map.get(key[i])))
 					res.append(key[i] + "=" + map.get(key[i]) + "&");
 			String rStr = res.substring(0, res.length() - 1);
 			return rStr;
@@ -52,8 +53,8 @@ public class payUtil {
 			Object[] key = decodeParamMap.keySet().toArray();
 			Arrays.sort(key);
 			StringBuffer res = new StringBuffer(128);
-			for (int i = 0; i < key.length; i++) 
-				if(ObjectUtil.isNotNull(decodeParamMap.get(key[i])))
+			for (int i = 0; i < key.length; i++)
+				if (ObjectUtil.isNotNull(decodeParamMap.get(key[i])))
 					res.append(key[i] + "=" + decodeParamMap.get(key[i]) + "&");
 			String rStr = res.substring(0, res.length() - 1);
 			return rStr;
