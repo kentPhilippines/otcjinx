@@ -72,17 +72,18 @@ public class NotifyUtil {
      * @param msg  发送通知的内容
      */
     private void send(String url,String orderId,Map<String,Object> msg){
-        log.info("【通知参数为："+msg.toString()+"】  "  );
+        log.info("【通知参数为：" + msg.toString() + "】  ");
+        log.info("【通知URL为 ：" + msg.toString() + "】  ");
         String result = HttpUtil.post(url, msg, 2000);
         log.info("服务器返回结果为: " + result.toString());
-        String isNotify="NO";
+        String isNotify = "NO";
         if ("success".equalsIgnoreCase(result)) {
             isNotify = "YES";
             log.info("【下游商户返回信息为成功,成功收到回调信息】");
-        }else
+        } else
             log.info("【下游商户未收到回调信息，或回调信息下游未成功返回】");
         //更新订单是否通知成功状态
-        boolean flag = orderSerciceImpl.updataOrderisNotifyByOrderId(orderId,isNotify);
+        boolean flag = orderSerciceImpl.updataOrderisNotifyByOrderId(orderId, isNotify);
         if (!flag)
             log.info("【更新是否通知状态失败！】");
     }

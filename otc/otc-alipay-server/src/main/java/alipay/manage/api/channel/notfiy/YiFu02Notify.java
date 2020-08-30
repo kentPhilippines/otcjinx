@@ -47,7 +47,7 @@ public class YiFu02Notify  extends NotfiyChannel {
          平台交易号         transact_id     是   String(32)      易付平台唯一交易标识
          支付时间           finished_time   是       String(32)      订单支付时间
          订单状态           status          是       Int
-        签名                sign            是           String(32)      MD5签名结果
+         签名                sign            是           String(32)      MD5签名结果
          */
         //{
         // amount=100000,

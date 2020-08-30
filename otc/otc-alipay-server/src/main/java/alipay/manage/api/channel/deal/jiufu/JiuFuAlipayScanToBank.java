@@ -1,11 +1,4 @@
-package alipay.manage.api.channel.deal;
-
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+package alipay.manage.api.channel.deal.jiufu;
 
 import alipay.manage.api.channel.util.jiufu.JiUFuUtil;
 import alipay.manage.api.config.PayOrderService;
@@ -18,11 +11,17 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import otc.bean.config.ConfigFile;
 import otc.common.PayApiConstant;
 import otc.result.Result;
-@Component("JiuFuAlipayH5ToBank")
-public class JiuFuAlipayH5ToBank extends PayOrderService{
+
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+@Component("JiuFuAlipayScanToBank")
+public class JiuFuAlipayScanToBank extends PayOrderService{
 	private static final Log log = LogFactory.get();
 	@Autowired ConfigServiceClient configServiceClientImpl;
 	@Override

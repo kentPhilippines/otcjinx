@@ -12,13 +12,7 @@ import alipay.manage.service.FileListService;
 import alipay.manage.service.MediumService;
 import alipay.manage.service.UserInfoService;
 import alipay.manage.service.WithdrawService;
-import alipay.manage.util.AmountRunUtil;
-import alipay.manage.util.AmountUtil;
-import alipay.manage.util.LogUtil;
-import alipay.manage.util.NotifyUtil;
-import alipay.manage.util.OrderUtil;
-import alipay.manage.util.QrUtil;
-import alipay.manage.util.QueueUtil;
+import alipay.manage.util.*;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.thread.ThreadUtil;
@@ -27,14 +21,9 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import otc.api.alipay.Common;
 import otc.bean.alipay.FileList;
 import otc.bean.alipay.Medium;
@@ -118,7 +107,7 @@ public class Api {
 		notifyUtil.sendMsg(orderNo);
 		return Result.buildSuccessMessage("重新通知成功");
 	}
-	
+
 	@PostMapping(PayApiConstant.File.FILE_API+PayApiConstant.File.OFF_FILE)
 	public void updateFileNotDeal(@RequestParam("fileId")String fileId) {
 		log.info("【当前接收到远程调用方法，删除不合格二维码，当前二维码编号："+fileId+"】");
@@ -134,9 +123,10 @@ public class Api {
 	 * @return
 	 */
 	@PostMapping(PayApiConstant.File.FILE_API+PayApiConstant.File.FIND_FILE_NOT_CUT)
-	public List<FileList> findFileNotCut(){
+	public List<FileList> findFileNotCut() {
 		log.info("【当前远程调用，查询所有未剪裁二维码】");
 		List<FileList> fileList = fileListServiceImpl.findFileNotCut();
+		log.info("【返回集合长度：" + fileList.size() + "】");
 		return fileList;
 	};
 	/**
@@ -154,7 +144,6 @@ public class Api {
 	};
 	/**
 	 * <p>系统回调订单成功资金处理</p>
-	 * @param param
 	 * @param request
 	 * @return
 	 */
@@ -193,21 +182,21 @@ public class Api {
 		log.info("=============【当前回调金额："+amount+"】============");
 		String associatedId = qrUtil.findOrderBy(new BigDecimal(amount), phone);
 		if(StrUtil.isBlank(associatedId)) {
-			log.info("【商户交易订单失效，或订单匹配不正确】");	
+			log.info("【商户交易订单失效，或订单匹配不正确】");
 			return Result.buildFailMessage("商户交易订单失效，或订单匹配不正确");
 		}
 		DealOrder order = dealOrderDao.findOrderByAssociatedId(associatedId);
-		if(ObjectUtil.isNull(order)) {
-			log.info("【通过商户订单号无法查询到码商交易订单号，当前交易订单号："+associatedId+"】");	
-			return Result.buildFailMessage("通过商户订单号无法查询到码商交易订单号，当前交易订单号："+associatedId+"");
+		if (ObjectUtil.isNull(order)) {
+			log.info("【通过商户订单号无法查询到码商交易订单号，当前交易订单号：" + associatedId + "】");
+			return Result.buildFailMessage("通过商户订单号无法查询到码商交易订单号，当前交易订单号：" + associatedId + "");
 		}
 		Result orderDealSu = orderUtil.orderDealSu(order.getOrderId(), ip);
-		ThreadUtil.execute(()->{
-			if(orderDealSu.isSuccess()) {
+		ThreadUtil.execute(() -> {
+			if (orderDealSu.isSuccess()) {
 				notifyUtil.sendMsg(order.getOrderId());
 			}
 		});
-		if(!orderDealSu.isSuccess()) 
+		if (!orderDealSu.isSuccess())
 			Result.buildFailMessage("回调失败,订单修改失败");
 		return Result.buildSuccessResult("回调成功", order.getOrderId());
 	}
@@ -228,7 +217,7 @@ public class Api {
 			return mediumList;
 		}
 	}
-	
+
 	/****
 	 * <p>人工加扣款接口</p>
 	 * @param param					加扣款订单
@@ -300,9 +289,9 @@ public class Api {
 			if(orderStatus.equals(Common.Deal.AMOUNT_ORDER_SU)) {//减款订单成功，
 				int a = amountDao.updataOrder( orderId.toString() ,  orderStatus.toString(), approval.toString(), comment.toString());
 				if(a > 0 && a< 2) {
-					logUtil.addLog(request, "当前发起订单修改操作，减款订单号："+amount.getOrderId()+"，减款订单置为成功，减款用户："+amount.getUserId()+"，操作人："+amount.getAccname()+"", amount.getAccname());
+					logUtil.addLog(request, "当前发起订单修改操作，减款订单号：" + amount.getOrderId() + "，减款订单置为成功，减款用户：" + amount.getUserId() + "，操作人：" + amount.getAccname() + "", amount.getAccname());
 					return Result.buildSuccessMessage("操作成功");
-				} 
+				}
 			}else if(orderStatus.equals(Common.Deal.AMOUNT_ORDER_ER)) {//减款失败，资金退回
 				int a = amountDao.updataOrder( orderId.toString() ,  orderStatus.toString(), approval.toString(), comment.toString());
 				if(a > 0 && a< 2) {
@@ -377,11 +366,11 @@ public class Api {
 		} else if (orderstatus.equals(Common.Order.DealOrder.ORDER_STATUS_SU.toString())) {
 			Result orderDealSu = orderUtil.orderDealSu(orderId, clientIP, userop);
 			if(orderDealSu.isSuccess()) {
-				ThreadUtil.execute(()->{
-					if(orderDealSu.isSuccess()) {
+				ThreadUtil.execute(() -> {
+					if (orderDealSu.isSuccess()) {
 						notifyUtil.sendMsg(order.getOrderId());
 					}
-				});				
+				});
 				return Result.buildSuccessMessage("操作成功");
 		}
 			else

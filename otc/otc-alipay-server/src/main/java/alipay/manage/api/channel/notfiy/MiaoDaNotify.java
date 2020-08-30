@@ -4,8 +4,6 @@ import alipay.manage.api.channel.util.miaoda.MiaoDaUtil;
 import alipay.manage.api.config.NotfiyChannel;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.http.HttpUtil;
-import cn.hutool.log.Log;
-import cn.hutool.log.LogFactory;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,7 +12,6 @@ import otc.result.Result;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 

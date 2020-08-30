@@ -1,4 +1,4 @@
-package alipay.manage.api.channel.deal;
+package alipay.manage.api.channel.deal.shenfu;
 
 import alipay.manage.api.channel.util.shenfu.payUtil;
 import alipay.manage.api.config.PayOrderService;
@@ -23,8 +23,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-@Component("ShenFuAlipayToBank")
-public class ShenFuAlipayToBank extends PayOrderService {
+@Component("ShenFuYunShanfuToBank")
+public class ShenFuYunShanfuToBank extends PayOrderService {
 	private static final Log log = LogFactory.get();
 	static SimpleDateFormat d = new SimpleDateFormat("yyyyMMddHHmmss");
 	@Autowired
@@ -32,7 +32,7 @@ public class ShenFuAlipayToBank extends PayOrderService {
 
 	@Override
 	public Result deal(DealOrderApp dealOrderApp, String payType) {
-		log.info("【进入绅付支付支付宝转银行卡】");
+		log.info("【进入绅付支付云闪付转银行卡】");
 		String create = create(dealOrderApp, payType);
 		if (StrUtil.isNotBlank(create)) {
 			log.info("【本地订单创建成功，开始请求远程三方支付】");
@@ -73,7 +73,7 @@ public class ShenFuAlipayToBank extends PayOrderService {
 		map.put("time_order", d.format(new Date()));
 		map.put("money_order", bigDecimal);
 		map.put("name_goods", "pdd");
-		map.put("pay_type", "205");//卡转卡
+		map.put("pay_type", "207");//云闪付转卡
 		map.put("info_order", "info_order");
 		String createParam = payUtil.createParam(map);
 		log.info("【绅付支付宝扫码请求参数：" + createParam + "】");

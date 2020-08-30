@@ -1,4 +1,4 @@
-package alipay.manage.api.channel.deal;
+package alipay.manage.api.channel.deal.shenfu;
 
 import alipay.manage.api.channel.util.shenfu.payUtil;
 import alipay.manage.api.config.PayOrderService;
@@ -8,7 +8,6 @@ import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
-import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
@@ -24,30 +23,33 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-@Component("shunyiAlipayScan")
-public class ShunYiAlipayScan extends PayOrderService{
-	private static final String KEY = "ASDASFQ4FRQEGRGQewfewrevrtboscdnoodmvoMmoeviVIVH9ERUERVURH9UHUBHBUHURHTB9RTBH9RHBTGHHGIRHFIjejiji";
-	private static final Log log = LogFactory.get();
-	@Autowired ConfigServiceClient configServiceClientImpl;
-	@Override
-	public Result deal(DealOrderApp dealOrderApp, String payType) {
-		log.info("【进入顺易支付宝支付支付宝扫码】");
+@Component("ShenFu02AlipayToBank")
+public class ShenFu02AlipayToBank extends PayOrderService {
+    private static final Log log = LogFactory.get();
+    static SimpleDateFormat d = new SimpleDateFormat("yyyyMMddHHmmss");
+    @Autowired
+    ConfigServiceClient configServiceClientImpl;
+
+    @Override
+    public Result deal(DealOrderApp dealOrderApp, String payType) {
+        log.info("【进入绅付支付支付宝转银行卡】");
         String create = create(dealOrderApp, payType);
         if (StrUtil.isNotBlank(create)) {
             log.info("【本地订单创建成功，开始请求远程三方支付】");
             Result config = configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.SERVER_IP);
-            JSONObject createOrder = createOrder(dealOrderApp, config.getResult() + PayApiConstant.Notfiy.NOTFIY_API_WAI + "/shunyi-notfiy", dealOrderApp.getOrderAmount(), create);
+            PddBean createOrder = createOrder(config.getResult() + PayApiConstant.Notfiy.NOTFIY_API_WAI + payUtil.NOTIFY, dealOrderApp.getOrderAmount(), create);
             if (ObjectUtil.isNull(createOrder)) {
+                boolean orderEr = orderEr(dealOrderApp, createOrder.getRet_msg());
+                if (orderEr)
+                    return Result.buildFailMessage("支付失败");
             } else {
-                return Result.buildSuccessResultCode("支付处理中", createOrder.getStr("redirect_url"), 1);
+                return Result.buildSuccessResultCode("支付处理中", createOrder.getRedirect_url(), 1);
             }
         }
         return Result.buildFailMessage("支付错误");
     }
 
-    static SimpleDateFormat d = new SimpleDateFormat("yyyyMMddHHmmss");
-
-    JSONObject createOrder(DealOrderApp dealOrderApp, String notfiy, BigDecimal bigDecimal, String orderId) {
+    PddBean createOrder(String notfiy, BigDecimal bigDecimal, String orderId) {
         /**
          oid_partner			String(18)			√				参数名称：商家号 商户签约时，分配给商家的唯一身份标识 例如：201411171645530813
          notify_url			String(128)			√				参数名称：服务器异步通知地址 支付成功后，系统会主动发送通知给商户，商户必须指定此通知地址
@@ -63,31 +65,27 @@ public class ShunYiAlipayScan extends PayOrderService{
          */
 
         Map<String, Object> map = new HashMap();
-        map.put("oid_partner", "202007301750003675");
+        map.put("oid_partner", payUtil.APPID01);
         map.put("notify_url", notfiy);
         map.put("sign_type", "MD5");
         map.put("user_id", IdUtil.objectId());
         map.put("no_order", orderId);
         map.put("time_order", d.format(new Date()));
         map.put("money_order", bigDecimal);
-        map.put("name_goods", "alipay");
-        map.put("pay_type", "58");
+        map.put("name_goods", "pdd");
+        map.put("pay_type", "205");//支付宝转银行卡
         map.put("info_order", "info_order");
         String createParam = payUtil.createParam(map);
-        log.info("【顺易支付宝扫码请求参数：" + createParam + "】");
-        String md5 = payUtil.md5(createParam + KEY);
+        log.info("【绅付支付宝扫码请求参数：" + createParam + "】");
+        String md5 = payUtil.md5(createParam + payUtil.KEY01);
         map.put("sign", md5);
-        String post = HttpUtil.post("http://api.zdjs1688.cn/gateway/bankgateway/getpayurl", map);
-        log.info("【顺易支付扫码返回数据：" + post + "】");
+        String post = HttpUtil.post(payUtil.URL, map);
+        log.info("【绅付支付扫码返回数据：" + post + "】");
         log.info(post);
-        JSONObject jsonObject = JSONUtil.parseObj(post);
-
-        if (ObjectUtil.isNotNull(jsonObject)) {
-            if (jsonObject.getStr("ret_code").equals("0000")) {
-                return jsonObject;
-            } else {
-                //	{"ret_code":"4008","ret_msg":"服务未开通"}
-                orderEr(dealOrderApp, "顺易返回：" + jsonObject.getStr("ret_msg"));
+        PddBean bean = JSONUtil.toBean(post, PddBean.class);
+        if (ObjectUtil.isNotNull(bean)) {
+            if (bean.getRet_code().equals("0000")) {
+                return bean;
             }
         }
         return null;

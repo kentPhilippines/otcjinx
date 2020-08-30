@@ -1,5 +1,18 @@
 package alipay.manage.api.channel.notfiy;
 
+import alipay.manage.api.config.NotfiyChannel;
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.http.HttpUtil;
+import cn.hutool.log.Log;
+import cn.hutool.log.LogFactory;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import otc.common.PayApiConstant;
+import otc.result.Result;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
@@ -8,42 +21,47 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import alipay.manage.api.config.NotfiyChannel;
-import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.http.HttpUtil;
-import cn.hutool.log.Log;
-import cn.hutool.log.LogFactory;
-import otc.common.PayApiConstant;
-import otc.result.Result;
 @RequestMapping(PayApiConstant.Notfiy.NOTFIY_API_WAI)
 @RestController
-public class HaoFuDpay extends NotfiyChannel{
-	private static final Log log = LogFactory.get();
-	@PostMapping("/HaoFuDpay-noyfit")
-	public String notify(HttpServletRequest req, HttpServletResponse res) throws IOException {
-		String clientIP = HttpUtil.getClientIP(req);
-		log.info("【当前回调ip为："+clientIP+"】");
-		if(!clientIP.equals("47.52.109.67")) {
-			log.info("【当前回调ip为："+clientIP+"，固定IP登记为："+"47.52.109.67"+"】");
-			log.info("【当前回调ip不匹配】");
-			return "ip errer";
-		}
-		/**
-		 * 		input_charset			10			是			编码格式:UTF-8
-				sign_type				3			是			签名方式:MD5
-				sign					256			否			MD5加密串
-				request_time			20			是			yyyy-MM-dd HH:mm:ss
-				trade_id				32			是			系统订单号
-				out_trade_no			32			是			外部订单号
-				amount_str				9			是			金额(单位:元,支持两位小数)
-				amount_fee				9			是			手续费
+public class HaoFuDpay extends NotfiyChannel {
+    private static final Log log = LogFactory.get();
+
+    public static String createParam(Map<String, Object> map) {
+        try {
+            if (map == null || map.isEmpty())
+                return null;
+            Object[] key = map.keySet().toArray();
+            Arrays.sort(key);
+            StringBuffer res = new StringBuffer(128);
+            for (int i = 0; i < key.length; i++)
+                if (ObjectUtil.isNotNull(map.get(key[i])))
+                    res.append(key[i] + "=" + map.get(key[i]) + "&");
+            String rStr = res.substring(0, res.length() - 1);
+            return rStr;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @PostMapping("/HaoFuDpay-noyfit")
+    public String notify(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        String clientIP = HttpUtil.getClientIP(req);
+        log.info("【当前回调ip为：" + clientIP + "】");
+        if (!clientIP.equals("47.52.109.67")) {
+            log.info("【当前回调ip为：" + clientIP + "，固定IP登记为：" + "47.52.109.67" + "】");
+            log.info("【当前回调ip不匹配】");
+            return "ip errer";
+        }
+        /**
+         * 		input_charset			10			是			编码格式:UTF-8
+         sign_type				3			是			签名方式:MD5
+         sign					256			否			MD5加密串
+         request_time			20			是			yyyy-MM-dd HH:mm:ss
+         trade_id				32			是			系统订单号
+         out_trade_no			32			是			外部订单号
+         amount_str				9			是			金额(单位:元,支持两位小数)
+         amount_fee				9			是			手续费
 				status					2			是			状态:0处理中,1完成,2失败
 				for_trade_id			32			是			原始订单号(针对退款)
 				business_type			3			是			交易类型
@@ -95,23 +113,6 @@ public class HaoFuDpay extends NotfiyChannel{
 			}
 		}
 		return "end errer";
-	}
-	public static String createParam(Map<String, Object> map) {
-		try {
-			if (map == null || map.isEmpty())
-				return null;
-			Object[] key = map.keySet().toArray();
-			Arrays.sort(key);
-			StringBuffer res = new StringBuffer(128);
-			for (int i = 0; i < key.length; i++) 
-				if(ObjectUtil.isNotNull(map.get(key[i])))
-					res.append(key[i] + "=" + map.get(key[i]) + "&");
-			String rStr = res.substring(0, res.length() - 1);
-			return rStr;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
 	}
 	 public static String md5(String a) {
 	    	String c = "";

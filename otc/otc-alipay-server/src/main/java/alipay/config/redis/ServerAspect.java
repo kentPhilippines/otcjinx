@@ -4,7 +4,6 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,8 +70,8 @@ public class ServerAspect {
             } finally {
                 cache.unlock(lock);
             }
-        }		
-        throw new OrderException("服务忙，请稍后再试", null); 
+        }
+        throw new OrderException("服务忙，请稍后再试", null);
     }
 
     private String getSpELRealVal(ProceedingJoinPoint call, String spEL) {

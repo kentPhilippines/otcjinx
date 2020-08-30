@@ -1,19 +1,5 @@
 package alipay.manage.api.channel.notfiy;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-
-import alipay.manage.api.channel.util.qiangui.Util;
 import alipay.manage.api.channel.util.zhaunshi.Config;
 import alipay.manage.api.channel.util.zhaunshi.Md5Util;
 import alipay.manage.api.channel.util.zhaunshi.StringUtil;
@@ -21,25 +7,35 @@ import alipay.manage.api.config.NotfiyChannel;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import otc.common.PayApiConstant;
 import otc.result.Result;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+
 @RequestMapping(PayApiConstant.Notfiy.NOTFIY_API_WAI)
 @RestController
-public class ZuanShiNotfiy extends NotfiyChannel{
-	private static final Log log = LogFactory.get();
-	
-	@PostMapping("/zuanshiDpay-notfiy")
-	@ResponseBody
+public class ZuanShiNotfiy extends NotfiyChannel {
+    private static final Log log = LogFactory.get();
+
+    @PostMapping("/zuanshiDpay-notfiy")
     public zuanshi notify(HttpServletRequest req, HttpServletResponse res) throws IOException {
-	String clientIP = HttpUtil.getClientIP(req);
-	String [] ipList = {"34.84.21.215" ,"34.85.98.150"};
-	List<String> asList = Arrays.asList(ipList);
-		if(!asList.contains(clientIP))
-			return new zuanshi("1111", 1);
-    /**
-     * 	payout_id			是	String	系统订单号
-		payout_cl_id		是	String	商户订单号
-					是	String	商户号
+        String clientIP = HttpUtil.getClientIP(req);
+        String[] ipList = {"34.84.21.215", "34.85.98.150"};
+        List<String> asList = Arrays.asList(ipList);
+        if (!asList.contains(clientIP))
+            return new zuanshi("1111", 1);
+        /**
+         * 	payout_id			是	String	系统订单号
+         payout_cl_id		是	String	商户订单号
+         是	String	商户号
 		amount				是	Integer	订单金额(分)
 		fee					是	Integer	手续费
 		status				是	Integer	交易状态
@@ -104,5 +100,5 @@ class zuanshi{
 		this.error_code = error_code;
 		this.status = status;
 	}
-	
+
 }

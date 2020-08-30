@@ -29,14 +29,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @RequestMapping(PayApiConstant.Notfiy.NOTFIY_API_WAI)
 @RestController
-public class ShunYiAlipayScanNotfiy extends NotfiyChannel {
-    private static final String KEY = "ASDASFQ4FRQEGRGQewfewrevrtboscdnoodmvoMmoeviVIVH9ERUERVURH9UHUBHBUHURHTB9RTBH9RHBTGHHGIRHFIjejiji";
-
+public class ShenFu02Notfiy extends NotfiyChannel {
     private static final Log log = LogFactory.get();
 
-    @PostMapping("/shunyi-notfiy")
+    @PostMapping(payUtil.NOTIFY)
     public KinpayNotfiyBean notify(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        log.info("【收到顺易支付成功回调】");
+        log.info("【收到金星拼多多支付成功回调】");
         InputStream inputStream = req.getInputStream();
         String body;
         StringBuilder stringBuilder = new StringBuilder();
@@ -68,7 +66,7 @@ public class ShunYiAlipayScanNotfiy extends NotfiyChannel {
         JSONObject parseObj = JSONUtil.parseObj(parse);
 
         Set<String> keySet = parseObj.keySet();
-        log.info("【收到顺易支付成功请求，当前请求参数为：" + parseObj + "】");
+        log.info("【收到绅付支付成功请求，当前请求参数为：" + parseObj + "】");
         Map<String, Object> decodeParamMap = new ConcurrentHashMap();
         for (String key : keySet)
             decodeParamMap.put(key, parseObj.getObj(key));
@@ -86,12 +84,13 @@ public class ShunYiAlipayScanNotfiy extends NotfiyChannel {
          */
         String clientIP = HttpUtil.getClientIP(req);
         log.info("【当前回调ip为：" + clientIP + "】");
-        Map map = new HashMap();// 47.75.104.225，47.244.244.129
-        map.put("47.75.104.225", "47.75.104.225");
-        map.put("47.244.244.129", "47.244.244.129");
+        Map map = new HashMap();
+        map.put("47.52.243.5", "47.52.243.5");
+        map.put("47.91.232.22", "47.91.232.22");
+        map.put("47.57.115.27", "47.57.115.27");
         Object object = map.get(clientIP);
         if (ObjectUtil.isNull(object)) {
-            log.info("【当前回调ip为：" + clientIP + "，固定IP登记为：" + "47.75.104.225，47.244.244.129" + "】");
+            log.info("【当前回调ip为：" + clientIP + "，固定IP登记为：" + "47.52.243.5" + "，47.91.232.22 " + "，47.57.115.27" + "】");
             log.info("【当前回调ip不匹配】");
             return new KinpayNotfiyBean("9999", "ip is not here  [这个回调ip我们不接受]");
         }
@@ -99,7 +98,7 @@ public class ShunYiAlipayScanNotfiy extends NotfiyChannel {
         String sign = (String) decodeParamMap.get("sign");
         String remove = (String) decodeParamMap.remove("sign");
         String createParam = payUtil.createParam(decodeParamMap);
-        String md5 = PayUtil.md5(createParam + KEY);
+        String md5 = PayUtil.md5(createParam + payUtil.KEY);
         if (md5.equals(sign)) {
             log.info("【当前支付成功回调签名参数：" + sign + "，当前我方验证签名结果：" + md5 + "】");
             log.info("【签名成功】");

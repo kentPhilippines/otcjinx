@@ -1,14 +1,4 @@
-package alipay.manage.api.channel.deal;
-
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+package alipay.manage.api.channel.deal.chaunshanjia;
 
 import alipay.manage.api.config.PayOrderService;
 import alipay.manage.api.feign.ConfigServiceClient;
@@ -16,7 +6,6 @@ import alipay.manage.bean.DealOrder;
 import alipay.manage.bean.DealOrderApp;
 import alipay.manage.service.OrderService;
 import cn.hutool.core.lang.Snowflake;
-import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
@@ -25,10 +14,18 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
-import otc.api.alipay.Common;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import otc.bean.config.ConfigFile;
 import otc.common.PayApiConstant;
 import otc.result.Result;
+
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.Map;
 @Component("XianYuH5")
 public class XinYuAlipayH5 extends PayOrderService{
 	private static final Log log = LogFactory.get();
@@ -59,51 +56,50 @@ public class XinYuAlipayH5 extends PayOrderService{
 		return Result.buildFailMessage("支付失败");
 	}
 	private XianYu createOrder(String notfiy, BigDecimal orderAmount, String orderId) {
-		DealOrder order = orderServiceImpl.findOrderByOrderId(orderId);
-    	Snowflake snowflake = IdUtil.createSnowflake(1, 1);
-    	String id = snowflake.nextId()+"";
-    	orderServiceImpl.updataXianyYu(order.getOrderId(),id);
-	   	String fxnotifyurl = notfiy;
-	    String fxbackurl = order.getBack();
-	    String fxattch = "test";
-	    String fxdesc = "desc";
-	    String fxfee = orderAmount.toString();
-	    String fxpay = "zfbh5";
-	    String fxddh =  id; //订单号
-	    String fxid = "2020177";
-	    String key = "AHFuoYCUgZcOdpectBxYiPElWMVGljbc";
-	    //订单签名
-	    String fxsign = md5(fxid + fxddh + fxfee + fxnotifyurl + key); 
-	    fxsign = fxsign.toLowerCase();
-	    Map<String, Object> reqMap = new HashMap<String, Object>();
-	    reqMap.put("fxid", fxid);
-	    reqMap.put("fxddh", fxddh);
-	    reqMap.put("fxfee", fxfee);
-	    reqMap.put("fxpay", fxpay);
-	    reqMap.put("fxnotifyurl", fxnotifyurl);
-	    reqMap.put("fxbackurl", fxbackurl);
-	    reqMap.put("fxattch", fxattch);
-	    reqMap.put("fxnotifystyle", "1" );
-	    reqMap.put("fxdesc", fxdesc);
-	    reqMap.put("fxip", "127.0.0.1");
-	    reqMap.put("fxsign", fxsign);
-	    log.info("【咸鱼H5请求参数："+reqMap.toString()+"】");
-	    // 支付请求返回结果
-	    String result = null;
-	    result = HttpUtil.post("https://csj.fenvun.com/Pay", reqMap);
-	    JSONObject parseObj = JSONUtil.parseObj(result);
-	    log.info("【咸鱼H5返回："+parseObj.toString()+"】");
-	    Object object = parseObj.get("status");
+        DealOrder order = orderServiceImpl.findOrderByOrderId(orderId);
+        Snowflake snowflake = IdUtil.createSnowflake(1, 1);
+        String id = snowflake.nextId() + "";
+        orderServiceImpl.updataXianyYu(order.getOrderId(), id);
+        String fxnotifyurl = notfiy;
+        String fxbackurl = order.getBack();
+        String fxattch = "test";
+        String fxdesc = "desc";
+        String fxfee = orderAmount.toString();
+        String fxpay = "zfbh5";
+        String fxddh = id; //订单号
+        String fxid = "2020177";
+        String key = "AHFuoYCUgZcOdpectBxYiPElWMVGljbc";
+        //订单签名
+        String fxsign = md5(fxid + fxddh + fxfee + fxnotifyurl + key);
+        fxsign = fxsign.toLowerCase();
+        Map<String, Object> reqMap = new HashMap<String, Object>();
+        reqMap.put("fxid", fxid);
+        reqMap.put("fxddh", fxddh);
+        reqMap.put("fxfee", fxfee);
+        reqMap.put("fxpay", fxpay);
+        reqMap.put("fxnotifyurl", fxnotifyurl);
+        reqMap.put("fxbackurl", fxbackurl);
+        reqMap.put("fxattch", fxattch);
+        reqMap.put("fxnotifystyle", "1");
+        reqMap.put("fxdesc", fxdesc);
+        reqMap.put("fxip", "127.0.0.1");
+        reqMap.put("fxsign", fxsign);
+        log.info("【咸鱼H5请求参数：" + reqMap.toString() + "】");
+        // 支付请求返回结果
+        String result = null;
+        result = HttpUtil.post("https://csj.fenvun.com/Pay", reqMap);
+        JSONObject parseObj = JSONUtil.parseObj(result);
+        log.info("【咸鱼H5返回：" + parseObj.toString() + "】");
+        Object object = parseObj.get("status");
 	    XianYu bean = new XianYu();
-	    if(object.toString().equals("1")) {
-	    	 bean = JSONUtil.toBean(parseObj, XianYu.class);
-	    	
-	    	 
-	    	 
-	    }else {
-	    	bean.setPayurl(parseObj.get("error").toString());
-	    	bean.setStatus("0");
-	    }
+        if (object.toString().equals("1")) {
+            bean = JSONUtil.toBean(parseObj, XianYu.class);
+
+
+        } else {
+            bean.setPayurl(parseObj.get("error").toString());
+            bean.setStatus("0");
+        }
 	    //{"status":1,"payurl":"trade_no=2020051404200399991055074076&biz_sub_type=peerpay_trade&presessionid=&app=tb&channel=&type2=gulupay&bizcontext={\"biz_type\":\"share_pp_pay\",\"type\":\"qogirpay\"}"}
 		return bean;
 	}

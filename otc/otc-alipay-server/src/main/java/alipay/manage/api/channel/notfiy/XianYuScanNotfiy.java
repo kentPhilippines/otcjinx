@@ -1,20 +1,5 @@
 package alipay.manage.api.channel.notfiy;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import alipay.manage.api.config.NotfiyChannel;
 import alipay.manage.bean.DealOrder;
 import alipay.manage.mapper.DealOrderMapper;
@@ -25,38 +10,53 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import otc.common.PayApiConstant;
 import otc.result.Result;
 
- 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+
 @RequestMapping(PayApiConstant.Notfiy.NOTFIY_API_WAI)
 @RestController
-public class XianYuScanNotfiy extends NotfiyChannel{
-    @Autowired DealOrderMapper dealOrderDao;
+public class XianYuScanNotfiy extends NotfiyChannel {
 	private static final String KEY = "gCwqqQSkBGKAYHKFOHdToMSLAErLVmeQ";
 	private static final String FX_ID = "2020183";
 	private static final String ORDER_QUERY = "orderquery";
 	private static final Log log = LogFactory.get();
+	@Autowired
+	DealOrderMapper dealOrderDao;
+
 	@RequestMapping("/xianyu-scan-notfiy")
-	 public void notify(  
-			 HttpServletRequest request,
-	         HttpServletResponse response
-			    ) throws Exception {
+	public void notify(
+			HttpServletRequest request,
+			HttpServletResponse response
+	) throws Exception {
 		log.info("进入咸鱼支付宝扫码 回调处理");
 		String clientIP = HttpUtil.getClientIP(request);
-		log.info("【当前回调ip为："+clientIP+"】");
-		if(!clientIP.equals("185.207.152.3")) {
-			log.info("【当前回调ip为："+clientIP+"，固定IP登记为："+"185.207.152.3"+"】");
+		log.info("【当前回调ip为：" + clientIP + "】");
+		if (!clientIP.equals("185.207.152.3")) {
+			log.info("【当前回调ip为：" + clientIP + "，固定IP登记为：" + "185.207.152.3" + "】");
 			log.info("【当前回调ip不匹配】");
 			response.getWriter().write("ip错误");
 			return;
 		}
 		response.getWriter().write("success");
 		List<DealOrder> findXianYuOrder = dealOrderDao.findXianYuOrder1();
-		for(DealOrder order : findXianYuOrder) {
-			ThreadUtil.execute(()->{
+		for (DealOrder order : findXianYuOrder) {
+			ThreadUtil.execute(() -> {
 				log.info("【进入咸鱼支付宝扫码订单查询处理】 ");
-				log.info("【当前咸鱼支付宝扫码订单号："+order.getOrderId()+"】 ");
+				log.info("【当前咸鱼支付宝扫码订单号：" + order.getOrderId() + "】 ");
 				String fxddh = order.getOrderId();//咸鱼订单号
 				String fxaction = ORDER_QUERY;
 				Map<String, Object>  map = new ConcurrentHashMap<String, Object>();

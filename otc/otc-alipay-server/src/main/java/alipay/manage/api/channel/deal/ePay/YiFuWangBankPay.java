@@ -1,4 +1,4 @@
-package alipay.manage.api.channel.deal;
+package alipay.manage.api.channel.deal.ePay;
 
 import alipay.manage.api.channel.util.yifu.YiFuUtil;
 import alipay.manage.api.config.PayOrderService;
@@ -20,14 +20,14 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
-@Component("YiFuWangYinPay")
-public class YiFuWangYinPay extends PayOrderService {
+@Component("YiFuWangBankPay")
+public class YiFuWangBankPay extends PayOrderService {
    //private static final Log log = LogFactory.get();
     @Autowired ConfigServiceClient configServiceClientImpl;
     @Autowired OrderService orderServiceImpl;
     @Override
     public Result deal(DealOrderApp dealOrderApp, String channelId) {
-            log.info("【进入易付网银支付】");
+            log.info("【进入易付卡转卡】");
             String orderId = create(dealOrderApp, channelId);
             if(StrUtil.isNotBlank(orderId)) {
                 log.info("【本地订单创建成功，开始请求远程三方支付】");
@@ -50,7 +50,7 @@ public class YiFuWangYinPay extends PayOrderService {
             String callback_url = notify;
             Map<String,Object> map = new HashMap<String,Object>();
             map.put("app_id", YiFuUtil.APPID);
-            map.put("channel", YiFuUtil.CHANNEL_WANGYING);
+            map.put("channel", YiFuUtil.CHANNEL_BANK);
             map.put("out_trade_no", orderId);
             map.put("money", orderAmount.intValue()+".00");
             map.put("callback_url", callback_url);

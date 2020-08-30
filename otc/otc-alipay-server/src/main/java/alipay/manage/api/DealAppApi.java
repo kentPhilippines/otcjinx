@@ -1,36 +1,9 @@
 package alipay.manage.api;
 
-import java.math.BigDecimal;
-import java.sql.Struct;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.servlet.http.HttpServletRequest;
-
 import alipay.config.redis.RedisLock;
-import alipay.manage.api.config.PayOrderService;
-import alipay.manage.bean.ChannelFee;
-import alipay.manage.bean.DealOrder;
-import alipay.manage.util.BankTypeUtil;
-import alipay.manage.util.CheckUtils;
-import alipay.manage.util.OrderUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import alipay.manage.api.channel.util.zhaunshi.BankEnum;
 import alipay.manage.api.config.FactoryForStrategy;
-import alipay.manage.bean.DealOrderApp;
-import alipay.manage.bean.Product;
-import alipay.manage.bean.UserFund;
-import alipay.manage.bean.UserInfo;
-import alipay.manage.bean.UserRate;
+import alipay.manage.api.config.PayOrderService;
+import alipay.manage.bean.*;
 import alipay.manage.bean.util.DealBean;
 import alipay.manage.bean.util.WithdrawalBean;
 import alipay.manage.mapper.ChannelFeeMapper;
@@ -39,34 +12,58 @@ import alipay.manage.service.OrderAppService;
 import alipay.manage.service.UserFundService;
 import alipay.manage.service.UserInfoService;
 import alipay.manage.service.WithdrawService;
+import alipay.manage.util.BankTypeUtil;
+import alipay.manage.util.CheckUtils;
+import alipay.manage.util.OrderUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import otc.api.alipay.Common;
 import otc.bean.dealpay.Withdraw;
 import otc.result.Result;
 import otc.util.MapUtil;
 import otc.util.number.Number;
 
+import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  * <p>商户请求交易接口</p>
- * @author hx08
  *
+ * @author hx08
  */
 @RestController
 @RequestMapping("/deal")
 public class DealAppApi extends PayOrderService {
-	@Autowired VendorRequestApi vendorRequestApi;
-	Logger log = LoggerFactory.getLogger(DealAppApi.class);
-	@Autowired FactoryForStrategy factoryForStrategy;
-    @Autowired AccountApiService accountApiServiceImpl;
-    @Autowired OrderAppService orderAppServiceImpl;
-    @Autowired WithdrawService withdrawServiceImpl;
-	@Autowired OrderUtil orderUtil;
-	@Autowired ProductMapper productDao;
-	@Autowired UserFundService userFundServiceImpl;
-	@Autowired UserInfoService userInfoServiceImpl;
-	@Autowired CheckUtils checkUtils;
+    @Autowired
+    VendorRequestApi vendorRequestApi;
+    Logger log = LoggerFactory.getLogger(DealAppApi.class);
+    @Autowired
+    FactoryForStrategy factoryForStrategy;
+    @Autowired
+    AccountApiService accountApiServiceImpl;
+    @Autowired
+    OrderAppService orderAppServiceImpl;
+    @Autowired
+    WithdrawService withdrawServiceImpl;
+    @Autowired
+    OrderUtil orderUtil;
+    @Autowired
+    ProductMapper productDao;
+    @Autowired
+    UserFundService userFundServiceImpl;
+    @Autowired
+    UserInfoService userInfoServiceImpl;
+    @Autowired
+    CheckUtils checkUtils;
 	@Autowired ChannelFeeMapper channelFeeDao;
 	@RequestMapping("/findFund")
 	public Result findFund(HttpServletRequest request) {
@@ -263,9 +260,9 @@ public class DealAppApi extends PayOrderService {
 	    try {
 	       deal = factoryForStrategy.getStrategy(channelFee.getImpl()).deal(dealBean, channelFee.getChannelId());
 	    } catch (Exception e) {
-	      log.info("【当前通道编码对于的实体类不存在】");
-	      return Result.buildFailMessage("当前通道编码不存在");
-	    }
+            log.info("【当前通道编码对于的实体类不存在：" + e.getMessage() + "】");
+            return Result.buildFailMessage("当前通道编码不存在");
+        }
 	    if(deal.isSuccess())
 	    	deal.setResult(new ResultDeal(true,0,deal.getCode(),deal.getResult()));
 		return deal;
@@ -274,42 +271,50 @@ public class DealAppApi extends PayOrderService {
 	@PostMapping("/wit")
 	@RedisLock(waitTime = 0, extraKey = "#userId")
 	public Result witOrder(HttpServletRequest request) {
-		String manage = request.getParameter("manage");
-		boolean flag = false;
-		if(StrUtil.isNotBlank(manage))
-			flag = true;
-		Result withdrawal = vendorRequestApi.withdrawal(request, flag);
-		if(!withdrawal.isSuccess())
-			return withdrawal;
-		Object result = withdrawal.getResult();
-		WithdrawalBean wit = MapUtil.mapToBean((Map<String, Object>)result, WithdrawalBean.class);
-		wit.setIp(HttpUtil.getClientIP(request));
-		UserRate userRate = accountApiServiceImpl.findUserRateWitByUserId(wit.getAppid());
-		String dpaytype = wit.getDpaytype();
-		ChannelFee channelFee = channelFeeDao.findImpl(userRate.getChannelId(),userRate.getPayTypr());
-	    if(ObjectUtil.isNull(channelFee)) {
-	      log.info("【通道实体不存在，费率配置错误】");
-	      Result.buildFailMessage("通道实体不存在，费率配置错误");
-	    }
-	    String bankcode =BankTypeUtil.getBank(wit.getBankcode());
-	    if(StrUtil.isBlank(bankcode)) {
-	      log.info("【当前银行卡类型不支持】");
-	  	  log.info("【当前银行不支持代付，当前商户："+wit.getAppid()+"，当前订单号:"+ wit.getApporderid()+"】");
-	  	  return Result.buildFailMessage("bankcode错误，当前银行不支持合， bankcode传值错误");
-	    }
-	    Withdraw bean = createWit(wit,userRate,flag,channelFee);
-	        Result deal = null;
-	        if(ObjectUtil.isNull(bean))
-	          return Result.buildFailMessage("代付订单生成失败");
-	    try {
-			 deal = super.withdraw(bean);
-			//deal = factoryForStrategy.getStrategy(channelFee.getImpl()).withdraw(bean);
-	    } catch (Exception e) {
-	     	log.error(e.getMessage());
-			super.withdrawEr(bean,"系统异常，请联系技术人员处理",HttpUtil.getClientIP(request));
-			log.info("【当前通道编码对于的实体类不存在】");
-	      return Result.buildFailMessage("当前通道编码不存在");
-	    }
+        String manage = request.getParameter("manage");
+        boolean flag = false;
+        if (StrUtil.isNotBlank(manage))
+            flag = true;
+        Result withdrawal = vendorRequestApi.withdrawal(request, flag);
+        if (!withdrawal.isSuccess())
+            return withdrawal;
+        Object result = withdrawal.getResult();
+        WithdrawalBean wit = MapUtil.mapToBean((Map<String, Object>) result, WithdrawalBean.class);
+        wit.setIp(HttpUtil.getClientIP(request));
+        UserRate userRate = accountApiServiceImpl.findUserRateWitByUserId(wit.getAppid());
+        UserInfo userInfo = accountApiServiceImpl.findUserInfo(wit.getAppid());
+        String dpaytype = wit.getDpaytype();
+        ChannelFee channelFee = channelFeeDao.findImpl(userRate.getChannelId(), userRate.getPayTypr());
+        if (ObjectUtil.isNull(channelFee)) {
+            log.info("【通道实体不存在，费率配置错误】");
+            Result.buildFailMessage("通道实体不存在，费率配置错误");
+        }
+        String bankcode = BankTypeUtil.getBank(wit.getBankcode());
+        if (StrUtil.isBlank(bankcode)) {
+            log.info("【当前银行卡类型不支持】");
+            log.info("【当前银行不支持代付，当前商户：" + wit.getAppid() + "，当前订单号:" + wit.getApporderid() + "】");
+            return Result.buildFailMessage("bankcode错误，当前银行不支持合， bankcode传值错误");
+        }
+        Withdraw bean = createWit(wit, userRate, flag, channelFee);
+        Result deal = null;
+        if (ObjectUtil.isNull(bean))
+            return Result.buildFailMessage("代付订单生成失败");
+        try {
+            Integer autoWit = userInfo.getAutoWit();
+            if (1 == autoWit) {
+                //自动推送
+                super.withdraw(bean);
+                deal = factoryForStrategy.getStrategy(channelFee.getImpl()).withdraw(bean);
+            } else {
+                //手动处理
+                deal = super.withdraw(bean);
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            super.withdrawEr(bean, "系统异常，请联系技术人员处理", HttpUtil.getClientIP(request));
+            log.info("【当前通道编码对于的实体类不存在】");
+            return Result.buildFailMessage("当前通道编码不存在");
+        }
 		return deal;
 	}
 	static final String BANK = "Bankcard",ALIPAY = "Alipay",WECHAR="Wechar";

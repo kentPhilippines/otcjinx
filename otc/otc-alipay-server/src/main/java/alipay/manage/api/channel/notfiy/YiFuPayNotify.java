@@ -42,35 +42,35 @@ public class YiFuPayNotify  extends NotfiyChannel {
         String app_id = request.getParameter("app_id");
         String code = request.getParameter("code");
         String sign = request.getParameter("sign");
-            Map map = new HashMap();
-            map.put("trade_no",trade_no);
-            map.put("out_trade_no",out_trade_no);
-            map.put("money",money);
-            map.put("pay_at",pay_at);
-            map.put("app_id",app_id);
-            map.put("code",code);
-            String createParam = YiFuUtil.createParam(map);
-            //app_id=-YbBmS2aFEfgBx4mnXI&money=1000&out_trade_no=C1593861094418016017&pay_at=2020-07-04 19:11:36&
-            log.info("【易付签名前参数："+createParam+"】");
-            String md5 = YiFuUtil.md5(createParam + "key="+YiFuUtil.KEY);
-            md5 = md5.toUpperCase();
-            if(md5.equals(sign)) {
-                log.info("【当前支付成功回调签名参数："+sign+"，当前我方验证签名结果："+md5+"】");
-                log.info("【签名成功】");
-            } else {
-                log.info("【当前支付成功回调签名参数："+sign+"，当前我方验证签名结果："+md5+"】");
-                log.info("【签名失败】");
-                return  "sgin is error";
-            }
-            if(!"success".equals(code.toString())){
-                log.info("【易付回调状态出错，当前回调状态为："+code+"，我方需要状态为："+"success"+"】");
-                return "错误 status is error";
-            }
-            Result dealpayNotfiy = dealpayNotfiy(out_trade_no, clientIP, "yifu回调订单成功");
-            if(dealpayNotfiy.isSuccess()) {
-                log.info("【订单回调修改成功，订单号为 ："+out_trade_no+" 】");
-                return "success";
-            }
-            return "错误 error";
+        Map map = new HashMap();
+        map.put("trade_no", trade_no);
+        map.put("out_trade_no", out_trade_no);
+        map.put("money", money);
+        map.put("pay_at", pay_at);
+        map.put("app_id", app_id);
+        map.put("code", code);
+        String createParam = YiFuUtil.createParam(map);
+        //app_id=-YbBmS2aFEfgBx4mnXI&money=1000&out_trade_no=C1593861094418016017&pay_at=2020-07-04 19:11:36&
+        log.info("【易付签名前参数：" + createParam + "】");
+        String md5 = YiFuUtil.md5(createParam + "key=" + YiFuUtil.KEY);
+        md5 = md5.toUpperCase();
+        if (md5.equals(sign)) {
+            log.info("【当前支付成功回调签名参数：" + sign + "，当前我方验证签名结果：" + md5 + "】");
+            log.info("【签名成功】");
+        } else {
+            log.info("【当前支付成功回调签名参数：" + sign + "，当前我方验证签名结果：" + md5 + "】");
+            log.info("【签名失败】");
+            return "sgin is error";
         }
+        if (!"success".equals(code.toString())) {
+            log.info("【易付回调状态出错，当前回调状态为：" + code + "，我方需要状态为：" + "success" + "】");
+            return "错误 status is error";
+        }
+        Result dealpayNotfiy = dealpayNotfiy(out_trade_no, clientIP, "yifu回调订单成功");
+        if (dealpayNotfiy.isSuccess()) {
+            log.info("【订单回调修改成功，订单号为 ：" + out_trade_no + " 】");
+            return "success";
+        }
+        return "错误 error";
+    }
 }

@@ -1,11 +1,4 @@
-package alipay.manage.api.channel.deal;
-
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+package alipay.manage.api.channel.deal.jiufu;
 
 import alipay.manage.api.channel.util.jiufu.JiUFuUtil;
 import alipay.manage.api.config.PayOrderService;
@@ -18,16 +11,22 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import otc.bean.config.ConfigFile;
 import otc.common.PayApiConstant;
 import otc.result.Result;
-@Component("JiuFuAlipayScanToBank")
-public class JiuFuAlipayScanToBank extends PayOrderService{
+
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+@Component("JiuFuBankToBank")
+public class JiuFuBankToBank extends PayOrderService{
 	private static final Log log = LogFactory.get();
 	@Autowired ConfigServiceClient configServiceClientImpl;
 	@Override
 	public Result deal(DealOrderApp dealOrderApp, String channel) {
-		log.info("【进入玖富支付宝转卡支付】");
+		log.info("【进入玖富卡转卡支付支付】");
 		String create = create(dealOrderApp, channel);
 		if(StrUtil.isNotBlank(create)) {
 			log.info("【本地订单创建成功，开始请求远程三方支付】");
@@ -48,7 +47,7 @@ public class JiuFuAlipayScanToBank extends PayOrderService{
 	}
 	private String createOrder(String notify, BigDecimal orderAmount, String orderId) {
 		String partner = JiUFuUtil.APPID;
-		String service = JiUFuUtil.SERVER_ALIAPY_BANK_SCAN;//"10108" 宝转卡    10101 网关支付    10114
+		String service = JiUFuUtil.SERVER_BANKTOBANK;//"10108" 宝转卡    10101 网关支付    10114
 		String tradeNo = orderId;
 		String amount = orderAmount.intValue()+"";
 		String notifyUrl = notify;

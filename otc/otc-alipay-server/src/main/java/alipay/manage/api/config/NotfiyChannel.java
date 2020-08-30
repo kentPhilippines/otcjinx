@@ -45,6 +45,8 @@ public abstract class NotfiyChannel {
     @Autowired AmountUtil amountUtil;
     @Autowired AmountRunUtil amountRunUtil;
     static Lock lock = new  ReentrantLock();
+
+
     public Result witNotfy(String orderId, String ip) {
         log.info("【进入代付回调抽象类，当前代付成功订单号："+orderId+"】");
         Withdraw wit = withdrawServiceImpl.findOrderId(orderId);

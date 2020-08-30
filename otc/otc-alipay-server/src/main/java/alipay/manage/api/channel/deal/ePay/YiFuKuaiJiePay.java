@@ -1,4 +1,4 @@
-package alipay.manage.api.channel.deal;
+package alipay.manage.api.channel.deal.ePay;
 
 import alipay.manage.api.channel.util.yifu.YiFuUtil;
 import alipay.manage.api.config.PayOrderService;

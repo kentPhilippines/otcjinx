@@ -1,11 +1,11 @@
 package alipay.manage.bean;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.util.Date;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * <p>用户详情表</p>
@@ -43,12 +43,21 @@ public class UserInfo implements Serializable{
     private String startTime;
     private String endTime;
     private Integer timesTotal;
-    private String amount;			//页面展示金额
+    private String amount;            //页面展示金额
     private String witip; //代付ip
     private String queueList;//供应队列code  以逗号分隔
     private String qrRechargeList;//卡商匹配标识
     private String dealUrl;//代付URl
     private String fee;
+    private Integer autoWit;//0:手动代付;1:自动代付
+
+    public Integer getAutoWit() {
+        return autoWit;
+    }
+
+    public void setAutoWit(Integer autoWit) {
+        this.autoWit = autoWit;
+    }
 
     public String getFee() {
         return fee;
@@ -64,29 +73,34 @@ public class UserInfo implements Serializable{
 	public void setQrRechargeList(String qrRechargeList) {
 		this.qrRechargeList = qrRechargeList;
 	}
-	public String getDealUrl() {
-		return dealUrl;
-	}
-	public void setDealUrl(String dealUrl) {
-		this.dealUrl = dealUrl;
-	}
-    
+
+    public String getDealUrl() {
+        return dealUrl;
+    }
+
+    public void setDealUrl(String dealUrl) {
+        this.dealUrl = dealUrl;
+    }
+
     private String productId;
     private BigDecimal rechargeNumber;   //保证金
-    private BigDecimal cashBalance;	//分润
-    
-    
-	public BigDecimal getRechargeNumber() {
-		return rechargeNumber;
-	}
-	public void setRechargeNumber(BigDecimal rechargeNumber) {
-		this.rechargeNumber = rechargeNumber;
-	}
-	public BigDecimal getCashBalance() {
-		return cashBalance;
-	}
-	public void setCashBalance(BigDecimal cashBalance) {
-		this.cashBalance = cashBalance;
+    private BigDecimal cashBalance;    //分润
+
+
+    public BigDecimal getRechargeNumber() {
+        return rechargeNumber;
+    }
+
+    public void setRechargeNumber(BigDecimal rechargeNumber) {
+        this.rechargeNumber = rechargeNumber;
+    }
+
+    public BigDecimal getCashBalance() {
+        return cashBalance;
+    }
+
+    public void setCashBalance(BigDecimal cashBalance) {
+        this.cashBalance = cashBalance;
 	}
 	public String getProductId() {
 		return productId;
@@ -114,8 +128,7 @@ public class UserInfo implements Serializable{
     private String online;
     private String agentCount;
 
-    
-    
+
     public String getWitip() {
 		return witip;
 	}

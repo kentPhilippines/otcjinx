@@ -1,17 +1,4 @@
-package alipay.manage.api.channel.deal;
-
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.sql.Struct;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+package alipay.manage.api.channel.deal.shenfu;
 
 import alipay.manage.api.channel.util.shanfu.ShanFuUtil;
 import alipay.manage.api.config.PayOrderService;
@@ -26,10 +13,20 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import otc.bean.config.ConfigFile;
 import otc.common.PayApiConstant;
 import otc.result.Result;
-import otc.util.number.GenerateOrderNo;
+
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 @Component("ShanFuAlipayH5")
 public class ShanFuAlipayH5 extends PayOrderService{
 	private static final Log log = LogFactory.get();
@@ -110,20 +107,20 @@ public class ShanFuAlipayH5 extends PayOrderService{
 		return mapR;
 	}
 	public static String createParam(Map<String, Object> map) {
-		try {
-			if (map == null || map.isEmpty())
-				return null;
-			Object[] key = map.keySet().toArray();
-			Arrays.sort(key);
-			StringBuffer res = new StringBuffer(128);
-			for (int i = 0; i < key.length; i++) 
-				if(ObjectUtil.isNotNull(map.get(key[i])))
-					res.append(key[i] + "=" + map.get(key[i]) + "&");
-			String rStr = res.substring(0, res.length() - 1);
-			return rStr;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+        try {
+            if (map == null || map.isEmpty())
+                return null;
+            Object[] key = map.keySet().toArray();
+            Arrays.sort(key);
+            StringBuffer res = new StringBuffer(128);
+            for (int i = 0; i < key.length; i++)
+                if (ObjectUtil.isNotNull(map.get(key[i])))
+                    res.append(key[i] + "=" + map.get(key[i]) + "&");
+            String rStr = res.substring(0, res.length() - 1);
+            return rStr;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 		return null;
 	}
 	 public static String md5(String a) {

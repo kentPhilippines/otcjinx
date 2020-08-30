@@ -8,7 +8,6 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
-import com.fasterxml.jackson.annotation.JsonAlias;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +24,7 @@ import java.util.Map;
 @RestController
 public class BaGPayNotify extends NotfiyChannel {
     private static final Log log = LogFactory.get();
+
     @PostMapping("/baG-notfiy")
     public String notify(HttpServletRequest req, HttpServletResponse res,@RequestBody Map<String,Object> data) throws Exception {
         String clientIP = HttpUtil.getClientIP(req);

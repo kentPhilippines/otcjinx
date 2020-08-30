@@ -1,30 +1,6 @@
 package alipay.manage.util;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
-import javax.annotation.Resource;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.Transactional;
-
-import alipay.config.thread.ThreadConnection;
-import alipay.config.thread.TransactionBusiness;
-import alipay.config.thread.TransactionBusinessManager;
-import alipay.manage.bean.DealOrder;
-import alipay.manage.bean.DealOrderApp;
-import alipay.manage.bean.UserFund;
-import alipay.manage.bean.UserInfo;
-import alipay.manage.bean.UserRate;
+import alipay.manage.bean.*;
 import alipay.manage.mapper.DealOrderAppMapper;
 import alipay.manage.mapper.RechargeMapper;
 import alipay.manage.mapper.UserRateMapper;
@@ -35,6 +11,11 @@ import alipay.manage.service.UserInfoService;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import otc.api.alipay.Common;
 import otc.bean.alipay.OrderDealStatus;
 import otc.bean.dealpay.Recharge;
@@ -42,15 +23,25 @@ import otc.bean.dealpay.Withdraw;
 import otc.exception.order.OrderException;
 import otc.result.Result;
 
+import java.math.BigDecimal;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 @Component
 public class OrderUtil {
 	Logger log = LoggerFactory.getLogger(OrderUtil.class);
-	@Autowired OrderService orderServiceImpl;
-	@Autowired AmountUtil amountUtil;
-	@Autowired AmountRunUtil amountRunUtil;
-	@Autowired UserInfoService userInfoServiceImpl;
-	@Autowired RechargeMapper rechargeDao;
-	@Autowired WithdrawMapper withdrawDao;
+	@Autowired
+	OrderService orderServiceImpl;
+	@Autowired
+	AmountUtil amountUtil;
+	@Autowired
+	AmountRunUtil amountRunUtil;
+	@Autowired
+	UserInfoService userInfoServiceImpl;
+	@Autowired
+	RechargeMapper rechargeDao;
+	@Autowired
+	WithdrawMapper withdrawDao;
 	@Autowired DealOrderAppMapper dealOrderAppDao;
 	@Autowired UserRateMapper userRateDao;
 	@Autowired RiskUtil riskUtil;
@@ -66,7 +57,7 @@ public class OrderUtil {
 		Recharge order = rechargeDao.findRechargeOrder(orderId);
 		return rechargeOrderEr(order);
 	}
-	
+
 	/**
 	 * <p>充值充值订单成功【自动回调】</p>
 	 * @param orderIds			订单号
@@ -77,7 +68,7 @@ public class OrderUtil {
 			return Result.buildFailMessage("必传参数为空");
 		return rechargeOrderSu(orderIds,false);
 	}
-	
+
 	/**
 	 * <p>充值订单人工置为成功</p>
 	 * @param orderIds
@@ -106,8 +97,8 @@ public class OrderUtil {
 		order.setComment(comment);
 		return withrawOrderSu(order);
 	}
-	
-	
+
+
 	/**
 	 * <p>代付订单置为失败【这里只能是人工操作】</p>
 	 * @param orderId			这里只能是人工操作
@@ -127,14 +118,8 @@ public class OrderUtil {
 		order.setComment(comment);
 		return withrawOrderEr(order,ip);
 	}
-	
-	
-	
-	
-	
-	
-	
-	
+
+
 	/**
 	 * <p>码商充值订单置为成功</p>
 	 * @param orderId
@@ -147,12 +132,8 @@ public class OrderUtil {
 		Recharge order = rechargeDao.findRechargeOrder(orderId);
 		return rechargeOrderSu(order,flag);
 	}
-	
-	
-	
-	
-	
-	
+
+
 	/**
 	 * <p>【码商交易订单】系统成功调用方法</p>
 	 * @param orderId				订单号
@@ -189,11 +170,8 @@ public class OrderUtil {
 		Result updateDealOrderEr = updateDealOrderEr(orderId, mag, ip);
 		return updateDealOrderEr;
 	}
-	
-	
-	
-	
-	
+
+
 	/**
 	 * ###############################################################
 	 * 【以下方法 不对外开放】
@@ -224,17 +202,17 @@ public class OrderUtil {
 	static Lock lock = new  ReentrantLock();
 	@Transactional
 	public  Result updataDealOrderSu(String orderId,String msg , String ip ,Boolean flag) {
-		if(StrUtil.isBlank(orderId) || StrUtil.isBlank(ip)) 
+		if (StrUtil.isBlank(orderId) || StrUtil.isBlank(ip))
 			return Result.buildFailMessage("必传参数为空");
 		lock.lock();
-	    try {
-		DealOrder order = orderServiceImpl.findOrderByOrderId(orderId);
-		if(order.getOrderStatus().toString().equals(OrderDealStatus.成功.getIndex().toString()))
-			return Result.buildFailMessage("当前订单不支持修改");
-		if(order.getOrderStatus().toString().equals(OrderDealStatus.失败.getIndex().toString()))
-			return Result.buildFailMessage("当前订单不支持修改");
-  		Result dealAmount = dealAmount(order, ip, flag,msg);
-  		if(!dealAmount.isSuccess())
+		try {
+			DealOrder order = orderServiceImpl.findOrderByOrderId(orderId);
+			if (order.getOrderStatus().toString().equals(OrderDealStatus.成功.getIndex().toString()))
+				return Result.buildFailMessage("当前订单不支持修改");
+			if (order.getOrderStatus().toString().equals(OrderDealStatus.失败.getIndex().toString()))
+				return Result.buildFailMessage("当前订单不支持修改");
+			Result dealAmount = dealAmount(order, ip, flag, msg);
+			if (!dealAmount.isSuccess())
   			throw new OrderException("订单修改异常", null);
   		Result dealAmount1 = enterOrderApp(order.getAssociatedId(), ip, flag);
   		if(!dealAmount1.isSuccess())
@@ -251,19 +229,19 @@ public class OrderUtil {
 	    }
 		return Result.buildSuccess();
 	}
-	
+
 	@SuppressWarnings("unused")
 	@Transactional
 	public Result updateDealOrderEr(String orderId,String mag ,String ip) {
-		if(StrUtil.isBlank(orderId) || StrUtil.isBlank(ip)) 
+		if (StrUtil.isBlank(orderId) || StrUtil.isBlank(ip))
 			return Result.buildFailMessage("必传参数为空");
 		DealOrder order = orderServiceImpl.findOrderByOrderId(orderId);
-		if(order.getOrderStatus().toString().equals(OrderDealStatus.成功.getIndex().toString()))
+		if (order.getOrderStatus().toString().equals(OrderDealStatus.成功.getIndex().toString()))
 			return Result.buildFailMessage("当前订单不支持修改");
-		if(order.getOrderStatus().toString().equals(OrderDealStatus.失败.getIndex().toString()))
+		if (order.getOrderStatus().toString().equals(OrderDealStatus.失败.getIndex().toString()))
 			return Result.buildFailMessage("当前订单不支持修改");
-		boolean updateOrderStatus = orderServiceImpl.updateOrderStatus(orderId,OrderDealStatus.失败.getIndex().toString(),mag);
-		if(!updateOrderStatus)
+		boolean updateOrderStatus = orderServiceImpl.updateOrderStatus(orderId, OrderDealStatus.失败.getIndex().toString(), mag);
+		if (!updateOrderStatus)
 			return Result.buildFailMessage("订单修改失败，请重新发起成功");
 		else
 			return Result.buildSuccess();
@@ -275,19 +253,19 @@ public class OrderUtil {
 	 * @param flag					true 自然流水     false  人工流水
 	 * @return
 	 */
-	public Result dealAmount(DealOrder order,String ip ,Boolean flag,String msg){
-		if(!orderServiceImpl.updateOrderStatus(order.getOrderId(),OrderDealStatus.成功.getIndex().toString(),msg))
+	public Result dealAmount(DealOrder order,String ip ,Boolean flag,String msg) {
+		if (!orderServiceImpl.updateOrderStatus(order.getOrderId(), OrderDealStatus.成功.getIndex().toString(), msg))
 			return Result.buildFailMessage("订单修改失败，请重新发起成功");
-		//TODO 这里结算模式可选设置为  是否为顶代模式，如果为订单模式 则  只扣减顶代的   账号金额     给当前码商增加利润     
-		//TODO 如果不为顶代模式 则直接按照当前现有模式  结算 
+		//TODO 这里结算模式可选设置为  是否为顶代模式，如果为订单模式 则  只扣减顶代的   账号金额     给当前码商增加利润
+		//TODO 如果不为顶代模式 则直接按照当前现有模式  结算
 		UserInfo user = userInfoServiceImpl.findUserInfoByUserId(order.getOrderQrUser());
 		UserFund userFund = new UserFund();
 		userFund.setUserId(order.getOrderQrUser());
-		if("3".equals(user.getUserType().toString())) {//渠道账户结算
-			log.info("【进入渠道账户结算，当前渠道："+user.getUserId()+"】");
+		if ("3".equals(user.getUserType().toString())) {//渠道账户结算
+			log.info("【进入渠道账户结算，当前渠道：" + user.getUserId() + "】");
 			userFund.setUserId(user.getUserId());
 			Result deleteDeal = amountUtil.deleteDeal(userFund, order.getDealAmount());//扣除交易点数账户变动
-			if(!deleteDeal.isSuccess())
+			if (!deleteDeal.isSuccess())
 				return deleteDeal;
 			Result deleteRechangerNumber = amountRunUtil.deleteRechangerNumber(order, ip, flag);//扣除交易点数 流水生成
 			if(!deleteRechangerNumber.isSuccess())
@@ -305,33 +283,31 @@ public class OrderUtil {
 			 */
 			userFund.setUserId(userId.getUserId());
 			Result deleteDeal = amountUtil.deleteDeal(userFund, order.getDealAmount());//扣除交易点数账户变动
-			if(!deleteDeal.isSuccess())
+			if (!deleteDeal.isSuccess())
 				return deleteDeal;
 			Result deleteRechangerNumber = amountRunUtil.deleteRechangerNumber(order, ip, flag);//扣除交易点数 流水生成
-			if(!deleteRechangerNumber.isSuccess())
+			if (!deleteRechangerNumber.isSuccess())
 				return deleteRechangerNumber;
-		//顶代账户已扣减
-		//下面是对订单交易用户进行账户分润	
-		//	UserRate userRate = userInfoServiceImpl.findUserRateById(order.getFeeId());
+			//顶代账户已扣减
+			//下面是对订单交易用户进行账户分润
+			//	UserRate userRate = userInfoServiceImpl.findUserRateById(order.getFeeId());
 			BigDecimal dealAmount = order.getDealAmount();
-	//		log.info("【当前交易金额："+dealAmount+"】");
-	//		UserInfo userOrder = userInfoServiceImpl.findUserInfoByUserId(order.getOrderQrUser());//当前接单用户
-	//		log.info("【当前订单交易码商："+userOrder.getUserId()+"】");
-	//		userFund.setUserId(userOrder.getUserId());
-			
-			BigDecimal multiply = new BigDecimal("0"); 
+			//		log.info("【当前交易金额："+dealAmount+"】");
+			//		UserInfo userOrder = userInfoServiceImpl.findUserInfoByUserId(order.getOrderQrUser());//当前接单用户
+			//		log.info("【当前订单交易码商："+userOrder.getUserId()+"】");
+			//		userFund.setUserId(userOrder.getUserId());
+
+			BigDecimal multiply = new BigDecimal("0");
 			Result addDeal = amountUtil.addDeal(userFund, multiply, dealAmount);
-			if(!addDeal.isSuccess())
+			if (!addDeal.isSuccess())
 				return addDeal;
 			Result addDealAmount = amountRunUtil.addDealAmount(order, ip, flag);
-			if(!addDealAmount.isSuccess())
+			if (!addDealAmount.isSuccess())
 				return addDealAmount;
 			log.info("【金额修改完毕，流水生成成功】");
 			return Result.buildSuccessResult();
-		
-		
-		
-		
+
+
 		} else {//正常结算模式
 			Result deleteDeal = amountUtil.deleteDeal(userFund, order.getDealAmount());//扣除交易点数账户变动
 			if(!deleteDeal.isSuccess())
@@ -355,7 +331,7 @@ public class OrderUtil {
 			log.info("【金额修改完毕，流水生成成功】");
 			return Result.buildSuccessResult();
 		}
-		
+
 	}
 	/**
 	 * <p>充值成功</p>
@@ -420,19 +396,25 @@ public class OrderUtil {
 		 * 代付失败给该用户退钱
 		 */
 		int a = withdrawDao.updataOrderStatus(wit.getOrderId(), wit.getApproval(), wit.getComment(), Common.Order.Wit.ORDER_STATUS_ER);
-		if(a == 0  || a > 2)
+		if (a == 0 || a > 2)
 			return Result.buildFailMessage("订单状态修改失败");
 		UserFund userFund = new UserFund();
 		userFund.setUserId(wit.getUserId());
 		Result addAmountAdd = amountUtil.addAmountAdd(userFund, wit.getAmount());
-		if(!addAmountAdd.isSuccess())
+		if (!addAmountAdd.isSuccess())
 			return addAmountAdd;
 		Result addAmountW = amountRunUtil.addAmountW(wit, ip);
-		if(!addAmountW.isSuccess())
+		if (!addAmountW.isSuccess())
 			return addAmountW;
+		Result result = amountUtil.addAmountAdd(userFund, wit.getFee());
+		if (!result.isSuccess())
+			return result;
+		Result result1 = amountRunUtil.addAmountWFee(wit, ip);
+		if (!result1.isSuccess())
+			return result1;
 		return Result.buildSuccessMessage("代付金额解冻成功");
 	}
-	
+
 	/**
 	 * <p>新建代付订单时候账户扣款</p>
 	 * @param orderId				代付订单号
@@ -458,7 +440,7 @@ public class OrderUtil {
 			return deleteAmountFee;
 	return Result.buildSuccess();
 	}
-	
+
 	/**
 	 * <p>商户订单结算</p>
 	 * @param orderId
@@ -469,28 +451,28 @@ public class OrderUtil {
 		if(StrUtil.isBlank(orderId))
 			return Result.buildFailMessage("必传参数为空");
 		DealOrderApp orderApp = dealOrderAppDao.findOrderByOrderId(orderId);
-		if(ObjectUtil.isNull(orderApp))
-			return Result.buildFailMessage("当前订单号不存在");	
-		if(!orderApp.getOrderStatus().toString().equals(Common.Order.DealOrderApp.ORDER_STATUS_DISPOSE))
+		if (ObjectUtil.isNull(orderApp))
+			return Result.buildFailMessage("当前订单号不存在");
+		if (!orderApp.getOrderStatus().toString().equals(Common.Order.DealOrderApp.ORDER_STATUS_DISPOSE))
 			return Result.buildFailMessage("当前订单状态不允许操作");
-		boolean status = dealOrderAppDao.updateOrderSu(orderId,Common.Order.DealOrderApp.ORDER_STATUS_SU);
-		if(!status)
+		boolean status = dealOrderAppDao.updateOrderSu(orderId, Common.Order.DealOrderApp.ORDER_STATUS_SU);
+		if (!status)
 			return Result.buildFail();
 		Integer feeId = orderApp.getFeeId();
 		String appId = orderApp.getOrderAccount();
 		UserFund userFund = userInfoServiceImpl.findUserFundByAccount(appId);
 		Result addDealApp = amountUtil.addDealApp(userFund, orderApp.getOrderAmount());
-		if(!addDealApp.isSuccess()) 
+		if (!addDealApp.isSuccess())
 			return Result.buildFail();
 		Result addDealAmountApp = amountRunUtil.addDealAmountApp(orderApp, ip, flag);
-		if(!addDealAmountApp.isSuccess())
+		if (!addDealAmountApp.isSuccess())
 			return Result.buildFail();
 		UserRate findFeeById = userRateDao.findFeeById(feeId);
 		BigDecimal fee = findFeeById.getFee();
 		BigDecimal multiply = orderApp.getOrderAmount().multiply(fee);
-		log.info("【当前商户结算费率："+fee+"，当前商户交易金额："+orderApp.getOrderAmount()+"，当前商户收取交易手续费："+multiply+"】");
+		log.info("【当前商户结算费率：" + fee + "，当前商户交易金额：" + orderApp.getOrderAmount() + "，当前商户收取交易手续费：" + multiply + "】");
 		Result deleteDeal = amountUtil.deleteDeal(userFund, multiply);
-		if(!deleteDeal.isSuccess())
+		if (!deleteDeal.isSuccess())
 			 throw new OrderException("订单修改异常", null);
 		Result feeApp = amountRunUtil.deleteDealAmountFeeApp(orderApp, ip, flag, multiply);
 		ThreadUtil.execute(()->{
@@ -501,7 +483,7 @@ public class OrderUtil {
 			return feeApp;
 		return Result.buildFail();
 	}
-	
+
 	/**
 	 * <p>商户代理商结算</p>
 	 * @param orderApp					商户订单
@@ -525,7 +507,7 @@ public class OrderUtil {
 			boolean flag1 = dealOrderAppDao.updateOrderIsAgent(orderApp.getOrderId(),"YES");
 			return true;
 		  }
-		
+
 		return false;
 	}
 
@@ -567,13 +549,13 @@ public class OrderUtil {
     }
     return withrawOrderErBySystem(order,ip,msg);
   }
-	
+
 	/*
-	   * 
-	   * @param wit
-	   * @param ip
-	   * @return
-	   */
+	 *
+	 * @param wit
+	 * @param ip
+	 * @return
+	 */
 	  @Transactional
 	  public Result withrawOrderErBySystem(Withdraw wit,String ip,String msg) {
 	    /*
@@ -599,5 +581,5 @@ public class OrderUtil {
 	      return addAmountWFee;
 	    return Result.buildSuccessMessage("代付金额解冻成功");
 	  }
-	
+
 }
