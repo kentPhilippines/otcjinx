@@ -22,7 +22,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -84,10 +83,7 @@ public class ShenFu02Notfiy extends NotfiyChannel {
          */
         String clientIP = HttpUtil.getClientIP(req);
         log.info("【当前回调ip为：" + clientIP + "】");
-        Map map = new HashMap();
-        map.put("47.52.243.5", "47.52.243.5");
-        map.put("47.91.232.22", "47.91.232.22");
-        map.put("47.57.115.27", "47.57.115.27");
+        Map map = payUtil.ipMap;
         Object object = map.get(clientIP);
         if (ObjectUtil.isNull(object)) {
             log.info("【当前回调ip为：" + clientIP + "，固定IP登记为：" + "47.52.243.5" + "，47.91.232.22 " + "，47.57.115.27" + "】");
@@ -98,7 +94,7 @@ public class ShenFu02Notfiy extends NotfiyChannel {
         String sign = (String) decodeParamMap.get("sign");
         String remove = (String) decodeParamMap.remove("sign");
         String createParam = payUtil.createParam(decodeParamMap);
-        String md5 = PayUtil.md5(createParam + payUtil.KEY);
+        String md5 = PayUtil.md5(createParam + payUtil.KEY01);
         if (md5.equals(sign)) {
             log.info("【当前支付成功回调签名参数：" + sign + "，当前我方验证签名结果：" + md5 + "】");
             log.info("【签名成功】");
