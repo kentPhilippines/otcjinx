@@ -8,9 +8,11 @@ import alipay.manage.mapper.WithdrawMapper;
 import alipay.manage.service.CorrelationService;
 import alipay.manage.service.OrderService;
 import alipay.manage.service.UserInfoService;
+import alipay.manage.service.WithdrawService;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,8 @@ import otc.exception.order.OrderException;
 import otc.result.Result;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -360,18 +364,25 @@ public class OrderUtil {
 	 * @param rechaege
 	 * @return
 	 */
-	public Result rechargeOrderEr( Recharge rechaege ){
+	public Result rechargeOrderEr(Recharge rechaege) {
 		/**
 		 * ######################
 		 * 充值失败修改订单状态什么都不管
 		 */
-		int a = rechargeDao.updateOrderStatus(rechaege.getOrderId(),Common.Order.Recharge.ORDER_STATUS_ER);
-		if(a > 0  && a < 2)
+		int a = rechargeDao.updateOrderStatus(rechaege.getOrderId(), Common.Order.Recharge.ORDER_STATUS_ER);
+		if (a > 0 && a < 2)
 			return Result.buildSuccessMessage("充值失败，可能原因，暂无充值渠道");
 		return Result.buildFail();
 	}
+
+	@Autowired
+	CheckUtils checkUtils;
+	@Autowired
+	WithdrawService withdrawServiceImpl;
+
 	/**
 	 * <p>代付成功</p>
+	 *
 	 * @return
 	 */
 	@Transactional
@@ -380,17 +391,52 @@ public class OrderUtil {
 		 * #########################
 		 * 代付成功修改订单状态
 		 */
-		int a = withdrawDao.updataOrderStatus(wit.getOrderId(),wit.getApproval(),wit.getComment(),Common.Order.Wit.ORDER_STATUS_SU);
-		if(a == 0  || a > 2)
+		int a = withdrawDao.updataOrderStatus(wit.getOrderId(), wit.getApproval(), wit.getComment(), Common.Order.Wit.ORDER_STATUS_SU);
+		if (a == 0 || a > 2)
 			return Result.buildFailMessage("订单状态修改失败");
+		wit(wit.getOrderId());
 		return Result.buildSuccessMessage("代付成功");
 	}
+
+	/**
+	 * <p>API下游代付通知</p>
+	 */
+	void wit(String orderId) {
+		log.info("【代付订单修改成功，现在开始通知下游，代付订单号：" + orderId + "】");
+		Map<String, Object> map = new HashMap<String, Object>();
+		Withdraw wit = withdrawServiceImpl.findOrderId(orderId);
+		UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(wit.getUserId());
+		map.put("apporderid", wit.getAppOrderId());
+		map.put("tradesno", wit.getOrderId());
+		map.put("status", wit.getOrderStatus());//0 预下单    1处理中  2 成功  3失败
+		map.put("amount", wit.getAmount());
+		map.put("appid", wit.getUserId());
+		String sign = checkUtils.getSign(map, userInfo.getPayPasword());
+		map.put("sign", sign);
+		send(wit.getNotify(), orderId, map);
+	}
+
+	/**
+	 * <p>发送通知</p>
+	 *
+	 * @param url     发送通知的地址
+	 * @param orderId 发送订单ID
+	 * @param msg     发送通知的内容
+	 */
+	private void send(String url, String orderId, Map<String, Object> msg) {
+		String result = HttpUtil.post(url, msg, -1);
+		log.info("服务器返回结果为: " + result.toString());
+		log.info("【下游商户返回信息为成功,成功收到回调信息】");
+		//更新订单是否通知成功状态
+	}
+
 	/**
 	 * <p>代付失败</p>
+	 *
 	 * @return
 	 */
 	@Transactional
-	public Result withrawOrderEr(Withdraw wit,String ip) {
+	public Result withrawOrderEr(Withdraw wit, String ip) {
 		/**
 		 * ###########################
 		 * 代付失败给该用户退钱
