@@ -1,32 +1,36 @@
 package alipay.manage.api.channel.amount;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import alipay.manage.api.StorageApi;
 import alipay.manage.api.feign.DealpayServiceClien;
 import alipay.manage.mapper.RechargeMapper;
 import alipay.manage.util.OrderUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import otc.api.alipay.Common;
 import otc.bean.dealpay.Recharge;
 import otc.bean.dealpay.Withdraw;
 import otc.result.Result;
+
 /**
  * <p>充值代付接口渠道分发</p>
+ *
  * @author hx08
  */
-public abstract class AmountObject  implements AmountChannel{
+public abstract class AmountObject implements AmountChannel {
 	Logger log = LoggerFactory.getLogger(AmountObject.class);
-	@Autowired RechargeMapper rechargeDao;
-	@Autowired OrderUtil orderUtil;
-	@Autowired DealpayServiceClien dealpayServiceClienImpl;
-		@Override
-		public Result recharge(Recharge rechaege) {
-			//  返回充值接口
-			Result recharge = dealpayServiceClienImpl.recharge(rechaege);
-			log.info("【充值渠道返回数据："+recharge.toString()+"】");
-			return recharge;
+	@Autowired
+	RechargeMapper rechargeDao;
+	@Autowired
+	OrderUtil orderUtil;
+	@Autowired
+	DealpayServiceClien dealpayServiceClienImpl;
+
+	@Override
+	public Result recharge(Recharge rechaege) {
+		//  返回充值接口
+		Result recharge = dealpayServiceClienImpl.recharge(rechaege);
+		log.info("【充值渠道返回数据：" + recharge.toString() + "】");
+		return recharge;
 		}
 		@Override
 		public Result withdraw(Withdraw wit) {

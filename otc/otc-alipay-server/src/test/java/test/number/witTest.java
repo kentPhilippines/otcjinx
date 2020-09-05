@@ -1,21 +1,22 @@
 
 package test.number;
 
-import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
-import org.apache.ibatis.reflection.ArrayUtil;
+import java.lang.reflect.Method;
 
 public class witTest {
-
 	public static void main(String[] args) {
-		String witip  = "123123,312321,312312,3434,45,435,435,25,dasd";
-		String[] split = witip.split(",");
-		for(String a : split)
-			System.out.println(a);
-		List<String> asList = Arrays.asList(split);
-		
+		new witTest().run();
 	}
+
+	public void run() {
+		// TODO Auto-generated method stub
+		System.out.println("测试========》");
+		String s1 = this.getClass().getName();//类名
+		System.out.println(s1);
+		System.out.println(Thread.currentThread().getStackTrace()[1].getClassName());
+		Method[] methods = this.getClass().getMethods();
+		for (Method md : methods)
+			System.out.println(md.getName());
+	}
+
 }

@@ -1,6 +1,8 @@
 package alipay.config.redis;
 
 
+import cn.hutool.log.Log;
+import cn.hutool.log.LogFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
@@ -13,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 @Component
 public class RedisCache {
-
+    public static final Log log = LogFactory.get();
     private static final String LOCK_KEY = "redis-lock:";
     private static final Long DEFAULT_TRY_LOCK_MILLIS = TimeUnit.SECONDS.toMillis(3);
 
@@ -158,6 +160,7 @@ public class RedisCache {
 
     public void unlock(String key) {
         String lock = LOCK_KEY + key;
+        log.info("【删除key：" + lock + "】");
         this.evic(lock);
     }
 

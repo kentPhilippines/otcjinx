@@ -1,10 +1,7 @@
 package alipay.manage.util;
 
 import alipay.manage.bean.*;
-import alipay.manage.mapper.DealOrderAppMapper;
-import alipay.manage.mapper.RechargeMapper;
-import alipay.manage.mapper.UserRateMapper;
-import alipay.manage.mapper.WithdrawMapper;
+import alipay.manage.mapper.*;
 import alipay.manage.service.CorrelationService;
 import alipay.manage.service.OrderService;
 import alipay.manage.service.UserInfoService;
@@ -75,38 +72,25 @@ public class OrderUtil {
 
 	/**
 	 * <p>充值订单人工置为成功</p>
+	 *
 	 * @param orderIds
 	 * @return
 	 */
 	public Result rechargeSu(String orderIds) {
-		if(StrUtil.isBlank(orderIds))
+		if (StrUtil.isBlank(orderIds))
 			return Result.buildFailMessage("必传参数为空");
-		return rechargeOrderSu(orderIds,true);
+		return rechargeOrderSu(orderIds, true);
 	}
-	/**
-	 * <p>代付订单置为成功</p>
-	 * @param orderId
-	 * @return
-	 */
-	@Transactional
-	public Result withrawOrderSu(String orderId, String approval, String comment) {
-		Withdraw order = withdrawDao.findWitOrder(orderId);
-		if (order == null) {
-			return Result.buildFailMessage("平台订单号不存在");
-		}
-		if (!Common.Order.Wit.ORDER_STATUS_YU.equals(order.getOrderStatus())) {
-			return Result.buildFailMessage("订单已被处理，不允许操作");
-		}
-		order.setApproval(approval);
-		order.setComment(comment);
-		return withrawOrderSu(order);
-	}
+
+	@Autowired
+	ChannelFeeMapper channelFeeDao;
 
 
 	/**
 	 * <p>代付订单置为失败【这里只能是人工操作】</p>
-	 * @param orderId			这里只能是人工操作
-	 * @param ip				操作 ip
+	 *
+	 * @param orderId 这里只能是人工操作
+	 * @param ip      操作 ip
 	 * @return
 	 */
 	@Transactional
@@ -381,21 +365,27 @@ public class OrderUtil {
 	WithdrawService withdrawServiceImpl;
 
 	/**
-	 * <p>代付成功</p>
+	 * <p>代付订单置为成功</p>
 	 *
+	 * @param orderId
 	 * @return
 	 */
 	@Transactional
-	public Result withrawOrderSu(Withdraw wit) {
-		/**
-		 * #########################
-		 * 代付成功修改订单状态
-		 */
-		int a = withdrawDao.updataOrderStatus(wit.getOrderId(), wit.getApproval(), wit.getComment(), Common.Order.Wit.ORDER_STATUS_SU);
-		if (a == 0 || a > 2)
-			return Result.buildFailMessage("订单状态修改失败");
-		wit(wit.getOrderId());
-		return Result.buildSuccessMessage("代付成功");
+	public Result withrawOrderSu(String orderId, String approval,
+								 String comment,
+								 String channelId, String witType) {
+		Withdraw order = withdrawDao.findWitOrder(orderId);
+		if (order == null) {
+			return Result.buildFailMessage("平台订单号不存在");
+		}
+		if (!Common.Order.Wit.ORDER_STATUS_YU.equals(order.getOrderStatus())) {
+			return Result.buildFailMessage("订单已被处理，不允许操作");
+		}
+		order.setApproval(approval);
+		order.setComment(comment);
+		order.setChennelId(channelId);
+		order.setWitType(witType);
+		return withrawOrderSu(order);
 	}
 
 	/**
@@ -431,34 +421,26 @@ public class OrderUtil {
 	}
 
 	/**
-	 * <p>代付失败</p>
+	 * <p>代付成功</p>
 	 *
 	 * @return
 	 */
 	@Transactional
-	public Result withrawOrderEr(Withdraw wit, String ip) {
+	public Result withrawOrderSu(Withdraw wit) {
 		/**
-		 * ###########################
-		 * 代付失败给该用户退钱
+		 * #########################
+		 * 代付成功修改订单状态
 		 */
-		int a = withdrawDao.updataOrderStatus(wit.getOrderId(), wit.getApproval(), wit.getComment(), Common.Order.Wit.ORDER_STATUS_ER);
+		int a = withdrawDao.updataOrderStatus(wit.getOrderId(), wit.getApproval(), wit.getComment(), Common.Order.Wit.ORDER_STATUS_SU, wit.getChennelId());
 		if (a == 0 || a > 2)
 			return Result.buildFailMessage("订单状态修改失败");
-		UserFund userFund = new UserFund();
-		userFund.setUserId(wit.getUserId());
-		Result addAmountAdd = amountUtil.addAmountAdd(userFund, wit.getAmount());
-		if (!addAmountAdd.isSuccess())
-			return addAmountAdd;
-		Result addAmountW = amountRunUtil.addAmountW(wit, ip);
-		if (!addAmountW.isSuccess())
-			return addAmountW;
-		Result result = amountUtil.addAmountAdd(userFund, wit.getFee());
-		if (!result.isSuccess())
-			return result;
-		Result result1 = amountRunUtil.addAmountWFee(wit, ip);
-		if (!result1.isSuccess())
-			return result1;
-		return Result.buildSuccessMessage("代付金额解冻成功");
+		wit(wit.getOrderId());//通知
+		wit.setWitChannel(wit.getChennelId());
+		//结算实际出款渠道
+		UserFund channel = new UserFund();
+		channel.setUserId(wit.getChennelId());
+		channelWitSu(wit.getOrderId(), wit, wit.getRetain2(),channel);
+		return Result.buildSuccessMessage("代付成功");
 	}
 
 	/**
@@ -604,28 +586,101 @@ public class OrderUtil {
 	 */
 	  @Transactional
 	  public Result withrawOrderErBySystem(Withdraw wit,String ip,String msg) {
-	    /*
-	     * ###########################
-	     * 代付失败给该用户退钱
-	     */
-	    int a = withdrawDao.updataOrderStatusEr(wit.getOrderId(),msg, Common.Order.Wit.ORDER_STATUS_ER);
-	    if(a == 0  || a > 2)
-	      return Result.buildFailMessage("订单状态修改失败");
-	    UserFund userFund = new UserFund();
-	    userFund.setUserId(wit.getUserId());
-	    Result addAmountAdd = amountUtil.addAmountAdd(userFund, wit.getAmount());
-	    if(!addAmountAdd.isSuccess())
-	      return addAmountAdd;
-	    Result addAmountW = amountRunUtil.addAmountW(wit, ip);
-	    if(!addAmountW.isSuccess())
-	      return addAmountW;
-	    Result addFee = amountUtil.addAmountAdd(userFund, wit.getFee());
-	    if(!addFee.isSuccess())
-	      return addFee;
-	    Result addAmountWFee = amountRunUtil.addAmountWFee(wit, ip );
-	    if(!addAmountWFee.isSuccess())
-	      return addAmountWFee;
-	    return Result.buildSuccessMessage("代付金额解冻成功");
+		  /*
+		   * ###########################
+		   * 代付失败给该用户退钱
+		   */
+		  int a = withdrawDao.updataOrderStatusEr(wit.getOrderId(),msg, Common.Order.Wit.ORDER_STATUS_ER);
+		  if(a == 0  || a > 2)
+			  return Result.buildFailMessage("订单状态修改失败");
+		  UserFund userFund = new UserFund();
+		  userFund.setUserId(wit.getUserId());
+		  Result addAmountAdd = amountUtil.addAmountAdd(userFund, wit.getAmount());
+		  if(!addAmountAdd.isSuccess())
+			  return addAmountAdd;
+		  Result addAmountW = amountRunUtil.addAmountW(wit, ip);
+		  if (!addAmountW.isSuccess())
+			  return addAmountW;
+		  Result addFee = amountUtil.addAmountAdd(userFund, wit.getFee());
+		  if (!addFee.isSuccess())
+			  return addFee;
+		  Result addAmountWFee = amountRunUtil.addAmountWFee(wit, ip);
+		  if (!addAmountWFee.isSuccess())
+			  return addAmountWFee;
+		  return Result.buildSuccessMessage("代付金额解冻成功");
 	  }
+
+	/**
+	 * <p>代付失败</p>
+	 *
+	 * @return
+	 */
+	@Transactional
+	public Result withrawOrderEr(Withdraw wit, String ip) {
+		/**
+		 * ###########################
+		 * 代付失败给该用户退钱
+		 */
+		int a = withdrawDao.updataOrderStatus1(wit.getOrderId(), wit.getApproval(), wit.getComment(), Common.Order.Wit.ORDER_STATUS_ER);
+		if (a == 0 || a > 2)
+			return Result.buildFailMessage("订单状态修改失败");
+		UserFund userFund = new UserFund();
+		userFund.setUserId(wit.getUserId());
+		Result addAmountAdd = amountUtil.addAmountAdd(userFund, wit.getAmount());
+		if (!addAmountAdd.isSuccess())
+			return addAmountAdd;
+		Result addAmountW = amountRunUtil.addAmountW(wit, ip);
+		if (!addAmountW.isSuccess())
+			return addAmountW;
+		Result result = amountUtil.addAmountAdd(userFund, wit.getFee());
+		if (!result.isSuccess())
+			return result;
+		Result result1 = amountRunUtil.addAmountWFee(wit, ip);
+		if (!result1.isSuccess())
+			return result1;
+		return Result.buildSuccessMessage("代付金额解冻成功");
+	}
+
+	/**
+	 * <p>代付成功渠道结算</p>
+	 *
+	 * @param orderId 代付订单
+	 * @param wit     代付订单实体类
+	 * @param ip      代付订单ip
+	 * @param channel 结算代付渠道账户
+	 * @return
+	 */
+	public Result channelWitSu(String orderId, Withdraw wit, String ip, UserFund channel) {
+		log.info("【当前代付订单成功，代付订单号为：" + orderId + "，对代付渠道进行加款操作】");
+		Result addAmountAdd = amountUtil.addAmountAdd(channel, wit.getAmount());
+		if (addAmountAdd.isSuccess())
+			log.info("【当前代付渠道账户加款成功，代付订单号为：" + orderId + "，生成渠道加款流水】");
+		else
+			log.info("【当前代付渠道账户加款【失败】，代付订单号为：" + orderId + "，加款渠道为：" + wit.getOrderId() + "】");
+		Result addChannelWit = amountRunUtil.addChannelWit(wit, ip);
+		if (addChannelWit.isSuccess())
+			log.info("【当前代付渠道账户加款流水成功，代付订单号为：" + orderId + "，生成渠道加款流水】");
+		else
+			log.info("【当前代付渠道账户加款流水【失败】，代付订单号为：" + orderId + "，加款渠道为：" + wit.getOrderId() + "】");
+		ChannelFee findChannelFee = channelFeeDao.findChannelFee(wit.getWitChannel(), wit.getWitType());
+		String channelDFee = findChannelFee.getChannelDFee();
+		log.info("【当前渠道代付手续费为：" + channelDFee + " 】");
+		Result add = amountUtil.addAmountAdd(channel, new BigDecimal(channelDFee));
+		log.info("【渠道账户记录代付手续费为：" + channelDFee + " 】");
+		if (add.isSuccess())
+			log.info("【当前代付渠道账户取款手续费加款成功，代付订单号为：" + orderId + "，生成渠道加款手续费流水】");
+		else
+			log.info("【当前代付渠道账户取款手续费加款【失败】，代付订单号为：" + orderId + "，加款渠道为：" + wit.getOrderId() + "】");
+		Result addChannelWitFee = amountRunUtil.addChannelWitFee(wit, ip, new BigDecimal(channelDFee));
+		if (addChannelWitFee.isSuccess())
+			log.info("【当前代付渠道账户取款手续费加款流水成功，代付订单号为：" + orderId + "，生成渠道加款流水】");
+		else
+			log.info("【当前代付渠道账户取款手续费加款流水【失败】，代付订单号为：" + orderId + "，加款渠道为：" + wit.getOrderId() + "】");
+		if (addAmountAdd.isSuccess() && addChannelWit.isSuccess() && add.isSuccess() && addChannelWitFee.isSuccess())
+			return Result.buildSuccess();
+		else
+			return  Result.buildFail();
+	}
+
 
 }

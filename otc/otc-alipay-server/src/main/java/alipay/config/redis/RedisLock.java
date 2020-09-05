@@ -2,8 +2,8 @@ package alipay.config.redis;
 import java.lang.annotation.*;
 
 @Documented
-@Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.METHOD, ElementType.TYPE})
 public @interface RedisLock {
 
     /**

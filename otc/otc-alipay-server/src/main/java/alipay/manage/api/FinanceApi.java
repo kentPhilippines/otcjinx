@@ -57,21 +57,27 @@ public class FinanceApi {
         if(ObjectUtil.isNull(paramMap.get("orderStatus")))
             return Result.buildFailMessage("订单状态未传，疑似数据安全问题");
         switch (paramMap.get("orderStatus").toString()){
-            case Common.Order.Wit.ORDER_STATUS_SU :
-                logUtil.addLog(request, "当前后台审核商户提现订单操作：" + paramMap.get("orderId") + "，：" + paramMap.get("userId") + "，操作人：" + paramMap.get("approval").toString() + ", 审核意见：" + paramMap.get("comment").toString(), paramMap.get("approval").toString());
-                return orderUtil.withrawOrderSu(paramMap.get("orderId").toString(), paramMap.get("approval").toString(), paramMap.get("comment").toString());
-            case Common.Order.Wit.ORDER_STATUS_ER :
-                logUtil.addLog(request, "当前后台审核商户提现订单操作：" + paramMap.get("orderId") + "，：" + paramMap.get("userId") + "，操作人：" + paramMap.get("approval").toString() +  ", 审核意见：" + paramMap.get("comment").toString(), paramMap.get("approval").toString());
-                return orderUtil.withrawOrderEr(paramMap.get("orderId").toString(), paramMap.get("approval").toString(), paramMap.get("comment").toString(), paramMap.get("ip").toString());
+            case Common.Order.Wit.ORDER_STATUS_SU:
+                logUtil.addLog(request, "当前后台审核商户提现订单操作：" + paramMap.get("orderId") + "，：" + paramMap.get("userId") + "，操作人：" + paramMap.get("approval").toString() + ", 审核意见：" + paramMap.get("comment").toString() + ",实际出款渠道：" + paramMap.get("channelId").toString(), paramMap.get("approval").toString());
+                return orderUtil.withrawOrderSu(paramMap.get("orderId").toString(),
+                        paramMap.get("approval").toString(), paramMap.get("comment").toString(),
+                        paramMap.get("channelId").toString(), paramMap.get("witType").toString());
+            case Common.Order.Wit.ORDER_STATUS_ER:
+                logUtil.addLog(request, "当前后台审核商户提现订单操作：" + paramMap.get("orderId") + "，：" + paramMap.get("userId") + "，操作人：" + paramMap.get("approval").toString() + ", 审核意见："
+                        + paramMap.get("comment").toString(), paramMap.get("approval").toString());
+                return orderUtil.withrawOrderEr(paramMap.get("orderId").toString(),
+                        paramMap.get("approval").toString(),
+                        paramMap.get("comment").toString(),
+                        paramMap.get("ip").toString());
             case "100":
-                logger.info("【接收到后台确认代付出款的方法调用，："+paramMap.get("orderId")+" 】");
+                logger.info("【接收到后台确认代付出款的方法调用，：" + paramMap.get("orderId") + " 】");
                 String orderId = paramMap.get("orderId").toString();
                 String apply = paramMap.get("approval").toString();
-                if(StrUtil.isBlank(orderId))
-                    return  Result.buildFailMessage("订单号为空");
-                if(StrUtil.isBlank(apply))
-                    return  Result.buildFailMessage("操作人为空");
-                logUtil.addLog(request,"后台人员确认代付订单，当前代付订单号："+orderId,apply);
+                if (StrUtil.isBlank(orderId))
+                    return Result.buildFailMessage("订单号为空");
+                if (StrUtil.isBlank(apply))
+                    return Result.buildFailMessage("操作人为空");
+                logUtil.addLog(request, "后台人员确认代付订单，当前代付订单号：" + orderId, apply);
                 Withdraw witOrder = withdrawServiceImpl.findOrderId(orderId);
                 String channnel = witOrder.getWitChannel();
                 String witType = witOrder.getWitType();

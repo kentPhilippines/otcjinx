@@ -17,6 +17,7 @@ import java.util.Map;
 public class YiFuPayNotify  extends NotfiyChannel {
     @RequestMapping("/YiFu-notfiy")
     public String notify(HttpServletRequest request) {
+
         log.info("【收到YiFu回调】");
         /**
          * trade_no	是	系统订单号

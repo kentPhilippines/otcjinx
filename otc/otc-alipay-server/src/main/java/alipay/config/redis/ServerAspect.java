@@ -1,5 +1,6 @@
 package alipay.config.redis;
 
+import cn.hutool.core.thread.ThreadUtil;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Around;
@@ -87,5 +88,18 @@ public class ServerAspect {
         }
         Expression expression = PARSER.parseExpression(spEL);
         return expression.getValue(context, String.class);
+    }
+
+
+    void redisLock(String lock) {
+        LOGGER.info("当前锁：{}", lock);
+        boolean tryLock = cache.lock(lock);
+        LOGGER.info("{}锁获取状态：{} ", lock, tryLock);
+        while (!tryLock) {
+            // 获取锁
+            ThreadUtil.sleep(20);
+            tryLock = cache.lock(lock);
+        }
+
     }
 }

@@ -69,7 +69,7 @@ public class ShenfuDpay extends PayOrderService {
         String oid_partner = payUtil.APPID01;
         String notify_url = notify;
         String no_order = wit.getOrderId();
-        Integer money_order = Integer.valueOf(wit.getActualAmount().toString());
+        Integer money_order = wit.getActualAmount().intValue();
         String acct_name = wit.getAccname();
         String card_no = wit.getBankNo();
         String bank_name = wit.getBankName();

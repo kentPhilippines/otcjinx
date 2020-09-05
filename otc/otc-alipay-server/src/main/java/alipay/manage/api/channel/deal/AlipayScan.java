@@ -1,9 +1,8 @@
 package alipay.manage.api.channel.deal;
 
-import org.springframework.stereotype.Component;
-
 import alipay.manage.api.config.PayOrderService;
 import alipay.manage.bean.DealOrderApp;
+import org.springframework.stereotype.Component;
 import otc.api.alipay.Common;
 import otc.result.Result;
 
@@ -12,7 +11,7 @@ import otc.result.Result;
  * @author kent
  *
  */
-//@Component(Common.Deal.PRODUCT_ALIPAY_SCAN)
+@Component("TEST_" + Common.Deal.PRODUCT_ALIPAY_SCAN)
 public class AlipayScan extends PayOrderService{
 	@Override
 	public Result deal(DealOrderApp dealOrderApp, String channel) throws Exception {
