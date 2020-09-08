@@ -422,6 +422,7 @@ public class OrderUtil {
 
 	/**
 	 * <p>代付成功</p>
+	 * 手动渠道结算
 	 *
 	 * @return
 	 */
@@ -439,17 +440,33 @@ public class OrderUtil {
 		//结算实际出款渠道
 		UserFund channel = new UserFund();
 		channel.setUserId(wit.getChennelId());
-		channelWitSu(wit.getOrderId(), wit, wit.getRetain2(),channel);
+		channelWitSu(wit.getOrderId(), wit, wit.getRetain2(), channel);
 		return Result.buildSuccessMessage("代付成功");
 	}
 
 	/**
-	 * <p>新建代付订单时候账户扣款</p>
-	 * @param orderId				代付订单号
+	 * <p>三方系统回调成功</p>
+	 *
+	 * @param wit
 	 * @return
 	 */
-	public Result withrawOrder(String orderId,String ip,Boolean flag) {
-		if(StrUtil.isBlank(orderId))
+	@Transactional
+	public Result withrawOrderSu1(Withdraw wit) {
+		int a = withdrawDao.updataOrderStatus(wit.getOrderId(), wit.getApproval(), wit.getComment(), Common.Order.Wit.ORDER_STATUS_SU, wit.getChennelId());
+		if (a == 0 || a > 2)
+			return Result.buildFailMessage("订单状态修改失败");
+		return Result.buildSuccessMessage("代付成功");
+	}
+
+
+	/**
+	 * <p>新建代付订单时候账户扣款</p>
+	 *
+	 * @param orderId 代付订单号
+	 * @return
+	 */
+	public Result withrawOrder(String orderId, String ip, Boolean flag) {
+		if (StrUtil.isBlank(orderId))
 			return Result.buildFailMessage("必传参数为空");
 		Withdraw wit = withdrawDao.findWitOrder(orderId);
 		UserFund userFund = new UserFund();

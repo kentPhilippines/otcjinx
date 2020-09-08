@@ -1,21 +1,17 @@
 package otc.util.encode;
 
+import org.apache.tomcat.util.codec.binary.Base64;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
+
+import javax.crypto.Cipher;
 import java.io.ByteArrayOutputStream;
-import java.security.Key;
-import java.security.KeyFactory;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
-import java.security.Signature;
+import java.security.*;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.HashMap;
 import java.util.Map;
-import javax.crypto.Cipher;
-import org.apache.tomcat.util.codec.binary.Base64;
-import org.apache.tomcat.util.http.fileupload.IOUtils;
 
 public class XRsa {
 	public static final String CHARSET = "UTF-8";
@@ -23,14 +19,27 @@ public class XRsa {
     public static final String RSA_ALGORITHM_SIGN = "SHA256WithRSA";
     private RSAPublicKey publicKey;
     private RSAPrivateKey privateKey;
-  /*  public static void main(String[] args) {
-    	Map<String, String> createKeys = createKeys(512);
-    	String publicKey = createKeys.get("publicKey");
-    	String privateKey = createKeys.get("privateKey");
-    	System.out.println(publicKey);
-    	System.out.println(privateKey);
-    	
-	}*/
+
+    /*  public static void main(String[] args) {
+          Map<String, String> createKeys = createKeys(512);
+          String publicKey = createKeys.get("publicKey");
+          String privateKey = createKeys.get("privateKey");
+          System.out.println(publicKey);
+          System.out.println(privateKey);
+
+      }*/
+    public XRsa(String publicKey) {
+        try {
+            KeyFactory keyFactory = KeyFactory.getInstance(RSA_ALGORITHM);
+            //ͨ��X509�����Keyָ���ù�Կ����
+            X509EncodedKeySpec x509KeySpec = new X509EncodedKeySpec(Base64.decodeBase64(publicKey));
+            this.publicKey = (RSAPublicKey) keyFactory.generatePublic(x509KeySpec);
+            //ͨ��PKCS#8�����Keyָ����˽Կ����
+        } catch (Exception e) {
+            throw new RuntimeException("��֧�ֵ���Կ", e);
+        }
+    }
+
     public XRsa(String publicKey, String privateKey) {
         try {
             KeyFactory keyFactory = KeyFactory.getInstance(RSA_ALGORITHM);
@@ -44,32 +53,42 @@ public class XRsa {
             throw new RuntimeException("不支持的密钥", e);
         }
     }
- 
-    public static Map<String, String> createKeys(int keySize){
+
+    public static Map<String, String> createKeys(int keySize) {
         //为RSA算法创建一个KeyPairGenerator对象
         KeyPairGenerator kpg;
-        try{
+        try {
             kpg = KeyPairGenerator.getInstance(RSA_ALGORITHM);
-        }catch(NoSuchAlgorithmException e){
+        } catch (NoSuchAlgorithmException e) {
             throw new IllegalArgumentException("No such algorithm-->[" + RSA_ALGORITHM + "]");
         }
+        // 初始化密钥对生成器
+        kpg.initialize(1024);
+        // 生成一个密钥对，保存在keyPair中
+        KeyPair keyPair = kpg.generateKeyPair();
+        // 得到私钥
+        RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
+        // 得到公钥
+        RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
+        String publicKeyString = java.util.Base64.getEncoder().encodeToString(publicKey.getEncoded());
+        // 得到私钥字符串
+        String privateKeyString = java.util.Base64.getEncoder().encodeToString(privateKey.getEncoded());
+
+
         //初始化KeyPairGenerator对象,不要被initialize()源码表面上欺骗,其实这里声明的size是生效的
         kpg.initialize(keySize);
         //生成密匙对
-        KeyPair keyPair = kpg.generateKeyPair();
         //得到公钥
-        Key publicKey = keyPair.getPublic();
         String publicKeyStr = Base64.encodeBase64URLSafeString(publicKey.getEncoded());
         //得到私钥
-        Key privateKey = keyPair.getPrivate();
         String privateKeyStr = Base64.encodeBase64URLSafeString(privateKey.getEncoded());
         Map<String, String> keyPairMap = new HashMap<String, String>();
         keyPairMap.put("publicKey", publicKeyStr);
         keyPairMap.put("privateKey", privateKeyStr);
- 
+
         return keyPairMap;
     }
- 
+
     /**
      * <p>公钥加密</p>
      * @param data
@@ -84,7 +103,7 @@ public class XRsa {
             throw new RuntimeException("加密字符串[" + data + "]时遇到异常", e);
         }
     }
- 
+
     /**
      * <p>私钥解密</p>
      * @param data
@@ -99,7 +118,7 @@ public class XRsa {
             throw new RuntimeException("解密字符串[" + data + "]时遇到异常", e);
         }
     }
- 
+
     /**
      * <p>私钥加密</p>
      * @param data
@@ -128,7 +147,7 @@ public class XRsa {
             throw new RuntimeException("解密字符串[" + data + "]时遇到异常", e);
         }
     }
- 
+
     /**
      * <p>签名</p>
      * @param data
@@ -145,7 +164,7 @@ public class XRsa {
             throw new RuntimeException("签名字符串[" + data + "]时遇到异常", e);
         }
     }
- 
+
     /**
      * <p>验签的方法</p>
      * @param data
@@ -162,7 +181,7 @@ public class XRsa {
             throw new RuntimeException("验签字符串[" + data + "]时遇到异常", e);
         }
     }
- 
+
     private static byte[] rsaSplitCodec(Cipher cipher, int opmode, byte[] datas, int keySize){
         int maxBlock = 0;
         if(opmode == Cipher.DECRYPT_MODE)

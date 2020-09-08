@@ -45,8 +45,8 @@ public class XianYuScanNotfiy extends NotfiyChannel {
 		log.info("进入咸鱼支付宝扫码 回调处理");
 		String clientIP = HttpUtil.getClientIP(request);
 		log.info("【当前回调ip为：" + clientIP + "】");
-		if (!clientIP.equals("185.207.152.3")) {
-			log.info("【当前回调ip为：" + clientIP + "，固定IP登记为：" + "185.207.152.3" + "】");
+		if (!clientIP.equals("185.207.152.11")) {
+			log.info("【当前回调ip为：" + clientIP + "，固定IP登记为：" + "185.207.152.11" + "】");
 			log.info("【当前回调ip不匹配】");
 			response.getWriter().write("ip错误");
 			return;

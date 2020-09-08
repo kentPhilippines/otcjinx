@@ -24,13 +24,13 @@ public class Withdraw implements Serializable{
     private BigDecimal actualAmount;//实际到账费用
     private String mobile;			//提现手机
     private String notify;			//提现成功回调参数
-    private String appOrderId;		//下游商户订单号【如果为后台代付 则该字段为空】
-    private Date createTime;			
+    private String appOrderId;        //下游商户订单号【如果为后台代付 则该字段为空】
+    private Date createTime;
     private Date submitTime;
     private Integer status;
-    private String retain1;	//1  api   代付   				2  后台代付
-    private String retain2;		//代付 ip
-    private String Time;	
+    private String retain1;    //1  api   代付   				2  后台代付
+    private String retain2;        //代付 ip
+    private String Time;
     private String witType;//  代付产品类型
     private String weight;   //代付用户权重  【一般作为下游商户，这个值为空】
     private String apply; //商户后台管理员（申请人）
@@ -38,17 +38,30 @@ public class Withdraw implements Serializable{
     private String comment; //审核意见
     private String bankcode;//银行标识号
     private String witChannel;
-	public String getWitChannel() {
-		return witChannel;
-	}
-	public void setWitChannel(String witChannel) {
-		this.witChannel = witChannel;
-	}
-	public String getBankcode() {
-		return bankcode;
-	}
-	public void setBankcode(String bankcode) {
-		this.bankcode = bankcode;
+    private String chennelId;
+
+    public String getChennelId() {
+        return chennelId;
+    }
+
+    public void setChennelId(String chennelId) {
+        this.chennelId = chennelId;
+    }
+
+    public String getWitChannel() {
+        return witChannel;
+    }
+
+    public void setWitChannel(String witChannel) {
+        this.witChannel = witChannel;
+    }
+
+    public String getBankcode() {
+        return bankcode;
+    }
+
+    public void setBankcode(String bankcode) {
+        this.bankcode = bankcode;
 	}
 	public String getApply() {
 		return apply;
