@@ -1,11 +1,11 @@
 package alipay.manage.util;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import alipay.manage.api.channel.util.zhaunshi.BankEnum;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class BankTypeUtil {
 	private static final Log log = LogFactory.get();
@@ -155,7 +155,6 @@ public class BankTypeUtil {
 		BANK_MAP.put("ZBCB", BankEnum.ZBCB.getBankId());
 
 
-
 		BANK_MAP.put("ZBCB", BankEnum.ZBCB.getBankId());
 		BANK_MAP.put("ZGCCB", BankEnum.ZGCCB.getBankId());
 		BANK_MAP.put("ZJKCCB", BankEnum.ZJKCCB.getBankId());
@@ -164,13 +163,13 @@ public class BankTypeUtil {
 		BANK_MAP.put("ZRCBANK", BankEnum.ZRCBANK.getBankId());
 		BANK_MAP.put("ZYCBANK", BankEnum.ZYCBANK.getBankId());
 		BANK_MAP.put("ZZBANK", BankEnum.ZZBANK.getBankId());
-
-
-
-
+		BANK_MAP.put("SPABANK", BankEnum.SPABANK.getBankId());
+		BANK_MAP.put("SPDB", BankEnum.SPDB.getBankId());
 
 
 		BANK_MAP_NAME.put("ABC", BankEnum.ABC.getBankNameCn());
+		BANK_MAP_NAME.put("SPDB", BankEnum.SPDB.getBankNameCn());
+		BANK_MAP_NAME.put("SPABANK", BankEnum.SPABANK.getBankNameCn());
 		BANK_MAP_NAME.put("ARCU", BankEnum.ARCU.getBankNameCn());
 		BANK_MAP_NAME.put("PSBC", BankEnum.PSBC.getBankNameCn());
 		BANK_MAP_NAME.put("ASCB", BankEnum.ASCB.getBankNameCn());

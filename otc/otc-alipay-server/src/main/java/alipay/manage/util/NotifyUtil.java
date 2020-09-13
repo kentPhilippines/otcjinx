@@ -169,8 +169,10 @@ public class NotifyUtil {
                     if (o > 30) {
                         log.info("【" + " 删除定时任务id  ：    " + orderId + "】");
                         CronUtil.remove(orderId);
+                        map.remove(orderId);
+                    } else {
+                        map.put(orderId, o);
                     }
-                    map.put(orderId, o);
                 }
             });
         } finally {
