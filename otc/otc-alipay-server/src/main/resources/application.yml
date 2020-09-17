@@ -10,18 +10,18 @@ server:
 eureka:
   client:
     serviceUrl:
-      defaultZone:  http://182.16.89.146:8761/eureka/
+      defaultZone:  http://185.207.152.8:8761/eureka/
   instance:
     # 是否使用ip注册
     prefer-ip-address: true
     # ${spring.cloud.client.ip-address}:${server.port}  局域网这样配置
     #  本地调试则要直接写死ip 【这个ip为注册时候的 调用ip】
-    instance-id: 182.16.89.146:${server.port}
+    instance-id: 127.0.0.1:${server.port}
     # 注册ip地址 公网注册地址112.121.162.162
-    ip-address:  182.16.89.146
+    ip-address: 127.0.0.1
     # 注册ip端口
     non-secure-port : ${server.port}
-    hostname: 182.16.89.146:${server.port}
+    hostname: 127.0.0.1:${server.port}
    # status-page-url : c.biancheng.net
 spring:
    application:
@@ -38,11 +38,11 @@ spring:
       trace:
         enabled: true
    datasource:
-    url: jdbc:mysql://182.16.89.146:3306/otc_alipay?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
-    username: root
-    password: 8sd7f6d7ff7af0afa0fasf0
-    driverClassName: com.mysql.jdbc.Driver
-    hikari:
+     url: jdbc:mysql://rm-3ns0wdzxpkyk00409qo.mysql.rds.aliyuncs.com:3306/otc_alipay?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+     username: kent
+     password: 9asdasd7dwgdo7$as8d)asd
+     driverClassName: com.mysql.jdbc.Driver
+     hikari:
        connection-test-query: SELECT 1 FROM DUAL
        connection-timeout: 600000
        maximum-pool-size: 500
@@ -53,7 +53,7 @@ spring:
        connection-init-sql: SET NAMES utf8mb4
    redis:
     port: 6379
-    host: 112.121.162.162
+    host: 127.0.0.1
     timeout: 5000
     pool:
         max-idle : 100

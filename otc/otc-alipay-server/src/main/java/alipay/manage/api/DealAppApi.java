@@ -64,16 +64,18 @@ public class DealAppApi extends PayOrderService {
     UserInfoService userInfoServiceImpl;
     @Autowired
     CheckUtils checkUtils;
-	@Autowired ChannelFeeMapper channelFeeDao;
-	@RequestMapping("/findFund")
-	public Result findFund(HttpServletRequest request) {
-		String appId = request.getParameter("appId");
-		String sign = request.getParameter("sign");
-		if(StrUtil.isBlank(appId) ||  StrUtil.isBlank(sign)  )
-			return Result.buildFailMessage("必传参数为空");
-		UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(appId);
-		if(ObjectUtil.isNull(userInfo))
-			return Result.buildFailMessage("商户不存在");
+    @Autowired
+    ChannelFeeMapper channelFeeDao;
+
+    @RequestMapping("/findFund")
+    public Result findFund(HttpServletRequest request) {
+        String appId = request.getParameter("appId");
+        String sign = request.getParameter("sign");
+        if (StrUtil.isBlank(appId) || StrUtil.isBlank(sign))
+            return Result.buildFailMessage("必传参数为空");
+        UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(appId);
+        if (ObjectUtil.isNull(userInfo))
+            return Result.buildFailMessage("商户不存在");
 		Map<String,Object> map = new ConcurrentHashMap<String,Object>();
 		map.put("appId", appId);
 		map.put("sign", sign);
@@ -231,28 +233,35 @@ public class DealAppApi extends PayOrderService {
 		Object result = pay.getResult();
 		DealBean mapToBean = MapUtil.mapToBean((Map<String, Object>)result, DealBean.class);
 		if(ObjectUtil.isNull(mapToBean))
-			return Result.buildFailMessage("加密前格式错误，参数为空");
-		String clientIP = HttpUtil.getClientIP(request);
-		if(StrUtil.isNotBlank(clientIP))
-			mapToBean.setIp(clientIP);
-		log.info("【当前请求交易实体类："+mapToBean.toString()+"】");
-		String passcode = mapToBean.getPassCode(); //通道支付编码
-		if(StrUtil.isBlank(passcode))
-			return Result.buildFailMessage("通道编码为空");
-		log.info("【当前通道编码："+passcode+"】");
-		log.info("【当前通道编码："+passcode+"】");
-	    UserRate userRate = accountApiServiceImpl.findUserRateByUserId(mapToBean.getAppId(), passcode);
-	    ChannelFee channelFee = channelFeeDao.findImpl(userRate.getChannelId(),userRate.getPayTypr());
-	    if(ObjectUtil.isNull(channelFee)) {
-	      log.info("【通道实体不存在，当前商户订单号："+mapToBean.getOrderId()+"】");
-	      log.info("【通道实体不存在，费率配置错误】");
-	      Result.buildFailMessage("通道实体不存在，费率配置错误");
-	    }
-	    DealOrderApp orderApp = orderAppServiceImpl.findOrderByApp(mapToBean.getAppId(),mapToBean.getOrderId());
-	    if(ObjectUtil.isNotNull(orderApp)) {
-		  log.info("【当前商户订单号重复："+mapToBean.getOrderId()+"】");
-		  return  Result.buildFailMessage("商户订单号重复");
-	    }
+            return Result.buildFailMessage("加密前格式错误，参数为空");
+        String clientIP = HttpUtil.getClientIP(request);
+        if (StrUtil.isNotBlank(clientIP))
+            mapToBean.setIp(clientIP);
+        log.info("【当前请求交易实体类：" + mapToBean.toString() + "】");
+        String passcode = mapToBean.getPassCode(); //通道支付编码
+        if (StrUtil.isBlank(passcode))
+            return Result.buildFailMessage("通道编码为空");
+        log.info("【当前通道编码：" + passcode + "】");
+        log.info("【当前通道编码：" + passcode + "】");
+        UserRate userRate = null;
+        ChannelFee channelFee = null;
+        try {
+            userRate = accountApiServiceImpl.findUserRateByUserId(mapToBean.getAppId(), passcode);
+            channelFee = channelFeeDao.findImpl(userRate.getChannelId(), userRate.getPayTypr());
+        } catch (Exception e) {
+            log.info("【当前通道编码设置有误，产品类型设置重复：" + e.getMessage() + "】");
+            return Result.buildFailMessage("当前通道编码设置有误，产品类型设置重复");
+        }
+        if (ObjectUtil.isNull(channelFee)) {
+            log.info("【通道实体不存在，当前商户订单号：" + mapToBean.getOrderId() + "】");
+            log.info("【通道实体不存在，费率配置错误】");
+            Result.buildFailMessage("通道实体不存在，费率配置错误");
+        }
+        DealOrderApp orderApp = orderAppServiceImpl.findOrderByApp(mapToBean.getAppId(), mapToBean.getOrderId());
+        if (ObjectUtil.isNotNull(orderApp)) {
+            log.info("【当前商户订单号重复：" + mapToBean.getOrderId() + "】");
+            return Result.buildFailMessage("商户订单号重复");
+        }
 	    DealOrderApp dealBean = createDealAppOrder(mapToBean);
 	    if(ObjectUtil.isNull(dealBean))
 	      return Result.buildFailMessage("交易预订单生成出错");
@@ -293,7 +302,7 @@ public class DealAppApi extends PayOrderService {
         if (StrUtil.isBlank(bankcode)) {
             log.info("【当前银行卡类型不支持】");
             log.info("【当前银行不支持代付，当前商户：" + wit.getAppid() + "，当前订单号:" + wit.getApporderid() + "】");
-            return Result.buildFailMessage("bankcode错误，当前银行不支持合， bankcode传值错误");
+            return Result.buildFailMessage("当前银行不支持合， 银行code值错误");
         }
         Withdraw bean = createWit(wit, userRate, flag, channelFee);
         Result deal = null;

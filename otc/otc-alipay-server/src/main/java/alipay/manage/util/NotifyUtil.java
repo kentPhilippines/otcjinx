@@ -123,7 +123,11 @@ public class NotifyUtil {
         log.info("【通知URL为 ：" + url + "】  ");
         String result = "";
         try {
-            result = HttpUtil.post(url, msg, 2000);
+            if (url.contains("https")) {
+                result = HttpUtils.postHttps(url, msg);
+            } else {
+                result = HttpUtil.post(url, msg, 2000);
+            }
         } catch (Exception e) {
             //加入定时任务推送
             if (flag)
