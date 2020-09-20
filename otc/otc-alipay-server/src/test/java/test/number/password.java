@@ -1,13 +1,14 @@
 package test.number;
 
-import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSON;
+import cn.hutool.json.JSONUtil;
 import otc.result.Result;
-import otc.util.encode.HashKit;
 
 public class password {
 	public static void main(String[] args) {
-		String a = StrUtil.isBlank("") ? "165515" : "???";
-		System.out.println(a);
+		JSON asdsad = JSONUtil.parse(Result.buildSuccessResult(Result.buildSuccessResultCode("支付处理中", "www.baidu.com", 1)));
+		System.out.println(asdsad.toString());
+
 	}
 
 }

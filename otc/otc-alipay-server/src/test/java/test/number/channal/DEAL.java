@@ -2,6 +2,9 @@ package test.number.channal;
 
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.http.HttpUtil;
+import cn.hutool.json.JSON;
+import cn.hutool.json.JSONUtil;
+import otc.result.Result;
 import otc.util.MapUtil;
 import otc.util.encode.XRsa;
 
@@ -15,7 +18,10 @@ public class DEAL {
     static SimpleDateFormat d = new SimpleDateFormat("yyyyMMddHHmmss");
 
     public static void main(String[] args) throws Exception {
-        test();
+        JSON asdsad = JSONUtil.parse(Result.buildFailMessage("失败"));
+        System.out.println(asdsad.toString());
+
+        // test();
     }
 
     static void test() throws Exception {
