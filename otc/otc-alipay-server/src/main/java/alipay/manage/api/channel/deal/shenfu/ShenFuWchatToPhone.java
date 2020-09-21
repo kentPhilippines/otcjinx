@@ -48,7 +48,7 @@ public class ShenFuWchatToPhone extends PayOrderService {
 			log.info("【本地订单创建成功，开始请求远程三方支付】");
 			Result config = configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.SERVER_IP);
 			Integer i = dealOrderApp.getOrderAmount().intValue();
-			String s = amount.get(i);
+			String s = amount.get(i.toString());
 			if (StrUtil.isBlank(s)) {
 				orderEr(dealOrderApp, msg);
 				return Result.buildFailMessage(msg);
