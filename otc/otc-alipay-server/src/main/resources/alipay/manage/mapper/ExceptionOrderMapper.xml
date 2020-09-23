@@ -1,0 +1,465 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="alipay.manage.mapper.ExceptionOrderMapper">
+    <resultMap id="BaseResultMap" type="alipay.manage.bean.ExceptionOrder">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="orderExceptId" property="orderExceptId" jdbcType="VARCHAR"/>
+        <result column="orderId" property="orderId" jdbcType="VARCHAR"/>
+        <result column="exceptStatus" property="exceptStatus" jdbcType="INTEGER"/>
+        <result column="exceptType" property="exceptType" jdbcType="INTEGER"/>
+        <result column="orderAccount" property="orderAccount" jdbcType="VARCHAR"/>
+        <result column="exceptOrderAmount" property="exceptOrderAmount" jdbcType="VARCHAR"/>
+        <result column="orderGenerationIp" property="orderGenerationIp" jdbcType="VARCHAR"/>
+        <result column="operation" property="operation" jdbcType="VARCHAR"/>
+        <result column="createTime" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="submitTime" property="submitTime" jdbcType="TIMESTAMP"/>
+        <result column="submitSystem" property="submitSystem" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+        <result column="retain1" property="retain1" jdbcType="VARCHAR"/>
+        <result column="retain2" property="retain2" jdbcType="VARCHAR"/>
+        <result column="retain3" property="retain3" jdbcType="VARCHAR"/>
+    </resultMap>
+    <resultMap id="ResultMapWithBLOBs" type="alipay.manage.bean.ExceptionOrder" extends="BaseResultMap">
+        <result column="explains" property="explains" jdbcType="LONGVARCHAR"/>
+    </resultMap>
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Base_Column_List">
+    id, orderExceptId, orderId, exceptStatus, exceptType, orderAccount, exceptOrderAmount,
+    orderGenerationIp, operation, createTime, submitTime, submitSystem, status, retain1,
+    retain2, retain3
+  </sql>
+    <sql id="Blob_Column_List">
+    explains
+  </sql>
+    <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs"
+            parameterType="alipay.manage.bean.ExceptionOrderExample">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        'true' as QUERYID,
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from alipay_exception_order
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+    <select id="selectByExample" resultMap="BaseResultMap" parameterType="alipay.manage.bean.ExceptionOrderExample">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        'true' as QUERYID,
+        <include refid="Base_Column_List"/>
+        from alipay_exception_order
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+    <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from alipay_exception_order
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from alipay_exception_order
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+    <delete id="deleteByExample" parameterType="alipay.manage.bean.ExceptionOrderExample">
+        delete from alipay_exception_order
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </delete>
+    <insert id="insert" parameterType="alipay.manage.bean.ExceptionOrder" useGeneratedKeys="true" keyProperty="id">
+    insert into alipay_exception_order (orderExceptId, orderId, exceptStatus,
+      exceptType, orderAccount, exceptOrderAmount,
+      orderGenerationIp, operation, createTime,
+      submitTime, submitSystem, status,
+      retain1, retain2, retain3,
+      explains)
+    values (#{orderExceptId,jdbcType=VARCHAR}, #{orderId,jdbcType=VARCHAR}, #{exceptStatus,jdbcType=INTEGER},
+      #{exceptType,jdbcType=INTEGER}, #{orderAccount,jdbcType=VARCHAR}, #{exceptOrderAmount,jdbcType=VARCHAR},
+      #{orderGenerationIp,jdbcType=VARCHAR}, #{operation,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
+      #{submitTime,jdbcType=TIMESTAMP}, #{submitSystem,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER},
+      #{retain1,jdbcType=VARCHAR}, #{retain2,jdbcType=VARCHAR}, #{retain3,jdbcType=VARCHAR},
+      #{explains,jdbcType=LONGVARCHAR})
+  </insert>
+    <insert id="insertSelective" parameterType="alipay.manage.bean.ExceptionOrder" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into alipay_exception_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderExceptId != null">
+                orderExceptId,
+            </if>
+            <if test="orderId != null">
+                orderId,
+            </if>
+            <if test="exceptStatus != null">
+                exceptStatus,
+            </if>
+            <if test="exceptType != null">
+                exceptType,
+            </if>
+            <if test="orderAccount != null">
+                orderAccount,
+            </if>
+            <if test="exceptOrderAmount != null">
+                exceptOrderAmount,
+            </if>
+            <if test="orderGenerationIp != null">
+                orderGenerationIp,
+            </if>
+            <if test="operation != null">
+                operation,
+            </if>
+            <if test="createTime != null">
+                createTime,
+            </if>
+            <if test="submitTime != null">
+                submitTime,
+            </if>
+            <if test="submitSystem != null">
+                submitSystem,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="retain1 != null">
+                retain1,
+            </if>
+            <if test="retain2 != null">
+                retain2,
+            </if>
+            <if test="retain3 != null">
+                retain3,
+            </if>
+            <if test="explains != null">
+                explains,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderExceptId != null">
+                #{orderExceptId,jdbcType=VARCHAR},
+            </if>
+            <if test="orderId != null">
+                #{orderId,jdbcType=VARCHAR},
+            </if>
+            <if test="exceptStatus != null">
+                #{exceptStatus,jdbcType=INTEGER},
+            </if>
+            <if test="exceptType != null">
+                #{exceptType,jdbcType=INTEGER},
+            </if>
+            <if test="orderAccount != null">
+                #{orderAccount,jdbcType=VARCHAR},
+            </if>
+            <if test="exceptOrderAmount != null">
+                #{exceptOrderAmount,jdbcType=VARCHAR},
+            </if>
+            <if test="orderGenerationIp != null">
+                #{orderGenerationIp,jdbcType=VARCHAR},
+            </if>
+            <if test="operation != null">
+                #{operation,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="submitTime != null">
+                #{submitTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="submitSystem != null">
+                #{submitSystem,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="retain1 != null">
+                #{retain1,jdbcType=VARCHAR},
+            </if>
+            <if test="retain2 != null">
+                #{retain2,jdbcType=VARCHAR},
+            </if>
+            <if test="retain3 != null">
+                #{retain3,jdbcType=VARCHAR},
+            </if>
+            <if test="explains != null">
+                #{explains,jdbcType=LONGVARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <select id="countByExample" parameterType="alipay.manage.bean.ExceptionOrderExample" resultType="java.lang.Integer">
+        select count(*) from alipay_exception_order
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </select>
+    <update id="updateByExampleSelective" parameterType="map">
+        update alipay_exception_order
+        <set>
+            <if test="record.id != null">
+                id = #{record.id,jdbcType=INTEGER},
+            </if>
+            <if test="record.orderExceptId != null">
+                orderExceptId = #{record.orderExceptId,jdbcType=VARCHAR},
+            </if>
+            <if test="record.orderId != null">
+                orderId = #{record.orderId,jdbcType=VARCHAR},
+            </if>
+            <if test="record.exceptStatus != null">
+                exceptStatus = #{record.exceptStatus,jdbcType=INTEGER},
+            </if>
+            <if test="record.exceptType != null">
+                exceptType = #{record.exceptType,jdbcType=INTEGER},
+            </if>
+            <if test="record.orderAccount != null">
+                orderAccount = #{record.orderAccount,jdbcType=VARCHAR},
+            </if>
+            <if test="record.exceptOrderAmount != null">
+                exceptOrderAmount = #{record.exceptOrderAmount,jdbcType=VARCHAR},
+            </if>
+            <if test="record.orderGenerationIp != null">
+                orderGenerationIp = #{record.orderGenerationIp,jdbcType=VARCHAR},
+            </if>
+            <if test="record.operation != null">
+                operation = #{record.operation,jdbcType=VARCHAR},
+            </if>
+            <if test="record.createTime != null">
+                createTime = #{record.createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.submitTime != null">
+                submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.submitSystem != null">
+                submitSystem = #{record.submitSystem,jdbcType=VARCHAR},
+            </if>
+            <if test="record.status != null">
+                status = #{record.status,jdbcType=INTEGER},
+            </if>
+            <if test="record.retain1 != null">
+                retain1 = #{record.retain1,jdbcType=VARCHAR},
+            </if>
+            <if test="record.retain2 != null">
+                retain2 = #{record.retain2,jdbcType=VARCHAR},
+            </if>
+            <if test="record.retain3 != null">
+                retain3 = #{record.retain3,jdbcType=VARCHAR},
+            </if>
+            <if test="record.explains != null">
+                explains = #{record.explains,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByExampleWithBLOBs" parameterType="map">
+        update alipay_exception_order
+        set id = #{record.id,jdbcType=INTEGER},
+        orderExceptId = #{record.orderExceptId,jdbcType=VARCHAR},
+        orderId = #{record.orderId,jdbcType=VARCHAR},
+        exceptStatus = #{record.exceptStatus,jdbcType=INTEGER},
+        exceptType = #{record.exceptType,jdbcType=INTEGER},
+        orderAccount = #{record.orderAccount,jdbcType=VARCHAR},
+        exceptOrderAmount = #{record.exceptOrderAmount,jdbcType=VARCHAR},
+        orderGenerationIp = #{record.orderGenerationIp,jdbcType=VARCHAR},
+        operation = #{record.operation,jdbcType=VARCHAR},
+        createTime = #{record.createTime,jdbcType=TIMESTAMP},
+        submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
+        submitSystem = #{record.submitSystem,jdbcType=VARCHAR},
+        status = #{record.status,jdbcType=INTEGER},
+        retain1 = #{record.retain1,jdbcType=VARCHAR},
+        retain2 = #{record.retain2,jdbcType=VARCHAR},
+        retain3 = #{record.retain3,jdbcType=VARCHAR},
+        explains = #{record.explains,jdbcType=LONGVARCHAR}
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByExample" parameterType="map">
+        update alipay_exception_order
+        set id = #{record.id,jdbcType=INTEGER},
+        orderExceptId = #{record.orderExceptId,jdbcType=VARCHAR},
+        orderId = #{record.orderId,jdbcType=VARCHAR},
+        exceptStatus = #{record.exceptStatus,jdbcType=INTEGER},
+        exceptType = #{record.exceptType,jdbcType=INTEGER},
+        orderAccount = #{record.orderAccount,jdbcType=VARCHAR},
+        exceptOrderAmount = #{record.exceptOrderAmount,jdbcType=VARCHAR},
+        orderGenerationIp = #{record.orderGenerationIp,jdbcType=VARCHAR},
+        operation = #{record.operation,jdbcType=VARCHAR},
+        createTime = #{record.createTime,jdbcType=TIMESTAMP},
+        submitTime = #{record.submitTime,jdbcType=TIMESTAMP},
+        submitSystem = #{record.submitSystem,jdbcType=VARCHAR},
+        status = #{record.status,jdbcType=INTEGER},
+        retain1 = #{record.retain1,jdbcType=VARCHAR},
+        retain2 = #{record.retain2,jdbcType=VARCHAR},
+        retain3 = #{record.retain3,jdbcType=VARCHAR}
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByPrimaryKeySelective" parameterType="alipay.manage.bean.ExceptionOrder">
+        update alipay_exception_order
+        <set>
+            <if test="orderExceptId != null">
+                orderExceptId = #{orderExceptId,jdbcType=VARCHAR},
+            </if>
+            <if test="orderId != null">
+                orderId = #{orderId,jdbcType=VARCHAR},
+            </if>
+            <if test="exceptStatus != null">
+                exceptStatus = #{exceptStatus,jdbcType=INTEGER},
+            </if>
+            <if test="exceptType != null">
+                exceptType = #{exceptType,jdbcType=INTEGER},
+            </if>
+            <if test="orderAccount != null">
+                orderAccount = #{orderAccount,jdbcType=VARCHAR},
+            </if>
+            <if test="exceptOrderAmount != null">
+                exceptOrderAmount = #{exceptOrderAmount,jdbcType=VARCHAR},
+            </if>
+            <if test="orderGenerationIp != null">
+                orderGenerationIp = #{orderGenerationIp,jdbcType=VARCHAR},
+            </if>
+            <if test="operation != null">
+                operation = #{operation,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                createTime = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="submitTime != null">
+                submitTime = #{submitTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="submitSystem != null">
+                submitSystem = #{submitSystem,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="retain1 != null">
+                retain1 = #{retain1,jdbcType=VARCHAR},
+            </if>
+            <if test="retain2 != null">
+                retain2 = #{retain2,jdbcType=VARCHAR},
+            </if>
+            <if test="retain3 != null">
+                retain3 = #{retain3,jdbcType=VARCHAR},
+            </if>
+            <if test="explains != null">
+                explains = #{explains,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKeyWithBLOBs" parameterType="alipay.manage.bean.ExceptionOrder">
+    update alipay_exception_order
+    set orderExceptId = #{orderExceptId,jdbcType=VARCHAR},
+      orderId = #{orderId,jdbcType=VARCHAR},
+      exceptStatus = #{exceptStatus,jdbcType=INTEGER},
+      exceptType = #{exceptType,jdbcType=INTEGER},
+      orderAccount = #{orderAccount,jdbcType=VARCHAR},
+      exceptOrderAmount = #{exceptOrderAmount,jdbcType=VARCHAR},
+      orderGenerationIp = #{orderGenerationIp,jdbcType=VARCHAR},
+      operation = #{operation,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      submitTime = #{submitTime,jdbcType=TIMESTAMP},
+      submitSystem = #{submitSystem,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER},
+      retain1 = #{retain1,jdbcType=VARCHAR},
+      retain2 = #{retain2,jdbcType=VARCHAR},
+      retain3 = #{retain3,jdbcType=VARCHAR},
+      explains = #{explains,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+    <update id="updateByPrimaryKey" parameterType="alipay.manage.bean.ExceptionOrder">
+    update alipay_exception_order
+    set orderExceptId = #{orderExceptId,jdbcType=VARCHAR},
+      orderId = #{orderId,jdbcType=VARCHAR},
+      exceptStatus = #{exceptStatus,jdbcType=INTEGER},
+      exceptType = #{exceptType,jdbcType=INTEGER},
+      orderAccount = #{orderAccount,jdbcType=VARCHAR},
+      exceptOrderAmount = #{exceptOrderAmount,jdbcType=VARCHAR},
+      orderGenerationIp = #{orderGenerationIp,jdbcType=VARCHAR},
+      operation = #{operation,jdbcType=VARCHAR},
+      createTime = #{createTime,jdbcType=TIMESTAMP},
+      submitTime = #{submitTime,jdbcType=TIMESTAMP},
+      submitSystem = #{submitSystem,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER},
+      retain1 = #{retain1,jdbcType=VARCHAR},
+      retain2 = #{retain2,jdbcType=VARCHAR},
+      retain3 = #{retain3,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
