@@ -34,26 +34,16 @@ public abstract class NotfiyChannel {
     private static final String WIT_LOCK = "witNotfy";
     private static final String DEAL_LOCK = "dealpayNotfiy";
     static Lock lock = new ReentrantLock();
-    @Autowired
-    UserInfoService userInfoServiceImpl;
-    @Autowired
-    OrderService orderServiceImpl;
-    @Autowired
-    NotifyUtil notifyUtilImpl;
-    @Autowired
-    ChannelFeeMapper channelFeeDao;
-    @Autowired
-    AmountUtil amountUtil;
-    @Autowired
-    AmountRunUtil amountRunUtil;
-    @Autowired
-    private OrderUtil orderUtilImpl;
-    @Autowired
-    private WithdrawService withdrawServiceImpl;
-    @Autowired
-    private CheckUtils checkUtils;
-    @Autowired
-    private RedisLockUtil redisLockUtil;
+    @Autowired private UserInfoService userInfoServiceImpl;
+    @Autowired private OrderService orderServiceImpl;
+    @Autowired private NotifyUtil notifyUtilImpl;
+    @Autowired private ChannelFeeMapper channelFeeDao;
+    @Autowired private AmountUtil amountUtil;
+    @Autowired private AmountRunUtil amountRunUtil;
+    @Autowired private OrderUtil orderUtilImpl;
+    @Autowired private WithdrawService withdrawServiceImpl;
+    @Autowired private CheckUtils checkUtils;
+    @Autowired private RedisLockUtil redisLockUtil;
 
     public Result witNotfy(String orderId, String ip) {
         String lock = this.getClass().getName() + WIT_LOCK + ip;

@@ -43,29 +43,18 @@ import java.util.concurrent.ConcurrentHashMap;
 @RestController
 @RequestMapping("/deal")
 public class DealAppApi extends PayOrderService {
-    @Autowired
-    VendorRequestApi vendorRequestApi;
+    @Autowired VendorRequestApi vendorRequestApi;
     Logger log = LoggerFactory.getLogger(DealAppApi.class);
-    @Autowired
-    FactoryForStrategy factoryForStrategy;
-    @Autowired
-    AccountApiService accountApiServiceImpl;
-    @Autowired
-    OrderAppService orderAppServiceImpl;
-    @Autowired
-    WithdrawService withdrawServiceImpl;
-    @Autowired
-    OrderUtil orderUtil;
-    @Autowired
-    ProductMapper productDao;
-    @Autowired
-    UserFundService userFundServiceImpl;
-    @Autowired
-    UserInfoService userInfoServiceImpl;
-    @Autowired
-    CheckUtils checkUtils;
-    @Autowired
-    ChannelFeeMapper channelFeeDao;
+    @Autowired FactoryForStrategy factoryForStrategy;
+    @Autowired AccountApiService accountApiServiceImpl;
+    @Autowired OrderAppService orderAppServiceImpl;
+    @Autowired WithdrawService withdrawServiceImpl;
+    @Autowired OrderUtil orderUtil;
+    @Autowired ProductMapper productDao;
+    @Autowired UserFundService userFundServiceImpl;
+    @Autowired UserInfoService userInfoServiceImpl;
+    @Autowired CheckUtils checkUtils;
+    @Autowired ChannelFeeMapper channelFeeDao;
 
     @RequestMapping("/findFund")
     public Result findFund(HttpServletRequest request) {
@@ -228,8 +217,12 @@ public class DealAppApi extends PayOrderService {
 	@PostMapping("/pay")
 	public Result dealAppPay(HttpServletRequest request) {
 		Result pay = vendorRequestApi.pay(request);
-		if(!pay.isSuccess())
+		if(!pay.isSuccess()){
+
+
+
 			return pay;
+		}
 		Object result = pay.getResult();
 		DealBean mapToBean = MapUtil.mapToBean((Map<String, Object>)result, DealBean.class);
 		if(ObjectUtil.isNull(mapToBean))
@@ -255,7 +248,7 @@ public class DealAppApi extends PayOrderService {
         if (ObjectUtil.isNull(channelFee)) {
             log.info("【通道实体不存在，当前商户订单号：" + mapToBean.getOrderId() + "】");
             log.info("【通道实体不存在，费率配置错误】");
-            Result.buildFailMessage("通道实体不存在，费率配置错误");
+            return Result.buildFailMessage("通道实体不存在，费率配置错误");
         }
         DealOrderApp orderApp = orderAppServiceImpl.findOrderByApp(mapToBean.getAppId(), mapToBean.getOrderId());
         if (ObjectUtil.isNotNull(orderApp)) {

@@ -700,4 +700,27 @@ public class OrderUtil {
 	}
 
 
+	/**
+	 *	当前为代付代理商结算     配置渠道结算的时候  出款渠道费率为配置出款渠道   实际出款渠道时候，当前出款渠道为实际出款
+	 * @param wit
+	 * @param flag   true 配置出款渠道结算          false    实际出款渠道
+	 * @return
+	 */
+	public Result agentDpayChannel(Withdraw wit,Boolean flag){
+		String channelId = "";
+		String product = "";
+		if(flag){
+			channelId = wit.getWitChannel();
+			product  = wit.getWitType();
+		}else{
+			channelId = wit.getChennelId();//实际出款渠道
+			product = "";
+		}
+
+
+
+
+		return  Result.buildFailMessage("代理商代付出款结算失败");
+	}
+
 }
