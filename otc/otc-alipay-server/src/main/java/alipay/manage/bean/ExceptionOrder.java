@@ -4,39 +4,22 @@ import java.util.Date;
 
 public class ExceptionOrder {
     private Integer id;
-
-    private String orderExceptId;
-
-    private String orderId;
-
-    private Integer exceptStatus;
-
-    private Integer exceptType;
-
-    private String orderAccount;
-
-    private String exceptOrderAmount;
-
-    private String orderGenerationIp;
-
-    private String operation;
-
+    private String orderExceptId; //异常流水号
+    private String orderId;        //关联商户号
+    private Integer exceptStatus;   // 操作类型   1  自动异常   2 人为异常
+    private Integer exceptType;        //异常类型 1交易,2人工加款,4人工扣款,5代付
+    private String orderAccount;       // 异常关联账号
+    private String exceptOrderAmount;   //异常金额
+    private String orderGenerationIp;   //异常ip
+    private String operation;           // 操作人
     private Date createTime;
-
     private Date submitTime;
-
     private String submitSystem;
-
     private Integer status;
-
     private String retain1;
-
     private String retain2;
-
     private String retain3;
-
-    private String explains;
-
+    private String explains;           //异常说明
     public Integer getId() {
         return id;
     }
