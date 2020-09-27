@@ -59,19 +59,22 @@ public class witTest {
 
 	void run() {
 		SimpleDateFormat d = new SimpleDateFormat("yyyyMMddHHmmss");
-		String key = "1FFE92CF583A451585181C958EE44775";//交易密钥
-		String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCKdv2iandXVj8MjY44RwsqwBwmu4gcnd2Fnu4SEGXwLL9TeKJgfvrzALYH2kDVWHzqNCu3VO37wRx3uKR1h1hmauHTeyadS4DrnzxSD1Wa1BO5yjYO3U+g11Jb8gO9HKeA/8SC7E2OhVHvpy6SHm0kl4LzmYNugEgPU/0DeVgSTQIDAQAB";
+		String userid = "2u7rMduh";
+		String key = "bc64a6067ae6e7edcfd8c62ad3472d46";//交易密钥
+		String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCIU7OCf+4N47fbJMCpd68GileM6vz02Bi+nTrvuzn7uAn/g89WGE+/aYuFHzAOCsrZ17y26RkQimjbWISEkDd4izP0+w7D0qZCb2czE+UeV7Qvt/DuXpY+yGM1+EAnP/xTr4qmXAZDn3e+xSzU8VMDD/3cuGH6X0CbmQZeK+VVqQIDAQAB";
+
+
 		Deal deal = new Deal();
 		deal.setAmount("100");//金额
-		deal.setAppId("borui123");//商户号
+		deal.setAppId(userid);//商户号
 		deal.setApplyDate(d.format(new Date()));
 		deal.setNotifyUrl("http://starpay168.com:5055");
 		deal.setOrderId(IdUtil.objectId());
-		deal.setPassCode("ALIPAY_SCAN");
+		deal.setPassCode("ALIPAYTOBANK");
 		deal.setSubject("订单交易");
-		deal.setUserid("freebuf002");  //to userid
+		deal.setUserid("ASDSADASDS");  //to userid
 		Map<String, Object> objectToMap = MapUtil.objectToMap(deal);
-		String createParam = MapUtil.createParam(objectToMap);
+		String createParam = createParam(objectToMap);
 		System.out.println("签名前请求串：" + createParam);
 		String md5 = getKeyedDigestUTF8(createParam + key);
 		System.out.println("签名：" + md5);
@@ -84,7 +87,8 @@ public class witTest {
 		System.out.println("加密后字符串：" + publicEncrypt);
 		Map<String, Object> postMap = new HashMap<String, Object>();
 		postMap.put("cipherText", publicEncrypt);
-		postMap.put("userId", "borui123");
+		postMap.put("userId", userid);
+		System.out.println("请求参数：" + postMap.toString());
 		String post = HttpUtil.post("http://starpay168.com:5055/api-alipay/deal/pay", postMap);
 		System.out.println("相应结果集：" + post);
 
@@ -93,21 +97,6 @@ public class witTest {
 }
 
 class Deal {
-	/**
-	 * ######################
-	 * �ֶ���		�Ƿ����ǩ��   �Ƿ����
-	 * appid			��			��		24		�̻��ţ����磺11396	�̻����׺�
-	 * orderid			��			��		128		�����ţ�����Ψһ	ϵͳ��֤��ʽ appid+orderid����֤Ψһ�ԡ�
-	 * notifyurl		��			��		96		�ص���ַ	�ص���ַ������72���ַ�
-	 * pageUrl			��			��		124		ͬ�����ص�ַ��H5���Ʒ�ش���	֧���ɹ�����ת�ĵ�ַ
-	 * amount			��			��		-		֧�����, ��λ  �� Ԫ
-	 * passcode		��			��		24		ͨ�����룺PAY1005��֧����ɨ�롿	��Ʒ���ͱ�š���ѯ��Ӫ��
-	 * rsasign			��			��		-		ǩ���ַ������ܣ����ܷ�ʽ�ο�ƽ̨��Demo	ǩ��
-	 * userid			��			��		124		�����û�Ψһ��ʶ	������Ϊ�̻�����ұ�ʶ��������߳ɹ��ʣ�
-	 * bankCode 		��			��		24		���б���	�磺 bankCode=ICBC������֧��ʱ����
-	 * subject 		��			��		124		��Ʒ����
-	 * applydate		��			��		-		����ʱ�䣬ʱ���ʽ��yyyyMMddHHmmss	��ʱ���ʽ���������쳣��
-	 */
 	private String appId;
 	private String orderId;
 	private String notifyUrl;

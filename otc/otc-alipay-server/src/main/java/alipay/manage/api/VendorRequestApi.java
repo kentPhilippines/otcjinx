@@ -1,6 +1,5 @@
 package alipay.manage.api;
 
-import alipay.manage.bean.BankList;
 import alipay.manage.bean.UserFund;
 import alipay.manage.bean.UserInfo;
 import alipay.manage.bean.UserRate;
@@ -11,7 +10,6 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +18,7 @@ import otc.api.alipay.Common;
 import otc.result.Result;
 import otc.util.RSAUtils;
 import otc.util.StringUtils;
+
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -71,7 +70,13 @@ public class VendorRequestApi {
         }
         String passCode = paramMap.get("passCode").toString();
         //后期优化从缓存读取数据
-        UserRate userRate = accountApiServiceImpl.findUserRateByUserId(userId, passCode);
+        UserRate userRate = null;
+        try {
+            userRate = accountApiServiceImpl.findUserRateByUserId(userId, passCode);
+        } catch (Exception e) {
+            log.info("【当前通道编码设置有误，产品类型设置重复：" + e.getMessage() + "】");
+            return Result.buildFailMessage("当前通道编码设置有误，产品类型设置重复");
+        }
         if (userRate == null) {
             log.info("--------------【 商户交易费率未配置或未开通】----------------");
             return Result.buildFailMessage("商户交易费率未配置或未开通");
