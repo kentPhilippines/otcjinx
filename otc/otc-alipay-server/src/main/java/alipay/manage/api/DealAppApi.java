@@ -8,10 +8,7 @@ import alipay.manage.bean.util.DealBean;
 import alipay.manage.bean.util.WithdrawalBean;
 import alipay.manage.mapper.ChannelFeeMapper;
 import alipay.manage.mapper.ProductMapper;
-import alipay.manage.service.OrderAppService;
-import alipay.manage.service.UserFundService;
-import alipay.manage.service.UserInfoService;
-import alipay.manage.service.WithdrawService;
+import alipay.manage.service.*;
 import alipay.manage.util.BankTypeUtil;
 import alipay.manage.util.CheckUtils;
 import alipay.manage.util.OrderUtil;
@@ -30,6 +27,7 @@ import otc.result.Result;
 import otc.util.MapUtil;
 import otc.util.number.Number;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.Map;
@@ -45,17 +43,17 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DealAppApi extends PayOrderService {
     @Autowired VendorRequestApi vendorRequestApi;
     Logger log = LoggerFactory.getLogger(DealAppApi.class);
-    @Autowired FactoryForStrategy factoryForStrategy;
-    @Autowired AccountApiService accountApiServiceImpl;
-    @Autowired OrderAppService orderAppServiceImpl;
-    @Autowired WithdrawService withdrawServiceImpl;
-    @Autowired OrderUtil orderUtil;
-    @Autowired ProductMapper productDao;
-    @Autowired UserFundService userFundServiceImpl;
-    @Autowired UserInfoService userInfoServiceImpl;
-    @Autowired CheckUtils checkUtils;
-    @Autowired ChannelFeeMapper channelFeeDao;
-
+    @Autowired private FactoryForStrategy factoryForStrategy;
+    @Autowired private AccountApiService accountApiServiceImpl;
+    @Autowired private OrderAppService orderAppServiceImpl;
+    @Autowired private WithdrawService withdrawServiceImpl;
+    @Autowired private OrderUtil orderUtil;
+    @Resource private ProductMapper productDao;
+    @Autowired private UserFundService userFundServiceImpl;
+    @Autowired private UserInfoService userInfoServiceImpl;
+    @Autowired private CheckUtils checkUtils;
+    @Resource private ChannelFeeMapper channelFeeDao;
+	@Autowired private ExceptionOrderService exceptionOrderServiceImpl;
     @RequestMapping("/findFund")
     public Result findFund(HttpServletRequest request) {
         String appId = request.getParameter("appId");
@@ -242,28 +240,34 @@ public class DealAppApi extends PayOrderService {
             userRate = accountApiServiceImpl.findUserRateByUserId(mapToBean.getAppId(), passcode);
             channelFee = channelFeeDao.findImpl(userRate.getChannelId(), userRate.getPayTypr());
         } catch (Exception e) {
+			exceptionOrderServiceImpl.addDealOrder(mapToBean,"用户报错：当前通道编码有误，产品类型设置重复；处理方法：当前配置用户产品的时候配置用户产品重复",clientIP);
             log.info("【当前通道编码设置有误，产品类型设置重复：" + e.getMessage() + "】");
             return Result.buildFailMessage("当前通道编码设置有误，产品类型设置重复");
         }
         if (ObjectUtil.isNull(channelFee)) {
             log.info("【通道实体不存在，当前商户订单号：" + mapToBean.getOrderId() + "】");
             log.info("【通道实体不存在，费率配置错误】");
-            return Result.buildFailMessage("通道实体不存在，费率配置错误");
+			exceptionOrderServiceImpl.addDealOrder(mapToBean,"用户报错：通道实体不存在；处理方法：渠道费率未设置",clientIP);
+			return Result.buildFailMessage("通道实体不存在，费率配置错误");
         }
         DealOrderApp orderApp = orderAppServiceImpl.findOrderByApp(mapToBean.getAppId(), mapToBean.getOrderId());
         if (ObjectUtil.isNotNull(orderApp)) {
             log.info("【当前商户订单号重复：" + mapToBean.getOrderId() + "】");
-            return Result.buildFailMessage("商户订单号重复");
+			exceptionOrderServiceImpl.addDealOrder(mapToBean,"用户报错：商户订单号重复；处理方法：提醒用户换一个订单号提交支付请求",clientIP);
+			return Result.buildFailMessage("商户订单号重复");
         }
 	    DealOrderApp dealBean = createDealAppOrder(mapToBean);
-	    if(ObjectUtil.isNull(dealBean))
-	      return Result.buildFailMessage("交易预订单生成出错");
+	    if(ObjectUtil.isNull(dealBean)){
+			exceptionOrderServiceImpl.addDealOrder(mapToBean,"用户报错：交易预订单生成出错；处理方法：让商户重新发起支付提交请求，或联系技术人员处理",clientIP);
+			return Result.buildFailMessage("交易预订单生成出错");
+		}
 	    Result deal = null;
 	    try {
 	       deal = factoryForStrategy.getStrategy(channelFee.getImpl()).deal(dealBean, channelFee.getChannelId());
 	    } catch (Exception e) {
             log.info("【当前通道编码对于的实体类不存在：" + e.getMessage() + "】");
-            return Result.buildFailMessage("当前通道编码不存在");
+			exceptionOrderServiceImpl.addDealOrder(mapToBean,"用户报错：当前通道编码不存在；处理方法：生成交易订单时候出现错误，或者请求三方渠道支付请求的时候出现异常返回，或联系技术人员处理",clientIP);
+			return Result.buildFailMessage("当前通道编码不存在");
         }
 	    if(deal.isSuccess())
 	    	deal.setResult(new ResultDeal(true,0,deal.getCode(),deal.getResult()));

@@ -22,6 +22,7 @@ import otc.bean.dealpay.Withdraw;
 import otc.exception.order.OrderException;
 import otc.result.Result;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,22 +32,16 @@ import java.util.concurrent.locks.ReentrantLock;
 @Component
 public class OrderUtil {
 	Logger log = LoggerFactory.getLogger(OrderUtil.class);
-	@Autowired
-	OrderService orderServiceImpl;
-	@Autowired
-	AmountUtil amountUtil;
-	@Autowired
-	AmountRunUtil amountRunUtil;
-	@Autowired
-	UserInfoService userInfoServiceImpl;
-	@Autowired
-	RechargeMapper rechargeDao;
-	@Autowired
-	WithdrawMapper withdrawDao;
-	@Autowired DealOrderAppMapper dealOrderAppDao;
-	@Autowired UserRateMapper userRateDao;
-	@Autowired RiskUtil riskUtil;
-	@Autowired CorrelationService correlationServiceImpl;
+	@Autowired private OrderService orderServiceImpl;
+	@Autowired private AmountUtil amountUtil;
+	@Autowired private AmountRunUtil amountRunUtil;
+	@Autowired private UserInfoService userInfoServiceImpl;
+	@Resource private RechargeMapper rechargeDao;
+	@Resource private WithdrawMapper withdrawDao;
+	@Resource private DealOrderAppMapper dealOrderAppDao;
+	@Resource private UserRateMapper userRateDao;
+	@Autowired private RiskUtil riskUtil;
+	@Autowired private CorrelationService correlationServiceImpl;
 	/**
 	 * <p>充值订单置为成功</p>
 	 * @param orderId			订单号
@@ -82,8 +77,7 @@ public class OrderUtil {
 		return rechargeOrderSu(orderIds, true);
 	}
 
-	@Autowired
-	ChannelFeeMapper channelFeeDao;
+	@Resource ChannelFeeMapper channelFeeDao;
 
 
 	/**
@@ -441,6 +435,7 @@ public class OrderUtil {
 		UserFund channel = new UserFund();
 		channel.setUserId(wit.getChennelId());
 		channelWitSu(wit.getOrderId(), wit, wit.getRetain2(), channel);
+		agentDpayChannel(wit, wit.getRetain2(),wit.getWitType(),false);//新加代付代理商结算
 		return Result.buildSuccessMessage("代付成功");
 	}
 
@@ -701,12 +696,39 @@ public class OrderUtil {
 
 
 	/**
-	 *	当前为代付代理商结算     配置渠道结算的时候  出款渠道费率为配置出款渠道   实际出款渠道时候，当前出款渠道为实际出款
+	 * 自动结算
 	 * @param wit
-	 * @param flag   true 配置出款渠道结算          false    实际出款渠道
+	 * @param ip
+	 * @param flag1
 	 * @return
 	 */
-	public Result agentDpayChannel(Withdraw wit,Boolean flag){
+	public  Result agentDpayChannel(Withdraw wit,String ip, boolean flag1){
+		return agentDpayChannel(wit,true,null,ip,flag1);
+	}
+
+	/**
+	 * 手动结算
+	 * @param wit
+	 * @param ip
+	 * @param product
+	 * @param flag1
+	 * @return
+	 */
+	public  Result agentDpayChannel(Withdraw wit,String ip,String product, boolean flag1){
+		return agentDpayChannel(wit,false,product,ip,flag1);
+	}
+
+	/**
+	 * 【当前为代付代理商结算     配置渠道结算的时候  出款渠道费率为配置出款渠道   实际出款渠道时候，当前出款渠道为实际出款】
+	 * 代理商代付利润结算
+	 * @param wit			代付订单
+	 * @param flag			是否手动推送出款  true 配置出款渠道结算          false    实际出款渠道
+	 * @param trueProduct   实际出款渠道
+	 * @param ip			代父ip
+	 * @param flag1			是否手动
+	 * @return
+	 */
+	private Result agentDpayChannel(Withdraw wit,Boolean flag,String trueProduct,String ip, boolean flag1){
 		String channelId = "";
 		String product = "";
 		if(flag){
@@ -714,13 +736,37 @@ public class OrderUtil {
 			product  = wit.getWitType();
 		}else{
 			channelId = wit.getChennelId();//实际出款渠道
-			product = "";
+			product = trueProduct;//实际出款产品
 		}
 
-
-
-
-		return  Result.buildFailMessage("代理商代付出款结算失败");
+		UserRate userRate = userRateDao.findProductFeeByAll(wit.getUserId(), product,channelId);//查询费率情况
+		final String finalChannelId = channelId;
+		final String finalProduct = product;
+		ThreadUtil.execute(()->{
+			witAgent(wit,wit.getUserId(), finalProduct, finalChannelId,userRate,ip,flag1);
+		});
+		return  Result.buildSuccessMessage("代付代理商结算");
 	}
 
+
+	private Result witAgent(Withdraw wit,String username, String product, String channelId, UserRate rate,  String ip, boolean flag) {
+		UserFund userFund = userInfoServiceImpl.findUserFundByAccount (username);//查询当前资金情况
+		UserRate userRate = userRateDao.findProductFeeByAll(userFund.getUserId(), product,channelId);//查询当前代理费率情况
+		log.info("【当前代理商为："+userRate.getUserId()+"】");
+		log.info("【当前代理商结算费率："+userRate.getFee()+"】");
+		log.info("【当前当前我方："+rate.getUserId()+"】");
+		log.info("【当前我方结算费率："+rate.getFee()+"】");
+		BigDecimal fee = userRate.getFee();//代理商的费率
+		BigDecimal fee2 = rate.getFee();//商户的费率
+		BigDecimal subtract = fee2.subtract(fee);//
+		log.info("【当前结算费率差为："+subtract+"】");
+		log.info("【当前结算费率差为代理商分润："+subtract+"】");//这个钱要加给代理商
+		log.info("【开始结算】");
+		Result addAmounProfit = amountUtil.addAmounProfit(userFund, subtract);
+		if(addAmounProfit.isSuccess())
+		 	amountRunUtil.addWitFee(userFund,subtract,wit,ip,flag);
+		if(StrUtil.isNotBlank(userFund.getAgent()))
+			witAgent(wit,userFund.getAgent(),product,channelId,userRate,ip,flag);
+		return Result.buildSuccessMessage("结算成功");
+	}
 }

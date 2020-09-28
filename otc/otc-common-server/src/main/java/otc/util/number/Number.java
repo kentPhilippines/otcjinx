@@ -145,6 +145,11 @@ public class Number {
 		return Common.Deals.RECHARGE_CARD+objectId;
 	}
 
+	public static String getExc() {
+		String objectId = IdUtil.objectId().toUpperCase();
+		return Common.Deals.ORDEREXCE+objectId;
+	}
+
 
 	public static String getWitOrderQr() {
 		 try {

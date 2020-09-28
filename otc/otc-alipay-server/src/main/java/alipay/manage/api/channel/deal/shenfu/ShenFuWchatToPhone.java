@@ -12,6 +12,7 @@ import cn.hutool.json.JSONUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import otc.bean.config.ConfigFile;
 import otc.common.PayApiConstant;
@@ -37,8 +38,8 @@ public class ShenFuWchatToPhone extends PayOrderService {
 		amount.put("200", "200");
 	}
 
-	@Autowired
-	ConfigServiceClient configServiceClientImpl;
+	@Qualifier("configServiceClientHystrix")
+	@Autowired private ConfigServiceClient configServiceClientImpl;
 
 	@Override
 	public Result deal(DealOrderApp dealOrderApp, String payType) {

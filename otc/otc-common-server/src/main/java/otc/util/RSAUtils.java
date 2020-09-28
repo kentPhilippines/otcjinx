@@ -309,7 +309,7 @@ public class RSAUtils {
         String urlParam = privateDecrypt(cipherText, privateKey);
         log.info("【解密数据："+urlParam+"】");
         if (StringUtils.isEmpty(urlParam)) 
-            throw new BusinessException("解密字符串为空");
+            throw new BusinessException("解密字符串为空,请核对密钥正确醒和确认好当前加密方法是否有误");
         return MapUtil.paramToMap(urlParam);
     }
 

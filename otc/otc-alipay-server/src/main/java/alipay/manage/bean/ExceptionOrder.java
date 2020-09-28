@@ -5,7 +5,7 @@ import java.util.Date;
 public class ExceptionOrder {
     private Integer id;
     private String orderExceptId; //异常流水号
-    private String orderId;        //关联商户号
+    private String orderId;        //关联商户订单号
     private Integer exceptStatus;   // 操作类型   1  自动异常   2 人为异常
     private Integer exceptType;        //异常类型 1交易,2人工加款,4人工扣款,5代付
     private String orderAccount;       // 异常关联账号

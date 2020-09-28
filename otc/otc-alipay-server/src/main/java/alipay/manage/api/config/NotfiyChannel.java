@@ -66,6 +66,7 @@ public abstract class NotfiyChannel {
         ThreadUtil.execute(() -> {
             orderUtilImpl.channelWitSu(orderId, wit, ip, userFund);
         });
+        Result result = orderUtilImpl.agentDpayChannel(wit, ip,true);
         redisLockUtil.unLock(lock);
         return withrawOrderSu;
     }

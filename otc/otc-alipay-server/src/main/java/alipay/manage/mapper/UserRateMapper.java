@@ -70,4 +70,6 @@ public interface UserRateMapper {
 
 	@Update("update alipay_user_rate set fee = #{fee},payTypr=#{payTypr} where feeType = 1 and userId = #{userId} ")
 	int updateRateR(@Param("userId")String userId, @Param("fee")String fee,@Param("payTypr")String payTypr);
+    @Select("select * from alipay_user_rate where userId = #{userId} and payTypr = #{product} and channelId = #{channel}")
+    UserRate findProductFeeByAll(@Param("userId") String userId, @Param("product") String product, @Param("channel") String channelId);
 }
