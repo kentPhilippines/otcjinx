@@ -15,6 +15,7 @@ public class YiFuUtil {
     public static final String CHANNEL_KUAIJIE="0202";
     public static final String CHANNEL_WANGYING = "0202";
     public static final String CHANNEL_BANK = "bank2";
+    public static final String BANK_TO_BANK = "802";
     public static String md5(String a) {
         String c = "";
         MessageDigest md5;

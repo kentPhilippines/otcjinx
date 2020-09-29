@@ -12,6 +12,7 @@ import alipay.manage.service.*;
 import alipay.manage.util.BankTypeUtil;
 import alipay.manage.util.CheckUtils;
 import alipay.manage.util.OrderUtil;
+import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
@@ -216,9 +217,9 @@ public class DealAppApi extends PayOrderService {
 	public Result dealAppPay(HttpServletRequest request) {
 		Result pay = vendorRequestApi.pay(request);
 		if(!pay.isSuccess()){
-
-
-
+			ThreadUtil.execute(()->{
+				exceptionOrderServiceImpl.addDealOrderOthen(pay.getMessage(),request.getParameter("userId"),HttpUtil.getClientIP(request));
+			});
 			return pay;
 		}
 		Object result = pay.getResult();

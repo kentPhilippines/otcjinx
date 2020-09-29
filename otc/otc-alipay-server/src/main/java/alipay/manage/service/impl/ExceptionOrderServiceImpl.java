@@ -38,6 +38,7 @@ public class ExceptionOrderServiceImpl implements ExceptionOrderService {
         exceptionOrder.setExplains(msg.trim());
         exceptionOrder.setOrderAccount(deal.getAppId());
         exceptionOrder.setExceptOrderAmount(deal.getAmount());
+        exceptionOrder.setExceptStatus(1);
         exceptionOrder.setExceptType(DEAL);
         exceptionOrder.setOperation(OPERATION);
         int i = exceptionOrderDao.insertSelective(exceptionOrder);
@@ -48,10 +49,12 @@ public class ExceptionOrderServiceImpl implements ExceptionOrderService {
     public boolean addDealOrderOthen(String msg, String user, String ip) {
         ExceptionOrder exceptionOrder = new ExceptionOrder();
         exceptionOrder.setOrderExceptId(Number.getExc());
+        exceptionOrder.setOrderId(Number.getExc());
         exceptionOrder.setOrderGenerationIp(ip);
         exceptionOrder.setExplains(msg.trim());
         exceptionOrder.setOrderAccount(user);
         exceptionOrder.setExceptType(DEAL);
+        exceptionOrder.setExceptStatus(1);
         exceptionOrder.setOperation(OPERATION);
         int i = exceptionOrderDao.insertSelective(exceptionOrder);
         return i>0 && i < 2;

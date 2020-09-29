@@ -9,6 +9,8 @@ import java.util.Map;
 
 import alipay.manage.api.channel.util.yifu.YiFuUtil;
 import cn.hutool.core.util.RandomUtil;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import com.netflix.ribbon.proxy.annotation.Http;
 
 import cn.hutool.core.util.ObjectUtil;
@@ -17,17 +19,26 @@ import cn.hutool.http.HttpUtil;
 
 public class YiFu {
 	public static void main(String[] args) {
-		/**
-		 * 	app_id				是		是			APP_ID
-			channel				是		是			通道编号，见下方目录
-			out_trade_no		是		是			外部订单号
-			money				是		是			金额，单位元，两位小数点
-			callback_url		是		是			异步回调地址
-			terminalType		否		否			终端类型：Android、IOS、PC、Others
-			sign				是		否			签名：详见下方签名方式
-		 */
+		Map<String,Object> map = new HashMap<String,Object>();
+		map.put("app_id", YiFuUtil.APPID);
+		map.put("channel", YiFuUtil.BANK_TO_BANK);
+		map.put("out_trade_no", StrUtil.uuid().toString());
+		map.put("money",  "100"+".00");
+		map.put("callback_url", "www.baidu.com");
+		String createParam = YiFuUtil.createParam(map);
+		System.out.println("【易付签名前参数："+createParam+"】");
+		String md5 = YiFuUtil.md5(createParam + "key="+YiFuUtil.KEY);
+		String sign = md5.toUpperCase();
+		map.put("sign", sign);
+		System.out.println("【请求Yifu参数："+map.toString()+"】");
+		//{"code":200,"msg":"ok","data":{"pay_url":"http://kpay8494.168yuju.cn/pay/gateway/order?c=22&o=2020070411330189354","money":"100"}}
+		//{"code":419,"msg":"签名不正确","data":[]}
+		String post = HttpUtil.post(YiFuUtil.URL, map);
+		JSONObject jsonObject = JSONUtil.parseObj(post);
+		String code = jsonObject.getStr("code");
+		System.out.println("【返回Yifu参数："+jsonObject.toString()+"】");
 		
-		test();
+
 	}
 
 	private static void test() {

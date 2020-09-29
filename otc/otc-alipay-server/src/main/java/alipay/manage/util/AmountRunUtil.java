@@ -1,14 +1,10 @@
 package alipay.manage.util;
 
 import java.math.BigDecimal;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import alipay.manage.bean.Amount;
 import alipay.manage.bean.DealOrder;
 import alipay.manage.bean.RunOrder;
@@ -16,15 +12,9 @@ import alipay.manage.bean.UserFund;
 import alipay.manage.bean.UserRate;
 import alipay.manage.service.RunOrderService;
 import alipay.manage.service.UserInfoService;
-import cn.hutool.core.thread.ThreadUtil;
-import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
-import org.springframework.transaction.annotation.Transactional;
-import otc.api.alipay.Common;
-import otc.api.alipay.Common.Order.DealOrderApp;
 import otc.bean.dealpay.Recharge;
 import otc.bean.dealpay.Withdraw;
-import otc.exception.BusinessException;
 import otc.exception.user.UserException;
 import otc.result.Result;
 

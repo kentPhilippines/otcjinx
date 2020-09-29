@@ -742,9 +742,12 @@ public class OrderUtil {
 		UserRate userRate = userRateDao.findProductFeeByAll(wit.getUserId(), product,channelId);//查询费率情况
 		final String finalChannelId = channelId;
 		final String finalProduct = product;
-		ThreadUtil.execute(()->{
-			witAgent(wit,wit.getUserId(), finalProduct, finalChannelId,userRate,ip,flag1);
-		});
+		UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(wit.getUserId());
+		if(StrUtil.isNotBlank(userInfo.getAgent())){
+			ThreadUtil.execute(()->{
+				witAgent(wit,userInfo.getAgent(), finalProduct, finalChannelId,userRate,ip,flag1);
+			});
+		}
 		return  Result.buildSuccessMessage("代付代理商结算");
 	}
 

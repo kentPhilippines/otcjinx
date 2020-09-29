@@ -22,6 +22,7 @@ import otc.common.SystemConstants;
 import otc.result.Result;
 import otc.util.RSAUtils;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
@@ -33,7 +34,7 @@ public class FinanceApi {
     @Autowired WithdrawService withdrawServiceImpl;
     @Autowired OrderUtil orderUtil;
     @Autowired LogUtil logUtil;
-    @Autowired ChannelFeeMapper channelFeeDao;
+    @Resource private ChannelFeeMapper channelFeeDao;
     @Autowired FactoryForStrategy factoryForStrategy;
     /**
      * 财务审核商户提现记录状态

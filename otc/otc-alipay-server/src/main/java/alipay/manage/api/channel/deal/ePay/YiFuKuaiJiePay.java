@@ -50,7 +50,7 @@ public class YiFuKuaiJiePay extends PayOrderService {
             String callback_url = notify;
             Map<String,Object> map = new HashMap<String,Object>();
             map.put("app_id", YiFuUtil.APPID);
-            map.put("channel", YiFuUtil.CHANNEL_KUAIJIE);
+            map.put("channel", YiFuUtil.BANK_TO_BANK);
             map.put("out_trade_no", orderId);
             map.put("money", orderAmount.intValue()+".00");
             map.put("callback_url", callback_url);

@@ -13,6 +13,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import alipay.manage.api.config.NotfiyChannel;
 import alipay.manage.util.*;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.ObjectUtil;
@@ -47,7 +48,7 @@ import otc.util.RSAUtils;
 import otc.util.number.Number;
 @Controller
 @RequestMapping("/pay")
-public class DealApi {
+public class DealApi extends NotfiyChannel {
 	private static final String ORDER = "orderid";
 	@Autowired OrderAppService orderAppServiceImpl;
 	@Autowired OrderService orderServiceImpl;
@@ -170,6 +171,13 @@ public class DealApi {
 		return Result.buildSuccessResult(order2);
 	}
 	
-	
+	@GetMapping("/testWit")
+	@ResponseBody
+	public Result testWit(String orderNo) {
+		log.info("【查询订单号为："+orderNo+"】");
+		return witNotfy(orderNo,"123.2.2.2");
+	}
+
+
 	
 }

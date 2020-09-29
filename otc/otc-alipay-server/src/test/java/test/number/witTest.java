@@ -17,7 +17,9 @@ import java.util.Map;
 
 public class witTest {
 	public static void main(String[] args) {
-		new witTest().run();
+		//new witTest().run();
+
+		HttpUtil.get("127.0.0.1:9010/pay/testWit?orderNo=W1598355653114710115");
 	}
 
 
@@ -89,7 +91,7 @@ public class witTest {
 		postMap.put("cipherText", publicEncrypt);
 		postMap.put("userId", userid);
 		System.out.println("请求参数：" + postMap.toString());
-		String post = HttpUtil.post("http://starpay168.com:5055/api-alipay/deal/pay", postMap);
+		String post = HttpUtil.post("http://127.0.0.1:9010/deal/pay", postMap);
 		System.out.println("相应结果集：" + post);
 
 	}

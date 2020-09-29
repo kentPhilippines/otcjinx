@@ -19,6 +19,7 @@ import otc.api.alipay.Common;
 import otc.bean.dealpay.Withdraw;
 import otc.result.Result;
 
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
@@ -37,9 +38,6 @@ public abstract class NotfiyChannel {
     @Autowired private UserInfoService userInfoServiceImpl;
     @Autowired private OrderService orderServiceImpl;
     @Autowired private NotifyUtil notifyUtilImpl;
-    @Autowired private ChannelFeeMapper channelFeeDao;
-    @Autowired private AmountUtil amountUtil;
-    @Autowired private AmountRunUtil amountRunUtil;
     @Autowired private OrderUtil orderUtilImpl;
     @Autowired private WithdrawService withdrawServiceImpl;
     @Autowired private CheckUtils checkUtils;

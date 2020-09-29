@@ -44,9 +44,6 @@ public class YiFuWangBankPay extends PayOrderService {
         }
 
     private String createOrder(DealOrderApp dealOrderApp,String notify, BigDecimal orderAmount, String orderId) {
-            int i = RandomUtil.randomInt(1000000000);
-            String out_trade_no =i+"";
-            String money = "100";
             String callback_url = notify;
             Map<String,Object> map = new HashMap<String,Object>();
             map.put("app_id", YiFuUtil.APPID);
