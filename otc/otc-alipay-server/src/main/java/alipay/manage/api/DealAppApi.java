@@ -217,9 +217,7 @@ public class DealAppApi extends PayOrderService {
 	public Result dealAppPay(HttpServletRequest request) {
 		Result pay = vendorRequestApi.pay(request);
 		if(!pay.isSuccess()){
-			ThreadUtil.execute(()->{
-				exceptionOrderServiceImpl.addDealOrderOthen(pay.getMessage(),request.getParameter("userId"),HttpUtil.getClientIP(request));
-			});
+			exceptionOrderServiceImpl.addDealOrderOthen(pay.getMessage(),request.getParameter("userId"),HttpUtil.getClientIP(request));
 			return pay;
 		}
 		Object result = pay.getResult();
@@ -267,7 +265,8 @@ public class DealAppApi extends PayOrderService {
 	       deal = factoryForStrategy.getStrategy(channelFee.getImpl()).deal(dealBean, channelFee.getChannelId());
 	    } catch (Exception e) {
             log.info("【当前通道编码对于的实体类不存在：" + e.getMessage() + "】");
-			exceptionOrderServiceImpl.addDealOrder(mapToBean,"用户报错：当前通道编码不存在；处理方法：生成交易订单时候出现错误，或者请求三方渠道支付请求的时候出现异常返回，或联系技术人员处理",clientIP);
+			exceptionOrderServiceImpl.addDealOrder(mapToBean,"用户报错：当前通道编码不存在；处理方法：生成交易订单时候出现错误，或者请求三方渠道支付请求的时候出现异常返回，或联系技术人员处理," +
+					"三方渠道报错信息："+e.getMessage(),clientIP);
 			return Result.buildFailMessage("当前通道编码不存在");
         }
 	    if(deal.isSuccess())
@@ -294,12 +293,14 @@ public class DealAppApi extends PayOrderService {
         ChannelFee channelFee = channelFeeDao.findImpl(userRate.getChannelId(), userRate.getPayTypr());
         if (ObjectUtil.isNull(channelFee)) {
             log.info("【通道实体不存在，费率配置错误】");
-            Result.buildFailMessage("通道实体不存在，费率配置错误");
+			exceptionOrderServiceImpl.addWitOrder(wit,"用户报错：通道实体不存在，费率配置错误；处理方法：请检查商户提交的通道编码，反复确认",HttpUtil.getClientIP(request));
+			Result.buildFailMessage("通道实体不存在，费率配置错误");
         }
         String bankcode = BankTypeUtil.getBank(wit.getBankcode());
         if (StrUtil.isBlank(bankcode)) {
             log.info("【当前银行卡类型不支持】");
             log.info("【当前银行不支持代付，当前商户：" + wit.getAppid() + "，当前订单号:" + wit.getApporderid() + "】");
+			exceptionOrderServiceImpl.addWitOrder(wit,"用户报错：当前银行不支持合， 银行code值错误；处理方法：请商户检查提交的银行卡code是否正确",HttpUtil.getClientIP(request));
             return Result.buildFailMessage("当前银行不支持合， 银行code值错误");
         }
         Withdraw bean = createWit(wit, userRate, flag, channelFee);
@@ -319,7 +320,8 @@ public class DealAppApi extends PayOrderService {
         } catch (Exception e) {
             log.error(e.getMessage());
             super.withdrawEr(bean, "系统异常，请联系技术人员处理", HttpUtil.getClientIP(request));
-            log.info("【当前通道编码对于的实体类不存在】");
+			exceptionOrderServiceImpl.addWitOrder(wit,"用户报错：当前通道编码不存在；处理方法：提交技术人员处理，报错信息："+e.getMessage(),HttpUtil.getClientIP(request));
+			log.info("【当前通道编码对于的实体类不存在】");
             return Result.buildFailMessage("当前通道编码不存在");
         }
 		return deal;

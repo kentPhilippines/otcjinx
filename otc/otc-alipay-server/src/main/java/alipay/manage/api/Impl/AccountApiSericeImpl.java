@@ -30,12 +30,14 @@ import otc.util.encode.HashKit;
 import otc.util.enums.BizStatusEnum;
 import otc.util.enums.UserStatusEnum;
 
+import javax.annotation.Resource;
+
 @Component
 public class AccountApiSericeImpl implements AccountApiService {
     Logger log = LoggerFactory.getLogger(AccountApiSericeImpl.class);
-    @Autowired UserRateMapper userRateDao;
-    @Autowired UserInfoMapper userInfoDao;
-    @Autowired UserFundMapper userFundDao;
+    @Resource private UserRateMapper userRateDao;
+    @Resource private  UserInfoMapper userInfoDao;
+    @Resource private  UserFundMapper userFundDao;
     @Autowired UserInfoService userInfoService;
     @Autowired AmountUtil amountUtil;
 

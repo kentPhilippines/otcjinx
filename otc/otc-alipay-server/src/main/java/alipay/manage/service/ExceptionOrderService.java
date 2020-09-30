@@ -20,13 +20,21 @@ public interface ExceptionOrderService {
      * @param msg
      * @return
      */
-    boolean addDealOrder(DealBean deal ,String msg,String ip);
-    boolean addDealOrderOthen(String msg , String user , String ip );
+    void addDealOrder(DealBean deal ,String msg,String ip);
+    void addDealOrderOthen(String msg , String user , String ip );
     /**
      * 代付异常订单生成一般用于代付异常拦截
      * @param wit
      * @param msg
      * @return
      */
-    boolean addWitOrder(WithdrawalBean wit , String msg);
+    void addWitOrder(WithdrawalBean wit , String msg,String ip);
+
+
+
+
+
+
+    void addWitEx(String user,String amount,String msg,String ip ,String orderId  );
+    void addDealEx(String user,String amount,String msg,String ip ,String orderId  );
 }

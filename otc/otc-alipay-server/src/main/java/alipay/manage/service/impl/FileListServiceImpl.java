@@ -19,15 +19,14 @@ import otc.bean.alipay.FileList;
 import otc.bean.alipay.Medium;
 import otc.result.Result;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.List;
 
 @Service
 public class FileListServiceImpl implements FileListService {
-    @Autowired
-    FileListMapper fileListMapper;
-    @Autowired
-    MediumService mediumServiceImpl;
+    @Resource private FileListMapper fileListMapper;
+    @Autowired MediumService mediumServiceImpl;
     Logger log= LoggerFactory.getLogger(FileListServiceImpl.class);
     @Override
     public boolean addQr(FileList editGatheringCode) {
