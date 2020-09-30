@@ -429,13 +429,15 @@ public class OrderUtil {
 		int a = withdrawDao.updataOrderStatus(wit.getOrderId(), wit.getApproval(), wit.getComment(), Common.Order.Wit.ORDER_STATUS_SU, wit.getChennelId());
 		if (a == 0 || a > 2)
 			return Result.buildFailMessage("订单状态修改失败");
-		wit(wit.getOrderId());//通知
+		ThreadUtil.execute(() -> {
+			wit(wit.getOrderId());//通知
+		});
 		wit.setWitChannel(wit.getChennelId());
 		//结算实际出款渠道
 		UserFund channel = new UserFund();
 		channel.setUserId(wit.getChennelId());
 		channelWitSu(wit.getOrderId(), wit, wit.getRetain2(), channel);
-		agentDpayChannel(wit, wit.getRetain2(),wit.getWitType(),false);//新加代付代理商结算
+		agentDpayChannel(wit, wit.getRetain2(), wit.getWitType(), false);//新加代付代理商结算
 		return Result.buildSuccessMessage("代付成功");
 	}
 
