@@ -5,6 +5,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import alipay.config.redis.RedisLockUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,7 @@ public class AmountUtil {
 	Logger log = LoggerFactory.getLogger(AmountUtil.class);
 	@Autowired UserInfoService userInfoServiceImpl;
 	@Autowired RunOrderService runorderServiceImpl;
+	@Autowired private RedisLockUtil redisLockUtil;
 	public static final String ADD_AMOUNT_RECHARGE = "ADD_AMOUNT_RECHARGE";//资金充值
 	public static final String ADD_AMOUNT_PROFIT = "ADD_AMOUNT_PROFIT";//代理利润分成
 	public static final String ADD_AMOUNT = "ADD_AMOUNT";//人工加钱
@@ -125,11 +127,20 @@ public class AmountUtil {
 	 * 	以下方法暂时不对外界开放
 	 * #####################################################################
 	 */
+
 	/**
 	 * <p>增加余额</p>
 	 * @return
 	 */
 	public Result addAmountBalance(UserFund userFund1 , BigDecimal balance , String addType  , BigDecimal dealAmount) {
+		String key = this.getClass().getName() +"addAmountBalance"+ userFund1.getUserId();
+		try {
+			redisLockUtil.redisLock(key);
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.info("【当前账户资金变动加锁异常，异常情况："+e.getMessage()+"】");
+		}
+
 		UserFund userFund = userInfoServiceImpl.findUserFundByAccount(userFund1.getUserId());
 			if(!clickUserFund(userFund).isSuccess())
 				return Result.buildFailMessage("【资金账户存在问题】");
@@ -164,6 +175,14 @@ public class AmountUtil {
 				log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
 				return 	Result.buildFailMessage("【当前账户更新失败，请联系技术人员查询情况】");
 			}
+
+		try {
+			redisLockUtil.unLock(key);
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.info("【当前账户资金变动释放锁异常，异常情况："+e.getMessage()+"】");
+		}
+
 			return Result.buildFailMessage("传参异常");
 	}
 	public Result addAmountDealApp(UserFund userFund, BigDecimal balance) {
@@ -217,8 +236,16 @@ public class AmountUtil {
 	 * @param addType
 	 * @return
 	 */
+	protected static  final String DELETE_KEY = "deleteAmountBalance";
 	@Transactional
 	public Result deleteAmountBalance(UserFund userFund , BigDecimal balance , String addType ) {
+		String key = this.getClass().getName() +DELETE_KEY+ userFund.getUserId();
+		try {
+			redisLockUtil.redisLock(key);
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.info("【当前账户资金变动加锁异常，异常情况："+e.getMessage()+"】");
+		}
 		lock.lock();
 	    try {
 		userFund = userInfoServiceImpl.findUserFundByAccount(userFund.getUserId());
@@ -269,6 +296,12 @@ public class AmountUtil {
 		}
 	    }  finally {
 	        lock.unlock();
+			try {
+				redisLockUtil.unLock(key);
+			} catch (Exception e) {
+				e.printStackTrace();
+				log.info("【当前账户资金变动释放锁异常，异常情况："+e.getMessage()+"】");
+			}
 	    }
 		return Result.buildFailMessage("传参异常");
 	}

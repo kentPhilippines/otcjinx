@@ -1,4 +1,4 @@
-package alipay.manage.api.channel.deal;
+package alipay.manage.api.channel.deal.yifu;
 
 import alipay.manage.api.channel.util.yifu.YiFu02Util;
 import alipay.manage.api.config.PayOrderService;
@@ -19,9 +19,8 @@ import otc.result.Result;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
-
-@Component("YiFu02PayBankToBank")
-public class YiFu02PayToBank extends PayOrderService {
+@Component("YiFu02PayToBank")
+public class YiFu02Pay extends PayOrderService {
     //private static final Log log = LogFactory.get();
     @Autowired
     ConfigServiceClient configServiceClientImpl;
@@ -50,7 +49,7 @@ public class YiFu02PayToBank extends PayOrderService {
         String merchant_id = YiFu02Util.APPID;
         String order_id = orderId;
         String amount = orderAmount.intValue()+"00.00";
-        String pay_type = "bank2";
+        String pay_type = "alipaytb";
         String notify_url = notify;
         String user_id = RandomUtil.randomString(10).toUpperCase();
         String user_ip = dealOrderApp.getOrderIp();
