@@ -64,18 +64,18 @@ public class YiFu02AlipayH5 extends PayOrderService {
     }
 
     private String createOrder(DealOrderApp dealOrderApp, String notify, BigDecimal orderAmount, String orderId) {
-        String key = YiFu02Util.KEY;
-        String merchant_id = YiFu02Util.APPID;
+        String key = YiFu02Util.XUNFU_KEY;
+        String merchant_id = YiFu02Util.XUNFU_APPID;
         String order_id = orderId;
-        String amount = orderAmount.intValue()+"00.00";
+        String amount = orderAmount.intValue() + "00.00";
         String pay_type = "alipayh5";
         String notify_url = notify;
         String user_id = RandomUtil.randomString(10).toUpperCase();
         String user_ip = dealOrderApp.getOrderIp();
-        Map<String,Object> map = new HashMap();
-        map.put("merchant_id",merchant_id);
-        map.put("order_id",order_id);
-        map.put("amount",amount);
+        Map<String, Object> map = new HashMap();
+        map.put("merchant_id", merchant_id);
+        map.put("order_id", order_id);
+        map.put("amount", amount);
         map.put("pay_type",pay_type);
         map.put("notify_url",notify_url);
         map.put("user_id",user_id);
@@ -85,7 +85,7 @@ public class YiFu02AlipayH5 extends PayOrderService {
         String s = YiFu02Util.md5(param + "key=" + key);
         map.put("sign",s);
         log.info("【易付2号请求前的参数："+map.toString()+"】");
-        String post = HttpUtil.post(YiFu02Util.URL, map);
+        String post = HttpUtil.post(YiFu02Util.XUNFU_URL, map);
         log.info(post);
         JSONObject jsonObject = JSONUtil.parseObj(post);
         String code = jsonObject.getStr("code");

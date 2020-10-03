@@ -9,9 +9,12 @@ import java.util.Arrays;
 import java.util.Map;
 
 public class YiFu02Util {
-    public static final String APPID="10174";
-    public static final String URL="http://apl.wuchengdu.com:12306/api/v1/createorder";
-    public static final String KEY="a07261026f369734b81a276a26b3cc9c";
+    public static final String APPID = "10174";
+    public static final String XUNFU_APPID = "10010";
+    public static final String URL = "http://apl.wuchengdu.com:12306/api/v1/createorder";
+    public static final String XUNFU_URL = " http://api.queermingkj.com:23423/api/v1/createorder";
+    public static final String KEY = "a07261026f369734b81a276a26b3cc9c";
+    public static final String XUNFU_KEY = "815aa11b2e030ce440e44298523f83de";
     public static String md5(String a) {
         String c = "";
         MessageDigest md5;

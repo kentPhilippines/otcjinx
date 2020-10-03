@@ -2,9 +2,10 @@ package test.number.channal;
 
 import alipay.manage.api.channel.util.yifu.YiFu02Util;
 import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.core.util.StrUtil;
+import cn.hutool.core.util.RandomUtil;
 import cn.hutool.http.HttpUtil;
-import otc.util.MapUtil;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
@@ -14,40 +15,37 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class yifu02 {
-    public void main(String[] args) {
 
-        //test();
+    public static void main(String[] args) {
         notifytest();
     }
 
-    private void notifytest() {
-        /**
-         * {
-         *
-         * amount=100000,
-         * order_id=C1596119675803817527,
-         * pay_time=2020-07-30 22:35:25,
-         * real_amount=100000,
-         * status=1,
-         * transact_id=aca047bcdebb68598f5f719b9e86f8e4,
-         * user_id=2u7rMduh,
-         * sign=7693189d0ed57388f8ab71464a1e8f29
-         *
-         *
-         * }
-         */
-        Map<String,Object> yifuMap = new HashMap<>();
-        yifuMap.put("order_id", "C1596119675803817527");
-        yifuMap.put("user_id", "2u7rMduh");
-        yifuMap.put("amount", "100000");
-        yifuMap.put("transact_id", "aca047bcdebb68598f5f719b9e86f8e4");
-        yifuMap.put("real_amount", "100000");
-        yifuMap.put("pay_time", "2020-07-30 22:35:25");
-        yifuMap.put("status","1");
-        String param = YiFu02Util.createParam(yifuMap);
-        System.out.println(param);
-        String s = YiFu02Util.md5(param + "key=" + YiFu02Util.KEY);
-        System.out.println(s);
+    private static void notifytest() {
+        String key = YiFu02Util.XUNFU_KEY;
+        String merchant_id = YiFu02Util.XUNFU_APPID;
+        String order_id = "adadosahdosadhsadosa0970709";
+        String amount = 1000 + "00.00";
+        String pay_type = "alipayh5";
+        String notify_url = "123.12.312.312:9002";
+        String user_id = RandomUtil.randomString(10).toUpperCase();
+        String user_ip = "213.2.123.3";
+        Map<String, Object> map = new HashMap();
+        map.put("merchant_id", merchant_id);
+        map.put("order_id", order_id);
+        map.put("amount", amount);
+        map.put("pay_type", pay_type);
+        map.put("notify_url", notify_url);
+        map.put("user_id", user_id);
+        map.put("user_ip", user_ip);
+        String param = YiFu02Util.createParam(map);
+        System.out.println("【易付2号加签前的参数：" + param + "】");
+        String s = YiFu02Util.md5(param + "key=" + key);
+        map.put("sign", s);
+        System.out.println("【易付2号请求前的参数：" + map.toString() + "】");
+        String post = HttpUtil.post(YiFu02Util.XUNFU_URL, map);
+        System.out.println(post);
+        JSONObject jsonObject = JSONUtil.parseObj(post);
+
     }
 
     /**
