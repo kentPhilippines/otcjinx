@@ -59,7 +59,12 @@ public class FinanceApi {
             return Result.buildFailMessage("订单状态未传，疑似数据安全问题");
         switch (paramMap.get("orderStatus").toString()){
             case Common.Order.Wit.ORDER_STATUS_SU:
-                logUtil.addLog(request, "当前后台审核商户提现订单操作：" + paramMap.get("orderId") + "，：" + paramMap.get("userId") + "，操作人：" + paramMap.get("approval").toString() + ", 审核意见：" + paramMap.get("comment").toString() + ",实际出款渠道：" + paramMap.get("channelId").toString(), paramMap.get("approval").toString());
+                logUtil.addLog(request, "当前后台审核商户提现订单操作：" +
+                                paramMap.get("orderId") + "，：" + paramMap.get("userId")
+                                + "，操作人：" + paramMap.get("approval").toString()
+                                + ", 审核意见：" + paramMap.get("comment").toString()
+                                + ",实际出款渠道：" + paramMap.get("channelId").toString(),
+                        paramMap.get("approval").toString());
                 return orderUtil.withrawOrderSu(paramMap.get("orderId").toString(),
                         paramMap.get("approval").toString(), paramMap.get("comment").toString(),
                         paramMap.get("channelId").toString(), paramMap.get("witType").toString());

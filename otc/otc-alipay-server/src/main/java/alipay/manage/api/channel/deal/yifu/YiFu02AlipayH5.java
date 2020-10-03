@@ -54,7 +54,7 @@ public class YiFu02AlipayH5 extends PayOrderService {
             Result config = configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.SERVER_IP);
             log.info("【回调地址ip为："+config.toString()+"】" );
             log.info("【本地订单创建成功，开始请求远程易付三方支付】");
-            String url = createOrder(dealOrderApp,config.getResult()+ PayApiConstant.Notfiy.NOTFIY_API_WAI+"/YiFu02-notfiy", dealOrderApp.getOrderAmount(),orderId);
+            String url = createOrder(dealOrderApp, config.getResult() + PayApiConstant.Notfiy.NOTFIY_API_WAI + "/YiFuH502-notfiy", dealOrderApp.getOrderAmount(), orderId);
             if (StrUtil.isBlank(url))
                 return Result.buildFailMessage("支付失败");
             else
