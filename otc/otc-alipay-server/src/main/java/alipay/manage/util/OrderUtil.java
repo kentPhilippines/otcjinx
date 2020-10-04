@@ -93,9 +93,10 @@ public class OrderUtil {
 		if (order == null) {
 			return Result.buildFailMessage("平台订单号不存在");
 		}
-		if (!Common.Order.Wit.ORDER_STATUS_YU.equals(order.getOrderStatus())) {
+		/*if (!Common.Order.Wit.ORDER_STATUS_YU.equals(order.getOrderStatus())) {
 			return Result.buildFailMessage("订单已被处理，不允许操作");
-		}
+		 	2020-10-04 增加任意状态下都可将代付订单处理为失败，故注释该代码
+		}*/
 		order.setApproval(approval);
 		order.setComment(comment);
 		return withrawOrderEr(order,ip);
@@ -529,7 +530,6 @@ public class OrderUtil {
 	/**
 	 * <p>商户代理商结算</p>
 	 * @param orderApp					商户订单
-	 * @param userRateList				需要结算的费率
 	 * @return
 	 */
 	boolean agentDealPay(DealOrderApp orderApp,boolean flag,String ip){
@@ -635,6 +635,16 @@ public class OrderUtil {
 		 * ###########################
 		 * 代付失败给该用户退钱
 		 */
+		if(wit.getOrderStatus().equals(Common.Order.Wit.ORDER_STATUS_SU)){
+			//1，订单成功时候的时候除了退换商户资金还会对渠道账户进行扣款操作
+			//2，对实际出款订单和配置出款订单加加款进行区分
+			if(StrUtil.isNotBlank(wit.getChennelId())){//配置出款
+				//按照配置的出款费率给渠道退款
+				channelWitEr(wit,wit.getChennelId());
+			}else{//手动推送出款
+				channelWitEr(wit,wit.getWitChannel());
+			}
+		}
 		int a = withdrawDao.updataOrderStatus1(wit.getOrderId(), wit.getApproval(), wit.getComment(), Common.Order.Wit.ORDER_STATUS_ER);
 		if (a == 0 || a > 2)
 			return Result.buildFailMessage("订单状态修改失败");
@@ -773,5 +783,36 @@ public class OrderUtil {
 		if(StrUtil.isNotBlank(userFund.getAgent()))
 			witAgent(wit,userFund.getAgent(),product,channelId,userRate,ip,flag);
 		return Result.buildSuccessMessage("结算成功");
+	}
+
+
+	 Result channelWitEr(Withdraw wit,String userId){
+		 UserFund userFund = new UserFund();
+		 userFund.setUserId(userId);
+		 Result result1 = amountUtil.addAmountAdd(userFund, wit.getActualAmount());
+		 if(!result1.isSuccess()){
+		 	log.info("【代付订单置为失败渠道账户加减款异常，请详细查看原因，当前代付订单号："+wit.getOrderId()+"】");
+			 return result1;
+		 }
+		 wit.setUserId(userId);
+		 Result addAmountW = amountRunUtil.addAmountW(wit, wit.getRetain2());
+		 if(!addAmountW.isSuccess()){
+			 log.info("【代付订单置为失败渠道账户加减款流水生成异常，请详细查看原因，当前代付订单号："+wit.getOrderId()+"】");
+			 return addAmountW;
+		 }
+		 ChannelFee findChannelFee = channelFeeDao.findChannelFee(userId, wit.getWitType());
+
+		 Result result = amountUtil.addAmountAdd(userFund, new BigDecimal(findChannelFee.getChannelDFee()));
+		 if(!result.isSuccess()){
+			 log.info("【代付订单置为失败渠道账户手续费加减款生成异常，请详细查看原因，当前代付订单号："+wit.getOrderId()+"】");
+			return result;
+		 }
+		 Result result2 = amountRunUtil.addAmountChannelWitEr(wit, wit.getRetain2(), new BigDecimal(findChannelFee.getChannelDFee()));
+		 if(!result2.isSuccess()){
+			 log.info("【代付订单置为失败渠道账户手续费加减款流水生成异常，请详细查看原因，当前代付订单号："+wit.getOrderId()+"】");
+			 return result2;
+		 }
+
+		 return Result.buildSuccessMessage("渠道退款成功");
 	}
 }

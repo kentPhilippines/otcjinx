@@ -18,7 +18,7 @@ import java.util.Map;
 @RestController
 public class YiFu02H5Notify extends NotfiyChannel {
     @RequestMapping("/YiFuH502-notfiy")
-    public String notify(HttpServletRequest request, @RequestBody Map<String, Object> data) {
+    public String notify(HttpServletRequest request,@RequestBody Map<String,Object> data) {
         log.info("【收到YiFu02回调】");
         String clientIP = HttpUtil.getClientIP(request);
         Map map = new HashMap();
@@ -30,6 +30,8 @@ public class YiFu02H5Notify extends NotfiyChannel {
         map.put("154.204.33.81", "154.204.33.81");
         map.put("61.4.112.74", "61.4.112.74");
         map.put("61.4.112.88", "61.4.112.88");
+        map.put("103.60.108.252", "103.60.108.252");
+        map.put("61.41.118.115", "61.41.118.115");
         Object object = map.get(clientIP);
         if (ObjectUtil.isNull(object)) {
             log.info("【当前回调ip为：" + clientIP + "，固定IP登记为：" + map.toString() + "】");
@@ -59,7 +61,7 @@ public class YiFu02H5Notify extends NotfiyChannel {
         // transact_id=aca047bcdebb68598f5f719b9e86f8e4,
         // user_id=2u7rMduh,
         // sign=7693189d0ed57388f8ab71464a1e8f29}
-        log.info("【易付02回调参数：" + data.toString() + "】");
+        log.info("【易付02回调参数："+data.toString()+"】");
         String order_id = data.get("order_id").toString();
         String user_id = data.get("user_id").toString();
         String amount = data.get("amount").toString();
@@ -68,29 +70,29 @@ public class YiFu02H5Notify extends NotfiyChannel {
         String pay_time = data.get("pay_time").toString();
         String status = data.get("status").toString();
         String sign = data.get("sign").toString();
-        Map<String, Object> yifuMap = new HashMap<>();
-        yifuMap.put("order_id", order_id);
-        yifuMap.put("user_id", user_id);
-        yifuMap.put("amount", amount);
-        yifuMap.put("real_amount", real_amount);
+        Map<String,Object> yifuMap = new HashMap<>();
+        yifuMap.put("order_id",order_id);
+        yifuMap.put("user_id",user_id);
+        yifuMap.put("amount",amount);
+        yifuMap.put("real_amount",real_amount);
         yifuMap.put("transact_id", transact_id);
-        yifuMap.put("pay_time", pay_time);
-        yifuMap.put("status", status);
+        yifuMap.put("pay_time",pay_time);
+        yifuMap.put("status",status);
         String param = YiFu02Util.createParam(yifuMap);
-        log.info("【易付2号加签前的参数：" + param + "】");
-        String s = YiFu02Util.md5(param + "key=" + YiFu02Util.XUNFU_KEY);
-        if (s.equals(sign)) {
-            log.info("【当前支付成功回调签名参数：" + sign + "，当前我方验证签名结果：" + s + "】");
+        log.info("【易付2号加签前的参数："+param+"】");
+        String s = YiFu02Util.md5(param + "key=" + YiFu02Util.KEY);
+        if(s.equals(sign)) {
+            log.info("【当前支付成功回调签名参数："+sign+"，当前我方验证签名结果："+s+"】");
             log.info("【签名成功】");
         } else {
-            log.info("【当前支付成功回调签名参数：" + sign + "，当前我方验证签名结果：" + s + "】");
+            log.info("【当前支付成功回调签名参数："+sign+"，当前我方验证签名结果："+s+"】");
             log.info("【签名失败】");
-            return "sign is error";
+            return  "sign is error";
         }
-        if ("1".equals(status)) {
+        if("1".equals(status)){
             Result dealpayNotfiy = dealpayNotfiy(order_id, clientIP, "yifu02回调订单成功");
-            if (dealpayNotfiy.isSuccess()) {
-                log.info("【订单回调修改成功，订单号为 ：" + order_id + " 】");
+            if(dealpayNotfiy.isSuccess()) {
+                log.info("【订单回调修改成功，订单号为 ："+order_id+" 】");
                 return "success";
             }
         }

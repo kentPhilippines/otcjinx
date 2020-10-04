@@ -125,6 +125,18 @@ public class AmountRunUtil {
     }
 
     /**
+     * 代付失败渠道退回
+     * @param withdraw
+     * @param generationIp
+     * @param bigDecimal
+     * @return
+     */
+    public Result addAmountChannelWitEr(Withdraw withdraw, String generationIp, BigDecimal bigDecimal) {
+        UserFund userFund = userInfoServiceImpl.findUserFundByAccount(withdraw.getUserId()); //查询出来为渠道账户
+        return add(WITHDRAY_AMOUNT_OPEN, userFund, withdraw.getOrderId(), bigDecimal, generationIp, "商户成功代付订单置为失败", RUNTYPE_ARTIFICIAL);
+    }
+
+    /**
      * <p>代付失败手续费解冻</p>
      *
      * @param withdraw
