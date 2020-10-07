@@ -20,21 +20,24 @@ public class shenfu {
     private static void test() {
         Map<String, Object> map = new HashMap();
         map.put("oid_partner", payUtil.APPID);
-        map.put("notify_url", "www.baidu.com");
+        map.put("notify_url",  "www.baidu.com");
         map.put("sign_type", "MD5");
         map.put("user_id", IdUtil.objectId());
-        map.put("no_order", UUID.randomUUID().toString());
+        map.put("no_order",  IdUtil.objectId());
         map.put("time_order", d.format(new Date()));
-        map.put("money_order", "100.00");
-        map.put("name_goods", "pdd");
-        map.put("pay_type", "203");//PDD PDD 插件通道
+        map.put("money_order",  "100.00");
+        map.put("name_goods", "huafei");
+        map.put("pay_type", "403");//PDD PDD 插件通道
         map.put("info_order", "info_order");
         String createParam = payUtil.createParam(map);
         System.out.println("【绅付支付宝扫码请求参数：" + createParam + "】");
         String md5 = payUtil.md5(createParam + payUtil.KEY);
-        map.put("sin", md5);
+        map.put("sign", md5);
         String post = HttpUtil.post(payUtil.URL, map);
         System.out.println("【绅付支付扫码返回数据：" + post + "】");
+        System.out.println(post);
+
+
         System.out.println(post);
         //   alipay.manage.api.channel.deal.PddBean bean = JSONUtil.toBean(post, alipay.manage.api.channel.deal.PddBean.class);
     /*    if(ObjectUtil.isNotNull(bean)) {

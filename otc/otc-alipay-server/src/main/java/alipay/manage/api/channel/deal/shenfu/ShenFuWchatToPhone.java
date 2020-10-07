@@ -48,12 +48,6 @@ public class ShenFuWchatToPhone extends PayOrderService {
 		if (StrUtil.isNotBlank(create)) {
 			log.info("【本地订单创建成功，开始请求远程三方支付】");
 			Result config = configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.SERVER_IP);
-			Integer i = dealOrderApp.getOrderAmount().intValue();
-			String s = amount.get(i.toString());
-			if (StrUtil.isBlank(s)) {
-				orderEr(dealOrderApp, msg);
-				return Result.buildFailMessage(msg);
-			}
 			PddBean createOrder = createOrder(config.getResult() + PayApiConstant.Notfiy.NOTFIY_API_WAI + "/shenfuAlipay-notfiy", dealOrderApp.getOrderAmount(), create);
 			if (ObjectUtil.isNull(createOrder)) {
 				boolean orderEr = orderEr(dealOrderApp, createOrder.getRet_msg());

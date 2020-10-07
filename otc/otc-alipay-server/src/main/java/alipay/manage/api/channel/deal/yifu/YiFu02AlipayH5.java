@@ -43,12 +43,6 @@ public class YiFu02AlipayH5 extends PayOrderService {
     @Override
     public Result deal(DealOrderApp dealOrderApp, String channel)   {
         String orderId = create(dealOrderApp, channel);
-        Integer i = dealOrderApp.getOrderAmount().intValue();
-        String s = amount.get(i.toString());
-        if (StrUtil.isBlank(s)) {
-            orderEr(dealOrderApp, msg);
-            return Result.buildFailMessage(msg);
-        }
         if (StrUtil.isNotBlank(orderId)){
             log.info("【本地订单创建成功，开始请求远程易付三方支付】");
             Result config = configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.SERVER_IP);
