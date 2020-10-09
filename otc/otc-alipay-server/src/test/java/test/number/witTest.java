@@ -18,9 +18,9 @@ import java.util.Map;
 
 public class witTest {
 	public static void main(String[] args) {
-		//new witTest().run();
+		new witTest().run();
 
-		HttpUtil.get("127.0.0.1:9010/pay/testWit?orderNo=W1598355653114710115");
+		//	HttpUtil.get("127.0.0.1:9010/pay/testWit?orderNo=W1598355653114710115");
 	}
 
 
@@ -65,15 +65,13 @@ public class witTest {
 		String userid = "2u7rMduh";
 		String key = "bc64a6067ae6e7edcfd8c62ad3472d46";//交易密钥
 		String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCIU7OCf+4N47fbJMCpd68GileM6vz02Bi+nTrvuzn7uAn/g89WGE+/aYuFHzAOCsrZ17y26RkQimjbWISEkDd4izP0+w7D0qZCb2czE+UeV7Qvt/DuXpY+yGM1+EAnP/xTr4qmXAZDn3e+xSzU8VMDD/3cuGH6X0CbmQZeK+VVqQIDAQAB";
-
-
 		Deal deal = new Deal();
 		deal.setAmount("100");//金额
 		deal.setAppId(userid);//商户号
 		deal.setApplyDate(d.format(new Date()));
 		deal.setNotifyUrl("http://starpay168.com:5055");
 		deal.setOrderId(IdUtil.objectId());
-		deal.setPassCode("ALIPAYTOBANK");
+		deal.setPassCode("ALIPAYTOPHONEFEE");
 		deal.setSubject("订单交易");
 		deal.setUserid("ASDSADASDS");  //to userid
 		Map<String, Object> objectToMap = MapUtil.objectToMap(deal);
@@ -92,7 +90,7 @@ public class witTest {
 		postMap.put("cipherText", publicEncrypt);
 		postMap.put("userId", userid);
 		System.out.println("请求参数：" + postMap.toString());
-		String post = HttpUtil.post("http://127.0.0.1:9010/deal/pay", postMap);
+		String post = HttpUtil.post("http://starpay168.com:5055/api-alipay/deal/pay", postMap);
 		System.out.println("相应结果集：" + post);
 
 	}
