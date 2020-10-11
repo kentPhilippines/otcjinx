@@ -24,6 +24,7 @@ public class payUtil {
         ipMap.put("47.91.232.22", "47.91.232.22");
         ipMap.put("47.57.115.27", "47.57.115.27");
         ipMap.put("47.244.12.113", "47.244.12.113");
+        ipMap.put("8.210.191.169", "8.210.191.169");
     }
 
     public static String createParam(Map<String, Object> map) {

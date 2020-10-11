@@ -12,7 +12,6 @@ import alipay.manage.service.*;
 import alipay.manage.util.BankTypeUtil;
 import alipay.manage.util.CheckUtils;
 import alipay.manage.util.OrderUtil;
-import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
@@ -293,26 +292,32 @@ public class DealAppApi extends PayOrderService {
         ChannelFee channelFee = channelFeeDao.findImpl(userRate.getChannelId(), userRate.getPayTypr());
         if (ObjectUtil.isNull(channelFee)) {
             log.info("【通道实体不存在，费率配置错误】");
-			exceptionOrderServiceImpl.addWitOrder(wit,"用户报错：通道实体不存在，费率配置错误；处理方法：请检查商户提交的通道编码，反复确认",HttpUtil.getClientIP(request));
+			exceptionOrderServiceImpl.addWitOrder(wit, "用户报错：通道实体不存在，费率配置错误；处理方法：请检查商户提交的通道编码，反复确认", HttpUtil.getClientIP(request));
 			Result.buildFailMessage("通道实体不存在，费率配置错误");
-        }
-        String bankcode = BankTypeUtil.getBank(wit.getBankcode());
-        if (StrUtil.isBlank(bankcode)) {
-            log.info("【当前银行卡类型不支持】");
-            log.info("【当前银行不支持代付，当前商户：" + wit.getAppid() + "，当前订单号:" + wit.getApporderid() + "】");
-			exceptionOrderServiceImpl.addWitOrder(wit,"用户报错：当前银行不支持合， 银行code值错误；处理方法：请商户检查提交的银行卡code是否正确",HttpUtil.getClientIP(request));
-            return Result.buildFailMessage("当前银行不支持合， 银行code值错误");
-        }
-        Withdraw bean = createWit(wit, userRate, flag, channelFee);
-        Result deal = null;
-        if (ObjectUtil.isNull(bean))
-            return Result.buildFailMessage("代付订单生成失败");
-        try {
-            Integer autoWit = userInfo.getAutoWit();
-            if (1 == autoWit) {
-                //自动推送
-                super.withdraw(bean);
-                deal = factoryForStrategy.getStrategy(channelFee.getImpl()).withdraw(bean);
+		}
+		String bankcode = BankTypeUtil.getBank(wit.getBankcode());
+		if (StrUtil.isBlank(bankcode)) {
+			log.info("【当前银行卡类型不支持】");
+			log.info("【当前银行不支持代付，当前商户：" + wit.getAppid() + "，当前订单号:" + wit.getApporderid() + "】");
+			exceptionOrderServiceImpl.addWitOrder(wit, "用户报错：当前银行不支持合， 银行code值错误；处理方法：请商户检查提交的银行卡code是否正确", HttpUtil.getClientIP(request));
+			return Result.buildFailMessage("当前银行不支持合， 银行code值错误");
+		}
+		Withdraw witb = withdrawServiceImpl.findOrderByApp(wit.getAppid(), wit.getApporderid());
+		if (ObjectUtil.isNotNull(witb)) {
+			log.info("【当前商户订单号重复：" + wit.getApporderid() + "】");
+			exceptionOrderServiceImpl.addWitOrder(wit, "用户报错：商户订单号重复；处理方法：提醒用户换一个订单号提交代付请求请求", HttpUtil.getClientIP(request));
+			return Result.buildFailMessage("商户订单号重复");
+		}
+		Withdraw bean = createWit(wit, userRate, flag, channelFee);
+		Result deal = null;
+		if (ObjectUtil.isNull(bean))
+			return Result.buildFailMessage("代付订单生成失败");
+		try {
+			Integer autoWit = userInfo.getAutoWit();
+			if (1 == autoWit) {
+				//自动推送
+				super.withdraw(bean);
+				deal = factoryForStrategy.getStrategy(channelFee.getImpl()).withdraw(bean);
             } else {
                 //手动处理
                 deal = super.withdraw(bean);
