@@ -18,7 +18,7 @@ import java.util.Map;
 
 public class witTest {
 	public static void main(String[] args) {
-		new witTest().run();
+		new witTest().deal();
 
 		//	HttpUtil.get("127.0.0.1:9010/pay/testWit?orderNo=W1598355653114710115");
 	}
@@ -60,7 +60,44 @@ public class witTest {
 		return null;
 	}
 
-	void run() {
+
+	void wit() {
+		SimpleDateFormat d = new SimpleDateFormat("yyyyMMddHHmmss");
+		String userid = "CX888";
+		String key = "AF2A874BF0AF49BBA136EB738E857EF6";//交易密钥
+		String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCGH6UIF1tms5pAmXQaPpwiprfF8m5AWlxAED4wjbHKYsdRXAxJaVJTkwvfDr+QAfJaa7YY4h33uVjMmqoxJ8rkHaT0w9l2fi6xReAWmhPJ6CDUN0zCF5mwawLDfw1ivYdfz9ZJCJhS8MmPNVTxPd1+5Tl9nZ7kSu5dxgZpuadilwIDAQAB";
+
+
+		Map<String, Object> objectToMap = new HashMap<>();
+		objectToMap.put("appid", userid);
+		objectToMap.put("apporderid", "123712343627d1dg112");
+		objectToMap.put("ordertime", d.format(new Date()) + "");
+		objectToMap.put("amount", "10");
+		objectToMap.put("acctno", "test123123123123");
+		objectToMap.put("acctname", "zhangsan");
+		objectToMap.put("bankcode", "ICBC");
+		objectToMap.put("notifyurl", "WWW.S7AD08AS.COM");
+		String createParam = createParam(objectToMap);
+		System.out.println("签名前请求串：" + createParam);
+		String md5 = getKeyedDigestUTF8(createParam + key);
+		System.out.println("签名：" + md5);
+		objectToMap.put("sign", md5);
+		String createParam2 = createParam(objectToMap);
+		System.out.println("加密前字符串：" + createParam2);
+		XRsa rsa = new XRsa(publicKey);
+		String publicEncrypt = rsa.publicEncrypt(createParam2);
+		System.out.println("加密后字符串：" + publicEncrypt);
+		Map<String, Object> postMap = new HashMap<String, Object>();
+		postMap.put("cipherText", publicEncrypt);
+		postMap.put("userId", userid);
+		System.out.println("请求参数：" + postMap.toString());
+		String post = HttpUtil.post("http://starpay168.com:5055/api-alipay/deal/wit", postMap);
+		System.out.println("相应结果集：" + post);
+
+
+	}
+
+	void deal() {
 		SimpleDateFormat d = new SimpleDateFormat("yyyyMMddHHmmss");
 		String userid = "2u7rMduh";
 		String key = "bc64a6067ae6e7edcfd8c62ad3472d46";//交易密钥
@@ -71,7 +108,7 @@ public class witTest {
 		deal.setApplyDate(d.format(new Date()));
 		deal.setNotifyUrl("http://starpay168.com:5055");
 		deal.setOrderId(IdUtil.objectId());
-		deal.setPassCode("ALIPAYTOPHONEFEE");
+		deal.setPassCode("ALIPAYTOBANK");
 		deal.setSubject("订单交易");
 		deal.setUserid("ASDSADASDS");  //to userid
 		Map<String, Object> objectToMap = MapUtil.objectToMap(deal);

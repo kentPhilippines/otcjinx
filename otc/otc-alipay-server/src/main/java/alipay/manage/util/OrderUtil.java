@@ -387,6 +387,7 @@ public class OrderUtil {
 	 * <p>API下游代付通知</p>
 	 */
 	void wit(String orderId) {
+		ThreadUtil.sleep(2000);
 		log.info("【代付订单修改成功，现在开始通知下游，代付订单号：" + orderId + "】");
 		Map<String, Object> map = new HashMap<String, Object>();
 		Withdraw wit = withdrawServiceImpl.findOrderId(orderId);

@@ -6,9 +6,10 @@ import java.security.NoSuchAlgorithmException;
 
 public class Util {
     public static final String PID = "65";
-    public static final String KEY = "WjeKVDjOYAaqDZAPqdbuFDjDxRznOcaE";
-    public static final String URL = "";
-    public static final String TYPE = "";
+    public static final String KEY = "WjekVDjOYAaqBZAPqdbuFDjDxRznOCaE";
+    public static final String URL = "http://api.lalarfb.cn/pay";
+    public static final String TYPE = "card1";
+    public static final String NOTIFY = "/haiwang-notify";
 
     public static String md5(String a) {
         String c = "";
