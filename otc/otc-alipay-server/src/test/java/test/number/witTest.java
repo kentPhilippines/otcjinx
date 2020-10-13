@@ -76,7 +76,7 @@ public class witTest {
 		objectToMap.put("acctno", "test123123123123");
 		objectToMap.put("acctname", "zhangsan");
 		objectToMap.put("bankcode", "ICBC");
-		objectToMap.put("notifyurl", "WWW.S7AD08AS.COM");
+		objectToMap.put("notifyurl", "http://www.baodu.com");
 		String createParam = createParam(objectToMap);
 		System.out.println("签名前请求串：" + createParam);
 		String md5 = getKeyedDigestUTF8(createParam + key);

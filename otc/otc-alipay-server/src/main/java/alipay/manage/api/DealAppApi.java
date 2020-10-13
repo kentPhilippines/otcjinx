@@ -1,6 +1,7 @@
 package alipay.manage.api;
 
 import alipay.config.redis.RedisLock;
+import alipay.config.redis.RedisLockUtil;
 import alipay.manage.api.config.FactoryForStrategy;
 import alipay.manage.api.config.PayOrderService;
 import alipay.manage.bean.*;
@@ -262,30 +263,36 @@ public class DealAppApi extends PayOrderService {
 	    Result deal = null;
 	    try {
 	       deal = factoryForStrategy.getStrategy(channelFee.getImpl()).deal(dealBean, channelFee.getChannelId());
-	    } catch (Exception e) {
-            log.info("【当前通道编码对于的实体类不存在：" + e.getMessage() + "】");
-			exceptionOrderServiceImpl.addDealOrder(mapToBean,"用户报错：当前通道编码不存在；处理方法：生成交易订单时候出现错误，或者请求三方渠道支付请求的时候出现异常返回，或联系技术人员处理," +
-					"三方渠道报错信息："+e.getMessage(),clientIP);
+		} catch (Exception e) {
+			log.info("【当前通道编码对于的实体类不存在：" + e.getMessage() + "】");
+			exceptionOrderServiceImpl.addDealOrder(mapToBean, "用户报错：当前通道编码不存在；处理方法：生成交易订单时候出现错误，或者请求三方渠道支付请求的时候出现异常返回，或联系技术人员处理," +
+					"三方渠道报错信息：" + e.getMessage(), clientIP);
 			return Result.buildFailMessage("当前通道编码不存在");
-        }
-	    if(deal.isSuccess())
-	    	deal.setResult(new ResultDeal(true,0,deal.getCode(),deal.getResult()));
+		}
+		if (deal.isSuccess())
+			deal.setResult(new ResultDeal(true, 0, deal.getCode(), deal.getResult()));
 		return deal;
 	}
+
+	@Autowired
+	private RedisLockUtil redisLockUtil;
+
 	@SuppressWarnings("unchecked")
 	@PostMapping("/wit")
 	@RedisLock(waitTime = 0, extraKey = "#userId")
 	public Result witOrder(HttpServletRequest request) {
-        String manage = request.getParameter("manage");
-        boolean flag = false;
-        if (StrUtil.isNotBlank(manage))
-            flag = true;
-        Result withdrawal = vendorRequestApi.withdrawal(request, flag);
-        if (!withdrawal.isSuccess())
-            return withdrawal;
-        Object result = withdrawal.getResult();
-        WithdrawalBean wit = MapUtil.mapToBean((Map<String, Object>) result, WithdrawalBean.class);
-        wit.setIp(HttpUtil.getClientIP(request));
+		String lock = this.getClass().getName() + "witOrder" + request.getParameter("userId");
+		redisLockUtil.redisLock(lock);
+		String manage = request.getParameter("manage");
+		boolean flag = false;
+		if (StrUtil.isNotBlank(manage))
+			flag = true;
+		Result withdrawal = vendorRequestApi.withdrawal(request, flag);
+		if (!withdrawal.isSuccess())
+			return withdrawal;
+		Object result = withdrawal.getResult();
+		WithdrawalBean wit = MapUtil.mapToBean((Map<String, Object>) result, WithdrawalBean.class);
+		wit.setIp(HttpUtil.getClientIP(request));
         UserRate userRate = accountApiServiceImpl.findUserRateWitByUserId(wit.getAppid());
         UserInfo userInfo = accountApiServiceImpl.findUserInfo(wit.getAppid());
         String dpaytype = wit.getDpaytype();
@@ -320,15 +327,17 @@ public class DealAppApi extends PayOrderService {
 				deal = factoryForStrategy.getStrategy(channelFee.getImpl()).withdraw(bean);
             } else {
                 //手动处理
-                deal = super.withdraw(bean);
-            }
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            super.withdrawEr(bean, "系统异常，请联系技术人员处理", HttpUtil.getClientIP(request));
-			exceptionOrderServiceImpl.addWitOrder(wit,"用户报错：当前通道编码不存在；处理方法：提交技术人员处理，报错信息："+e.getMessage(),HttpUtil.getClientIP(request));
+				deal = super.withdraw(bean);
+			}
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			super.withdrawEr(bean, "系统异常，请联系技术人员处理", HttpUtil.getClientIP(request));
+			exceptionOrderServiceImpl.addWitOrder(wit, "用户报错：当前通道编码不存在；处理方法：提交技术人员处理，报错信息：" + e.getMessage(), HttpUtil.getClientIP(request));
 			log.info("【当前通道编码对于的实体类不存在】");
-            return Result.buildFailMessage("当前通道编码不存在");
-        }
+			redisLockUtil.unLock(lock);
+			return Result.buildFailMessage("当前通道编码不存在");
+		}
+		redisLockUtil.unLock(lock);
 		return deal;
 	}
 	static final String BANK = "Bankcard",ALIPAY = "Alipay",WECHAR="Wechar";

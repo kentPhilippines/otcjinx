@@ -56,7 +56,6 @@ public class HaiWangNotify extends NotfiyChannel {
         log.info("海王签名参数：" + s.toString());
         String sign = Util.md5(s).toUpperCase();
         if (sign.equals(encryption)) {
-            res.getWriter().write("success");
             log.info("【当前支付成功回调签名参数：" + encryption + "，当前我方验证签名结果：" + sign + "】");
             log.info("【签名成功】");
         } else {
@@ -68,6 +67,7 @@ public class HaiWangNotify extends NotfiyChannel {
             Result dealpayNotfiy = dealpayNotfiy(out_sn.toString(), clientIP, "海王回调订单成功");
             if (dealpayNotfiy.isSuccess()) {
                 log.info("【订单回调修改成功，订单号为 ：" + out_sn + " 】");
+                return "success";
             }
         }
         return "";
