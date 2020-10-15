@@ -3,7 +3,6 @@ package alipay.manage.api;
 import alipay.manage.bean.UserFund;
 import alipay.manage.bean.UserInfo;
 import alipay.manage.bean.UserRate;
-import alipay.manage.service.BankListService;
 import alipay.manage.service.ExceptionOrderService;
 import alipay.manage.service.UserInfoService;
 import alipay.manage.util.CheckUtils;
@@ -204,9 +203,9 @@ public class VendorRequestApi {
                 if(ObjectUtil.isNull(amount))
                     amount = "金额未获取到";
                 exceptionOrderServiceImpl.addWitEx(
-                        apporderid.toString(),
+                        userId.toString(),
                         amount.toString(),
-                        result.getMessage(),HttpUtil.getClientIP(request),  apporderid.toString());
+                        result.getMessage(), HttpUtil.getClientIP(request), apporderid.toString());
             });
             return result;
         }
@@ -215,7 +214,7 @@ public class VendorRequestApi {
         if (ObjectUtil.isNull(userRate)){
             ThreadUtil.execute(()->{
                 exceptionOrderServiceImpl.addWitEx(
-                        paramMap.get("apporderid").toString(),
+                        userId,
                         paramMap.get("amount").toString(),
                         "商户相应提示：代付费率为开通或状态未开启；" +
                                 "处理方法：请重点检查商户代付费率是否配置开启",
@@ -229,7 +228,7 @@ public class VendorRequestApi {
             log.info("【当前账户代付权限未开通】");
             ThreadUtil.execute(()->{
                 exceptionOrderServiceImpl.addWitEx(
-                        paramMap.get("apporderid").toString(),
+                        userId,
                         paramMap.get("amount").toString(),
                         "商户相应提示：当前账户代付权限未开通；" +
                                 "处理方法：请重点检查商户代付状态是否开启",
@@ -249,10 +248,10 @@ public class VendorRequestApi {
             if (!asList.contains(clientIP)){
                 ThreadUtil.execute(()->{
                     exceptionOrderServiceImpl.addWitEx(
-                            paramMap.get("apporderid").toString(),
+                            userId,
                             paramMap.get("amount").toString(),
                             "商户相应提示：请绑定正确的代付ip；" +
-                                    "处理方法：当前商户代付ip存疑，请要求商户仔细核对；当前商户代付ip："+clientIP+"，我方登记ip："+asList.toString(),
+                                    "处理方法：当前商户代付ip存疑，请要求商户仔细核对；当前商户代付ip：" + clientIP + "，我方登记ip：" + asList.toString(),
                             HttpUtil.getClientIP(request), paramMap.get("apporderid").toString());
                 });
                 return Result.buildFailMessage("请绑定正确的代付ip");
@@ -278,7 +277,7 @@ public class VendorRequestApi {
             log.info("【当前账户金额不足】");
             ThreadUtil.execute(()->{
                 exceptionOrderServiceImpl.addWitEx(
-                        paramMap.get("apporderid").toString(),
+                        userId,
                         paramMap.get("amount").toString(),
                         "商户相应提示：当前账户金额不足；" +
                                 "处理方法：请检查商户金额是否足够，或者要求商户更换金额提交",

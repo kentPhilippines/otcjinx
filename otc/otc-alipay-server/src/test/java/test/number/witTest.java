@@ -107,8 +107,9 @@ public class witTest {
 		deal.setAppId(userid);//商户号
 		deal.setApplyDate(d.format(new Date()));
 		deal.setNotifyUrl("http://starpay168.com:5055");
+		deal.setPageUrl("http://starpay168.com:5055");
 		deal.setOrderId(IdUtil.objectId());
-		deal.setPassCode("ALIPAYTOBANK");
+		deal.setPassCode("WANGYIN01");
 		deal.setSubject("订单交易");
 		deal.setUserid("ASDSADASDS");  //to userid
 		Map<String, Object> objectToMap = MapUtil.objectToMap(deal);

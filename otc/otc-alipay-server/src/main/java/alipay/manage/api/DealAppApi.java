@@ -1,6 +1,5 @@
 package alipay.manage.api;
 
-import alipay.config.redis.RedisLock;
 import alipay.config.redis.RedisLockUtil;
 import alipay.manage.api.config.FactoryForStrategy;
 import alipay.manage.api.config.PayOrderService;
@@ -215,23 +214,26 @@ public class DealAppApi extends PayOrderService {
 	@SuppressWarnings("unchecked")
 	@PostMapping("/pay")
 	public Result dealAppPay(HttpServletRequest request) {
+		if (ObjectUtil.isNull(request.getParameter("userId"))) {
+			log.info("当前传参，参数格式错误");
+			return Result.buildFailMessage("当前传参，参数格式错误，请使用[application/x-www-form-urlencoded]表单格式传参");
+		}
 		Result pay = vendorRequestApi.pay(request);
-		if(!pay.isSuccess()){
-			exceptionOrderServiceImpl.addDealOrderOthen(pay.getMessage(),request.getParameter("userId"),HttpUtil.getClientIP(request));
+		if (!pay.isSuccess()) {
+			exceptionOrderServiceImpl.addDealOrderOthen(pay.getMessage(), request.getParameter("userId"), HttpUtil.getClientIP(request));
 			return pay;
 		}
 		Object result = pay.getResult();
-		DealBean mapToBean = MapUtil.mapToBean((Map<String, Object>)result, DealBean.class);
-		if(ObjectUtil.isNull(mapToBean))
-            return Result.buildFailMessage("加密前格式错误，参数为空");
-        String clientIP = HttpUtil.getClientIP(request);
+		DealBean mapToBean = MapUtil.mapToBean((Map<String, Object>) result, DealBean.class);
+		if (ObjectUtil.isNull(mapToBean))
+			return Result.buildFailMessage("加密前格式错误，参数为空");
+		String clientIP = HttpUtil.getClientIP(request);
         if (StrUtil.isNotBlank(clientIP))
             mapToBean.setIp(clientIP);
         log.info("【当前请求交易实体类：" + mapToBean.toString() + "】");
         String passcode = mapToBean.getPassCode(); //通道支付编码
         if (StrUtil.isBlank(passcode))
             return Result.buildFailMessage("通道编码为空");
-        log.info("【当前通道编码：" + passcode + "】");
         log.info("【当前通道编码：" + passcode + "】");
         UserRate userRate = null;
         ChannelFee channelFee = null;
@@ -279,8 +281,11 @@ public class DealAppApi extends PayOrderService {
 
 	@SuppressWarnings("unchecked")
 	@PostMapping("/wit")
-	@RedisLock(waitTime = 0, extraKey = "#userId")
 	public Result witOrder(HttpServletRequest request) {
+		if (ObjectUtil.isNull(request.getParameter("userId"))) {
+			log.info("当前传参，参数格式错误");
+			return Result.buildFailMessage("当前传参，参数格式错误，请使用[application/x-www-form-urlencoded]表单格式传参");
+		}
 		String lock = this.getClass().getName() + "witOrder" + request.getParameter("userId");
 		redisLockUtil.redisLock(lock);
 		String manage = request.getParameter("manage");
