@@ -109,7 +109,7 @@ public class witTest {
 		deal.setNotifyUrl("http://starpay168.com:5055");
 		deal.setPageUrl("http://starpay168.com:5055");
 		deal.setOrderId(IdUtil.objectId());
-		deal.setPassCode("WANGYIN01");
+		deal.setPassCode("ALIPAYTOBANK");
 		deal.setSubject("订单交易");
 		deal.setUserid("ASDSADASDS");  //to userid
 		Map<String, Object> objectToMap = MapUtil.objectToMap(deal);

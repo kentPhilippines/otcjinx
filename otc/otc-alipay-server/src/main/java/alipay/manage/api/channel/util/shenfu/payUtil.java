@@ -13,9 +13,13 @@ public class payUtil {
     public static final String KEY = "dtfysghxiazAIGY2BNEWDPOIL51";
     public static final String APPID = "202006032221186176";
     public static final String URL = "http://api.shishengclub.com/gateway/bankgateway/pay";
+    public static final String URL1 = "http://api.tjzfcy.com/gateway/bankgateway/pay ";
     public static final String D_PAY_URL = "http://api.shishengclub.com/gateway/pay";
+    public static final String D_PAY_URL2 = "http://api.tjzfcy.com/gateway/pay";
     public static final String KEY01 = "789okjhy789okjuy7890plkju890olkju789okjhy789ok";
     public static final String APPID01 = "202008272343214049";
+    public static final String APPID02 = "202010152317315510";
+    public static final String APPID03 = "202010161820473425";
     public static final String NOTIFY = "/shenFu02-notfiy";
     public static Map<String, String> ipMap = new HashMap();
 
@@ -25,6 +29,7 @@ public class payUtil {
         ipMap.put("47.57.115.27", "47.57.115.27");
         ipMap.put("47.244.12.113", "47.244.12.113");
         ipMap.put("8.210.191.169", "8.210.191.169");
+        ipMap.put("47.242.37.70", "47.242.37.70");
     }
 
     public static String createParam(Map<String, Object> map) {
