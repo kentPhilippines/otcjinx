@@ -10,21 +10,21 @@ server:
 eureka:
   client:
     serviceUrl:
-      defaultZone:  http://185.207.152.8:8761/eureka/
+      defaultZone: http://172.29.17.156:8761/eureka/
   instance:
     # 是否使用ip注册
     prefer-ip-address: true
     # ${spring.cloud.client.ip-address}:${server.port}  局域网这样配置
     #  本地调试则要直接写死ip 【这个ip为注册时候的 调用ip】
-    instance-id: 127.0.0.1:${server.port}
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}
     # 注册ip地址 公网注册地址112.121.162.162
-    ip-address: 127.0.0.1
+    ip-address: ${spring.cloud.client.ip-address}
     # 注册ip端口
     non-secure-port : ${server.port}
-    hostname: 127.0.0.1:${server.port}
+    hostname: ${spring.cloud.client.ip-address}:${server.port}
    # status-page-url : c.biancheng.net
 spring:
-   application:
+  application:
     name: otc-alipay-server
    cloud:
     config:
@@ -32,46 +32,26 @@ spring:
       profile: dev
       discovery:
         enabled:  true
-        serviceId:  otc-alipay-server
+        serviceId: otc-alipay-server
     bus:
       enabled: true
       trace:
         enabled: true
-   datasource:
-     url: jdbc:mysql://rm-3ns0wdzxpkyk00409qo.mysql.rds.aliyuncs.com:3306/otc_alipay?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
-     username: kent
-     password: 9asdasd7dwgdo7$as8d)asd
-     driverClassName: com.mysql.jdbc.Driver
-     hikari:
-       connection-test-query: SELECT 1 FROM DUAL
-       connection-timeout: 600000
-       maximum-pool-size: 500
-       max-lifetime: 1800000
-       minimum-idle: 20
-       validation-timeout: 3000
-       idle-timeout: 60000
-       connection-init-sql: SET NAMES utf8mb4
-   redis:
-    port: 6379
-    host: 127.0.0.1
-    timeout: 5000
-    pool:
-        max-idle : 100
-        min-idle : 10
-        max-active : 1000
-        max-wait : -1
-   http :
-      encoding :
-         force : true
-         charset : UTF-8
-         enabled : true
-   servlet:
-     multipart:
-       max-file-size: 100MB
-       max-request-size: 100MB
-   session:
-     store-type: redis
-     timeout: 7200s
+  http:
+    encoding:
+      force: true
+      charset: UTF-8
+      enabled: true
+      #发布时修改为online配置文件
+  profiles:
+    active: druid
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+  session:
+    store-type: redis
+    timeout: 7200s
 #断路器开启
 feign.hystrix.enabled: true
 logging:

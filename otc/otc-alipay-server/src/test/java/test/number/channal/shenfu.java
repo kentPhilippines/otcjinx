@@ -1,6 +1,6 @@
 package test.number.channal;
 
-import alipay.manage.api.channel.util.shenfu.payUtil;
+import alipay.manage.api.channel.util.shenfu.PayUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.http.HttpUtil;
 
@@ -8,7 +8,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 public class shenfu {
     static SimpleDateFormat d = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -19,8 +18,8 @@ public class shenfu {
 
     private static void test() {
         Map<String, Object> map = new HashMap();
-        map.put("oid_partner", payUtil.APPID);
-        map.put("notify_url",  "www.baidu.com");
+        map.put("oid_partner", PayUtil.APPID);
+        map.put("notify_url", "www.baidu.com");
         map.put("sign_type", "MD5");
         map.put("user_id", IdUtil.objectId());
         map.put("no_order",  IdUtil.objectId());
@@ -29,11 +28,11 @@ public class shenfu {
         map.put("name_goods", "huafei");
         map.put("pay_type", "403");//PDD PDD 插件通道
         map.put("info_order", "info_order");
-        String createParam = payUtil.createParam(map);
+        String createParam = PayUtil.createParam(map);
         System.out.println("【绅付支付宝扫码请求参数：" + createParam + "】");
-        String md5 = payUtil.md5(createParam + payUtil.KEY);
+        String md5 = PayUtil.md5(createParam + PayUtil.KEY);
         map.put("sign", md5);
-        String post = HttpUtil.post(payUtil.URL, map);
+        String post = HttpUtil.post(PayUtil.URL, map);
         System.out.println("【绅付支付扫码返回数据：" + post + "】");
         System.out.println(post);
 

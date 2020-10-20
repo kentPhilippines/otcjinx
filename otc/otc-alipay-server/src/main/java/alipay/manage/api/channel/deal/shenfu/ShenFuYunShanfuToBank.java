@@ -1,6 +1,6 @@
 package alipay.manage.api.channel.deal.shenfu;
 
-import alipay.manage.api.channel.util.shenfu.payUtil;
+import alipay.manage.api.channel.util.shenfu.PayUtil;
 import alipay.manage.api.config.PayOrderService;
 import alipay.manage.api.feign.ConfigServiceClient;
 import alipay.manage.bean.DealOrderApp;
@@ -55,39 +55,39 @@ public class ShenFuYunShanfuToBank extends PayOrderService {
 		 notify_url			String(128)			√				参数名称：服务器异步通知地址 支付成功后，系统会主动发送通知给商户，商户必须指定此通知地址
 		 user_id				String(32)			√				该用户在商户系统中的唯一编号，要求是该 编号在商户系统中唯一标识该用户
 		 sign_type			String(10)			√				参数名称：签名方式 1.取值为：MD5
-		 sign				String				√				参数名称：签名数据 该字段不参与签名，值如何获取，请参考提供的示例代码。
-		 no_order			String(32)			√				参数名称：商家订单号 商家网站生成的订单号，由商户保证其唯一性，由字母、数字组成。
-		 time_order			Date				√				参数名称：商家订单时间 时间格式：YYYYMMDDH24MISS 14 位数 字，精确到秒
-		 money_order			Number(13,2)		√				参数名称：客户实际支付金额与币种对应
-		 name_goods			String(40)			√				参数名称：商品名称
-		 info_order			String(255)			×				参数名称：商品描述
-		 pay_type			String(5)			√				参数名称：支付类型
-		 */
+         sign				String				√				参数名称：签名数据 该字段不参与签名，值如何获取，请参考提供的示例代码。
+         no_order			String(32)			√				参数名称：商家订单号 商家网站生成的订单号，由商户保证其唯一性，由字母、数字组成。
+         time_order			Date				√				参数名称：商家订单时间 时间格式：YYYYMMDDH24MISS 14 位数 字，精确到秒
+         money_order			Number(13,2)		√				参数名称：客户实际支付金额与币种对应
+         name_goods			String(40)			√				参数名称：商品名称
+         info_order			String(255)			×				参数名称：商品描述
+         pay_type			String(5)			√				参数名称：支付类型
+         */
 
-		Map<String, Object> map = new HashMap();
-		map.put("oid_partner", payUtil.APPID);
-		map.put("notify_url", notfiy);
-		map.put("sign_type", "MD5");
-		map.put("user_id", IdUtil.objectId());
-		map.put("no_order", orderId);
-		map.put("time_order", d.format(new Date()));
-		map.put("money_order", bigDecimal);
-		map.put("name_goods", "pdd");
-		map.put("pay_type", "207");//云闪付转卡
-		map.put("info_order", "info_order");
-		String createParam = payUtil.createParam(map);
-		log.info("【绅付支付宝扫码请求参数：" + createParam + "】");
-		String md5 = payUtil.md5(createParam + payUtil.KEY);
-		map.put("sign", md5);
-		String post = HttpUtil.post(payUtil.URL, map);
-		log.info("【绅付支付扫码返回数据：" + post + "】");
-		log.info(post);
-		PddBean bean = JSONUtil.toBean(post, PddBean.class);
-		if (ObjectUtil.isNotNull(bean)) {
-			if (bean.getRet_code().equals("0000")) {
-				return bean;
-			}
-		}
-		return null;
-	}
+        Map<String, Object> map = new HashMap();
+        map.put("oid_partner", PayUtil.APPID);
+        map.put("notify_url", notfiy);
+        map.put("sign_type", "MD5");
+        map.put("user_id", IdUtil.objectId());
+        map.put("no_order", orderId);
+        map.put("time_order", d.format(new Date()));
+        map.put("money_order", bigDecimal);
+        map.put("name_goods", "pdd");
+        map.put("pay_type", "207");//云闪付转卡
+        map.put("info_order", "info_order");
+        String createParam = PayUtil.createParam(map);
+        log.info("【绅付支付宝扫码请求参数：" + createParam + "】");
+        String md5 = PayUtil.md5(createParam + PayUtil.KEY);
+        map.put("sign", md5);
+        String post = HttpUtil.post(PayUtil.URL, map);
+        log.info("【绅付支付扫码返回数据：" + post + "】");
+        log.info(post);
+        PddBean bean = JSONUtil.toBean(post, PddBean.class);
+        if (ObjectUtil.isNotNull(bean)) {
+            if (bean.getRet_code().equals("0000")) {
+                return bean;
+            }
+        }
+        return null;
+    }
 }

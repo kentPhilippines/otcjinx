@@ -1,74 +1,72 @@
 package alipay.manage.api.config;
 
-import java.math.BigDecimal;
-import java.util.Map;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
-import alipay.manage.util.OrderUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.google.common.collect.Maps;
-
 import alipay.manage.api.feign.ConfigServiceClient;
-import alipay.manage.bean.ChannelFee;
-import alipay.manage.bean.CorrelationData;
-import alipay.manage.bean.DealOrder;
-import alipay.manage.bean.DealOrderApp;
-import alipay.manage.bean.UserFund;
-import alipay.manage.bean.UserInfo;
-import alipay.manage.bean.UserRate;
+import alipay.manage.bean.*;
 import alipay.manage.mapper.ChannelFeeMapper;
-import alipay.manage.service.CorrelationService;
-import alipay.manage.service.OrderAppService;
-import alipay.manage.service.OrderService;
-import alipay.manage.service.UserInfoService;
-import alipay.manage.service.UserRateService;
+import alipay.manage.service.*;
 import alipay.manage.util.AmountRunUtil;
 import alipay.manage.util.AmountUtil;
+import alipay.manage.util.OrderUtil;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.http.HttpUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
+import com.google.common.collect.Maps;
+import org.springframework.beans.factory.annotation.Autowired;
 import otc.api.alipay.Common;
-import otc.bean.alipay.FileList;
-import otc.bean.alipay.Medium;
 import otc.bean.config.ConfigFile;
 import otc.bean.dealpay.Withdraw;
 import otc.common.SystemConstants;
 import otc.result.Result;
 import otc.util.RSAUtils;
 import otc.util.number.GenerateOrderNo;
-import otc.util.number.Number;
+
+import javax.annotation.Resource;
+import java.math.BigDecimal;
+import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * <p>请求交易抽象【交易】【代付】</p>
+ *
  * @author kent
  */
-public abstract class PayOrderService implements PayService{
+public abstract class PayOrderService implements PayService {
 	public static final Log log = LogFactory.get();
 	private static final String ORDER = "orderid";
-	@Autowired AmountUtil amountUtil;
-	@Autowired AmountRunUtil amountRunUtil;
-    @Autowired UserInfoService userInfoServiceImpl;
-    @Autowired ConfigServiceClient configServiceClientImpl;
-    @Autowired OrderService orderServiceImpl;
-    @Autowired OrderAppService OrderAppServiceImpl;
-	@Autowired CorrelationService correlationServiceImpl;
-	@Autowired UserRateService userRateServiceImpl;
-	@Autowired ChannelFeeMapper channelFeeDao;
-	@Autowired OrderUtil orderUtilImpl;
+	@Autowired
+	private AmountUtil amountUtil;
+	@Autowired
+	private AmountRunUtil amountRunUtil;
+	@Autowired
+	private UserInfoService userInfoServiceImpl;
+	@Resource
+	private ConfigServiceClient configServiceClientImpl;
+	@Autowired
+	private OrderService orderServiceImpl;
+	@Autowired
+	private OrderAppService OrderAppServiceImpl;
+	@Autowired
+	private CorrelationService correlationServiceImpl;
+	@Autowired
+	private UserRateService userRateServiceImpl;
+	@Resource
+	private ChannelFeeMapper channelFeeDao;
+	@Autowired
+	private OrderUtil orderUtilImpl;
+
 	@Override
-	public Result deal(DealOrderApp dealOrderApp,String channel) throws Exception {
-		if(Common.Deal.PRODUCT_ALIPAY_SCAN.equals(channel))
+	public Result deal(DealOrderApp dealOrderApp, String channel) throws Exception {
+		if (Common.Deal.PRODUCT_ALIPAY_SCAN.equals(channel))
 			return dealAlipayScan(dealOrderApp);
-		else if(Common.Deal.PRODUCT_ALIPAY_H5.equals(channel))
+		else if (Common.Deal.PRODUCT_ALIPAY_H5.equals(channel))
 			return dealAlipayH5(dealOrderApp);
 		return null;
 	}
-	public boolean orderEr(DealOrderApp orderApp,String msg){
-		log.info("【将当前订单置为失败，当前交易订单号："+orderApp.getOrderId()+"】");
+
+	public boolean orderEr(DealOrderApp orderApp, String msg) {
+		log.info("【将当前订单置为失败，当前交易订单号：" + orderApp.getOrderId() + "】");
 		DealOrder dealOrder = orderServiceImpl.findAssOrder(orderApp.getOrderId());
 		if(ObjectUtil.isNotNull(dealOrder)) {
 			boolean updateOrderStatus = orderServiceImpl.updateOrderStatus(dealOrder.getOrderId(), Common.Order.DealOrder.ORDER_STATUS_ER, msg);
@@ -214,4 +212,5 @@ public abstract class PayOrderService implements PayService{
 		Result withrawOrderErBySystem = orderUtilImpl.withrawOrderErBySystem(wit.getOrderId(), ip, msg);
 		return withrawOrderErBySystem;
 	}
+
 }

@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public class payUtil {
+public class PayUtil {
     public static final String KEY = "dtfysghxiazAIGY2BNEWDPOIL51";
     public static final String APPID = "202006032221186176";
     public static final String URL = "http://api.shishengclub.com/gateway/bankgateway/pay";

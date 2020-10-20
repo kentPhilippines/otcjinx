@@ -1,23 +1,6 @@
 package alipay.manage.service.impl;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-
-import alipay.manage.bean.DealOrder;
-import alipay.manage.bean.DealOrderExample;
-import alipay.manage.bean.RechargeExample;
-import alipay.manage.bean.RunOrder;
-import alipay.manage.bean.RunOrderExample;
-import alipay.manage.bean.WithdrawExample;
+import alipay.manage.bean.*;
 import alipay.manage.mapper.DealOrderMapper;
 import alipay.manage.mapper.RechargeMapper;
 import alipay.manage.mapper.RunOrderMapper;
@@ -27,18 +10,35 @@ import alipay.manage.service.OrderService;
 import alipay.manage.util.SettingFile;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import otc.bean.dealpay.Recharge;
 import otc.bean.dealpay.Withdraw;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+
 @Component
 @Service
-public class OrderServiceImpl implements OrderService{
-    @Autowired DealOrderMapper dealOrderMapper;
-    @Autowired RunOrderMapper runOrderMapper;
-    @Autowired RechargeMapper rechargeDao;
-    @Autowired WithdrawMapper withdrawMapper;
-	@Autowired SettingFile settingFile;
-	@Autowired CorrelationService correlationServiceImpl;
+public class OrderServiceImpl implements OrderService {
+	@Autowired
+	DealOrderMapper dealOrderMapper;
+	@Autowired
+	RunOrderMapper runOrderMapper;
+	@Autowired
+	RechargeMapper rechargeDao;
+	@Autowired
+	WithdrawMapper withdrawMapper;
+	@Autowired
+	SettingFile settingFile;
+	@Autowired
+	CorrelationService correlationServiceImpl;
     Logger log= LoggerFactory.getLogger(OrderServiceImpl.class);
     
 	@Override
@@ -281,12 +281,23 @@ public class OrderServiceImpl implements OrderService{
 		int insertSelective = rechargeDao.insertSelective(order);
 		return insertSelective > 0 && insertSelective < 2;
 	}
+
 	@Override
 	public DealOrder findAssOrder(String orderId) {
 		return dealOrderMapper.findOrderByAssociatedId(orderId);
 	}
+
 	@Override
 	public void updataXianyYu(String orderId, String id) {
-		dealOrderMapper.updataXianyYu(orderId,id);
+		dealOrderMapper.updataXianyYu(orderId, id);
+	}
+
+	@Override
+	public boolean updateBankInfoByOrderId(String bank, String orderId) {
+
+		int a = dealOrderMapper.updateBankInfoByOrderId(bank, orderId);
+
+
+		return a == 1;
 	}
 }

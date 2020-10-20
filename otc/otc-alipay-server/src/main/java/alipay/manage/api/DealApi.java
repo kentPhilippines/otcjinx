@@ -1,44 +1,24 @@
 package alipay.manage.api;
 
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Future;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import alipay.manage.api.config.NotfiyChannel;
-import alipay.manage.util.*;
+import alipay.manage.bean.*;
+import alipay.manage.service.*;
+import alipay.manage.util.LogUtil;
+import alipay.manage.util.NotifyUtil;
+import alipay.manage.util.QrUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.ObjectUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-
-import alipay.manage.bean.CorrelationData;
-import alipay.manage.bean.DealOrder;
-import alipay.manage.bean.DealOrderApp;
-import alipay.manage.bean.UserInfo;
-import alipay.manage.bean.UserRate;
-import alipay.manage.service.CorrelationService;
-import alipay.manage.service.FileListService;
-import alipay.manage.service.MediumService;
-import alipay.manage.service.OrderAppService;
-import alipay.manage.service.OrderService;
-import alipay.manage.service.UserInfoService;
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import otc.api.alipay.Common;
 import otc.bean.alipay.FileList;
 import otc.bean.alipay.Medium;
@@ -46,6 +26,15 @@ import otc.common.SystemConstants;
 import otc.result.Result;
 import otc.util.RSAUtils;
 import otc.util.number.Number;
+
+import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 @Controller
 @RequestMapping("/pay")
 public class DealApi extends NotfiyChannel {
@@ -62,6 +51,7 @@ public class DealApi extends NotfiyChannel {
 	static Lock lock = new ReentrantLock();
 	private static final String tinyurl =  "http://tinyurl.com/api-create.php";
 	private static final Log log = LogFactory.get();
+
 
 	@RequestMapping("/alipayScan/{param:.+}")
 	public String alipayScan(@PathVariable String param,HttpServletRequest request) {

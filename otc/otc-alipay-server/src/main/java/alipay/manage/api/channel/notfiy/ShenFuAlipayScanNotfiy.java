@@ -1,7 +1,6 @@
 package alipay.manage.api.channel.notfiy;
 
 import alipay.manage.api.channel.util.kinpay.PayUtil;
-import alipay.manage.api.channel.util.shenfu.payUtil;
 import alipay.manage.api.config.NotfiyChannel;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.http.HttpUtil;
@@ -97,8 +96,8 @@ public class ShenFuAlipayScanNotfiy extends NotfiyChannel {
         log.info("【转换为map为：" + decodeParamMap.toString() + "】");
         String sign = (String) decodeParamMap.get("sign");
         String remove = (String) decodeParamMap.remove("sign");
-        String createParam = payUtil.createParam(decodeParamMap);
-        String md5 = PayUtil.md5(createParam + payUtil.KEY);
+        String createParam = PayUtil.createParam(decodeParamMap);
+        String md5 = PayUtil.md5(createParam + PayUtil.key);
         if (md5.equals(sign)) {
             log.info("【当前支付成功回调签名参数：" + sign + "，当前我方验证签名结果：" + md5 + "】");
             log.info("【签名成功】");

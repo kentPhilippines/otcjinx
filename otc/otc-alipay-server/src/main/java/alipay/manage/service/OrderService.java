@@ -1,20 +1,19 @@
 package alipay.manage.service;
 
-import java.util.List;
-import java.util.Map;
-
 import alipay.manage.bean.DealOrder;
-import alipay.manage.bean.DealOrderApp;
 import alipay.manage.bean.RunOrder;
 import otc.bean.dealpay.Recharge;
 import otc.bean.dealpay.Withdraw;
+
+import java.util.List;
 
 public interface OrderService {
 
 	/**
 	 * <p>码商查询自己的订单</p>
-	 * @param userId				账户号
-	 * @param createTime			时间
+	 *
+	 * @param userId     账户号
+	 * @param createTime 时间
 	 * @return
 	 */
 	List<DealOrder> findOrderByUser(String userId, String createTime);
@@ -104,17 +103,26 @@ public interface OrderService {
 
 	/**
 	 * <p>通过关联订单号查询订单</p>
-	 * @param orderId			订单号
+	 * @param orderId            订单号
 	 * @return
 	 */
 	DealOrder findAssOrder(String orderId);
 
 	/**
 	 * <p>咸鱼对接专属接口</p>
+	 *
 	 * @param orderId
 	 * @param id
 	 */
 	void updataXianyYu(String orderId, String id);
 
 
+	/**
+	 * 根据订单号修改支付信息数据
+	 *
+	 * @param bank
+	 * @param orderId
+	 * @return
+	 */
+	boolean updateBankInfoByOrderId(String bank, String orderId);
 }

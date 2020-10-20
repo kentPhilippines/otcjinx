@@ -1,6 +1,6 @@
 package alipay.manage.api.channel.deal.shenfu;
 
-import alipay.manage.api.channel.util.shenfu.payUtil;
+import alipay.manage.api.channel.util.shenfu.PayUtil;
 import alipay.manage.api.config.PayOrderService;
 import alipay.manage.api.feign.ConfigServiceClient;
 import alipay.manage.bean.DealOrderApp;
@@ -73,7 +73,7 @@ public class ShenFuWchatToPhone extends PayOrderService {
 		 pay_type			String(5)			√				参数名称：支付类型
 		 */
 		Map<String, Object> map = new HashMap();
-		map.put("oid_partner", payUtil.APPID);
+		map.put("oid_partner", PayUtil.APPID);
 		map.put("notify_url", notfiy);
 		map.put("sign_type", "MD5");
 		map.put("user_id", IdUtil.objectId());
@@ -83,11 +83,11 @@ public class ShenFuWchatToPhone extends PayOrderService {
 		map.put("name_goods", "huafei");
 		map.put("pay_type", "403");//PDD PDD 插件通道
 		map.put("info_order", "info_order");
-		String createParam = payUtil.createParam(map);
+		String createParam = PayUtil.createParam(map);
 		log.info("【绅付支付宝扫码请求参数：" + createParam + "】");
-		String md5 = payUtil.md5(createParam + payUtil.KEY);
+		String md5 = PayUtil.md5(createParam + PayUtil.KEY);
 		map.put("sign", md5);
-		String post = HttpUtil.post(payUtil.URL, map);
+		String post = HttpUtil.post(PayUtil.URL, map);
 		log.info("【绅付支付扫码返回数据：" + post + "】");
 		log.info(post);
 		PddBean bean = JSONUtil.toBean(post, PddBean.class);

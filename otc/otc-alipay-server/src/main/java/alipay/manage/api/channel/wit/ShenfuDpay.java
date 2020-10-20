@@ -1,6 +1,6 @@
 package alipay.manage.api.channel.wit;
 
-import alipay.manage.api.channel.util.shenfu.payUtil;
+import alipay.manage.api.channel.util.shenfu.PayUtil;
 import alipay.manage.api.config.PayOrderService;
 import alipay.manage.api.feign.ConfigServiceClient;
 import cn.hutool.core.date.DatePattern;
@@ -66,7 +66,7 @@ public class ShenfuDpay extends PayOrderService {
          sign			String	√	参数名称：签名数据 该字段不参与签名，值如何获取，请参考提供的示例代码。
          sign_type		String(10)	√	参数名称：签名方式 1.取值为：MD5
          */
-        String oid_partner = payUtil.APPID01;
+        String oid_partner = PayUtil.APPID01;
         String notify_url = notify;
         String no_order = wit.getOrderId();
         Integer money_order = wit.getActualAmount().intValue();
@@ -83,12 +83,12 @@ public class ShenfuDpay extends PayOrderService {
         map.put("bank_name", bank_name);
         map.put("time_order", time_order);
         map.put("sign_type", SIGN_TYPE);
-        String createParam = payUtil.createParam(map);
+        String createParam = PayUtil.createParam(map);
         log.info("【绅付代付签名前参数：" + createParam + "】");
-        String md5 = payUtil.md5(createParam + payUtil.KEY01);
+        String md5 = PayUtil.md5(createParam + PayUtil.KEY01);
         map.put("sign", md5);
         log.info("【当前绅付代付请求参数为：" + map.toString() + "】");
-        String post = HttpUtil.post(payUtil.D_PAY_URL, map);
+        String post = HttpUtil.post(PayUtil.D_PAY_URL, map);
         log.info("【绅付代付响应参数为：" + post + "】");
 
         /**

@@ -1,7 +1,6 @@
 package alipay.manage.api.channel.notfiy;
 
-import alipay.manage.api.channel.util.kinpay.PayUtil;
-import alipay.manage.api.channel.util.shenfu.payUtil;
+import alipay.manage.api.channel.util.shenfu.PayUtil;
 import alipay.manage.api.config.NotfiyChannel;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.http.HttpUtil;
@@ -31,7 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ShenFu02Notfiy extends NotfiyChannel {
     private static final Log log = LogFactory.get();
 
-    @PostMapping(payUtil.NOTIFY)
+    @PostMapping(PayUtil.NOTIFY)
     public KinpayNotfiyBean notify(HttpServletRequest req, HttpServletResponse res) throws IOException {
         log.info("【收到金星拼多多支付成功回调】");
         InputStream inputStream = req.getInputStream();
@@ -83,7 +82,7 @@ public class ShenFu02Notfiy extends NotfiyChannel {
          */
         String clientIP = HttpUtil.getClientIP(req);
         log.info("【当前回调ip为：" + clientIP + "】");
-        Map map = payUtil.ipMap;
+        Map map = PayUtil.ipMap;
         Object object = map.get(clientIP);
         if (ObjectUtil.isNull(object)) {
             log.info("【当前回调ip为：" + clientIP + "，固定IP登记为：" + "47.52.243.5" + "，47.91.232.22 " + "，47.57.115.27" + "】");
@@ -93,8 +92,8 @@ public class ShenFu02Notfiy extends NotfiyChannel {
         log.info("【转换为map为：" + decodeParamMap.toString() + "】");
         String sign = (String) decodeParamMap.get("sign");
         String remove = (String) decodeParamMap.remove("sign");
-        String createParam = payUtil.createParam(decodeParamMap);
-        String md5 = PayUtil.md5(createParam + payUtil.KEY01);
+        String createParam = PayUtil.createParam(decodeParamMap);
+        String md5 = PayUtil.md5(createParam + PayUtil.KEY01);
         if (md5.equals(sign)) {
             log.info("【当前支付成功回调签名参数：" + sign + "，当前我方验证签名结果：" + md5 + "】");
             log.info("【签名成功】");

@@ -1,6 +1,6 @@
 package alipay.manage.api.channel.deal;
 
-import alipay.manage.api.channel.util.shenfu.payUtil;
+import alipay.manage.api.channel.util.kinpay.PayUtil;
 import alipay.manage.api.config.PayOrderService;
 import alipay.manage.api.feign.ConfigServiceClient;
 import alipay.manage.bean.DealOrderApp;
@@ -73,9 +73,9 @@ public class ShunYiAlipayScan extends PayOrderService{
         map.put("name_goods", "alipay");
         map.put("pay_type", "58");
         map.put("info_order", "info_order");
-        String createParam = payUtil.createParam(map);
+        String createParam = PayUtil.createParam(map);
         log.info("【顺易支付宝扫码请求参数：" + createParam + "】");
-        String md5 = payUtil.md5(createParam + KEY);
+        String md5 = PayUtil.md5(createParam + KEY);
         map.put("sign", md5);
         String post = HttpUtil.post("http://api.zdjs1688.cn/gateway/bankgateway/getpayurl", map);
         log.info("【顺易支付扫码返回数据：" + post + "】");

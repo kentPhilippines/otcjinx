@@ -1,6 +1,6 @@
 package alipay.manage.api.channel.notfiy;
 
-import alipay.manage.api.channel.util.shenfu.payUtil;
+import alipay.manage.api.channel.util.shenfu.PayUtil;
 import alipay.manage.api.config.NotfiyChannel;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.http.HttpUtil;
@@ -31,7 +31,7 @@ public class ShenFuDpay extends NotfiyChannel {
         log.info("【当前回调ip为：" + clientIP + "】");
 
 
-        Map mapIp = payUtil.ipMap;
+        Map mapIp = PayUtil.ipMap;
         Object object = mapIp.get(clientIP);
         if (ObjectUtil.isNull(object)) {
             log.info("【当前回调ip为：" + clientIP + "，固定IP登记为：" + "47.244.12.113" + "】");
@@ -66,9 +66,9 @@ public class ShenFuDpay extends NotfiyChannel {
         map.put("time_order", time_order);
         map.put("result_pay", result_pay);
         map.put("sign_type", sign_type);
-        String createParam = payUtil.createParam(map);
+        String createParam = PayUtil.createParam(map);
         log.info("【绅付代付签名前参数：" + createParam + "】");
-        String md5 = payUtil.md5(createParam + payUtil.KEY01);
+        String md5 = PayUtil.md5(createParam + PayUtil.KEY01);
         if (sign.equals(md5)) {
             Result result = witNotfy(no_order, clientIP);
             if (result.isSuccess()) {
