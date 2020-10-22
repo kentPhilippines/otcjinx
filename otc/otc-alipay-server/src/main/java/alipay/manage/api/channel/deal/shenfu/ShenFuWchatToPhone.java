@@ -2,8 +2,9 @@ package alipay.manage.api.channel.deal.shenfu;
 
 import alipay.manage.api.channel.util.shenfu.PayUtil;
 import alipay.manage.api.config.PayOrderService;
-import alipay.manage.api.feign.ConfigServiceClient;
 import alipay.manage.bean.DealOrderApp;
+import alipay.manage.bean.UserInfo;
+import alipay.manage.service.UserInfoService;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
@@ -13,7 +14,6 @@ import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import otc.bean.config.ConfigFile;
 import otc.common.PayApiConstant;
 import otc.result.Result;
 
@@ -30,14 +30,8 @@ public class ShenFuWchatToPhone extends PayOrderService {
 	private static final Log log = LogFactory.get();
 	static Map<String, String> amount = new ConcurrentHashMap<>();
 	static SimpleDateFormat d = new SimpleDateFormat("yyyyMMddHHmmss");
-
-	static {
-		amount.put("50", "50");
-		amount.put("100", "100");
-		amount.put("200", "200");
-	}
-
-	@Autowired private ConfigServiceClient configServiceClientImpl;
+	@Autowired
+	private UserInfoService userInfoServiceImpl;
 
 	@Override
 	public Result deal(DealOrderApp dealOrderApp, String payType) {
@@ -45,8 +39,13 @@ public class ShenFuWchatToPhone extends PayOrderService {
 		String create = create(dealOrderApp, payType);
 		if (StrUtil.isNotBlank(create)) {
 			log.info("【本地订单创建成功，开始请求远程三方支付】");
-			Result config = configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.SERVER_IP);
-			PddBean createOrder = createOrder(config.getResult() + PayApiConstant.Notfiy.NOTFIY_API_WAI + "/shenfuAlipay-notfiy", dealOrderApp.getOrderAmount(), create);
+			UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(dealOrderApp.getOrderAccount());
+			if (StrUtil.isBlank(userInfo.getDealUrl())) {
+				orderEr(dealOrderApp, "当前商户交易url未设置");
+				return Result.buildFailMessage("请联系运营为您的商户好设置交易url");
+			}
+			log.info("【回调地址ip为：" + userInfo.getDealUrl() + "】");
+			PddBean createOrder = createOrder(userInfo.getDealUrl() + PayApiConstant.Notfiy.NOTFIY_API_WAI + "/shenfuAlipay-notfiy", dealOrderApp.getOrderAmount(), create);
 			if (ObjectUtil.isNull(createOrder)) {
 				boolean orderEr = orderEr(dealOrderApp, createOrder.getRet_msg());
 				if (orderEr)

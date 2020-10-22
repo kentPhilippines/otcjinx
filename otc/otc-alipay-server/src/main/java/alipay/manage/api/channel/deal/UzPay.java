@@ -1,44 +1,46 @@
 package alipay.manage.api.channel.deal;
 
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import alipay.manage.api.channel.util.uzpay.UzPayUtil;
 import alipay.manage.api.config.PayOrderService;
-import alipay.manage.api.feign.ConfigServiceClient;
 import alipay.manage.bean.DealOrderApp;
-import alipay.manage.service.OrderService;
-import cn.hutool.core.util.ObjectUtil;
+import alipay.manage.bean.UserInfo;
+import alipay.manage.bean.util.ResultDeal;
+import alipay.manage.service.UserInfoService;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
-import otc.bean.config.ConfigFile;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import otc.common.PayApiConstant;
 import otc.result.Result;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+
 @Component("uzpayBank")
-public class UzPay extends PayOrderService{ 
+public class UzPay extends PayOrderService {
 	private static final Log log = LogFactory.get();
-	@Autowired ConfigServiceClient configServiceClientImpl;
-	@Autowired OrderService orderServiceImpl;
+	@Autowired
+	private UserInfoService userInfoServiceImpl;
+
 	@Override
 	public Result deal(DealOrderApp dealOrderApp, String channnl) {
 		log.info("【进入UZPAY银行卡转卡】");
 		String orderId = create(dealOrderApp, channnl);
-		if(StrUtil.isNotBlank(orderId)) {
+		if (StrUtil.isNotBlank(orderId)) {
 			log.info("【本地订单创建成功，开始请求远程三方支付】");
-			Result config = configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.SERVER_IP);
-			String url = createOrder(config.getResult()+PayApiConstant.Notfiy.NOTFIY_API_WAI+"/UZPAY-notfiy", dealOrderApp.getOrderAmount(),orderId);
-			if(StrUtil.isNotBlank(url)) {
-				log.info("【UZPAY银行卡转卡请求参数："+url+"】");
-				return Result.buildSuccessResultCode("支付处理中", url,1);
+			UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(dealOrderApp.getOrderAccount());
+			if (StrUtil.isBlank(userInfo.getDealUrl())) {
+				orderEr(dealOrderApp, "当前商户交易url未设置");
+				return Result.buildFailMessage("请联系运营为您的商户号设置交易url");
+			}
+			log.info("【回调地址ip为：" + userInfo.getDealUrl() + "】");
+			String url = createOrder(userInfo.getDealUrl() + PayApiConstant.Notfiy.NOTFIY_API_WAI + "/UZPAY-notfiy", dealOrderApp.getOrderAmount(), orderId);
+			if (StrUtil.isNotBlank(url)) {
+				log.info("【UZPAY银行卡转卡请求参数：" + url + "】");
+				return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(url));
+
 			}
 		}
 		return Result.buildFailMessage("支付失败");

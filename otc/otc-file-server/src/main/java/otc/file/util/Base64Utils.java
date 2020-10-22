@@ -1,23 +1,12 @@
 package otc.file.util;
 
-import java.io.FileOutputStream;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
+import cn.hutool.core.util.StrUtil;
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.stereotype.Component;
 
-import cn.hutool.core.util.StrUtil;
-import sun.misc.BASE64Encoder;
-import sun.misc.BASE64Decoder;
-
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 @Component
 public class Base64Utils {
 	public static void main(String[] args) {
@@ -48,8 +37,7 @@ public class Base64Utils {
 			e.printStackTrace();
 		}
 		// 对字节数组Base64编码
-		BASE64Encoder encoder = new BASE64Encoder();
-		return encoder.encode(data);// 返回Base64编码过的字节数组字符串
+		return Base64.encodeBase64String(data);// 返回Base64编码过的字节数组字符串
 	}
 	/**
 	 * 在线图片转换成base64字符串
@@ -80,9 +68,7 @@ public class Base64Utils {
 			e.printStackTrace();
 		}
 		// 对字节数组Base64编码
-		@SuppressWarnings("restriction")
-		BASE64Encoder encoder = new BASE64Encoder();
-		return encoder.encode(data.toByteArray());
+		return Base64.encodeBase64String(data.toByteArray());
 	}
 	/**
 	 * base64字符串转换成图片
@@ -97,12 +83,11 @@ public class Base64Utils {
 		if (StrUtil.isEmpty(imgStr)) // 图像数据为空
 			return false;
 		@SuppressWarnings("restriction")
-		BASE64Decoder decoder = new BASE64Decoder();
 		File file = new File(imgFilePath);
 		try {
 			// Base64解码
 			@SuppressWarnings("restriction")
-			byte[] b = decoder.decodeBuffer(imgStr);
+			byte[] b = Base64.decodeBase64(imgStr);
 			for (int i = 0; i < b.length; ++i) {
 				if (b[i] < 0) {// 调整异常数据
 					b[i] += 256;

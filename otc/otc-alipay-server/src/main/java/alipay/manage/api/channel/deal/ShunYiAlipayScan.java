@@ -2,8 +2,10 @@ package alipay.manage.api.channel.deal;
 
 import alipay.manage.api.channel.util.kinpay.PayUtil;
 import alipay.manage.api.config.PayOrderService;
-import alipay.manage.api.feign.ConfigServiceClient;
 import alipay.manage.bean.DealOrderApp;
+import alipay.manage.bean.UserInfo;
+import alipay.manage.bean.util.ResultDeal;
+import alipay.manage.service.UserInfoService;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
@@ -14,7 +16,6 @@ import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import otc.bean.config.ConfigFile;
 import otc.common.PayApiConstant;
 import otc.result.Result;
 
@@ -27,19 +28,26 @@ import java.util.Map;
 @Component("shunyiAlipayScan")
 public class ShunYiAlipayScan extends PayOrderService{
 	private static final String KEY = "ASDASFQ4FRQEGRGQewfewrevrtboscdnoodmvoMmoeviVIVH9ERUERVURH9UHUBHBUHURHTB9RTBH9RHBTGHHGIRHFIjejiji";
-	private static final Log log = LogFactory.get();
-	@Autowired ConfigServiceClient configServiceClientImpl;
+    private static final Log log = LogFactory.get();
+    @Autowired
+    private UserInfoService userInfoServiceImpl;
 	@Override
 	public Result deal(DealOrderApp dealOrderApp, String payType) {
 		log.info("【进入顺易支付宝支付支付宝扫码】");
         String create = create(dealOrderApp, payType);
         if (StrUtil.isNotBlank(create)) {
             log.info("【本地订单创建成功，开始请求远程三方支付】");
-            Result config = configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.SERVER_IP);
-            JSONObject createOrder = createOrder(dealOrderApp, config.getResult() + PayApiConstant.Notfiy.NOTFIY_API_WAI + "/shunyi-notfiy", dealOrderApp.getOrderAmount(), create);
+            UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(dealOrderApp.getOrderAccount());
+            if (StrUtil.isBlank(userInfo.getDealUrl())) {
+                orderEr(dealOrderApp, "当前商户交易url未设置");
+                return Result.buildFailMessage("请联系运营为您的商户号设置交易url");
+            }
+            log.info("【回调地址ip为：" + userInfo.getDealUrl() + "】");
+            JSONObject createOrder = createOrder(dealOrderApp, userInfo.getDealUrl() + PayApiConstant.Notfiy.NOTFIY_API_WAI + "/shunyi-notfiy",
+                    dealOrderApp.getOrderAmount(), create);
             if (ObjectUtil.isNull(createOrder)) {
             } else {
-                return Result.buildSuccessResultCode("支付处理中", createOrder.getStr("redirect_url"), 1);
+                return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(createOrder.getStr("redirect_url")));
             }
         }
         return Result.buildFailMessage("支付错误");

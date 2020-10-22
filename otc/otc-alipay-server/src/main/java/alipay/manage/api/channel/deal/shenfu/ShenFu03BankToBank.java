@@ -2,8 +2,10 @@ package alipay.manage.api.channel.deal.shenfu;
 
 import alipay.manage.api.channel.util.shenfu.PayUtil;
 import alipay.manage.api.config.PayOrderService;
-import alipay.manage.api.feign.ConfigServiceClient;
 import alipay.manage.bean.DealOrderApp;
+import alipay.manage.bean.UserInfo;
+import alipay.manage.bean.util.ResultDeal;
+import alipay.manage.service.UserInfoService;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
@@ -13,7 +15,6 @@ import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import otc.bean.config.ConfigFile;
 import otc.common.PayApiConstant;
 import otc.result.Result;
 
@@ -28,22 +29,26 @@ public class ShenFu03BankToBank extends PayOrderService {
     private static final Log log = LogFactory.get();
     static SimpleDateFormat d = new SimpleDateFormat("yyyyMMddHHmmss");
     @Autowired
-    ConfigServiceClient configServiceClientImpl;
-
+    private UserInfoService userInfoServiceImpl;
     @Override
     public Result deal(DealOrderApp dealOrderApp, String payType) {
-        log.info("【进入绅付网银转账】");
+        log.info("【进入绅付支付支付宝转银行卡】");
         String create = create(dealOrderApp, payType);
         if (StrUtil.isNotBlank(create)) {
             log.info("【本地订单创建成功，开始请求远程三方支付】");
-            Result config = configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.SERVER_IP);
-            PddBean createOrder = createOrder(config.getResult() + PayApiConstant.Notfiy.NOTFIY_API_WAI + PayUtil.NOTIFY, dealOrderApp.getOrderAmount(), create);
+            UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(dealOrderApp.getOrderAccount());
+            if (StrUtil.isBlank(userInfo.getDealUrl())) {
+                orderEr(dealOrderApp, "当前商户交易url未设置");
+                return Result.buildFailMessage("请联系运营为您的商户好设置交易url");
+            }
+            log.info("【回调地址ip为：" + userInfo.getDealUrl() + "】");
+            PddBean createOrder = createOrder(userInfo.getDealUrl() + PayApiConstant.Notfiy.NOTFIY_API_WAI + PayUtil.NOTIFY, dealOrderApp.getOrderAmount(), create);
             if (ObjectUtil.isNull(createOrder)) {
                 boolean orderEr = orderEr(dealOrderApp, createOrder.getRet_msg());
                 if (orderEr)
                     return Result.buildFailMessage("支付失败");
             } else {
-                return Result.buildSuccessResultCode("支付处理中", createOrder.getRedirect_url(), 1);
+                return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(createOrder.getRedirect_url()));
             }
         }
         return Result.buildFailMessage("支付错误");

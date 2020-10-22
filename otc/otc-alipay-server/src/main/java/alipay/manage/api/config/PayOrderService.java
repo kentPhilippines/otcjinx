@@ -1,5 +1,6 @@
 package alipay.manage.api.config;
 
+import alipay.manage.api.channel.util.ChannelInfo;
 import alipay.manage.api.feign.ConfigServiceClient;
 import alipay.manage.bean.*;
 import alipay.manage.mapper.ChannelFeeMapper;
@@ -33,37 +34,37 @@ import java.util.concurrent.locks.ReentrantLock;
  * @author kent
  */
 public abstract class PayOrderService implements PayService {
-	public static final Log log = LogFactory.get();
-	private static final String ORDER = "orderid";
-	@Autowired
-	private AmountUtil amountUtil;
-	@Autowired
-	private AmountRunUtil amountRunUtil;
-	@Autowired
-	private UserInfoService userInfoServiceImpl;
-	@Resource
-	private ConfigServiceClient configServiceClientImpl;
-	@Autowired
-	private OrderService orderServiceImpl;
-	@Autowired
-	private OrderAppService OrderAppServiceImpl;
-	@Autowired
-	private CorrelationService correlationServiceImpl;
-	@Autowired
-	private UserRateService userRateServiceImpl;
-	@Resource
-	private ChannelFeeMapper channelFeeDao;
-	@Autowired
-	private OrderUtil orderUtilImpl;
+    public static final Log log = LogFactory.get();
+    private static final String ORDER = "orderid";
+    @Autowired
+    private AmountUtil amountUtil;
+    @Autowired
+    private AmountRunUtil amountRunUtil;
+    @Autowired
+    private UserInfoService userInfoServiceImpl;
+    @Resource
+    private ConfigServiceClient configServiceClientImpl;
+    @Autowired
+    private OrderService orderServiceImpl;
+    @Autowired
+    private OrderAppService OrderAppServiceImpl;
+    @Autowired
+    private CorrelationService correlationServiceImpl;
+    @Autowired
+    private UserRateService userRateServiceImpl;
+    @Resource
+    private ChannelFeeMapper channelFeeDao;
+    @Autowired
+    private OrderUtil orderUtilImpl;
 
-	@Override
-	public Result deal(DealOrderApp dealOrderApp, String channel) throws Exception {
-		if (Common.Deal.PRODUCT_ALIPAY_SCAN.equals(channel))
-			return dealAlipayScan(dealOrderApp);
-		else if (Common.Deal.PRODUCT_ALIPAY_H5.equals(channel))
-			return dealAlipayH5(dealOrderApp);
-		return null;
-	}
+    @Override
+    public Result deal(DealOrderApp dealOrderApp, String channel) throws Exception {
+        if (Common.Deal.PRODUCT_ALIPAY_SCAN.equals(channel))
+            return dealAlipayScan(dealOrderApp);
+        else if (Common.Deal.PRODUCT_ALIPAY_H5.equals(channel))
+            return dealAlipayH5(dealOrderApp);
+        return null;
+    }
 
 	public boolean orderEr(DealOrderApp orderApp, String msg) {
 		log.info("【将当前订单置为失败，当前交易订单号：" + orderApp.getOrderId() + "】");
@@ -203,14 +204,32 @@ public abstract class PayOrderService implements PayService {
 	}
 	/**
 	 * <p>代付失败</p>
-	 * @param wit
-	 * @param msg
-	 * @param ip
-	 * @return
-	 */
-	public Result withdrawEr(Withdraw wit,String msg,String ip){
-		Result withrawOrderErBySystem = orderUtilImpl.withrawOrderErBySystem(wit.getOrderId(), ip, msg);
-		return withrawOrderErBySystem;
-	}
+     * @param wit
+     * @param msg
+     * @param ip
+     * @return
+     */
+    public Result withdrawEr(Withdraw wit, String msg, String ip) {
+        Result withrawOrderErBySystem = orderUtilImpl.withrawOrderErBySystem(wit.getOrderId(), ip, msg);
+        return withrawOrderErBySystem;
+    }
 
+
+    /**
+     * 请求渠道时,获取渠道详情
+     *
+     * @param channelId
+     * @param payType
+     * @return
+     */
+    protected ChannelInfo getChannelInfo(String channelId, String payType) {
+        ChannelInfo channelInfo = new ChannelInfo();
+        UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(channelId);
+        channelInfo.setChannelAppId(userInfo.getUserNode());
+        channelInfo.setChannelPassword(userInfo.getPayPasword());
+        channelInfo.setDealurl(userInfo.getDealUrl());
+        ChannelFee channelFee = channelFeeDao.findChannelFee(channelId, payType);
+        channelInfo.setChannelType(channelFee.getChannelNo());
+        return channelInfo;
+    }
 }

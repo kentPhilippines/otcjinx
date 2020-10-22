@@ -2,9 +2,10 @@ package alipay.manage.api.channel.deal.yifu;
 
 import alipay.manage.api.channel.util.yifu.YiFu02Util;
 import alipay.manage.api.config.PayOrderService;
-import alipay.manage.api.feign.ConfigServiceClient;
 import alipay.manage.bean.DealOrderApp;
-import alipay.manage.service.OrderService;
+import alipay.manage.bean.UserInfo;
+import alipay.manage.bean.util.ResultDeal;
+import alipay.manage.service.UserInfoService;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
@@ -12,7 +13,6 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import otc.bean.config.ConfigFile;
 import otc.common.PayApiConstant;
 import otc.result.Result;
 
@@ -22,25 +22,24 @@ import java.util.Map;
 
 @Component("YiFu02PayBankToBank")
 public class YiFu02PayToBank extends PayOrderService {
-    //private static final Log log = LogFactory.get();
     @Autowired
-    ConfigServiceClient configServiceClientImpl;
-    @Autowired
-    OrderService orderServiceImpl;
-
+    private UserInfoService userInfoServiceImpl;
     @Override
     public Result deal(DealOrderApp dealOrderApp, String channel)   {
         String orderId = create(dealOrderApp, channel);
-        if (StrUtil.isNotBlank(orderId)){
+        if (StrUtil.isNotBlank(orderId)) {
             log.info("【本地订单创建成功，开始请求远程三方支付】");
-            Result config = configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.SERVER_IP);
-            log.info("【回调地址ip为："+config.toString()+"】" );
-            log.info("【本地订单创建成功，开始请求远程三方支付】");
-            String url = createOrder(dealOrderApp,config.getResult()+ PayApiConstant.Notfiy.NOTFIY_API_WAI+"/YiFu02-notfiy", dealOrderApp.getOrderAmount(),orderId);
+            UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(dealOrderApp.getOrderAccount());
+            if (StrUtil.isBlank(userInfo.getDealUrl())) {
+                orderEr(dealOrderApp, "当前商户交易url未设置");
+                return Result.buildFailMessage("请联系运营为您的商户好设置交易url");
+            }
+            log.info("【回调地址ip为：" + userInfo.getDealUrl() + "】");
+            String url = createOrder(dealOrderApp, userInfo.getDealUrl() + PayApiConstant.Notfiy.NOTFIY_API_WAI + "/YiFu02-notfiy", dealOrderApp.getOrderAmount(), orderId);
             if (StrUtil.isBlank(url))
                 return Result.buildFailMessage("支付失败");
             else
-                return Result.buildSuccessResultCode("支付处理中", url, 1);
+                return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(url));
         }
         return  Result.buildFailMessage("支付失败");
     }

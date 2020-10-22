@@ -1,25 +1,14 @@
 package test.number.channal;
 
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.http.HttpUtil;
+
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import javax.net.ssl.HttpsURLConnection;
-import javax.servlet.http.HttpUtils;
-
-import cn.hutool.core.lang.UUID;
-import cn.hutool.core.util.IdUtil;
-import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.http.HttpUtil;
-import cn.hutool.json.JSON;
-import cn.hutool.json.JSONObject;
-import cn.hutool.json.JSONUtil;
 
 public class alipayH5XIanyu {
 	public static void main(String[] args) { 
@@ -85,28 +74,27 @@ public class alipayH5XIanyu {
 		ben.setNotify("http://182.16.89.146:9010/notfiy-api-pay/xianyu-notfiy");
 		ben.setPart_sn("222222224422");
 		ben.setSign(md5);
-		JSONObject parseObj = JSONUtil.parseObj(ben);
-		System.out.println(parseObj.toString());
-		
-		String post = HttpUtil.post("http://xianyu.tbuoljh.cn/api/order", map);
-		System.out.println(post);
-		*/
-		
-		
-		
-	//	1267136389196156928
-		 String KEY = "gCwqqQSkBGKAYHKFOHdToMSLAErLVmeQ";
-		  String FX_ID = "2020183";
+		 JSONObject parseObj = JSONUtil.parseObj(ben);
+		 System.out.println(parseObj.toString());
+
+		 String post = HttpUtil.post("http://xianyu.tbuoljh.cn/api/order", map);
+		 System.out.println(post);
+		 */
+
+
+		//	1267136389196156928
+		String KEY = "gCwqqQSkBGKAYHKFOHdToMSLAErLVmeQ";
+		String FX_ID = "2020183";
 		String ORDER_QUERY = "orderquery";
 		System.out.println("【进入咸鱼支付宝扫码订单查询处理】 ");
-		System.out.println("【当前咸鱼支付宝扫码订单号："+"1267136389196156928"+"】 ");
+		System.out.println("【当前咸鱼支付宝扫码订单号：" + "1267136389196156928" + "】 ");
 		String fxddh = "1267136389196156928";//咸鱼订单号
 		String fxaction = ORDER_QUERY;
-		Map<String, Object>  map = new ConcurrentHashMap<String, Object>();
+		Map<String, Object> map = new ConcurrentHashMap<String, Object>();
 		map.put("fxid", FX_ID);
 		map.put("fxddh", fxddh);
 		map.put("fxaction", fxaction);
-		map.put("fxsign", md5(FX_ID+fxddh+fxaction+KEY));
+		map.put("fxsign", md5(FX_ID + fxddh + fxaction + KEY));
 		String post = HttpUtil.post("https://csj.fenvun.com/Pay"  , map);
 		System.out.println("【当前返回数据为：】"+post.toString());
 		

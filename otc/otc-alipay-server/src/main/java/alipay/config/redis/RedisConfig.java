@@ -1,6 +1,6 @@
 package alipay.config.redis;
-import java.time.Duration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,7 +15,6 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
@@ -97,6 +96,8 @@ public class RedisConfig  extends CachingConfigurerSupport {
 			return rsToUse;
 		};
 	}
+
+
 	@Override
 	@Bean
 	public CacheErrorHandler errorHandler() {

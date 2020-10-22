@@ -2,24 +2,19 @@ package alipay.manage.api.channel.deal;
 
 import alipay.manage.api.channel.util.shenlaifu.ShenlaifuUtil;
 import alipay.manage.api.config.PayOrderService;
-import alipay.manage.api.feign.ConfigServiceClient;
 import alipay.manage.bean.DealOrderApp;
-import alipay.manage.service.OrderService;
-import cn.hutool.core.util.ObjectUtil;
+import alipay.manage.bean.UserInfo;
+import alipay.manage.service.UserInfoService;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import otc.bean.config.ConfigFile;
 import otc.common.PayApiConstant;
 import otc.result.Result;
 
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -28,22 +23,27 @@ import java.util.Map;
 @Component("ShenLaiFuAlipayToCard")
 public class ShenLaiFuDeal extends PayOrderService {
     private static final Log log = LogFactory.get();
-    @Autowired ConfigServiceClient configServiceClientImpl;
-    @Autowired OrderService orderServiceImpl;
+    @Autowired
+    private UserInfoService userInfoServiceImpl;
     @Override
     public Result deal(DealOrderApp dealOrderApp, String channel) {
         log.info("【进入神来付转卡支付】");
         String orderId = create(dealOrderApp, channel);
-        if(StrUtil.isNotBlank(orderId)){
+        if(StrUtil.isNotBlank(orderId)) {
             log.info("【本地订单创建成功，开始请求远程三方支付】");
-            Result config = configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.SERVER_IP);
-            String url = createOrder(config.getResult()+ PayApiConstant.Notfiy.NOTFIY_API_WAI+"/shenlaifu-notfiy", dealOrderApp.getOrderAmount(),orderId);
-            if(StrUtil.isBlank(url)) {
+            UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(dealOrderApp.getOrderAccount());
+            if (StrUtil.isBlank(userInfo.getDealUrl())) {
+                orderEr(dealOrderApp, "当前商户交易url未设置");
+                return Result.buildFailMessage("请联系运营为您的商户号设置交易url");
+            }
+            log.info("【回调地址ip为：" + userInfo.getDealUrl() + "】");
+            String url = createOrder(userInfo.getDealUrl() + PayApiConstant.Notfiy.NOTFIY_API_WAI + "/shenlaifu-notfiy", dealOrderApp.getOrderAmount(), orderId);
+            if (StrUtil.isBlank(url)) {
                 boolean orderEr = orderEr(dealOrderApp);
-                if(orderEr)
+                if (orderEr)
                     return Result.buildFailMessage("支付失败");
-            }else {
-                return Result.buildSuccessResultCode("支付处理中", url,1);
+            } else {
+                return Result.buildSuccessResultCode("支付处理中", url, 1);
             }
         }
         return  Result.buildFailMessage("支付错误");

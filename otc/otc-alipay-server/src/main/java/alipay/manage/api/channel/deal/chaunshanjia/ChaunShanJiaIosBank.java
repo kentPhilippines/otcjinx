@@ -5,6 +5,7 @@ import alipay.manage.api.config.PayOrderService;
 import alipay.manage.api.feign.ConfigServiceClient;
 import alipay.manage.bean.DealOrder;
 import alipay.manage.bean.DealOrderApp;
+import alipay.manage.bean.util.ResultDeal;
 import alipay.manage.service.OrderService;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
@@ -40,8 +41,8 @@ public class ChaunShanJiaIosBank extends PayOrderService{
 					return Result.buildFailMessage("支付失败");
 			}else {
 				if(xianyu.getStatus().equals("1")) {
-					return Result.buildSuccessResultCode("支付处理中", xianyu.getPayurl(),1);
-				}else {
+                    return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(xianyu.getPayurl()));
+                }else {
 					orderEr(dealOrderApp,"暂无通道");
 					return Result.buildFailMessage(xianyu.getPayurl());
 				}

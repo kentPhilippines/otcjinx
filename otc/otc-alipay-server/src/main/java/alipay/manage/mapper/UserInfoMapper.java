@@ -3,16 +3,10 @@ package alipay.manage.mapper;
 import alipay.manage.bean.UserFund;
 import alipay.manage.bean.UserInfo;
 import alipay.manage.bean.UserInfoExample;
+import alipay.manage.bean.UserRate;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
-
-import alipay.manage.bean.UserRate;
-
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
 
 @Mapper
 public interface UserInfoMapper {
@@ -110,14 +104,18 @@ public interface UserInfoMapper {
     @Update("update alipay_user_info set payPasword = #{newPassword} where userId = #{userId}")
 	int updataPayPassword(String userId, String newPayPassword);
 
-    
-    @Update("update alipay_user_fund set  todayDealAmount = 0 ,todayProfit = 0,todayOrderCount = 0 , todayAgentProfit = 0 ")
-	void updateUserTime();
 
-    @Insert("insert into  alipay_user_fund_bak (userId, userName, cashBalance, rechargeNumber, freezeBalance, accountBalance,  " + 
-    		"    sumDealAmount, sumRechargeAmount, sumProfit, sumAgentProfit, sumOrderCount, todayDealAmount,  " + 
-    		"    todayProfit, todayOrderCount, todayAgentProfit, userType, agent, isAgent   )  select userId, userName, cashBalance, rechargeNumber, freezeBalance, accountBalance,  " + 
-    		 "    sumDealAmount, sumRechargeAmount, sumProfit, sumAgentProfit, sumOrderCount, todayDealAmount,  " + 
-    		 "    todayProfit, todayOrderCount, todayAgentProfit, userType, agent, isAgent    FROM alipay_user_fund")
-	void bak();
+    @Update("update alipay_user_fund set  todayDealAmount = 0 ,todayProfit = 0,todayOrderCount = 0 , todayAgentProfit = 0 ")
+    void updateUserTime();
+
+    @Insert("insert into  alipay_user_fund_bak (userId, userName, cashBalance, rechargeNumber, freezeBalance, accountBalance,  " +
+            "    sumDealAmount, sumRechargeAmount, sumProfit, sumAgentProfit, sumOrderCount, todayDealAmount,  " +
+            "    todayProfit, todayOrderCount, todayAgentProfit, userType, agent, isAgent   )  select userId, userName, cashBalance, rechargeNumber, freezeBalance, accountBalance,  " +
+            "    sumDealAmount, sumRechargeAmount, sumProfit, sumAgentProfit, sumOrderCount, todayDealAmount,  " +
+            "    todayProfit, todayOrderCount, todayAgentProfit, userType, agent, isAgent    FROM alipay_user_fund")
+    void bak();
+
+
+    @Select("select * form alipay_user_info where userNode = #{userNode}")
+    UserInfo findChannelAppId(@Param("userNode") String userNode);
 }

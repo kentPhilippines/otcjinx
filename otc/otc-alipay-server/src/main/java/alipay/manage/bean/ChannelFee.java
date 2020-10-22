@@ -19,22 +19,49 @@ public class ChannelFee implements Serializable{
     private Integer status;
     private String channelRFee;
     private String channelDFee;
-    public void setChannelRFee(String channelRFee){this.channelRFee = channelRFee;}
-    public String getChannelRFee(){return this.channelRFee;};
-    public void setChannelDFee(String channelDFee){this.channelDFee = channelDFee;}
-    public String getChannelDFee(){return  this.channelDFee;}
+
+    public void setChannelRFee(String channelRFee) {
+        this.channelRFee = channelRFee;
+    }
+
+    public String getChannelRFee() {
+        return this.channelRFee;
+    }
+
+    ;
+
+    public void setChannelDFee(String channelDFee) {
+        this.channelDFee = channelDFee;
+    }
+
+    public String getChannelDFee() {
+        return this.channelDFee;
+    }
+
     private String channelId;
     private String productId;
     private String impl;
-	public Integer getId() {
-		return id;
-	}
-	public void setId(Integer id) {
-		this.id = id;
-	}
-	public Date getCreateTime() {
-		return createTime;
-	}
+    private String channelNo;
+
+    public String getChannelNo() {
+        return channelNo;
+    }
+
+    public void setChannelNo(String channelNo) {
+        this.channelNo = channelNo;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
 	}

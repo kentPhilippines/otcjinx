@@ -1,5 +1,18 @@
 package otc.file.util;
 
+import cn.hutool.extra.qrcode.QrCodeUtil;
+import cn.hutool.extra.qrcode.QrConfig;
+import cn.hutool.log.Log;
+import cn.hutool.log.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import otc.bean.alipay.FileList;
+import otc.bean.config.ConfigFile;
+import otc.file.feign.AlipayServiceClien;
+import otc.file.feign.ConfigServiceClient;
+import otc.result.Result;
+
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -8,29 +21,15 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.imageio.ImageIO;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import cn.hutool.extra.qrcode.QrCodeUtil;
-import cn.hutool.extra.qrcode.QrConfig;
-import cn.hutool.log.Log;
-import cn.hutool.log.LogFactory;
-import jp.sourceforge.qrcode.QRCodeDecoder;
-import jp.sourceforge.qrcode.data.QRCodeImage;
-import otc.bean.alipay.FileList;
-import otc.bean.config.ConfigFile;
-import otc.file.feign.AlipayServiceClien;
-import otc.file.feign.ConfigServiceClient;
-import otc.result.Result;
-
 @Component
 public class CutUtil {
 	private static final Log log = LogFactory.get();
-    @Autowired ConfigServiceClient configServiceClientFeignImpl;
-    @Autowired AlipayServiceClien alipayServiceClienImpl;
-    private static final String FORMAT_NAME = "jpeg";
+	@Autowired
+	ConfigServiceClient configServiceClientFeignImpl;
+	@Autowired
+	AlipayServiceClien alipayServiceClienImpl;
+	private static final String FORMAT_NAME = "jpeg";
+
 	public void cut() {
 		log.info("开始裁剪图片");
 		Result config = configServiceClientFeignImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.LOCAL_STORAGE_PATH);
@@ -98,20 +97,21 @@ public static void mkdirs(String destPath) {
 }
 
 public static String readQrCode(File file) throws IOException {  //图片路径
-    //读取图片到缓冲区
-    BufferedImage bufferedImage = ImageIO.read(file);
+	//读取图片到缓冲区
+   /* BufferedImage bufferedImage = ImageIO.read(file);
     //QRCode解码器
     QRCodeDecoder codeDecoder = new QRCodeDecoder();
-    /**
-     *codeDecoder.decode(new MyQRCodeImage())
-     *这里需要实现QRCodeImage接口，移步最后一段代码
-     */
+    *//**
+	 *codeDecoder.decode(new MyQRCodeImage())
+	 *这里需要实现QRCodeImage接口，移步最后一段代码
+	 *//*
     //通过解析二维码获得信息
-    String result = new String(codeDecoder.decode(new MyQRCodeImage(bufferedImage)), "utf-8");
-   return result;
+    String result = new String(codeDecoder.decode(new MyQRCodeImage(bufferedImage)), "utf-8");*/
+	return "";
 }
 }
 
+/*
 
 class MyQRCodeImage implements QRCodeImage{
     BufferedImage bufferedImage;
@@ -134,3 +134,4 @@ class MyQRCodeImage implements QRCodeImage{
         return bufferedImage.getRGB(i,j);
     }
 }
+*/

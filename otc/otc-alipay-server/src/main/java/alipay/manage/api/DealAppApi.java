@@ -5,6 +5,8 @@ import alipay.manage.api.config.FactoryForStrategy;
 import alipay.manage.api.config.PayOrderService;
 import alipay.manage.bean.*;
 import alipay.manage.bean.util.DealBean;
+import alipay.manage.bean.util.Fund;
+import alipay.manage.bean.util.FundBean;
 import alipay.manage.bean.util.WithdrawalBean;
 import alipay.manage.mapper.ChannelFeeMapper;
 import alipay.manage.mapper.ProductMapper;
@@ -75,15 +77,15 @@ public class DealAppApi extends PayOrderService {
 			log.info("【当前查询的商户号不存在，请核实，商户号为："+appId+"】");
 			return Result.buildFailMessage("当前查询的订单不存在，请核实");
 		}
-		Map<String,Object> mapr = new ConcurrentHashMap<String,Object>();
+		Map<String, Object> mapr = new ConcurrentHashMap<String, Object>();
 		mapr.put("userId", fund.getUserId());
-		mapr.put("userName",fund.getUserName());
+		mapr.put("userName", fund.getUserName());
 		mapr.put("balance", fund.getAccountBalance());
 		String sign2 = checkUtils.getSign(mapr, userInfo.getPayPasword());
 		userInfo = null;
 		mapr = null;
 		Fund fundInfo = new Fund();
-		fundInfo.setBalance( fund.getAccountBalance());
+		fundInfo.setBalance(fund.getAccountBalance());
 		fundInfo.setSign(sign2);
 		fundInfo.setUserId(fund.getUserId());
 		fundInfo.setUserName(fund.getUserName());
@@ -262,17 +264,17 @@ public class DealAppApi extends PayOrderService {
 			exceptionOrderServiceImpl.addDealOrder(mapToBean,"用户报错：交易预订单生成出错；处理方法：让商户重新发起支付提交请求，或联系技术人员处理",clientIP);
 			return Result.buildFailMessage("交易预订单生成出错");
 		}
-	    Result deal = null;
-	    try {
-	       deal = factoryForStrategy.getStrategy(channelFee.getImpl()).deal(dealBean, channelFee.getChannelId());
+		Result deal = null;
+		try {
+			deal = factoryForStrategy.getStrategy(channelFee.getImpl()).deal(dealBean, channelFee.getChannelId());
 		} catch (Exception e) {
 			log.info("【当前通道编码对于的实体类不存在：" + e.getMessage() + "】");
 			exceptionOrderServiceImpl.addDealOrder(mapToBean, "用户报错：当前通道编码不存在；处理方法：生成交易订单时候出现错误，或者请求三方渠道支付请求的时候出现异常返回，或联系技术人员处理," +
 					"三方渠道报错信息：" + e.getMessage(), clientIP);
 			return Result.buildFailMessage("当前通道编码不存在");
 		}
-		if (deal.isSuccess())
-			deal.setResult(new ResultDeal(true, 0, deal.getCode(), deal.getResult()));
+		/*if (deal.isSuccess())
+			deal.setResult(new ResultDeal(true, 0, deal.getCode(), deal.getResult()));*/
 		return deal;
 	}
 
@@ -345,7 +347,6 @@ public class DealAppApi extends PayOrderService {
 		redisLockUtil.unLock(lock);
 		return deal;
 	}
-	static final String BANK = "Bankcard",ALIPAY = "Alipay",WECHAR="Wechar";
 	private Withdraw createWit(WithdrawalBean wit, UserRate userRate,Boolean fla, ChannelFee channelFee ) {
 	    log.info("【当前转换参数 代付实体类为："+wit.toString()+"】");
 	    String type = "";
@@ -403,102 +404,4 @@ public class DealAppApi extends PayOrderService {
 	      return dealApp;
 	    return null;
 	  }
-}
-class ResultDeal{
-	private boolean sussess;	//是否成功	        True 成功  false  失败
-	private Integer cod;	//订单状态码【“0”为成功】	详情请查看响应状态码
-	private Integer openType;//	打开方式	【1】为url打开方式【2】为html浏览器打开方式
-	private String  returnUrl;	//支付内容
-
-	public ResultDeal(boolean sussess, Integer cod, Integer openType, Object returnUrl) {
-		super();
-		this.sussess = sussess;
-		this.cod = cod;
-		this.openType = openType;
-		this.returnUrl = returnUrl.toString();
-	}
-	public boolean isSussess() {
-		return sussess;
-	}
-	public void setSussess(boolean sussess) {
-		this.sussess = sussess;
-	}
-	public Integer getCod() {
-		return cod;
-	}
-	public void setCod(Integer cod) {
-		this.cod = cod;
-	}
-	public Integer getOpenType() {
-		return openType;
-	}
-	public void setOpenType(Integer openType) {
-		this.openType = openType;
-	}
-	public String getReturnUrl() {
-		return returnUrl;
-	}
-	public void setReturnUrl(String returnUrl) {
-		this.returnUrl = returnUrl;
-	}
-}
-class FundBean{
-	private String orderId;
-	private String orderStatus;
-	private String amount;
-	private String sign;
-	public String getSign() {
-		return sign;
-	}
-	public void setSign(String sign) {
-		this.sign = sign;
-	}
-	public String getOrderId() {
-		return orderId;
-	}
-	public void setOrderId(String orderId) {
-		this.orderId = orderId;
-	}
-	public String getOrderStatus() {
-		return orderStatus;
-	}
-	public void setOrderStatus(String orderStatus) {
-		this.orderStatus = orderStatus;
-	}
-	public String getAmount() {
-		return amount;
-	}
-	public void setAmount(String amount) {
-		this.amount = amount;
-	}
-}
-class Fund{
-	private String userId;					//用户id
-	private String userName;				//用户姓名
-	private BigDecimal balance;			//现金账户【分润】
-	private String sign;
-	public String getSign() {
-		return sign;
-	}
-	public void setSign(String sign) {
-		this.sign = sign;
-	}
-	public String getUserId() {
-		return userId;
-	}
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
-	public String getUserName() {
-		return userName;
-	}
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
-	public BigDecimal getBalance() {
-		return balance;
-	}
-	public void setBalance(BigDecimal balance) {
-		this.balance = balance;
-	}
 }

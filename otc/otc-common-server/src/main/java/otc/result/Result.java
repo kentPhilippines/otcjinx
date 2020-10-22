@@ -55,7 +55,7 @@ public class Result {
 	 * @return
 	 */
 	public static Result buildSuccessResult(String msg ,Object result) {
-		return new Result(true, msg, result,null);
+		return new Result(true, msg, result, 1);
 	}
 	public static Result buildSuccessResultCode(String msg ,Object result,Integer i) {
 		return new Result(true, msg, result,i);

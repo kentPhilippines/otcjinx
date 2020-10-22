@@ -1,6 +1,4 @@
 package alipay.manage.service;
-import java.math.BigDecimal;
-import java.util.List;
 
 import alipay.manage.bean.Amount;
 import alipay.manage.bean.UserFund;
@@ -8,9 +6,13 @@ import alipay.manage.bean.UserInfo;
 import alipay.manage.bean.UserRate;
 import otc.result.Result;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 public interface UserInfoService {
 	/**
 	 * <p>查询所有的下级</p>
+	 *
 	 * @param user
 	 * @return
 	 */
@@ -152,10 +154,19 @@ public interface UserInfoService {
 
 	/**
 	 * 根据主键ID 更新账户余额
+	 *
 	 * @param id
 	 * @return
 	 */
 	int updateBalanceById(Integer id, BigDecimal deduct, Integer version);
 
 	int insertAmountEntitys(Amount amount);
+
+	/**
+	 * 根据渠道标记商户号查找渠道密钥
+	 *
+	 * @param oid_partner
+	 * @return
+	 */
+	UserInfo findChannelAppId(String oid_partner);
 }

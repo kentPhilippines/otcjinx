@@ -1,5 +1,21 @@
 package alipay.manage.api.channel.deal;
 
+import alipay.manage.api.config.PayOrderService;
+import alipay.manage.bean.DealOrderApp;
+import alipay.manage.bean.UserInfo;
+import alipay.manage.bean.util.ResultDeal;
+import alipay.manage.service.UserInfoService;
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpUtil;
+import cn.hutool.json.JSONUtil;
+import cn.hutool.log.Log;
+import cn.hutool.log.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import otc.common.PayApiConstant;
+import otc.result.Result;
+
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.security.MessageDigest;
@@ -7,43 +23,32 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import alipay.manage.api.config.PayOrderService;
-import alipay.manage.api.feign.ConfigServiceClient;
-import alipay.manage.bean.DealOrderApp;
-import cn.hutool.core.lang.UUID;
-import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.http.HttpUtil;
-import cn.hutool.json.JSONUtil;
-import cn.hutool.log.Log;
-import cn.hutool.log.LogFactory;
-import otc.api.alipay.Common;
-import otc.bean.config.ConfigFile;
-import otc.common.PayApiConstant;
-import otc.result.Result;
 @Component("YouSuAlipayScan")
-public class YouShuAlipayScan extends PayOrderService{
+public class YouShuAlipayScan extends PayOrderService {
 	private static final Log log = LogFactory.get();
-	@Autowired ConfigServiceClient configServiceClientImpl;
+	@Autowired
+	private UserInfoService userInfoServiceImpl;
+
 	@Override
 	public Result deal(DealOrderApp dealOrderApp, String payType) {
 		log.info("【进入优树支付宝个码支付】");
 		String channelId = "YOUSHUALIPAYSCAN";//配置的渠道账号
 		String create = create(dealOrderApp, channelId);
-		if(StrUtil.isNotBlank(create)) {
+		if (StrUtil.isNotBlank(create)) {
 			log.info("【本地订单创建成功，开始请求远程三方支付】");
-			Result config = configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.SERVER_IP);
-			log.info("【回调地址ip为："+config.toString()+"】" );
-			bean createOrder = createOrder(config.getResult()+PayApiConstant.Notfiy.NOTFIY_API_WAI+"/youshu-notfiy", dealOrderApp.getOrderAmount(),create);
-			if(ObjectUtil.isNull(createOrder)) {
+			UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(dealOrderApp.getOrderAccount());
+			if (StrUtil.isBlank(userInfo.getDealUrl())) {
+				orderEr(dealOrderApp, "当前商户交易url未设置");
+				return Result.buildFailMessage("请联系运营为您的商户号设置交易url");
+			}
+			log.info("【回调地址ip为：" + userInfo.getDealUrl() + "】");
+			bean createOrder = createOrder(userInfo.getDealUrl() + PayApiConstant.Notfiy.NOTFIY_API_WAI + "/youshu-notfiy", dealOrderApp.getOrderAmount(), create);
+			if (ObjectUtil.isNull(createOrder)) {
 				boolean orderEr = orderEr(dealOrderApp);
-				if(orderEr)
+				if (orderEr)
 					return Result.buildFailMessage("支付失败");
-			}else {
-				return Result.buildSuccessResultCode("支付处理中", createOrder.getPay_url(),1);
+			} else {
+				return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(createOrder.getPay_url()));
 			}
 		}
 		return  Result.buildFailMessage("支付错误");

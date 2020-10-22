@@ -18,7 +18,7 @@ public class shenfu {
 
     private static void test() {
         Map<String, Object> map = new HashMap();
-        map.put("oid_partner", PayUtil.APPID);
+        map.put("oid_partner", PayUtil.APPID01);
         map.put("notify_url", "www.baidu.com");
         map.put("sign_type", "MD5");
         map.put("user_id", IdUtil.objectId());

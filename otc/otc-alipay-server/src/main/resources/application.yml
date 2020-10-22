@@ -26,12 +26,12 @@ eureka:
 spring:
   application:
     name: otc-alipay-server
-   cloud:
+  cloud:
     config:
       label: master
       profile: dev
       discovery:
-        enabled:  true
+        enabled: true
         serviceId: otc-alipay-server
     bus:
       enabled: true
@@ -44,7 +44,7 @@ spring:
       enabled: true
       #发布时修改为online配置文件
   profiles:
-    active: druid
+    active: online
   servlet:
     multipart:
       max-file-size: 100MB

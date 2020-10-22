@@ -1,56 +1,56 @@
 package alipay.manage.service.impl;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-
 import alipay.config.redis.RedisUtil;
-import alipay.manage.bean.UserFund;
-import alipay.manage.bean.UserFundExample;
-import alipay.manage.bean.UserInfo;
-import alipay.manage.bean.UserInfoExample;
-import alipay.manage.bean.UserInfoExample.Criteria;
-import alipay.manage.bean.UserRate;
 import alipay.manage.bean.*;
+import alipay.manage.bean.UserInfoExample.Criteria;
 import alipay.manage.mapper.FileListMapper;
 import alipay.manage.mapper.UserFundMapper;
 import alipay.manage.mapper.UserInfoMapper;
 import alipay.manage.mapper.UserRateMapper;
 import alipay.manage.service.MediumService;
+import alipay.manage.service.UserInfoService;
 import alipay.manage.util.AttributeUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
-
-import alipay.manage.service.UserInfoService;
 import otc.bean.alipay.FileList;
 import otc.bean.alipay.Medium;
 import otc.common.RedisConstant;
 import otc.result.Result;
 
+import javax.annotation.Resource;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 @Component
-public class UserInfoServiceImpl implements UserInfoService{
+public class UserInfoServiceImpl implements UserInfoService {
 	static final String QR_CODE = "QR:CODE";
-	@Autowired UserInfoMapper userInfoMapper;
-	@Autowired RedisUtil redisUtil;
-	@Autowired MediumService mediumService;
-	@Autowired FileListMapper fileListMapper;
-	@Autowired UserRateMapper userRateDao;
-	@Autowired UserFundMapper userFundDao;
-	@Autowired AttributeUtil attributeUtil;
-    Logger log= LoggerFactory.getLogger(UserInfoServiceImpl.class);
+	Logger log = LoggerFactory.getLogger(UserInfoServiceImpl.class);
+	@Resource
+	private UserInfoMapper userInfoMapper;
+	@Autowired
+	MediumService mediumService;
+	@Resource
+	private RedisUtil redisUtil;
+	@Resource
+	private FileListMapper fileListMapper;
+	@Resource
+	private UserRateMapper userRateDao;
+	@Resource
+	private UserFundMapper userFundDao;
+	@Resource
+	private AttributeUtil attributeUtil;
 
 	/**
 	 * <p>查询自己的子账户</p>
+	 *
 	 * @param user
 	 * @return
 	 */
@@ -243,16 +243,22 @@ public class UserInfoServiceImpl implements UserInfoService{
 	@Override
 	public boolean updateproxyByUser(UserInfo user) {
 		int results=userInfoMapper.updateproxyByUser(user);
-		return results>0 && results<2;
+		return results> 0 && results < 2;
 	}
 
-    @Override
-    public int updateBalanceById(Integer id, BigDecimal deduct, Integer version) {
+	@Override
+	public int updateBalanceById(Integer id, BigDecimal deduct, Integer version) {
 		return userFundDao.updateBalanceById(id, deduct, version);
-    }
+	}
 
 	@Override
 	public int insertAmountEntitys(Amount amount) {
 		return userFundDao.insetAmountEntity(amount);
+	}
+
+	@Override
+	public UserInfo findChannelAppId(String oid_partner) {
+		UserInfo userInfo = userInfoMapper.findChannelAppId(oid_partner);
+		return userInfo;
 	}
 }

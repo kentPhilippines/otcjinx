@@ -2,8 +2,10 @@ package alipay.manage.api.channel.deal;
 
 import alipay.manage.api.channel.util.haofu.HaoFuUtil;
 import alipay.manage.api.config.PayOrderService;
-import alipay.manage.api.feign.ConfigServiceClient;
 import alipay.manage.bean.DealOrderApp;
+import alipay.manage.bean.UserInfo;
+import alipay.manage.bean.util.ResultDeal;
+import alipay.manage.service.UserInfoService;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
@@ -13,7 +15,6 @@ import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import otc.bean.config.ConfigFile;
 import otc.common.PayApiConstant;
 import otc.result.Result;
 
@@ -26,23 +27,29 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component("HaoFuAlipayToBank")
-public class HaoFuAlipayToBank extends PayOrderService{
+public class HaoFuAlipayToBank extends PayOrderService {
 	private static final Log log = LogFactory.get();
-	@Autowired ConfigServiceClient configServiceClientImpl;
+	@Autowired
+	private UserInfoService userInfoServiceImpl;
+
 	@Override
 	public Result deal(DealOrderApp dealOrderApp, String payType) {
 		log.info("【进入豪富支付宝转银行卡】");
 		String channelId = payType;//配置的渠道账号
 		String create = create(dealOrderApp, channelId);
-		if(StrUtil.isNotBlank(create)) {
+		if (StrUtil.isNotBlank(create)) {
 			log.info("【本地订单创建成功，开始请求远程三方支付】");
-			Result config = configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.SERVER_IP);
-			log.info("【回调地址ip为："+config.toString()+"】" );
-			String url = createOrder(dealOrderApp,config.getResult()+PayApiConstant.Notfiy.NOTFIY_API_WAI+"/haofu-notfiy", dealOrderApp.getOrderAmount(),create);
-			if(StrUtil.isBlank(url)) {
-				 log.info("【豪富支付宝转卡支付失败，订单号为："+create+"】");
-			}else {
-				return Result.buildSuccessResultCode("支付处理中", url,1);
+			UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(dealOrderApp.getOrderAccount());
+			if (StrUtil.isBlank(userInfo.getDealUrl())) {
+				orderEr(dealOrderApp, "当前商户交易url未设置");
+				return Result.buildFailMessage("请联系运营为您的商户号设置交易url");
+			}
+			log.info("【回调地址ip为：" + userInfo.getDealUrl() + "】");
+			String url = createOrder(dealOrderApp, userInfo.getDealUrl() + PayApiConstant.Notfiy.NOTFIY_API_WAI + "/haofu-notfiy", dealOrderApp.getOrderAmount(), create);
+			if (StrUtil.isBlank(url)) {
+				log.info("【豪富支付宝转卡支付失败，订单号为：" + create + "】");
+			} else {
+				return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(url));
 			}
 		}
 		return  Result.buildFailMessage("支付错误");

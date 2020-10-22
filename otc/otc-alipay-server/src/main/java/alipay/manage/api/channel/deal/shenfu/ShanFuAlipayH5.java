@@ -2,10 +2,12 @@ package alipay.manage.api.channel.deal.shenfu;
 
 import alipay.manage.api.channel.util.shanfu.ShanFuUtil;
 import alipay.manage.api.config.PayOrderService;
-import alipay.manage.api.feign.ConfigServiceClient;
 import alipay.manage.bean.DealOrder;
 import alipay.manage.bean.DealOrderApp;
+import alipay.manage.bean.UserInfo;
+import alipay.manage.bean.util.ResultDeal;
 import alipay.manage.service.OrderService;
+import alipay.manage.service.UserInfoService;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
@@ -15,7 +17,6 @@ import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import otc.bean.config.ConfigFile;
 import otc.common.PayApiConstant;
 import otc.result.Result;
 
@@ -27,39 +28,47 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
 @Component("ShanFuAlipayH5")
-public class ShanFuAlipayH5 extends PayOrderService{
+public class ShanFuAlipayH5 extends PayOrderService {
 	private static final Log log = LogFactory.get();
-	@Autowired ConfigServiceClient configServiceClientImpl;
-    @Autowired OrderService orderServiceImpl;
-    private  final static String SU = "1";
-    private  final static String ER = "0";
+	@Autowired
+	private UserInfoService userInfoServiceImpl;
+	@Autowired
+	OrderService orderServiceImpl;
+	private final static String SU = "1";
+	private final static String ER = "0";
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
 	private static String getNowDateStr() {
-	   return sdf.format(new Date());
+		return sdf.format(new Date());
 	}
+
 	@Override
 	public Result deal(DealOrderApp dealOrderApp, String channelId) {
 		log.info("【进入善付支付宝H5支付】");
 		String create = create(dealOrderApp, channelId);
-		if(StrUtil.isBlank(dealOrderApp.getBack())) {
+		if (StrUtil.isBlank(dealOrderApp.getBack())) {
 			log.info("【同步跳转地址未传】");
-			boolean orderEr = orderEr(dealOrderApp,"同步跳转地址未传");
-			return 	  Result.buildFailMessage("同步跳转地址未传");
+			boolean orderEr = orderEr(dealOrderApp, "同步跳转地址未传");
+			return Result.buildFailMessage("同步跳转地址未传");
 		}
-		log.info("【本地订单创建成功，开始请求远程三方支付】");
-		Result config = configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.SERVER_IP);
-		log.info("【回调地址ip为："+config.toString()+"】" );
-		Map<String,String> map = createOrder(create,config.getResult()+PayApiConstant.Notfiy.NOTFIY_API_WAI+"/shanfu-notfiy");
+		UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(dealOrderApp.getOrderAccount());
+		if (StrUtil.isBlank(userInfo.getDealUrl())) {
+			orderEr(dealOrderApp, "当前商户交易url未设置");
+			return Result.buildFailMessage("请联系运营为您的商户好设置交易url");
+		}
+		log.info("【回调地址ip为：" + userInfo.getDealUrl() + "】");
+		Map<String, String> map = createOrder(create, userInfo.getDealUrl() + PayApiConstant.Notfiy.NOTFIY_API_WAI + "/shanfu-notfiy");
 		String url = map.get(SU);
-		if(StrUtil.isBlank(url)) {
+		if (StrUtil.isBlank(url)) {
 			log.info("【请求失败】");
 			String msg = map.get(ER);
-			log.info("【请求失败，失败信息："+msg+"】");
-			orderEr(dealOrderApp,msg);
+			log.info("【请求失败，失败信息：" + msg + "】");
+			orderEr(dealOrderApp, msg);
 			return Result.buildFailMessage(msg);
 		}
-		return Result.buildSuccessResultCode("支付处理中", url,1);
+		return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(url));
 	}
 	Map<String,String>  createOrder(String orderId,String notfiy){
 		Map  mapR = new HashMap();
