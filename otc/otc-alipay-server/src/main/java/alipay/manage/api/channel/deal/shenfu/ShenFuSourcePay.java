@@ -31,7 +31,7 @@ public class ShenFuSourcePay extends PayOrderService {
 
     @Override
     public Result deal(DealOrderApp dealOrderApp, String channel) throws Exception {
-        log.info("【进入申付支付，当前请求产品：" + dealOrderApp.getRetain2() + "，当前请求渠道：" + channel + "】");
+        log.info("【进入申付支付，当前请求产品：" + dealOrderApp.getRetain1() + "，当前请求渠道：" + channel + "】");
         String orderId = create(dealOrderApp, channel);
         UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(dealOrderApp.getOrderAccount());
         if (StrUtil.isBlank(userInfo.getDealUrl())) {

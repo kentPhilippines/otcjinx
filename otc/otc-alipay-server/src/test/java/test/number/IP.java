@@ -6,7 +6,7 @@ import java.net.UnknownHostException;
 public class IP {
   public static void main(String[] args) throws UnknownHostException {
       BigDecimal money = new BigDecimal("300");
-      if (!(money.compareTo(new BigDecimal("200")) == -1)) {
+      if (!(money.compareTo(new BigDecimal("300")) == -1)) {
           System.out.println("asdasdadsad");
           System.out.println(money.compareTo(new BigDecimal("5000")));
       }

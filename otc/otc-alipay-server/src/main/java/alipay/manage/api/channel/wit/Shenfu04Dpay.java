@@ -40,7 +40,7 @@ public class Shenfu04Dpay extends PayOrderService {
         log.info("【进入申付代付】");
         try {
             log.info("【本地订单创建成功，开始请求远程三方代付接口】");
-            UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(wit.getChennelId());
+            UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(wit.getUserId());
             if (StrUtil.isBlank(userInfo.getDealUrl())) {
                 withdrawEr(wit, "当前商户交易url未设置", wit.getRetain2());
                 return Result.buildFailMessage("请联系运营为您的商户好设置交易url");

@@ -285,7 +285,7 @@ public class VendorRequestApi {
             });
             return Result.buildFailMessage("当前账户金额不足");
         }
-        BigDecimal money = new BigDecimal("300");
+        BigDecimal money = new BigDecimal("299");
         if (!(money.compareTo(new BigDecimal(amount)) == -1)) {
             log.info("【当前代付最低金额为300】");
             ThreadUtil.execute(() -> {
