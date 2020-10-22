@@ -275,7 +275,7 @@ public class VendorRequestApi {
         BigDecimal accountBalance = userFund.getAccountBalance();
         if (accountBalance.compareTo(new BigDecimal(amount).add(userRate.getFee())) == -1) {
             log.info("【当前账户金额不足】");
-            ThreadUtil.execute(()->{
+            ThreadUtil.execute(() -> {
                 exceptionOrderServiceImpl.addWitEx(
                         userId,
                         paramMap.get("amount").toString(),
@@ -284,6 +284,19 @@ public class VendorRequestApi {
                         HttpUtil.getClientIP(request), paramMap.get("apporderid").toString());
             });
             return Result.buildFailMessage("当前账户金额不足");
+        }
+        BigDecimal money = new BigDecimal("300");
+        if (!(money.compareTo(new BigDecimal(amount)) == -1)) {
+            log.info("【当前代付最低金额为300】");
+            ThreadUtil.execute(() -> {
+                exceptionOrderServiceImpl.addWitEx(
+                        userId,
+                        paramMap.get("amount").toString(),
+                        "商户相应提示：当前代付最低金额为300；" +
+                                "处理方法：金额限制为300",
+                        HttpUtil.getClientIP(request), paramMap.get("apporderid").toString());
+            });
+            return Result.buildFailMessage("当前代付最低金额为300");
         }
         return Result.buildSuccessResult(paramMap);
     }

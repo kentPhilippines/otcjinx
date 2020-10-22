@@ -15,11 +15,11 @@ public class ResultDeal {
     }
 
     public static ResultDeal sendHtml(Object returnUrl) {
-        return new ResultDeal(true, 0, 2, returnUrl);
+        return new ResultDeal(true, 1, 2, returnUrl);
     }
 
     public static ResultDeal sendUrl(Object returnUrl) {
-        return new ResultDeal(true, 0, 1, returnUrl);
+        return new ResultDeal(true, 1, 1, returnUrl);
     }
 
     public boolean isSussess() {

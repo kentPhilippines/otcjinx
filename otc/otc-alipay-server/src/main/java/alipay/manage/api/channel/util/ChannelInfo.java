@@ -5,7 +5,15 @@ public class ChannelInfo {
     private String dealurl;
     private String channelPassword;
     private String channelType;
+    private String witUrl;
 
+    public String getWitUrl() {
+        return witUrl;
+    }
+
+    public void setWitUrl(String witUrl) {
+        this.witUrl = witUrl;
+    }
 
     public String getChannelType() {
         return channelType;

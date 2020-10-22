@@ -4,6 +4,7 @@ import alipay.manage.api.channel.util.shenfu.PayUtil;
 import alipay.manage.api.config.PayOrderService;
 import alipay.manage.bean.DealOrderApp;
 import alipay.manage.bean.UserInfo;
+import alipay.manage.bean.util.ResultDeal;
 import alipay.manage.service.UserInfoService;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.ObjectUtil;
@@ -51,8 +52,8 @@ public class ShenFuWchatToPhone extends PayOrderService {
 				if (orderEr)
 					return Result.buildFailMessage("支付失败");
 			} else {
-				return Result.buildSuccessResultCode("支付处理中", createOrder.getRedirect_url(), 1);
-			}
+                return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(createOrder.getRedirect_url()));
+            }
 		}
 		return Result.buildFailMessage("支付错误");
 	}

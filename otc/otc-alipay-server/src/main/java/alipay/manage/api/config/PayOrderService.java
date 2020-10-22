@@ -10,6 +10,7 @@ import alipay.manage.util.AmountUtil;
 import alipay.manage.util.OrderUtil;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
 import com.google.common.collect.Maps;
@@ -230,6 +231,9 @@ public abstract class PayOrderService implements PayService {
         channelInfo.setDealurl(userInfo.getDealUrl());
         ChannelFee channelFee = channelFeeDao.findChannelFee(channelId, payType);
         channelInfo.setChannelType(channelFee.getChannelNo());
+        if (StrUtil.isNotBlank(userInfo.getWitip())) {
+            channelInfo.setWitUrl(userInfo.getWitip());
+        }
         return channelInfo;
     }
 }

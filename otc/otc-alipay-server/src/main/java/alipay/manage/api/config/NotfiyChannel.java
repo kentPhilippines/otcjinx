@@ -4,11 +4,12 @@ import alipay.config.redis.RedisLockUtil;
 import alipay.manage.bean.DealOrder;
 import alipay.manage.bean.UserFund;
 import alipay.manage.bean.UserInfo;
-import alipay.manage.mapper.ChannelFeeMapper;
 import alipay.manage.service.OrderService;
 import alipay.manage.service.UserInfoService;
 import alipay.manage.service.WithdrawService;
-import alipay.manage.util.*;
+import alipay.manage.util.CheckUtils;
+import alipay.manage.util.NotifyUtil;
+import alipay.manage.util.OrderUtil;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.http.HttpUtil;
@@ -19,7 +20,6 @@ import otc.api.alipay.Common;
 import otc.bean.dealpay.Withdraw;
 import otc.result.Result;
 
-import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
@@ -143,4 +143,17 @@ public abstract class NotfiyChannel {
         //更新订单是否通知成功状态
     }
 
+
+    /**
+     * 获取渠道密钥
+     *
+     * @param orderId
+     * @return
+     */
+    public String getChannelKey(String orderId) {
+        DealOrder orderInfo = orderServiceImpl.findOrderByOrderId(orderId);
+        String orderQrUser = orderInfo.getOrderQrUser();
+        UserInfo userInfoByUserId = userInfoServiceImpl.findUserInfoByUserId(orderQrUser);
+        return userInfoByUserId.getPayPasword();
+    }
 }

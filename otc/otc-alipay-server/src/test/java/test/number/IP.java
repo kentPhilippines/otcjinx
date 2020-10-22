@@ -1,22 +1,15 @@
 package test.number;
 
-import alipay.manage.util.HttpUtils;
-
+import java.math.BigDecimal;
 import java.net.UnknownHostException;
-import java.util.HashMap;
-import java.util.Map;
 
 public class IP {
   public static void main(String[] args) throws UnknownHostException {
-      String url = "https://pay5.sg123.ws/return/160000186154147387";
-      Map<String, Object> map = new HashMap<>();
-      map.put("2", "adsdsa");
-      map.put("3", "adsdsa");
-      map.put("4", "adsdsa");
-      map.put("25", "adsdsa");
-      String s = HttpUtils.postHttps(url, map);
-      System.out.println("响应：" + s);
-
+      BigDecimal money = new BigDecimal("300");
+      if (!(money.compareTo(new BigDecimal("200")) == -1)) {
+          System.out.println("asdasdadsad");
+          System.out.println(money.compareTo(new BigDecimal("5000")));
+      }
 
 
 

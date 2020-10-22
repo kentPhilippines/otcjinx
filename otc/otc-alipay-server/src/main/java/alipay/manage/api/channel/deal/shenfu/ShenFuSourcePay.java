@@ -43,13 +43,12 @@ public class ShenFuSourcePay extends PayOrderService {
                         PayApiConstant.Notfiy.NOTFIY_API_WAI + "/shenfu-source-notify",
                 dealOrderApp.getOrderAmount(),
                 orderId,
-                getChannelInfo(channel, dealOrderApp.getRetain2()));
+                getChannelInfo(channel, dealOrderApp.getRetain1()));
         if (result.isSuccess()) {
-            Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(result.getResult()));
+            return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(result.getResult()));
         } else {
             return result;
         }
-        return Result.buildFailMessage("支付失败");
     }
 
     private Result createOrder(String notify, BigDecimal orderAmount, String orderId, ChannelInfo channelInfo) {
