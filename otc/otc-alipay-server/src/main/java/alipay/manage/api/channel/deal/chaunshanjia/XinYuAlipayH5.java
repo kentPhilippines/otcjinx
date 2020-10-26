@@ -1,11 +1,12 @@
 package alipay.manage.api.channel.deal.chaunshanjia;
 
 import alipay.manage.api.config.PayOrderService;
-import alipay.manage.api.feign.ConfigServiceClient;
 import alipay.manage.bean.DealOrder;
 import alipay.manage.bean.DealOrderApp;
+import alipay.manage.bean.UserInfo;
 import alipay.manage.bean.util.ResultDeal;
 import alipay.manage.service.OrderService;
+import alipay.manage.service.UserInfoService;
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.ObjectUtil;
@@ -17,7 +18,6 @@ import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import otc.bean.config.ConfigFile;
 import otc.common.PayApiConstant;
 import otc.result.Result;
 
@@ -27,28 +27,36 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
+
 @Component("XianYuH5")
-public class XinYuAlipayH5 extends PayOrderService{
+public class XinYuAlipayH5 extends PayOrderService {
 	private static final Log log = LogFactory.get();
-	@Autowired ConfigServiceClient configServiceClientImpl;
-	@Autowired OrderService orderServiceImpl;
+	@Autowired
+	private UserInfoService userInfoServiceImpl;
+	@Autowired
+	private OrderService orderServiceImpl;
+
 	@Override
 	public Result deal(DealOrderApp dealOrderApp, String payType) {
 		String channelId = "XianYuZhifubao";
 		log.info("【进入咸鱼支付宝H5】");
 		String create = create(dealOrderApp, channelId);
-		if(StrUtil.isNotBlank(create)) {
+		if (StrUtil.isNotBlank(create)) {
 			log.info("【本地订单创建成功，开始请求远程三方支付】");
-			Result config = configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.SERVER_IP);
-			XianYu xianyu = createOrder(config.getResult()+PayApiConstant.Notfiy.NOTFIY_API_WAI+"/xianyu-notfiy", dealOrderApp.getOrderAmount(),create);
-			if(ObjectUtil.isNull(xianyu)) {
+			UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(dealOrderApp.getOrderAccount());
+			if (StrUtil.isBlank(userInfo.getDealUrl())) {
+				orderEr(dealOrderApp, "当前商户交易url未设置");
+				return Result.buildFailMessage("请联系运营为您的商户好设置交易url");
+			}
+			XianYu xianyu = createOrder(userInfo.getDealUrl() + PayApiConstant.Notfiy.NOTFIY_API_WAI + "/xianyu-notfiy", dealOrderApp.getOrderAmount(), create);
+			if (ObjectUtil.isNull(xianyu)) {
 				boolean orderEr = orderEr(dealOrderApp);
-				if(orderEr)
+				if (orderEr)
 					return Result.buildFailMessage("支付失败");
-			}else {
-				if(xianyu.getStatus().equals("1")) {
-                    return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(xianyu.getPayurl()));
-                }else {
+			} else {
+				if (xianyu.getStatus().equals("1")) {
+					return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(xianyu.getPayurl()));
+				} else {
 					orderEr(dealOrderApp);
 					return Result.buildFailMessage(xianyu.getPayurl());
 				}

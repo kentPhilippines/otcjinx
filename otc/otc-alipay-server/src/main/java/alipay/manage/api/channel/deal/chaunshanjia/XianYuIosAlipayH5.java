@@ -2,11 +2,12 @@ package alipay.manage.api.channel.deal.chaunshanjia;
 
 import alipay.manage.api.channel.util.xianyu.XianYuUtil;
 import alipay.manage.api.config.PayOrderService;
-import alipay.manage.api.feign.ConfigServiceClient;
 import alipay.manage.bean.DealOrder;
 import alipay.manage.bean.DealOrderApp;
+import alipay.manage.bean.UserInfo;
 import alipay.manage.bean.util.ResultDeal;
 import alipay.manage.service.OrderService;
+import alipay.manage.service.UserInfoService;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
@@ -27,9 +28,9 @@ import java.util.Map;
 public class XianYuIosAlipayH5 extends PayOrderService {
     private static final Log log = LogFactory.get();
     @Autowired
-    ConfigServiceClient configServiceClientImpl;
+    private UserInfoService userInfoServiceImpl;
     @Autowired
-    OrderService orderServiceImpl;
+    private OrderService orderServiceImpl;
 
     @Override
     public Result deal(DealOrderApp dealOrderApp, String payType) {
@@ -37,7 +38,13 @@ public class XianYuIosAlipayH5 extends PayOrderService {
         String create = create(dealOrderApp, payType);
         if (StrUtil.isNotBlank(create)) {
             log.info("【本地订单创建成功，开始请求远程三方支付】");
-            XianYu xianyu = createOrder("http://182.16.89.146:9010" + PayApiConstant.Notfiy.NOTFIY_API_WAI + "/chuanshanjia-notfiy", dealOrderApp.getOrderAmount(), create);
+            UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(dealOrderApp.getOrderAccount());
+            if (StrUtil.isBlank(userInfo.getDealUrl())) {
+                orderEr(dealOrderApp, "当前商户交易url未设置");
+                return Result.buildFailMessage("请联系运营为您的商户好设置交易url");
+            }
+            XianYu xianyu = createOrder(userInfo.getDealUrl() +
+                    PayApiConstant.Notfiy.NOTFIY_API_WAI + "/chuanshanjia-notfiy", dealOrderApp.getOrderAmount(), create);
             if (ObjectUtil.isNull(xianyu)) {
                 boolean orderEr = orderEr(dealOrderApp);
                 if (orderEr)

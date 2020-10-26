@@ -64,11 +64,11 @@ public class ShenFuSourcePay extends PayOrderService {
         map.put("pay_type", channelInfo.getChannelType());//PDD PDD 插件通道
         map.put("info_order", "info_order");
         String createParam = PayUtil.createParam(map);
-        log.info("【绅付支付宝扫码请求参数：" + createParam + "】");
+        log.info("【绅付请求参数：" + createParam + "】");
         String md5 = PayUtil.md5(createParam + channelInfo.getChannelPassword());
         map.put("sign", md5);
         String post = HttpUtil.post(channelInfo.getDealurl(), map);
-        log.info("【绅付支付扫码返回数据：" + post + "】");
+        log.info("【绅付返回数据：" + post + "】");
         log.info(post);
         PddBean bean = JSONUtil.toBean(post, PddBean.class);
         if (ObjectUtil.isNotNull(bean)) {

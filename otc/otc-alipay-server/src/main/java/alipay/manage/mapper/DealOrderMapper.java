@@ -66,7 +66,6 @@ public interface DealOrderMapper {
      */
     List<DealOrder> findMyOrder(DealOrder order);
 
-    @Cacheable(cacheNames = {ORDER_INFO_CHANNEL}, unless = "#result == null")
     @Select("select * from alipay_deal_order where orderId = #{orderId}")
 	DealOrder findOrderByOrderId(@Param("orderId")String orderId);
 
