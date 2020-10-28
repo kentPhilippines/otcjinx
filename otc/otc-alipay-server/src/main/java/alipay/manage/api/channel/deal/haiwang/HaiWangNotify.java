@@ -27,8 +27,8 @@ public class HaiWangNotify extends NotfiyChannel {
                          @RequestBody String json) throws IOException {
         log.info("【收到海王回调】");
         String clientIP = HttpUtil.getClientIP(request);
-        if (!clientIP.equals("43.240.159.91")) {
-            log.info("【当前回调ip为：" + clientIP + "，固定IP登记为：" + "43.240.159.91" + "】");
+        if (!clientIP.equals("110.42.3.162")) {
+            log.info("【当前回调ip为：" + clientIP + "，固定IP登记为：" + "110.42.3.16" + "】");
             log.info("【当前回调ip不匹配】");
             return "ip errer";
         }

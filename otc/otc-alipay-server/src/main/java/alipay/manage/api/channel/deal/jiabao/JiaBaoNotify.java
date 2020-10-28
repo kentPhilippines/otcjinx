@@ -44,7 +44,7 @@ public class JiaBaoNotify extends NotfiyChannel {
         notifyMap.put("tradeStatus", ntobj.getStr("tradeStatus"));
         notifyMap.put("tradeNo", ntobj.getStr("tradeNo"));
         notifyMap.put("notifyTime", ntobj.getStr("notifyTime"));
-        String channelKey = super.getChannelKey(ntobj.getStr("merchantCode"));
+        String channelKey = super.getChannelKey(ntobj.getStr("merchantTradeNo"));
         String signStr = RSAUtil.createParam(notifyMap);
         log.info("signStr ====== {}", signStr);
         log.info("收到回调内容：签名字符串：{}", signStr);
@@ -59,7 +59,7 @@ public class JiaBaoNotify extends NotfiyChannel {
             return "sign is error";
         }
         if ("PAYMENT_SUCCESS".equals(ntobj.getStr("tradeStatus"))) {
-            Result result = dealpayNotfiy(ntobj.getStr("merchantCode"), clientIP, "家宝回调成功");
+            Result result = dealpayNotfiy(ntobj.getStr("merchantTradeNo"), clientIP, "家宝回调成功");
             if (result.isSuccess()) {
                 return "SUCCESS";
             }

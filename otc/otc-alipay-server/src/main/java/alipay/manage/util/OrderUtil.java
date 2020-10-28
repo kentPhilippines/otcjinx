@@ -636,16 +636,18 @@ public class OrderUtil {
 		 * ###########################
 		 * 代付失败给该用户退钱
 		 */
-		if(wit.getOrderStatus().equals(Common.Order.Wit.ORDER_STATUS_SU)){
+		Withdraw witd = wit;
+		if (wit.getOrderStatus().equals(Common.Order.Wit.ORDER_STATUS_SU)) {
 			//1，订单成功时候的时候除了退换商户资金还会对渠道账户进行扣款操作
 			//2，对实际出款订单和配置出款订单加加款进行区分
-			if(StrUtil.isNotBlank(wit.getChennelId())){//配置出款
+			if (StrUtil.isNotBlank(witd.getChennelId())) {//配置出款
 				//按照配置的出款费率给渠道退款
-				channelWitEr(wit,wit.getChennelId());
-			}else{//手动推送出款
-				channelWitEr(wit,wit.getWitChannel());
+				channelWitEr(witd, witd.getChennelId());
+			} else {//手动推送出款
+				channelWitEr(witd, witd.getWitChannel());
 			}
 		}
+
 		int a = withdrawDao.updataOrderStatus1(wit.getOrderId(), wit.getApproval(), wit.getComment(), Common.Order.Wit.ORDER_STATUS_ER);
 		if (a == 0 || a > 2)
 			return Result.buildFailMessage("订单状态修改失败");

@@ -7,7 +7,7 @@ import java.security.NoSuchAlgorithmException;
 public class Util {
     public static final String PID = "65";
     public static final String KEY = "WjekVDjOYAaqBZAPqdbuFDjDxRznOCaE";
-    public static final String URL = "http://api.lalarfb.cn/pay";
+    public static final String URL = "http://110.42.3.162:91/pay";
     public static final String TYPE = "card1";
     public static final String NOTIFY = "/haiwang-notify";
 
