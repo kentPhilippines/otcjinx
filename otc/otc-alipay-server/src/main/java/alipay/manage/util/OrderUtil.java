@@ -555,18 +555,19 @@ public class OrderUtil {
 	}
 
 	private Result findUserRateList(String agent, String product, String channelId, UserRate rate, DealOrderApp orderApp,boolean flag, String ip) {
-		 UserFund userFund = userInfoServiceImpl.findUserFundByAccount (agent);
-		 UserRate userRate = userRateDao.findProductFeeBy(userFund.getUserId(), product,channelId);
-		 log.info("【当前代理商为："+userRate.getUserId()+"】");
-		 log.info("【当前代理商结算费率："+userRate.getFee()+"】");
-		 log.info("【当前当前我方："+rate.getUserId()+"】");
-		 log.info("【当前我方结算费率："+rate.getFee()+"】");
-		 BigDecimal fee = userRate.getFee();
-		 BigDecimal fee2 = rate.getFee();
-		 BigDecimal subtract = fee2.subtract(fee);
-		 log.info("【当前结算费率差为："+subtract+"】");
-		 BigDecimal amount = orderApp.getOrderAmount();
-		 BigDecimal multiply = amount.multiply(subtract);
+		UserFund userFund = userInfoServiceImpl.findUserFundByAccount(agent);
+		UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(agent);
+		UserRate userRate = userRateDao.findProductFeeBy(userFund.getUserId(), product, channelId);
+		log.info("【当前代理商为：" + userRate.getUserId() + "】");
+		log.info("【当前代理商结算费率：" + userRate.getFee() + "】");
+		log.info("【当前当前我方：" + rate.getUserId() + "】");
+		log.info("【当前我方结算费率：" + rate.getFee() + "】");
+		BigDecimal fee = userRate.getFee();
+		BigDecimal fee2 = rate.getFee();
+		BigDecimal subtract = fee2.subtract(fee);
+		log.info("【当前结算费率差为：" + subtract + "】");
+		BigDecimal amount = orderApp.getOrderAmount();
+		BigDecimal multiply = amount.multiply(subtract);
 		 log.info("【当前结算订单金额为："+amount+"，当前结算代理分润为："+multiply+"】");
 		 log.info("【开始结算】");
 		 Result addAmounProfit = amountUtil.addAmounProfit(userFund, multiply);
@@ -574,8 +575,8 @@ public class OrderUtil {
 			 Result addAppProfit = amountRunUtil.addAppProfit(orderApp , userFund.getUserId(), multiply, ip, flag);
 			 if(addAppProfit.isSuccess()) {
 				 log.info("【流水成功】");
-				 if(StrUtil.isNotBlank(userFund.getAgent()))
-					 return findUserRateList(userFund.getAgent(), product, channelId,userRate, orderApp, flag, ip);
+				 if (StrUtil.isNotBlank(userInfo.getAgent()))
+					 return findUserRateList(userInfo.getAgent(), product, channelId, userRate, orderApp, flag, ip);
 			 }
 		 }
 		return Result.buildSuccessMessage("结算成功");
@@ -637,6 +638,7 @@ public class OrderUtil {
 		 * 代付失败给该用户退钱
 		 */
 		Withdraw witd = wit;
+		String userId = wit.getUserId();
 		if (wit.getOrderStatus().equals(Common.Order.Wit.ORDER_STATUS_SU)) {
 			//1，订单成功时候的时候除了退换商户资金还会对渠道账户进行扣款操作
 			//2，对实际出款订单和配置出款订单加加款进行区分
@@ -651,6 +653,7 @@ public class OrderUtil {
 		int a = withdrawDao.updataOrderStatus1(wit.getOrderId(), wit.getApproval(), wit.getComment(), Common.Order.Wit.ORDER_STATUS_ER);
 		if (a == 0 || a > 2)
 			return Result.buildFailMessage("订单状态修改失败");
+		witd.setUserId(userId);
 		UserFund userFund = new UserFund();
 		userFund.setUserId(wit.getUserId());
 		Result addAmountAdd = amountUtil.addAmountAdd(userFund, wit.getAmount());

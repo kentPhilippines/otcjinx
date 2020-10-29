@@ -9,6 +9,7 @@ public class Util {
     public static final String KEY = "WjekVDjOYAaqBZAPqdbuFDjDxRznOCaE";
     public static final String URL = "http://110.42.3.162:91/pay";
     public static final String TYPE = "card1";
+    public static final String TYPE_CARD = "card2";
     public static final String NOTIFY = "/haiwang-notify";
 
     public static String md5(String a) {

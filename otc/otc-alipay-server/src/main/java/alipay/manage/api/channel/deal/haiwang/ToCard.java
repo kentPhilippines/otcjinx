@@ -1,5 +1,6 @@
 package alipay.manage.api.channel.deal.haiwang;
 
+import alipay.manage.api.channel.util.ChannelInfo;
 import alipay.manage.api.config.PayOrderService;
 import alipay.manage.bean.DealOrderApp;
 import alipay.manage.bean.UserInfo;
@@ -41,7 +42,10 @@ public class ToCard extends PayOrderService {
             }
             log.info("【回调地址ip为：" + userInfo.getDealUrl() + "】");
             String url = createOrder(dealOrderApp, userInfo.getDealUrl() +
-                    PayApiConstant.Notfiy.NOTFIY_API_WAI + Util.NOTIFY, dealOrderApp.getOrderAmount(), create);
+                            PayApiConstant.Notfiy.NOTFIY_API_WAI + Util.NOTIFY,
+                    dealOrderApp.getOrderAmount(), create,
+                    getChannelInfo(channel, dealOrderApp.getRetain1())
+            );
             if (StrUtil.isBlank(url)) {
                 log.info("【海王转卡支付失败，订单号为：" + create + "】");
             } else {
@@ -52,14 +56,16 @@ public class ToCard extends PayOrderService {
 
     }
 
-    private String createOrder(DealOrderApp dealOrderApp, String notifys, BigDecimal orderAmount, String orderId) {
-        String pid = Util.PID;
+    private String createOrder(DealOrderApp dealOrderApp, String notifys,
+                               BigDecimal orderAmount, String orderId,
+                               ChannelInfo channelInfo) {
+        String pid = channelInfo.getChannelAppId();
         int i = orderAmount.intValue();
         String money = i + ".00";
         String sn = orderId;
-        String pay_type_group = Util.TYPE;
+        String pay_type_group = channelInfo.getChannelType();
         String notify_url = notifys;
-        String key = Util.KEY;
+        String key = channelInfo.getChannelPassword();
         String s = "pid=" + pid + "&money=" + money + "&sn=" + sn + "&pay_type_group=" +
                 pay_type_group + "&notify_url=" + notify_url + "&key=" + key;
         log.info("海王签名参数：" + s.toString());
@@ -72,7 +78,7 @@ public class ToCard extends PayOrderService {
         map.put("notify_url", notify_url);
         map.put("sign", sign);
         log.info("海王请求参数：" + map.toString());
-        String post = HttpUtil.post(Util.URL, map);
+        String post = HttpUtil.post(channelInfo.getDealurl(), map);
         log.info(post);
         // {"code":0,"msg":"商户订单号重复","data":""}
         //{"code":1,"msg":"订单生成成功",
