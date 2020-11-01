@@ -74,8 +74,8 @@ public class witTest {
         objectToMap.put("appid", userid);
         objectToMap.put("apporderid", "123712343627d1dg112");
         objectToMap.put("ordertime", d.format(new Date()) + "");
-        objectToMap.put("amount", "10");
-        objectToMap.put("acctno", "test123123123123");
+		objectToMap.put("amount", "100");
+		objectToMap.put("acctno", "test123123123123");
         objectToMap.put("acctname", "zhangsan");
         objectToMap.put("bankcode", "ICBC");
         objectToMap.put("notifyurl", "http://www.baodu.com");
@@ -100,20 +100,20 @@ public class witTest {
 	}
 
 	void deal() {
-        SimpleDateFormat d = new SimpleDateFormat("yyyyMMddHHmmss");
-        String userid = "CX888";
-        String key = "c0abf775-a597-4490-ac66-3b9980d383d5";//交易密钥
-        String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCMyACJDW3gJMSAFtgq7VRJfcZ5HvcnZQ53q0ljfu9T7xOwTbTcDk1alajhfbvZE0OEwMsFRP7qeUappKFMMtIXGux7LluGoCzs7sPmH/5JyvmmOHQyIfKXktoRYd6TU8ywl/M6qCdcJ7C0dPFraHwUgZVRsznMpeWQj5aIo/KK5wIDAQAB";
-        Deal deal = new Deal();
-        deal.setAmount("100");//金额
-        deal.setAppId(userid);//商户号
-        deal.setApplyDate(d.format(new Date()));
-        deal.setNotifyUrl("http://starpay168.com:5055");
-        deal.setPageUrl("http://starpay168.com:5055");
-        deal.setOrderId(IdUtil.objectId());
-        deal.setPassCode("ALIPAYTOBANK");
-        deal.setSubject("订单交易");
-        deal.setUserid("ASDSADASDS");  //to userid
+		SimpleDateFormat d = new SimpleDateFormat("yyyyMMddHHmmss");
+		String userid = "2u7rMduh";
+		String key = "bc64a6067ae6e7edcfd8c62ad3472d46";//交易密钥
+		String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCIU7OCf+4N47fbJMCpd68GileM6vz02Bi+nTrvuzn7uAn/g89WGE+/aYuFHzAOCsrZ17y26RkQimjbWISEkDd4izP0+w7D0qZCb2czE+UeV7Qvt/DuXpY+yGM1+EAnP/xTr4qmXAZDn3e+xSzU8VMDD/3cuGH6X0CbmQZeK+VVqQIDAQAB";
+		Deal deal = new Deal();
+		deal.setAmount("100");//金额
+		deal.setAppId(userid);//商户号
+		deal.setApplyDate(d.format(new Date()));
+		deal.setNotifyUrl("http://starpay168.com:5055");
+		deal.setPageUrl("http://starpay168.com:5055");
+		deal.setOrderId(IdUtil.objectId());
+		deal.setPassCode("WECHARTOPHONEFEE");
+		deal.setSubject("订单交易");
+		deal.setUserid("ASDSADASDS");  //to userid
 		Map<String, Object> objectToMap = MapUtil.objectToMap(deal);
 		String createParam = createParam(objectToMap);
 		System.out.println("签名前请求串：" + createParam);

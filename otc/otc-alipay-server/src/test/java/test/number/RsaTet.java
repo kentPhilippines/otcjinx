@@ -12,22 +12,21 @@ public class RsaTet {
 	}
 
 	private static void test1() {
-        String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCBgveeFzs3TKSdfMH9Z5uZ5aAThUaSaCLjabXIyAzpbmz1SzbCc6YNXAEYwDvXkztTzbks6jQbt61ib1Uuy4z123wEYk3p4IyFMKfEquPAauj7yTybME0J23rmpXDgXLsX5vO2LB1P9pcv1HiJG/403wYiebnLOfB1w/20qtRnyQIDAQAB";
-		String privatekey = "MIICdQIBADANBgkqhkiG9w0BAQEFAASCAl8wggJbAgEAAoGBAIGC954XOzdMpJ18wf1nm5nloBOFRpJoIuNptcjIDOlubPVLNsJzpg1cARjAO9eTO1PNuSzqNBu3rWJvVS7LjPXbfARiTengjIUwp8Sq48Bq6PvJPJswTQnbeualcOBcuxfm87YsHU/2ly/UeIkb/jTfBiJ5ucs58HXD/bSq1GfJAgMBAAECgYAL8KEXiBjDfmNmyYuw6w5jX9IkOpNJCCS/Ro2l1xupoa6V5rtDrhnO/X50Y7SgqUg876h0xZrMO2DWxGDcEZQLLKaeNNLB1XehgF+J+Tffwbo1eoMpH4DnTp8fVU5gWSei55GMN/xzp1qph+06b74wQ2hJq6ig49xVU6VYxErDAQJBANJPQ6dfbzbF/D9WmXiFRKf87gXDnVTyQ/tmVTCns5VV0M+E6rDs/E/9pmt7emXKvDbzv+3V4hQ1EJEg5da1RbkCQQCdpfrNBm7KQPGDBqreOoMmk/UoimD5hVznAsZQ3ko0Hi2eUehQBxLVMYXpKw5U5JP1wVPjf7mAsOwFacxNPDqRAkADGMGxRDl5//5P3HGUEbpKEvJaSWAWsR6JJB+bAM0nJMVXWOivxD2O2/hIWuAZgZu1327zDJQwoftld6uKts6ZAkAtEvHcgQRYS61B2zwrgetRsmgcCUSk0x625jIxmPz6Xc6JP73+c6dM0XYKLsdQOnKbh4UmvLQbOXqiKZfCVYAhAkBNsuCHrdgjN6mQNI6Xeo6+v8mjeQJ0XnPpMpbbq5E6bTpQGeNlirs6bonn09gWdv3ItYlreaLs08CeBSXby/6U";
+        String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCvRvYBBFtPRCxDb+OedlBzzJSYaPnROvE5Xq0H3IuyxoweFoOrMGmlY79LWSXzTV20x5XRgREunFT5DVXZd96h9xpWQ6As/JkG1H8RsmzrWxhZilub3Nh39zAMoX9PoZ8X7+HKVOsUnvPSvw6JIO8duZKMh8wwIDgryPjHnYx3vQIDAQAB";
 
 
-		String password = "FS9rSQoysFsz6yMbIHLPRoluynypNBiudHE6m6uwZ/q5Mejt47RnwOccw9TlxwiSeYrg5KFqJwZx4xYBJjpuX0OP+ygjhfH9jfn1/pW84qQQBry2VhVirM/9Oq2Y4c/KBIFYBkbMtfhcYydy0KI1O4cowU3iF9zZkk/qy7c2UZjF3VjSj+Wy/055ibXUN24F95GYLHjcGfJaw6tNi2G24eGpDzh1SfjiHhgbUHbjDdFGoG+tB0RyI8tdtGQdSryvyt/3p8BtjUM4RRpYyZdOx7nlS71nB3l/4lyt6uL4jbzcTkOh/CFqXLUzrrKNGn7W8Y8Ib9GbEwTjp5y1nFKuH33EwyuLw21NVxIaME5wqHxHE13TyAA6kRMwYNVJANO2M8bnLsTwsaYB/OjRoysWLVjc/021exr9tq3GsvD3GA7JweVZ";
+        String privatekey = "MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAK9G9gEEW09ELENv4552UHPMlJho+dE68TlerQfci7LGjB4Wg6swaaVjv0tZJfNNXbTHldGBES6cVPkNVdl33qH3GlZDoCz8mQbUfxGybOtbGFmKW5vc2Hf3MAyhf0+hnxfv4cpU6xSe89K/Dokg7x25koyHzDAgOCvI+MedjHe9AgMBAAECgYBPuTYR1lp13mtHrS/aFrSXRzlbbXwbl/S6hH6tcbo08awvz0vKZLXY3VrYOc9SMCFsJc/WQB+BlOftdAxVYvlm6/8d/+l9O08Udni+Axs/DXjkWwgnc0Z9CMTy29UEe3+AfJy+casW13C/gSiHJycVqciVHboz1ZgF4w8GSZNw4QJBAP9Fsocuo9FmUZr06gz+xqwJyjZallAyzUYYzyIjRDnMoLIjVewMWLTej4NzLETawWNsdP6jm5BhOgfTyTZ6KGUCQQCvxuGyxx016coAxWqkgCJBfdPepPrWIqDUnGaIa8Q5REQBDyFIYrgCySOUB1zlk2nNvBdK6yDXFkSplGuTq+B5AkEAxU46yk/bYPvD8ZCB4199cfXzLQXhjsVlclu0pf86Oa6XOnkjbVqxqcMojAKWYfXvagineTY+BF+R+gDRUmEjHQJBAJL/eIpA+A25OSSR9FAjlAI/DysXv2nKxcNoFFsr/IqDq3dTRts5K3ew7B8EVUzsjcPu82/E2M7nIX7Lz3dMeskCQHERgD5Pu/EhexxaSg4TnkTS+CL4PGDrviFDVYD7dsInCPKJzeArdbZvdo3c88KvPo8uI3wrHMo7AAY++XmBAHc=";
+        String password = "345678";
 
-
-		XRsa rsa = new XRsa(publicKey, privatekey);
+        XRsa rsa = new XRsa(publicKey, privatekey);
 /*
         String asas = rsa.privateDecrypt(password);
         System.out.println("解密结果：" + asas);
         System.out.println("明文长度：" + asas.length());*/
-		String publicEncrypt = rsa.publicEncrypt(password);
-		System.out.println("公钥加密后的内容：" + publicEncrypt);
-		System.out.println("密文长度：" + publicEncrypt.length());
-		String privateEncrypt = rsa.privateEncrypt(password);
+        String publicEncrypt = rsa.publicEncrypt(password);
+        System.out.println("公钥加密后的内容：" + publicEncrypt);
+        System.out.println("密文长度：" + publicEncrypt.length());
+        String privateEncrypt = rsa.privateEncrypt(password);
 		System.out.println("私钥加密后的内容：" + privateEncrypt);
 		String privateDecrypt2 = rsa.privateDecrypt(publicEncrypt);
 		System.out.println("私钥解密公钥内容：" + privateDecrypt2);

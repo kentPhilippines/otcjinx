@@ -31,6 +31,9 @@ public class PayUtil {
         ipMap.put("8.210.191.169", "8.210.191.169");
         ipMap.put("47.242.37.70", "47.242.37.70");
         ipMap.put("8.210.184.32", "8.210.184.32");
+        ipMap.put("47.244.213.35", "47.244.213.35");
+        ipMap.put("47.75.91.111", "47.75.91.111");
+
     }
 
     public static String createParam(Map<String, Object> map) {
@@ -56,13 +59,14 @@ public class PayUtil {
         MessageDigest md5;
 		   	String result="";
 			try {
-				md5 = MessageDigest.getInstance("md5");
-				md5.update(a.getBytes("utf-8"));
-				byte[] temp;
-				temp=md5.digest(c.getBytes("utf-8"));
-				for (int i=0; i<temp.length; i++)
-					result+=Integer.toHexString((0x000000ff & temp[i]) | 0xffffff00).substring(6);
-			} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+                md5 = MessageDigest.getInstance("md5");
+                md5.update(a.getBytes("utf-8"));
+                byte[] temp;
+                temp = md5.digest(c.getBytes("utf-8"));
+                for (int i = 0; i < temp.length; i++) {
+                    result += Integer.toHexString((0x000000ff & temp[i]) | 0xffffff00).substring(6);
+                }
+            } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
 			}
 			return result;
 	    }
