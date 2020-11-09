@@ -1,5 +1,6 @@
 package alipay.manage.api.channel.deal.yifu;
 
+import alipay.manage.api.channel.util.ChannelInfo;
 import alipay.manage.api.channel.util.yifu.YiFu02Util;
 import alipay.manage.api.config.PayOrderService;
 import alipay.manage.bean.DealOrderApp;
@@ -48,21 +49,25 @@ public class YiFu02AlipayH5 extends PayOrderService {
                 return Result.buildFailMessage("请联系运营为您的商户好设置交易url");
             }
             log.info("【回调地址ip为：" + userInfo.getDealUrl() + "】");
-            String url = createOrder(dealOrderApp, userInfo.getDealUrl() + PayApiConstant.Notfiy.NOTFIY_API_WAI + "/YiFuH502-notfiy", dealOrderApp.getOrderAmount(), orderId);
+            String url = createOrder(dealOrderApp,
+                    userInfo.getDealUrl() + PayApiConstant.Notfiy.NOTFIY_API_WAI +
+                            "/YiFuH502-notfiy", dealOrderApp.getOrderAmount(),
+                    orderId, getChannelInfo(channel, dealOrderApp.getRetain1()));
             if (StrUtil.isBlank(url))
                 return Result.buildFailMessage("支付失败");
             else
                 return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(url));
         }
-        return  Result.buildFailMessage("支付失败");
+        return Result.buildFailMessage("支付失败");
     }
 
-    private String createOrder(DealOrderApp dealOrderApp, String notify, BigDecimal orderAmount, String orderId) {
-        String key = YiFu02Util.XUNFU_KEY;
-        String merchant_id = YiFu02Util.XUNFU_APPID;
+    private String createOrder(DealOrderApp dealOrderApp, String notify,
+                               BigDecimal orderAmount, String orderId, ChannelInfo channelInfo) {
+        String key = channelInfo.getChannelPassword();
+        String merchant_id = channelInfo.getChannelAppId();
         String order_id = orderId;
         String amount = orderAmount.intValue() + "00.00";
-        String pay_type = "alipayh5";
+        String pay_type = channelInfo.getChannelType();
         String notify_url = notify;
         String user_id = RandomUtil.randomString(10).toUpperCase();
         String user_ip = dealOrderApp.getOrderIp();
@@ -79,7 +84,7 @@ public class YiFu02AlipayH5 extends PayOrderService {
         String s = YiFu02Util.md5(param + "key=" + key);
         map.put("sign",s);
         log.info("【易付2号请求前的参数："+map.toString()+"】");
-        String post = HttpUtil.post(YiFu02Util.XUNFU_URL, map);
+        String post = HttpUtil.post(channelInfo.getDealurl(), map);
         log.info(post);
         JSONObject jsonObject = JSONUtil.parseObj(post);
         String code = jsonObject.getStr("code");

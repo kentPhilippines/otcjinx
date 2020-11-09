@@ -31,7 +31,9 @@ public class YiFu02H5Notify extends NotfiyChannel {
         map.put("61.4.112.74", "61.4.112.74");
         map.put("61.4.112.88", "61.4.112.88");
         map.put("103.60.108.252", "103.60.108.252");
-        map.put("61.41.118.115", "61.41.118.115");
+        map.put("61.4.118.115", "61.4.118.115");
+        map.put("61.4.114.125", "61.4.114.125");
+        map.put("103.229.67.20", "103.229.67.20");
         Object object = map.get(clientIP);
         if (ObjectUtil.isNull(object)) {
             log.info("【当前回调ip为：" + clientIP + "，固定IP登记为：" + map.toString() + "】");
@@ -78,9 +80,10 @@ public class YiFu02H5Notify extends NotfiyChannel {
         yifuMap.put("transact_id", transact_id);
         yifuMap.put("pay_time",pay_time);
         yifuMap.put("status",status);
+        String channelKey = super.getChannelKey(order_id);
         String param = YiFu02Util.createParam(yifuMap);
         log.info("【易付2号加签前的参数："+param+"】");
-        String s = YiFu02Util.md5(param + "key=" + YiFu02Util.KEY);
+        String s = YiFu02Util.md5(param + "key=" + channelKey);
         if(s.equals(sign)) {
             log.info("【当前支付成功回调签名参数："+sign+"，当前我方验证签名结果："+s+"】");
             log.info("【签名成功】");

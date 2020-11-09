@@ -1,16 +1,59 @@
 package test.number;
 
+import cn.hutool.core.thread.ThreadUtil;
+
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 public class charN {
+	static int o = 1;
+	static Lock lock = new ReentrantLock();
+
 	public static void main(String[] args) {
-		String username = "B2adshasdasdjk13";
-		char[] charArray = username.toCharArray();
-		char a = charArray[0];
-		char d = charArray[charArray.length-1];
-		System.out.println(a);
-		System.out.println(d);
-		int o = a - d ;
-		int ss = (o < 0) ? -o : o;
-		System.out.println(ss);
+
+		for (int b = 1; b <= 20; b++) {
+			ThreadUtil.execute(() -> {
+				boolean a = true;
+				do {
+					if (test()) {
+						a = false;
+					}
+				} while (a);
+			});
+
+		}
+
+
 	}
 
+	static boolean test() {
+		lock.lock();
+		try {
+			o++;
+			System.out.println("执行次数：" + o);
+			int a = 1;
+			if (o == 2) {
+				System.out.println("执行次数2---------------------------：" + o);
+
+			}
+			int b = 5;
+
+
+			int c = b - a;
+			ThreadUtil.sleep(200);
+			if (c == 4) {
+				a = 2;
+
+				return true;
+			} else {
+				System.out.println("错误，a == " + a);
+				System.out.println("错误，c == " + c);
+				return false;
+			}
+		} finally {
+			lock.unlock();
+		}
+
+
+	}
 }

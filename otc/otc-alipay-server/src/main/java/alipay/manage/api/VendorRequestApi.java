@@ -115,19 +115,6 @@ public class VendorRequestApi {
             });
             return Result.buildFailMessage("商户交易费率未配置或未开通");
         }
-        if (userInfo.getSwitchs() == 0) {
-            log.info("--------------【 商户通道已关闭】----------------");
-            ThreadUtil.execute(()->{
-                exceptionOrderServiceImpl.addDealEx(
-                        paramMap.get("appId").toString(),
-                        paramMap.get("amount").toString(),
-                        "商户相应提示：商户通道已关闭；" +
-                                "处理方法：请反复确认当前商户传入通道编号是否和商户开启的通道编号相匹配，当前商户传入通道编码："+passCode+"," +
-                                "，请检查商户是否有权限开启该通道",
-                        HttpUtil.getClientIP(request), paramMap.get("orderId").toString());
-            });
-            return Result.buildFailMessage("商户通道未开启");
-        }
         log.info("--------------【验证是否有时间限制】----------------");
         String start = userInfo.getStartTime();
         String end = userInfo.getEndTime();
@@ -226,12 +213,26 @@ public class VendorRequestApi {
         Integer remitOrderState = userInfo.getRemitOrderState();// 1 接单 2 暂停接单
         if (Common.Order.DAPY_OFF.equals(remitOrderState)) {
             log.info("【当前账户代付权限未开通】");
-            ThreadUtil.execute(()->{
+            ThreadUtil.execute(() -> {
                 exceptionOrderServiceImpl.addWitEx(
                         userId,
                         paramMap.get("amount").toString(),
                         "商户相应提示：当前账户代付权限未开通；" +
                                 "处理方法：请重点检查商户代付状态是否开启",
+                        HttpUtil.getClientIP(request), paramMap.get("apporderid").toString());
+            });
+            return Result.buildFailMessage("当前账户代付权限未开通");
+        }
+
+        Integer switchs = userInfo.getSwitchs();// 1 接单 2 暂停接单
+        if (Common.Order.OFF.equals(switchs)) {
+            log.info("【当前账户代付权限未开通】");
+            ThreadUtil.execute(() -> {
+                exceptionOrderServiceImpl.addWitEx(
+                        userId,
+                        paramMap.get("amount").toString(),
+                        "商户相应提示：当前账户代付权限未开通；" +
+                                "处理方法：请开启账户总开关",
                         HttpUtil.getClientIP(request), paramMap.get("apporderid").toString());
             });
             return Result.buildFailMessage("当前账户代付权限未开通");
@@ -245,7 +246,7 @@ public class VendorRequestApi {
             log.info("【获取当前允许代付ip为：" + witip + "】");
             String[] split = witip.split(",");
             List<String> asList = Arrays.asList(split);
-            if (!asList.contains(clientIP)){
+            if (!asList.contains(clientIP)) {
                 ThreadUtil.execute(()->{
                     exceptionOrderServiceImpl.addWitEx(
                             userId,

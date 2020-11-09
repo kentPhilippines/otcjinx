@@ -330,9 +330,14 @@ public class DealAppApi extends PayOrderService {
 			Integer autoWit = userInfo.getAutoWit();
 			if (1 == autoWit) {
 				//自动推送
-				super.withdraw(bean);
-				deal = factoryForStrategy.getStrategy(channelFee.getImpl()).withdraw(bean);
-            } else {
+				Result withdraw = super.withdraw(bean);
+				if (withdraw.isSuccess()) {
+					deal = factoryForStrategy.getStrategy(channelFee.getImpl()).withdraw(bean);
+				} else {
+					withdrawServiceImpl.updateWitError(bean.getOrderId());
+					return Result.buildFailMessage("代付失败，当前排队爆满，请再次发起代付");
+				}
+			} else {
                 //手动处理
 				deal = super.withdraw(bean);
 			}
@@ -341,6 +346,7 @@ public class DealAppApi extends PayOrderService {
 			super.withdrawEr(bean, "系统异常，请联系技术人员处理", HttpUtil.getClientIP(request));
 			exceptionOrderServiceImpl.addWitOrder(wit, "用户报错：当前通道编码不存在；处理方法：提交技术人员处理，报错信息：" + e.getMessage(), HttpUtil.getClientIP(request));
 			log.info("【当前通道编码对于的实体类不存在】");
+			withdrawServiceImpl.updateWitError(bean.getOrderId());
 			redisLockUtil.unLock(lock);
 			return Result.buildFailMessage("当前通道编码不存在");
 		}

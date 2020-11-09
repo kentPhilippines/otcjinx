@@ -19,8 +19,14 @@ public class RedisLockUtil {
         LOGGER.info("{}锁获取状态：{} ", lock, tryLock);
         while (!tryLock) {
             // 获取锁
-            ThreadUtil.sleep(20);
+            long l = System.currentTimeMillis();
+            Long a = l % 2;
+            if (a == 0) {
+                a = a + 3;
+            }
+            ThreadUtil.sleep(20 + a);
             tryLock = cache.lock(lock);
+            LOGGER.info("【不断重复请求当前锁：" + lock + "，当前锁状态：" + tryLock + "】");
         }
     }
 

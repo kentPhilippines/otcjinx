@@ -35,6 +35,7 @@ import otc.result.Result;
 import otc.util.RSAUtils;
 import otc.util.enums.DeductStatusEnum;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -43,32 +44,47 @@ import java.util.Map;
 
 @RestController
 public class Api {
-	@Autowired AmountMapper amountDao;
-	@Autowired MediumService mediumServiceImpl;
-	@Autowired LogUtil logUtil;
-	@Autowired AmountUtil amountUtil;
-	@Autowired UserInfoService userInfoServiceImpl;
-	@Autowired AmountRunUtil amountRunUtil;
+	@Resource
+	private AmountMapper amountDao;
+	@Autowired
+	MediumService mediumServiceImpl;
+	@Autowired
+	LogUtil logUtil;
+	@Autowired
+	AmountUtil amountUtil;
+	@Autowired
+	UserInfoService userInfoServiceImpl;
+	@Autowired
+	AmountRunUtil amountRunUtil;
 	private static final Log log = LogFactory.get();
-	@Autowired OrderUtil orderUtil;
-	@Autowired DealOrderMapper dealOrderDao;
-	@Autowired QrUtil qrUtil;
-	@Autowired NotifyUtil notifyUtil;
-	@Autowired QueueUtil queueUtil;
-	@Autowired FileListService fileListServiceImpl;
-	@Autowired FactoryForStrategy factoryForStrategy;
-	@Autowired WithdrawService withdrawServiceImpl;
-	@Autowired ChannelFeeMapper channelFeeDao;
-
+	@Autowired
+	OrderUtil orderUtil;
+	@Resource
+	private DealOrderMapper dealOrderDao;
+	@Autowired
+	QrUtil qrUtil;
+	@Autowired
+	NotifyUtil notifyUtil;
+	@Autowired
+	QueueUtil queueUtil;
+	@Autowired
+	FileListService fileListServiceImpl;
+	@Autowired
+	FactoryForStrategy factoryForStrategy;
+	@Autowired
+	WithdrawService withdrawServiceImpl;
+	@Resource
+	private ChannelFeeMapper channelFeeDao;
 
 
 	/**
 	 * <p>后台调用重新通知的方法</p>
+	 *
 	 * @param request
 	 * @return
 	 */
-	@GetMapping(PayApiConstant.Alipay.ORDER_API+PayApiConstant.Alipay.WIT_API_ENTER)
-	public Result wit(  HttpServletRequest request) {
+	@GetMapping(PayApiConstant.Alipay.ORDER_API + PayApiConstant.Alipay.WIT_API_ENTER)
+	public Result wit(HttpServletRequest request) {
 		log.info("【接收到后台确认代付出款的方法调用，："+request.getParameter("orderId")+" 】");
 		String orderId = request.getParameter("orderId");
 		String apply = request.getParameter("apply");

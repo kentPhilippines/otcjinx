@@ -69,30 +69,31 @@ public class Common {
 			
 			public static final String WIT_QR = "2";				//码商提现
 			public static final String WIT_ACC = "1";				//商户提现
-			
-			
-			
-			
-			public static final String WIT_TYPE_API = "1";				//API代付
-			public static final String WIT_TYPE_MANAGE = "2";			//商户提现
-			public static final String WIT_TYPE_CLI = "3";				//码商客户端提现
-			
+
+
+			public static final String WIT_TYPE_API = "1";                //API代付
+			public static final String WIT_TYPE_MANAGE = "2";            //商户提现
+			public static final String WIT_TYPE_CLI = "3";                //码商客户端提现
+
 		}
-		
+
 		public static final Integer ORDER_TYPE_DEAL = 1;//交易订单
 		public static final Integer ORDER_TYPE_WIT = 5;//代付充值
 		public static final Integer DAPY_OPEN = 1;//代付开启
 		public static final Integer DAPY_OFF = 2;//代付关闭
+		public static final Integer OFF = 0;//总开关 关闭
+		public static final Integer OPEN = 1;//总开关开启
 		public static final Integer DEAL_OPEN = 1;//交易开启
 		public static final Integer DEAL_OFF = 2;//交易关闭
-		
-		public static class DealOrderApp{
+
+		public static class DealOrderApp {
 			public static final String ORDER_STATUS_DISPOSE = "1";//订单处理中
 			public static final String ORDER_STATUS_SU = "2";//订单成功
-			public static final String ORDER_STATUS_ER= "4";//订单失败
-			
+			public static final String ORDER_STATUS_ER = "4";//订单失败
+
 		}
-		public static class DealOrder{
+
+		public static class DealOrder {
 			/**
 			 * <p>订单处理中</p>
 			 */

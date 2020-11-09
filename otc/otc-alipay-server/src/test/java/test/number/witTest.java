@@ -1,8 +1,10 @@
 
 package test.number;
 
+import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import otc.util.MapUtil;
 import otc.util.encode.XRsa;
@@ -18,7 +20,25 @@ import java.util.Map;
 
 public class witTest {
 	public static void main(String[] args) {
-		new witTest().deal();
+
+		String userid1 = "sx978";
+		String key1 = "52927A864A704AE384E4E167A9772CEB";
+		String publickey1 = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCCHLkbqXFZAkccRIT9+EuNuUeThCMSReMDj1BCsxIWOjEICD6cIdKdJ8Et2oaNsoXqo/Khd+Ntt50chKTQ48l+/ceZ5h37QpnsVeNmln3a+mtEBRzO/9fIOsb3aa+Cz2zD/u7Mh2DMOEP3cB98Q22CNuptYnXM1ne2XC7DpR/lIQIDAQAB";
+
+		String userid2 = "Dlx7nuGO";
+		String key2 = "52927A864A704AE384E4E167A9772CEB";
+		String publickey2 = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCSeEFaY0UboAGW7sTe4KqXxJzwhD02gDfT6rSzSl042ujWq6wtOAcID7W07DheHHNV7io7r3OCJolLDRxKwMj6KJtK217dtLIKlo2BSZpk7KKSa6mwwLAVqrePv0IIukAYrRYPEvfLN4O4FAlhtazmoSZO7TvWy1uKR3suO9g0SwIDAQAB";
+
+		for (int a = 0; a <= 3; a++) {
+			ThreadUtil.execute(() -> {
+				new witTest().wit(userid1, key1, publickey1);
+			});
+			ThreadUtil.execute(() -> {
+				new witTest().wit(userid2, key2, publickey2);
+			});
+		}
+
+
 		//相应结果集：{"success":true,"message":"支付处理中","result":{"sussess":true,"cod":0,"openType":1,"returnUrl":"http://api.tjzfcy.com/gateway/bankgateway/payorder/order/60326816340490956.html"},"code":null}
 		//相应结果集：{"success":true,"message":"支付处理中","result":{"sussess":true,"cod":0,"openType":1,"returnUrl":"http://api.tjzfcy.com/gateway/bankgateway/payorder/order/60326822046537022.html"},"code":1}
 
@@ -64,21 +84,21 @@ public class witTest {
 	}
 
 
-	void wit() {
-        SimpleDateFormat d = new SimpleDateFormat("yyyyMMddHHmmss");
-        String userid = "CX888";
-        String key = "c0abf775-a597-4490-ac66-3b9980d383d5";//交易密钥
-        String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCMyACJDW3gJMSAFtgq7VRJfcZ5HvcnZQ53q0ljfu9T7xOwTbTcDk1alajhfbvZE0OEwMsFRP7qeUappKFMMtIXGux7LluGoCzs7sPmH/5JyvmmOHQyIfKXktoRYd6TU8ywl/M6qCdcJ7C0dPFraHwUgZVRsznMpeWQj5aIo/KK5wIDAQAB";
+	void wit(String userid1, String key1, String publickey) {
+		SimpleDateFormat d = new SimpleDateFormat("yyyyMMddHHmmss");
+		String userid = userid1;
+		String key = key1;//交易密钥
+		String publicKey = publickey;
 
-        Map<String, Object> objectToMap = new HashMap<>();
-        objectToMap.put("appid", userid);
-        objectToMap.put("apporderid", "123712343627d1dg112");
-        objectToMap.put("ordertime", d.format(new Date()) + "");
-		objectToMap.put("amount", "100");
+		Map<String, Object> objectToMap = new HashMap<>();
+		objectToMap.put("appid", userid);
+		objectToMap.put("apporderid", StrUtil.uuid());
+		objectToMap.put("ordertime", d.format(new Date()) + "");
+		objectToMap.put("amount", "300");
 		objectToMap.put("acctno", "test123123123123");
-        objectToMap.put("acctname", "zhangsan");
-        objectToMap.put("bankcode", "ICBC");
-        objectToMap.put("notifyurl", "http://www.baodu.com");
+		objectToMap.put("acctname", "zhangsan");
+		objectToMap.put("bankcode", "ICBC");
+		objectToMap.put("notifyurl", "http://www.baodu.com");
 		String createParam = createParam(objectToMap);
 		System.out.println("签名前请求串：" + createParam);
 		String md5 = getKeyedDigestUTF8(createParam + key);
@@ -93,7 +113,7 @@ public class witTest {
 		postMap.put("cipherText", publicEncrypt);
 		postMap.put("userId", userid);
 		System.out.println("请求参数：" + postMap.toString());
-		String post = HttpUtil.post("http://starpay168.com:5055/api-alipay/deal/wit", postMap);
+		String post = HttpUtil.post("http://127.0.0.1:9010/deal/wit", postMap);
 		System.out.println("相应结果集：" + post);
 
 

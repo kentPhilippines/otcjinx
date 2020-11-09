@@ -3,13 +3,11 @@ package alipay.manage.util;
 import alipay.manage.api.AccountApiService;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import com.google.common.collect.Maps;
-
 import otc.common.SystemConstants;
 import otc.result.Result;
 import otc.util.MapUtil;
@@ -55,15 +53,15 @@ public class CheckUtils {
         String bankcode = (String) map.get("bankcode");
         String notifyurl = (String) map.get("notifyurl");
         String rsasign = (String) map.get("sign");
-        if (StrUtil.isBlank(rsasign)
-                || StrUtil.isBlank(notifyurl)
-                || StrUtil.isBlank(bankcode)
-                || StrUtil.isBlank(acctname)
-                || StrUtil.isBlank(amount)
-                || StrUtil.isBlank(acctno)
-                || StrUtil.isBlank(ordertime)
-                || StrUtil.isBlank(orderId)
-                || StrUtil.isBlank(appid)
+        if (StrUtil.isEmpty(rsasign)
+                || StrUtil.isEmpty(notifyurl)
+                || StrUtil.isEmpty(bankcode)
+                || StrUtil.isEmpty(acctname)
+                || StrUtil.isEmpty(amount)
+                || StrUtil.isEmpty(acctno)
+                || StrUtil.isEmpty(ordertime)
+                || StrUtil.isEmpty(orderId)
+                || StrUtil.isEmpty(appid)
         )
             return false;
         return true;

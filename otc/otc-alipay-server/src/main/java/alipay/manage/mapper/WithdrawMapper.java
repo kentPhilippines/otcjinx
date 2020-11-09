@@ -51,7 +51,8 @@ public interface WithdrawMapper {
             "comment = #{comment}, " +
             "submitTime = sysdate() " +
             "where orderId = #{orderId}")
-    int updataOrderStatusEr(@Param("orderId") String orderId, @Param("orderStatus") String orderStatus, @Param("comment") String comment);
+    int updataOrderStatusEr(@Param("orderId") String orderId,
+                            @Param("orderStatus") String orderStatus, @Param("comment") String comment);
 
     @Select("select * from alipay_withdraw where appOrderId = #{orderId} and userId = #{appId}")
     Withdraw findOrderByApp(@Param("appId") String appId, @Param("orderId") String orderId);
