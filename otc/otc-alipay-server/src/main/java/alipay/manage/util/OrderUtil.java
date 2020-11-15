@@ -607,13 +607,14 @@ public class OrderUtil {
 		   * ###########################
 		   * 代付失败给该用户退钱
 		   */
-		  int a = withdrawDao.updataOrderStatusEr(wit.getOrderId(),msg, Common.Order.Wit.ORDER_STATUS_ER);
-		  if(a == 0  || a > 2)
+		  int a = withdrawDao.updataOrderStatusEr(wit.getOrderId(),
+				  Common.Order.Wit.ORDER_STATUS_ER, msg);
+		  if (a == 0 || a > 2)
 			  return Result.buildFailMessage("订单状态修改失败");
 		  UserFund userFund = new UserFund();
 		  userFund.setUserId(wit.getUserId());
 		  Result addAmountAdd = amountUtil.addAmountAdd(userFund, wit.getAmount());
-		  if(!addAmountAdd.isSuccess())
+		  if (!addAmountAdd.isSuccess())
 			  return addAmountAdd;
 		  Result addAmountW = amountRunUtil.addAmountW(wit, ip);
 		  if (!addAmountW.isSuccess())

@@ -1,22 +1,19 @@
 package alipay.manage.util;
 
-import java.math.BigDecimal;
+import alipay.manage.bean.*;
+import alipay.manage.service.RunOrderService;
+import alipay.manage.service.UserInfoService;
+import cn.hutool.core.util.StrUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import alipay.manage.bean.Amount;
-import alipay.manage.bean.DealOrder;
-import alipay.manage.bean.RunOrder;
-import alipay.manage.bean.UserFund;
-import alipay.manage.bean.UserRate;
-import alipay.manage.service.RunOrderService;
-import alipay.manage.service.UserInfoService;
-import cn.hutool.core.util.StrUtil;
 import otc.bean.dealpay.Recharge;
 import otc.bean.dealpay.Withdraw;
 import otc.exception.user.UserException;
 import otc.result.Result;
+
+import java.math.BigDecimal;
 
 /**
  * <p>资金流水处理类</p>
@@ -66,8 +63,6 @@ public class AmountRunUtil {
     private static final String DELETE_DEAL_FEE_AMOUNT_APP = "ADD_DEAL_FEE_AMOUNT_APP";//下游商户交易手续费扣款
     private static final Integer ADD_DEAL_AMOUNT_APP_NUMBER = 20;// 下游商户交易加款编号
     private static final Integer DELETE_DEAL_FEE_AMOUNT_APP_NUMBER = 21;// 下游商户交易手续费扣款编号
-
-
     private static final String CHANNEL_ADD_R = "CHANNEL_ADD_R";// 渠道手续费标识
     private static final Integer CHANNEL_ADD_R_NUMBER = 24;// 渠道手续费编号
     private static final Integer CHANNEL_ADD_WIT_NUMBER = 23;// 渠道代付加款成功标识
@@ -76,6 +71,12 @@ public class AmountRunUtil {
     private static final String AGNEET_WIT_FRREE = "AGNEET_WIT_FRREE";// 商户代理商代付利润结算
     private static final String CHANNEL_ADD_WIT = "CHANNEL_ADD_WIT";// 渠道代付成功标识
     private static final String CHANNEL_ADD_WIT_FEE = "CHANNEL_ADD_WIT_FEE";// 渠道代付成功标识手续费
+
+
+    private static final String DELETE_FREEZE = "DELETE_FREEZE";// 商户金额冻结
+    private static final String ADD_FREEZE = "ADD_FREEZE";// 商户金额解冻
+    private static final Integer DELETE_FREEZE_NUMBER = 27;// 商户金额冻结
+    private static final Integer ADD_FREEZE_NUMBER = 28;// 商户金额解冻
 
 
     private static final String AMOUNT_TYPE_R = "0";//对于当前账户来说是   收入
@@ -577,6 +578,12 @@ public class AmountRunUtil {
             case CHANNEL_ADD_WIT_FEE:
                 runOrderType = CHANNEL_ADD_WIT_FEE_NUMBER;
                 break;
+            case DELETE_FREEZE:
+                runOrderType = DELETE_FREEZE_NUMBER;
+                break;
+            case ADD_FREEZE:
+                runOrderType = ADD_FREEZE_NUMBER;
+                break;
             default:
                 break;
         }
@@ -605,6 +612,17 @@ public class AmountRunUtil {
     public Result addChannelWit(Withdraw withdraw, String generationIp) {
         UserFund userFund = userInfoServiceImpl.findUserFundByAccount(withdraw.getWitChannel()); //当前账户资金
         return add(CHANNEL_ADD_WIT, userFund, withdraw.getOrderId(), withdraw.getAmount(), generationIp, "渠道代付成功加款", RUNTYPE_NATURAL);
+    }
+
+
+    public Result addFreeze(Amount amount, String generationIp) {
+        UserFund userFund = userInfoServiceImpl.findUserFundByAccount(amount.getUserId()); //当前账户资金
+        return add(ADD_FREEZE, userFund, amount.getOrderId(), amount.getAmount(), generationIp, "小金库转入余额账户", RUNTYPE_ARTIFICIAL);
+    }
+
+    public Result deleteFreeze(Amount amount, String generationIp) {
+        UserFund userFund = userInfoServiceImpl.findUserFundByAccount(amount.getUserId()); //当前账户资金
+        return add(DELETE_FREEZE, userFund, amount.getOrderId(), amount.getAmount(), generationIp, "余额账户转入小金库", RUNTYPE_ARTIFICIAL);
     }
 
 

@@ -326,18 +326,62 @@ public class Api {
 				if(a > 0 &&  a < 2) {
 					UserFund userFund = userInfoServiceImpl.findUserFundByAccount(amount.getUserId());
 					Result deleteAmount2 = amountUtil.deleteAmount(userFund, amount.getAmount());
-					if(deleteAmount2.isSuccess()) {
+					if (deleteAmount2.isSuccess()) {
 						Result deleteAmount = amountRunUtil.deleteAmount(amount, clientIP);
-						if(deleteAmount.isSuccess()) {
-							logUtil.addLog(request, "当前发起扣款操作，扣款订单号："+amount.getOrderId()+"，扣款成功，扣款用户："+amount.getUserId()+"，操作人："+amount.getAccname()+"", amount.getAccname());
+						if (deleteAmount.isSuccess()) {
+							logUtil.addLog(request, "当前发起扣款操作，扣款订单号：" + amount.getOrderId() + "，扣款成功，扣款用户：" + amount.getUserId() + "，操作人：" + amount.getAccname() + "", amount.getAccname());
 							return Result.buildSuccessMessage("操作成功");
 						}
 					}
 				}
 			}
 			return Result.buildFailMessage("人工处理加扣款失败");
-		default:
-			return Result.buildFailMessage("人工处理加扣款失败");
+			case Common.Deal.AMOUNT_ORDER_DELETE_FREEZE:   //资金冻结
+				if (orderStatus.equals(Common.Deal.AMOUNT_ORDER_SU)) {//资金冻结成功
+					int a = amountDao.updataOrder(orderId.toString(), orderStatus.toString(), approval.toString(), comment.toString());
+					if (a > 0 && a < 2) {
+						logUtil.addLog(request, "当前发起订单修改操作，冻结订单号：" + amount.getOrderId() + "，冻结订单置为成功，冻结用户：" + amount.getUserId() + "，操作人：" + amount.getAccname() + "", amount.getAccname());
+						return Result.buildSuccessMessage("操作成功");
+					}
+				} else if (orderStatus.equals(Common.Deal.AMOUNT_ORDER_ER)) {//资金冻结失败
+					int a = amountDao.updataOrder(orderId.toString(), orderStatus.toString(), approval.toString(), comment.toString());
+					if (a > 0 && a < 2) {
+						UserFund userFund = userInfoServiceImpl.findUserFundByAccount(amount.getUserId());
+						Result addAmountAdd = amountUtil.addFreeze(userFund, amount.getAmount());
+						if (addAmountAdd.isSuccess()) {
+							Result deleteAmount = amountRunUtil.addFreeze(amount, clientIP);
+							if (deleteAmount.isSuccess()) {
+								logUtil.addLog(request, "当前扣款订单置为失败，资金原路退回，扣款订单号：" + amount.getOrderId() + "，扣款用户：" + amount.getUserId() + "，操作人：" + amount.getAccname() + "", amount.getAccname());
+								return Result.buildSuccessMessage("操作成功");
+							}
+						}
+					}
+				}
+				return Result.buildFailMessage("人工处理冻结失败");
+			case Common.Deal.AMOUNT_ORDER_ADD_FREEZE:
+				if (orderStatus.equals(Common.Deal.AMOUNT_ORDER_SU)) {//资金解冻成功
+					int a = amountDao.updataOrder(orderId.toString(), orderStatus.toString(), approval.toString(), comment.toString());
+					if (a > 0 && a < 2) {
+						UserFund userFund = userInfoServiceImpl.findUserFundByAccount(amount.getUserId());
+						Result addAmountAdd = amountUtil.addFreeze(userFund, amount.getAmount());
+						if (addAmountAdd.isSuccess()) {
+							Result addAmount = amountRunUtil.addFreeze(amount, clientIP);
+							if (addAmount.isSuccess()) {
+								logUtil.addLog(request, "当前发起解冻操作，解冻订单号：" + amount.getOrderId() + "，解冻成功，加款用户：" + amount.getUserId() + "，操作人：" + amount.getAccname() + "", amount.getAccname());
+								return Result.buildSuccessMessage("解冻成功");
+							}
+						}
+					}
+				} else if (orderStatus.equals(Common.Deal.AMOUNT_ORDER_ER)) {//资金解冻失败
+					int a = amountDao.updataOrder(orderId.toString(), orderStatus.toString(), approval.toString(), comment.toString());
+					if (a > 0 && a < 2) {
+						logUtil.addLog(request, "当前发起订单修改操作，解冻订单号：" + amount.getOrderId() + "，解冻订单置为失败，解冻用户：" + amount.getUserId() + "，操作人：" + amount.getAccname() + "", amount.getAccname());
+						return Result.buildSuccessMessage("操作成功");
+					}
+				}
+				return Result.buildFailMessage("人工处理解冻失败");
+			default:
+				return Result.buildFailMessage("人工处理订单失败");
 		}
 	}
 
@@ -442,34 +486,49 @@ public class Api {
 		alipayAmount.setAccname(accname.toString());
 		alipayAmount.setActualAmount(new BigDecimal(amount.toString()));
 		String clientIP = HttpUtil.getClientIP(request);
-		if(StrUtil.isBlank(clientIP))
+		if (StrUtil.isBlank(clientIP))
 			return Result.buildFailMessage("当前使用代理服务器 或是操作ip识别出错，不允许操作");
 		UserFund userFund = userInfoServiceImpl.findUserFundByAccount(userId.toString());
 		if (userFund == null) {
 			throw new BusinessException("此用户不存在");
 		}
-		BigDecimal balance = userFund.getAccountBalance();
-		BigDecimal deduct = new BigDecimal(amount.toString());
-		if (balance.compareTo(deduct) > -1) {//余额充足
-//			deduct = deduct.abs().negate();
-//			//更新账户余额
-//			int i = userInfoServiceImpl.updateBalanceById(userFund.getId(), deduct, userFund.getVersion());
-//			if (i == 1){//生成流水
-//
-//			}
-			Result deleteAmount2 = amountUtil.deleteAmount(userFund, deduct);
-			if(deleteAmount2.isSuccess()) {
-				Result deleteAmount = amountRunUtil.deleteAmount(alipayAmount, clientIP);
-				if(deleteAmount.isSuccess()) {
-					int i = userInfoServiceImpl.insertAmountEntitys(alipayAmount);
-					if (i == 1)
-						return Result.buildSuccessMessage("创建订单成功");
-					else
-						return Result.buildFailMessage("创建订单失败");
+
+		if (amountType.toString().equals(Common.Deal.AMOUNT_ORDER_DELETE_FREEZE)) {
+			BigDecimal balance = userFund.getAccountBalance();
+			BigDecimal deduct = new BigDecimal(amount.toString());
+			if (balance.compareTo(deduct) > -1) {//余额充足
+				Result deleteAmount2 = amountUtil.deleteFreeze(userFund, deduct);
+				if (deleteAmount2.isSuccess()) {
+					Result deleteAmount = amountRunUtil.deleteFreeze(alipayAmount, clientIP);
+					if (deleteAmount.isSuccess()) {
+						int i = userInfoServiceImpl.insertAmountEntitys(alipayAmount);
+						if (i == 1)
+							return Result.buildSuccessMessage("创建订单成功");
+						else
+							return Result.buildFailMessage("创建订单失败");
+					}
 				}
+			} else {//余额不足
+				return Result.buildFailMessage("操作失败，账户余额不足");
 			}
-		}else{//余额不足
-			return Result.buildFailMessage("操作失败，账户余额不足");
+		} else if (amountType.toString().equals(Common.Deal.AMOUNT_ORDER_ADD)) {
+			BigDecimal balance = userFund.getAccountBalance();
+			BigDecimal deduct = new BigDecimal(amount.toString());
+			if (balance.compareTo(deduct) > -1) {//余额充足
+				Result deleteAmount2 = amountUtil.deleteAmount(userFund, deduct);
+				if (deleteAmount2.isSuccess()) {
+					Result deleteAmount = amountRunUtil.deleteAmount(alipayAmount, clientIP);
+					if (deleteAmount.isSuccess()) {
+						int i = userInfoServiceImpl.insertAmountEntitys(alipayAmount);
+						if (i == 1)
+							return Result.buildSuccessMessage("创建订单成功");
+						else
+							return Result.buildFailMessage("创建订单失败");
+					}
+				}
+			} else {//余额不足
+				return Result.buildFailMessage("操作失败，账户余额不足");
+			}
 		}
 		return null;
 	}

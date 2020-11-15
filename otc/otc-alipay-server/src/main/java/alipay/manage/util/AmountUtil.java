@@ -38,6 +38,7 @@ public class AmountUtil {
 	public static final String DELETE_AMOUNT = "DELETE_AMOUNT";//人工减钱
 	public static final String DELETE_WITHDRAW = "DELETE_WITHDRAW";//提现withdraw
 	public static final String DELETE_FREEZE = "DELETE_FREEZE";//冻结  FreezeBalance
+	public static final String ADD_FREEZE = "ADD_FREEZE";//解冻 FreezeBalance
 	static Lock lock = new ReentrantLock();
 
 	/**
@@ -69,24 +70,40 @@ public class AmountUtil {
 	public Result addAmountAdd(UserFund userFund , BigDecimal balance) {
 		return addAmountBalance(userFund, balance, ADD_AMOUNT,new BigDecimal(0));
 	}
+
 	/**
 	 * <p><strong>增加交易分润</strong></p>
-	 * @param userFund							资金账户
-	 * @param balance							记录资金【分润金额】
-	 * @param dealAmount						交易金额【订单金额】
+	 *
+	 * @param userFund   资金账户
+	 * @param balance    记录资金【分润金额】
+	 * @param dealAmount 交易金额【订单金额】
 	 * @return
 	 */
-	public Result addDeal(UserFund userFund , BigDecimal balance, BigDecimal dealAmount) {
-		return addAmountBalance(userFund, balance, ADD_AMOUNT_DEAL,dealAmount);
+	public Result addDeal(UserFund userFund, BigDecimal balance, BigDecimal dealAmount) {
+		return addAmountBalance(userFund, balance, ADD_AMOUNT_DEAL, dealAmount);
 	}
+
+
+	/**
+	 * 资金账户余额加钱，解冻账户余额
+	 *
+	 * @param userFund
+	 * @param freezeAmont
+	 * @return
+	 */
+	public Result addFreeze(UserFund userFund, BigDecimal freezeAmont) {
+		return addAmountBalance(userFund, freezeAmont, ADD_FREEZE, new BigDecimal(0));
+	}
+
 	/**
 	 * <p>下游商户交易时，增加下游商户商户余额</p>
+	 *
 	 * @param userFund
 	 * @param balance
 	 * @return
 	 */
-	public Result addDealApp(UserFund userFund , BigDecimal balance) {
-		return addAmountBalance(userFund, balance, ADD_AMOUNT_DEAL_APP,new BigDecimal("0"));
+	public Result addDealApp(UserFund userFund, BigDecimal balance) {
+		return addAmountBalance(userFund, balance, ADD_AMOUNT_DEAL_APP, new BigDecimal("0"));
 	}
 	/**
 	 * <p><strong>减少交易点数【交易订单置为成功调用这个方法】</strong></p>
@@ -132,9 +149,10 @@ public class AmountUtil {
 
 	/**
 	 * <p>增加余额</p>
+	 *
 	 * @return
 	 */
-	public Result addAmountBalance(UserFund userFund1 , BigDecimal balance , String addType  , BigDecimal dealAmount) {
+	public Result addAmountBalance(UserFund userFund1, final BigDecimal balance, final String addType, final BigDecimal dealAmount) {
 		lock.lock();
 		try {
 			boolean flag = true;
@@ -171,7 +189,7 @@ public class AmountUtil {
 						return addAmountRecharge;
 					}
 					lockMsg++;
-					log.info("【手动加钱失败，请联系技术人员处理");
+					log.info("【手动加钱失败，请联系技术人员处理,请查询当前时间范围内的异常情况");
 					return Result.buildFailMessage("【手动加钱失败，请联系技术人员处理】");
 				} else if (ADD_AMOUNT_DEAL.equals(addType)) {//交易利润分成 ,统计交易笔数
 					Result addAmountDeal = addAmountDeal(userFund, balance, dealAmount);
@@ -189,6 +207,14 @@ public class AmountUtil {
 					}
 					lockMsg++;
 					log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
+				} else if (ADD_FREEZE.equals(addType)) {
+					Result addAmountDeal = addFreezeAmount(userFund, balance);
+					if (addAmountDeal.isSuccess()) {
+						flag = false;
+						return addAmountDeal;
+					}
+					lockMsg++;
+					log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
 				}
 				if (lockMsg > 20) {
 					log.info("【账户余额添加失败，请查询当前时间范围内的异常情况，当前账户：" + userFund1.getUserId() + "，金额：" +
@@ -198,22 +224,45 @@ public class AmountUtil {
 			} while (flag);
 		} finally {
 			lock.unlock();
+		}
+
+
+		return Result.buildFailMessage("传参异常");
 	}
 
+	private Result addFreezeAmount(UserFund userFund, BigDecimal amount) {
+		log.info("【当前方法为 【码商或者商户资金解冻】 ，当前操作金额为：" + amount + "】");
+		BigDecimal accountBalance = userFund.getAccountBalance();
+		BigDecimal rechargeNumber = userFund.getRechargeNumber();
+		BigDecimal cashBalance = userFund.getCashBalance();
+		BigDecimal freezeBalance = userFund.getFreezeBalance();
 
 
+		freezeBalance = freezeBalance.subtract(amount);//冻结余额 扣减
+		accountBalance = rechargeNumber.add(cashBalance).subtract(freezeBalance);//余额账户新增
+		userFund.setAccountBalance(accountBalance);
+		userFund.setFreezeBalance(freezeBalance);
+		userFund.setCashBalance(cashBalance);
+		userFund.setRechargeNumber(rechargeNumber);
+		Boolean updataAmount = userInfoServiceImpl.updataAmount(userFund);
+		if (updataAmount) {
+			log.info("【当前解冻资金执行成功，操作的金额为：" + amount + "】");
+			log.info("【解冻资金后的账户金额为：账户总余额：" + accountBalance + "，当前利润账户【现金账户】：" + cashBalance + "，当前冻结账户：" + freezeBalance + "当前操作金额为：" + amount + "】");
+			return Result.buildSuccessMessage("当前金额解冻方法执行成功");
+		} else
+			return Result.buildFailMessage("当前金额解冻方法执行失败");
 
-			return Result.buildFailMessage("传参异常");
 	}
+
 	public Result addAmountDealApp(UserFund userFund, BigDecimal balance) {
 		BigDecimal accountBalance = userFund.getAccountBalance();//当前账户比较金额
 		BigDecimal cashBalance = userFund.getCashBalance();//当前利润账户
 		BigDecimal freezeBalance = userFund.getFreezeBalance();//当前冻结账户
 		BigDecimal rechargeNumber = userFund.getRechargeNumber();//当前充值点数
-	//	BigDecimal sumAgentProfit = userFund.getSumAgentProfit();//当前代理商分润  【当前订单为自己接单，不需要该字段】
+		//	BigDecimal sumAgentProfit = userFund.getSumAgentProfit();//当前代理商分润  【当前订单为自己接单，不需要该字段】
 		BigDecimal sumDealAmount = userFund.getSumDealAmount();//当前交易分润	
-	//	BigDecimal sumProfit = userFund.getSumProfit();//当前当前总的利润
-	//	BigDecimal todayAgentProfit = userFund.getTodayAgentProfit();//今日代理分润  【当前订单为自己接单，无需统计该字段】
+		//	BigDecimal sumProfit = userFund.getSumProfit();//当前当前总的利润
+		//	BigDecimal todayAgentProfit = userFund.getTodayAgentProfit();//今日代理分润  【当前订单为自己接单，无需统计该字段】
 		BigDecimal todayDealAmount = userFund.getTodayDealAmount();//今日交易金额
 		Integer sumOrderCount = userFund.getSumOrderCount();//总订单笔数
 		Integer todayOrderCount = userFund.getTodayOrderCount();//今日订单笔数
@@ -255,9 +304,10 @@ public class AmountUtil {
 	 * @param addType
 	 * @return
 	 */
-	protected static  final String DELETE_KEY = "deleteAmountBalance";
+	protected static final String DELETE_KEY = "deleteAmountBalance";
+
 	@Transactional
-	public Result deleteAmountBalance(UserFund userFund , BigDecimal balance , String addType ) {
+	public Result deleteAmountBalance(UserFund userFund, final BigDecimal balance, final String addType) {
 
 		lock.lock();
 		try {
