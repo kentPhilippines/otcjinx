@@ -501,27 +501,27 @@ public class Api {
 				if (deleteAmount2.isSuccess()) {
 					Result deleteAmount = amountRunUtil.deleteFreeze(alipayAmount, clientIP);
 					if (deleteAmount.isSuccess()) {
-						int i = userInfoServiceImpl.insertAmountEntitys(alipayAmount);
-						if (i == 1)
-							return Result.buildSuccessMessage("创建订单成功");
-						else
-							return Result.buildFailMessage("创建订单失败");
-					}
-				}
-			} else {//余额不足
-				return Result.buildFailMessage("操作失败，账户余额不足");
-			}
-		} else if (amountType.toString().equals(Common.Deal.AMOUNT_ORDER_ADD)) {
-			BigDecimal balance = userFund.getAccountBalance();
-			BigDecimal deduct = new BigDecimal(amount.toString());
-			if (balance.compareTo(deduct) > -1) {//余额充足
-				Result deleteAmount2 = amountUtil.deleteAmount(userFund, deduct);
-				if (deleteAmount2.isSuccess()) {
-					Result deleteAmount = amountRunUtil.deleteAmount(alipayAmount, clientIP);
-					if (deleteAmount.isSuccess()) {
-						int i = userInfoServiceImpl.insertAmountEntitys(alipayAmount);
-						if (i == 1)
-							return Result.buildSuccessMessage("创建订单成功");
+                        int i = userInfoServiceImpl.insertAmountEntitys(alipayAmount);
+                        if (i == 1)
+                            return Result.buildSuccessMessage("创建订单成功");
+                        else
+                            return Result.buildFailMessage("创建订单失败");
+                    }
+                }
+            } else {//余额不足
+                return Result.buildFailMessage("操作失败，账户余额不足");
+            }
+        } else if (amountType.toString().equals(Common.Deal.AMOUNT_ORDER_DELETE)) {
+            BigDecimal balance = userFund.getAccountBalance();
+            BigDecimal deduct = new BigDecimal(amount.toString());
+            if (balance.compareTo(deduct) > -1) {//余额充足
+                Result deleteAmount2 = amountUtil.deleteAmount(userFund, deduct);
+                if (deleteAmount2.isSuccess()) {
+                    Result deleteAmount = amountRunUtil.deleteAmount(alipayAmount, clientIP);
+                    if (deleteAmount.isSuccess()) {
+                        int i = userInfoServiceImpl.insertAmountEntitys(alipayAmount);
+                        if (i == 1)
+                            return Result.buildSuccessMessage("创建订单成功");
 						else
 							return Result.buildFailMessage("创建订单失败");
 					}

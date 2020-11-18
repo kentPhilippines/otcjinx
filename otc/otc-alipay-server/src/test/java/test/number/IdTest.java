@@ -3,17 +3,11 @@ package test.number;
 public class IdTest {
 	public static void main(String[] args) {
 
-        String a = "82186.62";
-        Double adouble = Double.valueOf(a);
+        int a = 100;
+        while (a > 20) {
+            a--;
+        }
 
-
-        int i = adouble.intValue();
-
-
-        System.out.println(
-                i
-        );
-
-
+        System.out.println("a = " + a);
     }
 }
