@@ -1,7 +1,10 @@
 package test.number;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.thread.ThreadUtil;
+import cn.hutool.core.util.StrUtil;
 
+import java.util.Arrays;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -11,17 +14,13 @@ public class charN {
 
 	public static void main(String[] args) {
 
-		for (int b = 1; b <= 20; b++) {
-			ThreadUtil.execute(() -> {
-				boolean a = true;
-				do {
-					if (test()) {
-						a = false;
-					}
-				} while (a);
-			});
 
-		}
+		String str = "https://ap5xt6p0w.vanns.vip/api/bank/fc9025d82ef745168fea6854a92db802";
+		String[] split = str.split("/");
+		String last = CollUtil.getLast(Arrays.asList(split));
+		System.out.println(last);
+		String s = StrUtil.subBefore(str, last, true);
+		System.out.println(s);
 
 
 	}

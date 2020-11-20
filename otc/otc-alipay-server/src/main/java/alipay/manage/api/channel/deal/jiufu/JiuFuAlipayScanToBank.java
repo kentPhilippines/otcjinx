@@ -61,26 +61,27 @@ public class JiuFuAlipayScanToBank extends PayOrderService {
 		String notifyUrl = notify;
 		String extra = "abc";
 		String resultType = "json";
-		String sign = "";
-		String key = JiUFuUtil.KEY;
-		Map<String,Object> map = new HashMap<String,Object>();
-		map.put("partner", partner);
-		map.put("service", service);
-		map.put("tradeNo", tradeNo);
-		map.put("amount", amount);
-		map.put("notifyUrl", notifyUrl);
-		map.put("resultType", resultType);
-		map.put("extra", extra);
-		String createParam = JiUFuUtil.createParam(map);
-		map.put("sign", JiUFuUtil.md5(createParam+"&"+key));
-		log.info("【玖富请求前参数："+map.toString()+"】");
-		String post = HttpUtil.post(JiUFuUtil.URL, map);
-		log.info("【玖富返回参数："+post.toString()+"】");
-		JSONObject parseObj = JSONUtil.parseObj(post);
-		Object object = parseObj.get("isSuccess");
-		if(ObjectUtil.isNotNull(object)) {
-			log.info("【当前玖富的订单为："+object+"】");
-			if(object.equals("T")) {
+        String sign = "";
+        String key = JiUFuUtil.KEY;
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("partner", partner);
+        map.put("service", service);
+        map.put("tradeNo", tradeNo);
+        map.put("amount", amount);
+        map.put("notifyUrl", notifyUrl);
+        map.put("resultType", resultType);
+        map.put("extra", extra);
+        map.put("buyer", JiUFuUtil.name());
+        String createParam = JiUFuUtil.createParam(map);
+        map.put("sign", JiUFuUtil.md5(createParam + "&" + key));
+        log.info("【玖富请求前参数：" + map.toString() + "】");
+        String post = HttpUtil.post(JiUFuUtil.URL, map);
+        log.info("【玖富返回参数：" + post.toString() + "】");
+        JSONObject parseObj = JSONUtil.parseObj(post);
+        Object object = parseObj.get("isSuccess");
+        if (ObjectUtil.isNotNull(object)) {
+            log.info("【当前玖富的订单为：" + object + "】");
+            if (object.equals("T")) {
 				Object object2 = parseObj.get("url");
 				if(ObjectUtil.isNotNull(object2)) {
 					log.info("【支付链接为："+object2+"】");

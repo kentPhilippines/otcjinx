@@ -40,7 +40,7 @@ public class ShuadeDuoNotify extends NotfiyChannel {
         JSONObject jsonObject = JSONUtil.parseObj(json);
         String trade_no = jsonObject.getStr("trade_no");
         String status = jsonObject.getStr("status");
-        String url = "https://4536251.net/api/transaction/" + trade_no;
+        String url = "https://15634145.com/api/transaction/" + trade_no;
         String header = "Bearer ";
         String channelKey = getChannelKey(trade_no);
         String result2 = HttpRequest.get(url)

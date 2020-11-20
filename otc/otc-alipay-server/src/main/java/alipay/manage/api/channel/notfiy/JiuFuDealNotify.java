@@ -2,6 +2,7 @@ package alipay.manage.api.channel.notfiy;
 
 import alipay.manage.api.channel.util.jiufu.JiUFuUtil;
 import alipay.manage.api.config.NotfiyChannel;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
@@ -26,8 +27,12 @@ public class JiuFuDealNotify extends NotfiyChannel {
     public String notify(HttpServletRequest req, HttpServletResponse res) throws IOException {
         String clientIP = HttpUtil.getClientIP(req);
         log.info("【当前回调ip为：" + clientIP + "】");
-        if (!clientIP.equals("43.231.184.8")) {
-            log.info("【当前回调ip为：" + clientIP + "，固定IP登记为：" + "43.231.184.8" + "】");
+        Map mapip = new HashMap();
+        mapip.put("45.192.182.53", "45.192.182.53");
+        mapip.put("46.137.208.154", "46.137.208.154");
+        Object object = mapip.get(clientIP);
+        if (ObjectUtil.isNull(object)) {
+            log.info("【当前回调ip为：" + clientIP + "，固定IP登记为：" + mapip.toString() + "】");
             log.info("【当前回调ip不匹配】");
             return "ip errer";
         }

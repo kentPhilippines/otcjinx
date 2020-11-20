@@ -1,7 +1,6 @@
 
 package test.number;
 
-import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
@@ -21,6 +20,8 @@ import java.util.Map;
 public class witTest {
 	public static void main(String[] args) {
 
+		new witTest().deal();
+/*
 		String userid1 = "sx978";
 		String key1 = "52927A864A704AE384E4E167A9772CEB";
 		String publickey1 = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCCHLkbqXFZAkccRIT9+EuNuUeThCMSReMDj1BCsxIWOjEICD6cIdKdJ8Et2oaNsoXqo/Khd+Ntt50chKTQ48l+/ceZ5h37QpnsVeNmln3a+mtEBRzO/9fIOsb3aa+Cz2zD/u7Mh2DMOEP3cB98Q22CNuptYnXM1ne2XC7DpR/lIQIDAQAB";
@@ -36,7 +37,7 @@ public class witTest {
 			ThreadUtil.execute(() -> {
 				new witTest().wit(userid2, key2, publickey2);
 			});
-		}
+		}*/
 
 
 		//相应结果集：{"success":true,"message":"支付处理中","result":{"sussess":true,"cod":0,"openType":1,"returnUrl":"http://api.tjzfcy.com/gateway/bankgateway/payorder/order/60326816340490956.html"},"code":null}
@@ -124,14 +125,16 @@ public class witTest {
 		String userid = "2u7rMduh";
 		String key = "bc64a6067ae6e7edcfd8c62ad3472d46";//交易密钥
 		String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCIU7OCf+4N47fbJMCpd68GileM6vz02Bi+nTrvuzn7uAn/g89WGE+/aYuFHzAOCsrZ17y26RkQimjbWISEkDd4izP0+w7D0qZCb2czE+UeV7Qvt/DuXpY+yGM1+EAnP/xTr4qmXAZDn3e+xSzU8VMDD/3cuGH6X0CbmQZeK+VVqQIDAQAB";
+
+
 		Deal deal = new Deal();
-		deal.setAmount("100");//金额
+		deal.setAmount("1000");//金额
 		deal.setAppId(userid);//商户号
 		deal.setApplyDate(d.format(new Date()));
 		deal.setNotifyUrl("http://starpay168.com:5055");
 		deal.setPageUrl("http://starpay168.com:5055");
 		deal.setOrderId(IdUtil.objectId());
-		deal.setPassCode("WECHARTOPHONEFEE");
+		deal.setPassCode("ALIPAYTOBANKH5");
 		deal.setSubject("订单交易");
 		deal.setUserid("ASDSADASDS");  //to userid
 		Map<String, Object> objectToMap = MapUtil.objectToMap(deal);

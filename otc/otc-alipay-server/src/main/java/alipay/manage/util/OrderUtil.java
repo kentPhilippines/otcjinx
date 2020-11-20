@@ -773,23 +773,24 @@ public class OrderUtil {
 
 
 	private Result witAgent(Withdraw wit,String username, String product, String channelId, UserRate rate,  String ip, boolean flag) {
-		UserFund userFund = userInfoServiceImpl.findUserFundByAccount (username);//查询当前资金情况
-		UserRate userRate = userRateDao.findProductFeeByAll(userFund.getUserId(), product,channelId);//查询当前代理费率情况
-		log.info("【当前代理商为："+userRate.getUserId()+"】");
-		log.info("【当前代理商结算费率："+userRate.getFee()+"】");
-		log.info("【当前当前我方："+rate.getUserId()+"】");
-		log.info("【当前我方结算费率："+rate.getFee()+"】");
+		UserFund userFund = userInfoServiceImpl.findUserFundByAccount(username);//查询当前资金情况
+		UserRate userRate = userRateDao.findProductFeeByAll(userFund.getUserId(), product, channelId);//查询当前代理费率情况
+		UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(wit.getUserId());
+		log.info("【当前代理商为：" + userRate.getUserId() + "】");
+		log.info("【当前代理商结算费率：" + userRate.getFee() + "】");
+		log.info("【当前当前我方：" + rate.getUserId() + "】");
+		log.info("【当前我方结算费率：" + rate.getFee() + "】");
 		BigDecimal fee = userRate.getFee();//代理商的费率
 		BigDecimal fee2 = rate.getFee();//商户的费率
 		BigDecimal subtract = fee2.subtract(fee);//
-		log.info("【当前结算费率差为："+subtract+"】");
-		log.info("【当前结算费率差为代理商分润："+subtract+"】");//这个钱要加给代理商
+		log.info("【当前结算费率差为：" + subtract + "】");
+		log.info("【当前结算费率差为代理商分润：" + subtract + "】");//这个钱要加给代理商
 		log.info("【开始结算】");
 		Result addAmounProfit = amountUtil.addAmounProfit(userFund, subtract);
-		if(addAmounProfit.isSuccess())
-		 	amountRunUtil.addWitFee(userFund,subtract,wit,ip,flag);
-		if(StrUtil.isNotBlank(userFund.getAgent()))
-			witAgent(wit,userFund.getAgent(),product,channelId,userRate,ip,flag);
+		if (addAmounProfit.isSuccess())
+			amountRunUtil.addWitFee(userFund, subtract, wit, ip, flag);
+		if (StrUtil.isNotBlank(userInfo.getAgent()))
+			witAgent(wit, userInfo.getAgent(), product, channelId, userRate, ip, flag);
 		return Result.buildSuccessMessage("结算成功");
 	}
 
