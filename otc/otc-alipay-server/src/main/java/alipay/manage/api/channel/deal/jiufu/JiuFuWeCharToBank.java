@@ -27,7 +27,6 @@ public class JiuFuWeCharToBank extends PayOrderService {
 	private static final Log log = LogFactory.get();
 	@Autowired
 	private UserInfoService userInfoServiceImpl;
-
 	@Override
 	public Result deal(DealOrderApp dealOrderApp, String channel) {
 		log.info("【进入玖富支付宝转卡支付】");
@@ -71,7 +70,6 @@ public class JiuFuWeCharToBank extends PayOrderService {
         map.put("notifyUrl", notifyUrl);
         map.put("resultType", resultType);
         map.put("extra", extra);
-        map.put("buyer", JiUFuUtil.name());
         String createParam = JiUFuUtil.createParam(map);
         map.put("sign", JiUFuUtil.md5(createParam + "&" + key));
         log.info("【玖富请求前参数：" + map.toString() + "】");

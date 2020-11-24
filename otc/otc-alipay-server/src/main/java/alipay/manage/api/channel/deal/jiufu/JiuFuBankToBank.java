@@ -71,7 +71,6 @@ public class JiuFuBankToBank extends PayOrderService {
         map.put("notifyUrl", notifyUrl);
         map.put("resultType", resultType);
         map.put("extra", extra);
-        map.put("buyer", JiUFuUtil.name());
         String createParam = JiUFuUtil.createParam(map);
         map.put("sign", JiUFuUtil.md5(createParam + "&" + key));
         log.info("【玖富请求前参数：" + map.toString() + "】");

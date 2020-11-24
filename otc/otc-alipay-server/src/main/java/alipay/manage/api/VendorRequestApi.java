@@ -144,14 +144,24 @@ public class VendorRequestApi {
         UserFund userFund = accountApiServiceImpl.findUserFundByUserId(userId);
         log.info("--------------【验证单日成功下单次数】----------------");
         if (!"".equals(userInfo.getTimesTotal()) && null != userInfo.getTimesTotal()) {
-            if(userFund.getTodayOrderCount() > userInfo.getTimesTotal()){
+            if (userFund.getTodayOrderCount() > userInfo.getTimesTotal()) {
                 return Result.buildFailMessage("今日下单次数已受限");
             }
         }
-        log.info("--------------【验证单日成功下单金额】----------------");
-        if (!"".equals(userInfo.getTotalAmount()) && null != userInfo.getTotalAmount()) {
-            if(userFund.getTodayDealAmount().add(new BigDecimal(orderAmount)).compareTo(userInfo.getTotalAmount()) == 1){
-                return Result.buildFailMessage("今日下单金额已受限");
+        BigDecimal totalAmount = userInfo.getTotalAmount();
+        if (null != totalAmount) {
+            if (userFund.getAccountBalance().compareTo(userInfo.getTotalAmount()) > -1) {
+                log.info("--------------【当前交易金额以受限制】----------------");
+                ThreadUtil.execute(() -> {
+                    exceptionOrderServiceImpl.addDealEx(
+                            paramMap.get("appId").toString(),
+                            paramMap.get("amount").toString(),
+                            "商户相应提示：今日下单金额已受限，请及时下发；" +
+                                    "处理方法：提示商户及时下发，当前商户余额：" + userFund.getAccountBalance()
+                                    + "，受限额度：" + userInfo.getTotalAmount() + "，当前商户传入通道编码：" + passCode,
+                            HttpUtil.getClientIP(request), paramMap.get("orderId").toString());
+                });
+                return Result.buildFailMessage("今日下单金额已受限，请及时下发");
             }
         }
         return Result.buildSuccessResult(paramMap);
@@ -274,6 +284,8 @@ public class VendorRequestApi {
         */
         UserFund userFund = userInfoServiceImpl.findUserFundByAccount(userId);
         BigDecimal accountBalance = userFund.getAccountBalance();
+        BigDecimal quota = userFund.getQuota();
+        accountBalance = accountBalance.add(quota);
         if (accountBalance.compareTo(new BigDecimal(amount).add(userRate.getFee())) == -1) {
             log.info("【当前账户金额不足】");
             ThreadUtil.execute(() -> {

@@ -10,19 +10,19 @@ import java.util.Map;
 import java.util.Random;
 
 public class JiUFuUtil {
-	public static final String APPID = "1006346282";
-	public static final String KEY = "yhdbzeqlusdgchemxs";
-	public static final String URL = "https://newapi.9pay.vip/unionOrderVip";
-	public static final String SERVER_BANKTOBANK = "10101";
-	public static final String SERVER_ALIAPY_BANK_SCAN = "10108";
-	public static final String SERVER_ALIAPY_BANK_H5 = "10109";
-	public static final String SERVER_YUNSAHNFUTOBANK = "10103";
-	public static final String SERVER_WECHAR_BANK = "10114";
+    public static final String APPID = "1006346282";
+    public static final String KEY = "yhdbzeqlusdgchemxs";
+    public static final String URL = "https://newapi.9pay.vip/unionOrder";
+    public static final String SERVER_BANKTOBANK = "10101";
+    public static final String SERVER_ALIAPY_BANK_SCAN = "10108";
+    public static final String SERVER_ALIAPY_BANK_H5 = "10109";
+    public static final String SERVER_YUNSAHNFUTOBANK = "10103";
+    public static final String SERVER_WECHAR_BANK = "10114";
 
-	public static String createParam(Map<String, Object> map) {
-		try {
-			if (map == null || map.isEmpty())
-				return null;
+    public static String createParam(Map<String, Object> map) {
+        try {
+            if (map == null || map.isEmpty())
+                return null;
 			Object[] key = map.keySet().toArray();
 			Arrays.sort(key);
 			StringBuffer res = new StringBuffer(128);

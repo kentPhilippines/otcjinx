@@ -22,18 +22,8 @@ public class YiFu02H5Notify extends NotfiyChannel {
         log.info("【收到YiFu02回调】");
         String clientIP = HttpUtil.getClientIP(request);
         Map map = new HashMap();
-        map.put("58.82.240.171", "58.82.240.171");
-        map.put("58.82.240.133", "58.82.240.133");
-        map.put("202.46.44.42", "202.46.44.42");
-        map.put(" 202.46.38.133", " 202.46.38.133");
-        map.put("202.46.44.35", "202.46.44.35");
-        map.put("154.204.33.81", "154.204.33.81");
-        map.put("61.4.112.74", "61.4.112.74");
-        map.put("61.4.112.88", "61.4.112.88");
-        map.put("103.60.108.252", "103.60.108.252");
-        map.put("61.4.118.115", "61.4.118.115");
-        map.put("61.4.114.125", "61.4.114.125");
-        map.put("103.229.67.20", "103.229.67.20");
+        map.put("14.192.67.110", "14.192.67.110");
+        map.put("14.192.67.114", "14.192.67.114");
         Object object = map.get(clientIP);
         if (ObjectUtil.isNull(object)) {
             log.info("【当前回调ip为：" + clientIP + "，固定IP登记为：" + map.toString() + "】");

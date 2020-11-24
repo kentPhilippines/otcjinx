@@ -380,6 +380,51 @@ public class Api {
 					}
 				}
 				return Result.buildFailMessage("人工处理解冻失败");
+			case Common.Deal.AMOUNT_ORDER_ADD_QUOTA:
+				if (orderStatus.equals(Common.Deal.AMOUNT_ORDER_SU)) {//授权订单成功
+					int a = amountDao.updataOrder(orderId.toString(), orderStatus.toString(), approval.toString(), comment.toString());
+					if (a > 0 && a < 2) {
+						UserFund userFund = userInfoServiceImpl.findUserFundByAccount(amount.getUserId());
+						Result addAmountAdd = amountUtil.addQuotaAmount(userFund, amount.getAmount());
+						if (addAmountAdd.isSuccess()) {
+							Result addAmount = amountRunUtil.addQuota(amount, clientIP);
+							if (addAmount.isSuccess()) {
+								logUtil.addLog(request, "当前发起账户授权操作，授权订单号：" + amount.getOrderId() + "，授权成功，授权用户：" + amount.getUserId() + "，操作人：" + amount.getAccname() + "", amount.getAccname());
+								return Result.buildSuccessMessage("授权成功");
+							}
+						}
+					}
+				} else if (orderStatus.equals(Common.Deal.AMOUNT_ORDER_ER)) {//授权订单失败
+					int a = amountDao.updataOrder(orderId.toString(), orderStatus.toString(), approval.toString(), comment.toString());
+					if (a > 0 && a < 2) {
+						logUtil.addLog(request, "当前发起订单修改操作，授权订单号：" + amount.getOrderId() + "，授权订单置为失败，授权用户：" + amount.getUserId() + "，操作人：" + amount.getAccname() + "", amount.getAccname());
+						return Result.buildSuccessMessage("操作成功");
+					}
+				}
+				return Result.buildFailMessage("人工处理授权失败");
+			case Common.Deal.AMOUNT_ORDER_DELETE_QUOTA:   //减少授权订单
+				if (orderStatus.equals(Common.Deal.AMOUNT_ORDER_SU)) {//减少授权订单成功
+					int a = amountDao.updataOrder(orderId.toString(), orderStatus.toString(), approval.toString(), comment.toString());
+					if (a == 1) {
+						logUtil.addLog(request, "当前发起账户减少授权操作，减少授权订单号：" + amount.getOrderId() + "，减少授权成功，授权用户：" + amount.getUserId() + "，操作人：" + amount.getAccname() + "", amount.getAccname());
+						return Result.buildSuccessMessage("操作成功");
+					}
+				} else if (orderStatus.equals(Common.Deal.AMOUNT_ORDER_ER)) {//授权订单失败
+					int a = amountDao.updataOrder(orderId.toString(), orderStatus.toString(), approval.toString(), comment.toString());
+					if (a > 0 && a < 2) {
+						UserFund userFund = userInfoServiceImpl.findUserFundByAccount(amount.getUserId());
+						Result addAmountAdd = amountUtil.addQuotaAmount(userFund, amount.getAmount());
+						if (addAmountAdd.isSuccess()) {
+							Result addAmount = amountRunUtil.addQuota(amount, clientIP);
+							if (addAmount.isSuccess()) {
+								logUtil.addLog(request, "当前账户减少授权账户失败，给账户重新添加授权，授权订单号：" + amount.getOrderId() + "，减少授权失败增加授权成功，授权用户：" + amount.getUserId() + "，操作人：" + amount.getAccname() + "", amount.getAccname());
+								return Result.buildSuccessMessage("操作成功");
+							}
+						}
+					}
+				}
+				return Result.buildFailMessage("人工处理授权失败");
+
 			default:
 				return Result.buildFailMessage("人工处理订单失败");
 		}
@@ -441,47 +486,48 @@ public class Api {
 
 	/**
 	 * 后台减款申请生成订单，从用户账户里预扣款，生成流水
+	 *
 	 * @param param
 	 * @param request
 	 * @return
 	 */
 
 	@Transactional
-	@PostMapping(PayApiConstant.Alipay.ACCOUNT_API+PayApiConstant.Alipay.GENERATE_ORDER_DEDUCT+"/{param:.+}")
-	public Result generateOrderDeduct(@PathVariable("param") String param, HttpServletRequest request){
-		log.info("【请求交易的终端用户交易请求参数为："+param+"】");
+	@PostMapping(PayApiConstant.Alipay.ACCOUNT_API + PayApiConstant.Alipay.GENERATE_ORDER_DEDUCT + "/{param:.+}")
+	public Result generateOrderDeduct(@PathVariable("param") String param, HttpServletRequest request) {
+		log.info("【请求交易的终端用户交易请求参数为：" + param + "】");
 		Map<String, Object> stringObjectMap = RSAUtils.retMapDecode(param, SystemConstants.INNER_PLATFORM_PRIVATE_KEY);
 		Amount alipayAmount = new Amount();
-		if(CollUtil.isEmpty(stringObjectMap)) {
+		if (CollUtil.isEmpty(stringObjectMap)) {
 			log.info("【参数解密为空】");
 			return Result.buildFailMessage("参数为空");
 		}
 		Object userId = stringObjectMap.get("userId");
-		if(ObjectUtil.isNull(userId))
+		if (ObjectUtil.isNull(userId))
 			return Result.buildFailMessage("用户ID不能为空");
 		alipayAmount.setUserId(userId.toString());
 		Object orderId = stringObjectMap.get("orderId");
-		if(ObjectUtil.isNull(orderId))
+		if (ObjectUtil.isNull(orderId))
 			return Result.buildFailMessage("订单号不能为空");
 		alipayAmount.setOrderId(orderId.toString());
 		Object orderStatus = stringObjectMap.get("orderStatus");
-		if(ObjectUtil.isNull(orderStatus))
+		if (ObjectUtil.isNull(orderStatus))
 			return Result.buildFailMessage("订单状态为空");
 		alipayAmount.setOrderStatus(orderStatus.toString());
 		Object amount = stringObjectMap.get("amount");
-		if(ObjectUtil.isNull(amount))
+		if (ObjectUtil.isNull(amount))
 			return Result.buildFailMessage("减款金额不能为空");
 		alipayAmount.setAmount(new BigDecimal(amount.toString()));
 		Object dealDescribe = stringObjectMap.get("dealDescribe");
-		if(ObjectUtil.isNull(dealDescribe))
+		if (ObjectUtil.isNull(dealDescribe))
 			return Result.buildFailMessage("扣款描述不能为空");
 		alipayAmount.setDealDescribe(dealDescribe.toString());
 		Object amountType = stringObjectMap.get("amountType");
-		if(ObjectUtil.isNull(amountType))
+		if (ObjectUtil.isNull(amountType))
 			return Result.buildFailMessage("申请类型不能为空");
 		alipayAmount.setAmountType(amountType.toString());
 		Object accname = stringObjectMap.get("accname");
-		if(ObjectUtil.isNull(accname))
+		if (ObjectUtil.isNull(accname))
 			return Result.buildFailMessage("申请人不能为空");
 		alipayAmount.setAccname(accname.toString());
 		alipayAmount.setActualAmount(new BigDecimal(amount.toString()));
@@ -501,27 +547,9 @@ public class Api {
 				if (deleteAmount2.isSuccess()) {
 					Result deleteAmount = amountRunUtil.deleteFreeze(alipayAmount, clientIP);
 					if (deleteAmount.isSuccess()) {
-                        int i = userInfoServiceImpl.insertAmountEntitys(alipayAmount);
-                        if (i == 1)
-                            return Result.buildSuccessMessage("创建订单成功");
-                        else
-                            return Result.buildFailMessage("创建订单失败");
-                    }
-                }
-            } else {//余额不足
-                return Result.buildFailMessage("操作失败，账户余额不足");
-            }
-        } else if (amountType.toString().equals(Common.Deal.AMOUNT_ORDER_DELETE)) {
-            BigDecimal balance = userFund.getAccountBalance();
-            BigDecimal deduct = new BigDecimal(amount.toString());
-            if (balance.compareTo(deduct) > -1) {//余额充足
-                Result deleteAmount2 = amountUtil.deleteAmount(userFund, deduct);
-                if (deleteAmount2.isSuccess()) {
-                    Result deleteAmount = amountRunUtil.deleteAmount(alipayAmount, clientIP);
-                    if (deleteAmount.isSuccess()) {
-                        int i = userInfoServiceImpl.insertAmountEntitys(alipayAmount);
-                        if (i == 1)
-                            return Result.buildSuccessMessage("创建订单成功");
+						int i = userInfoServiceImpl.insertAmountEntitys(alipayAmount);
+						if (i == 1)
+							return Result.buildSuccessMessage("创建订单成功");
 						else
 							return Result.buildFailMessage("创建订单失败");
 					}
@@ -529,7 +557,44 @@ public class Api {
 			} else {//余额不足
 				return Result.buildFailMessage("操作失败，账户余额不足");
 			}
+		} else if (amountType.toString().equals(Common.Deal.AMOUNT_ORDER_DELETE)) {
+			BigDecimal balance = userFund.getAccountBalance();
+			BigDecimal deduct = new BigDecimal(amount.toString());
+			if (balance.compareTo(deduct) > -1) {//余额充足
+				Result deleteAmount2 = amountUtil.deleteAmount(userFund, deduct);
+				if (deleteAmount2.isSuccess()) {
+					Result deleteAmount = amountRunUtil.deleteAmount(alipayAmount, clientIP);
+					if (deleteAmount.isSuccess()) {
+						int i = userInfoServiceImpl.insertAmountEntitys(alipayAmount);
+						if (i == 1)
+							return Result.buildSuccessMessage("创建订单成功");
+						else
+							return Result.buildFailMessage("创建订单失败");
+					}
+				}
+			} else {//余额不足
+				return Result.buildFailMessage("操作失败，账户余额不足");
+			}
+		} else if (amountType.toString().equals(Common.Deal.AMOUNT_ORDER_DELETE_QUOTA)) {
+			BigDecimal balance = userFund.getAccountBalance();
+			BigDecimal deduct = new BigDecimal(amount.toString());
+			if (balance.compareTo(deduct) > -1) {//余额充足
+				Result deleteAmount2 = amountUtil.deleteQuotaAmount(userFund, deduct);
+				if (deleteAmount2.isSuccess()) {
+					Result deleteAmount = amountRunUtil.deleteQuota(alipayAmount, clientIP);
+					if (deleteAmount.isSuccess()) {
+						int i = userInfoServiceImpl.insertAmountEntitys(alipayAmount);
+						if (i == 1)
+							return Result.buildSuccessMessage("创建订单成功");
+						else
+							return Result.buildFailMessage("创建订单失败");
+					}
+				}
+			} else {//余额不足
+				return Result.buildFailMessage("操作失败，账户余额不足");
+			}
+
 		}
-		return null;
+		return Result.buildFailMessage("操作失败");
 	}
 }

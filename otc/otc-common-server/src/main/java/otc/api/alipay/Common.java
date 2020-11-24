@@ -161,22 +161,24 @@ public class Common {
 	
 	public static class Deal {
 		public static final String PRODUCT_ALIPAY_SCAN = "ALIPAY_SCAN";//支付宝扫码
-		public static final String PDD_303 = "PDD_303";//金星拼多多
-		public static final String PRODUCT_ALIPAY_H5 = "ALIPAY_H5";//支付宝H5
-		public static final String WITHDRAW_MY = "SYSTEM_DP";//系统出款
-		public static final String WITHDRAW_QAINKUI_ALIPAY = "WITHDRAW_QAINKUI_ALIPAY";//钱柜alipay代付
-		public static final String WITHDRAW_ZAHUNSHI_ALIPAY = "WITHDRAW_ZAHUNSHI_ALIPAY";//钻石alipay代付
-		public static final String WITHDRAW_DEAL = "WITHDRAW_DEAL";//三方代付
-		public static final String AMOUNT_ORDER_ADD = "1";//资金订单  加款类型
-		public static final String AMOUNT_ORDER_DELETE = "2";//资金订单  扣款款类型
-		public static final String AMOUNT_ORDER_DELETE_FREEZE = "3";//资金冻结
-		public static final String AMOUNT_ORDER_ADD_FREEZE = "4";//资金解冻
+        public static final String PDD_303 = "PDD_303";//金星拼多多
+        public static final String PRODUCT_ALIPAY_H5 = "ALIPAY_H5";//支付宝H5
+        public static final String WITHDRAW_MY = "SYSTEM_DP";//系统出款
+        public static final String WITHDRAW_QAINKUI_ALIPAY = "WITHDRAW_QAINKUI_ALIPAY";//钱柜alipay代付
+        public static final String WITHDRAW_ZAHUNSHI_ALIPAY = "WITHDRAW_ZAHUNSHI_ALIPAY";//钻石alipay代付
+        public static final String WITHDRAW_DEAL = "WITHDRAW_DEAL";//三方代付
+        public static final String AMOUNT_ORDER_ADD = "1";//资金订单  加款类型
+        public static final String AMOUNT_ORDER_DELETE = "2";//资金订单  扣款款类型
+        public static final String AMOUNT_ORDER_DELETE_FREEZE = "3";//资金冻结
+        public static final String AMOUNT_ORDER_ADD_FREEZE = "4";//资金解冻
+        public static final String AMOUNT_ORDER_ADD_QUOTA = "5";//增加授权额度
+        public static final String AMOUNT_ORDER_DELETE_QUOTA = "6";//减少授权额度
 
 
-		public static final String AMOUNT_ORDER_SU = "3";//订单成功【加减款订单】
-		public static final String AMOUNT_ORDER_HE = "2";//订单处理中【加减款订单】
-		public static final String AMOUNT_ORDER_ER = "4";//订单失败 【加减款订单】
-	}
+        public static final String AMOUNT_ORDER_SU = "3";//订单成功【加减款订单】
+        public static final String AMOUNT_ORDER_HE = "2";//订单处理中【加减款订单】
+        public static final String AMOUNT_ORDER_ER = "4";//订单失败 【加减款订单】
+    }
 	
 	
 	

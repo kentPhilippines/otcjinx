@@ -79,6 +79,12 @@ public class AmountRunUtil {
     private static final Integer ADD_FREEZE_NUMBER = 28;// 商户金额解冻
 
 
+    private static final String DELETE_QUOTA = "DELETE_QUOTA";// 商户金额冻结
+    private static final String ADD_QUOTA = "ADD_QUOTA";// 商户金额解冻
+    private static final Integer DELETE_QUOTA_NUMBER = 29;// 商户金额冻结
+    private static final Integer ADD_QUOTA_NUMBER = 30;// 商户金额解冻
+
+
     private static final String AMOUNT_TYPE_R = "0";//对于当前账户来说是   收入
     private static final String AMOUNT_TYPE_W = "1";//对于当前账户来说是   支出
 
@@ -584,6 +590,12 @@ public class AmountRunUtil {
             case ADD_FREEZE:
                 runOrderType = ADD_FREEZE_NUMBER;
                 break;
+            case ADD_QUOTA:
+                runOrderType = ADD_QUOTA_NUMBER;
+                break;
+            case DELETE_QUOTA:
+                runOrderType = DELETE_QUOTA_NUMBER;
+                break;
             default:
                 break;
         }
@@ -623,6 +635,16 @@ public class AmountRunUtil {
     public Result deleteFreeze(Amount amount, String generationIp) {
         UserFund userFund = userInfoServiceImpl.findUserFundByAccount(amount.getUserId()); //当前账户资金
         return add(DELETE_FREEZE, userFund, amount.getOrderId(), amount.getAmount(), generationIp, "余额账户转入小金库", RUNTYPE_ARTIFICIAL);
+    }
+
+    public Result addQuota(Amount amount, String generationIp) {
+        UserFund userFund = userInfoServiceImpl.findUserFundByAccount(amount.getUserId()); //当前账户资金
+        return add(ADD_QUOTA, userFund, amount.getOrderId(), amount.getAmount(), generationIp, "增加授权额度", RUNTYPE_ARTIFICIAL);
+    }
+
+    public Result deleteQuota(Amount amount, String generationIp) {
+        UserFund userFund = userInfoServiceImpl.findUserFundByAccount(amount.getUserId()); //当前账户资金
+        return add(DELETE_QUOTA, userFund, amount.getOrderId(), amount.getAmount(), generationIp, "减少授权额度", RUNTYPE_ARTIFICIAL);
     }
 
 

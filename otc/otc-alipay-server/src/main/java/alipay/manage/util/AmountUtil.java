@@ -29,27 +29,57 @@ public class AmountUtil {
 	@Autowired RunOrderService runorderServiceImpl;
 	@Autowired
 	private RedisLockUtil redisLockUtil;
-	public static final String ADD_AMOUNT_RECHARGE = "ADD_AMOUNT_RECHARGE";//资金充值
-	public static final String ADD_AMOUNT_PROFIT = "ADD_AMOUNT_PROFIT";//代理利润分成
-	public static final String ADD_AMOUNT = "ADD_AMOUNT";//人工加钱
-	public static final String ADD_AMOUNT_DEAL = "ADD_AMOUNT_DEAL";//交易利润加钱
-	public static final String ADD_AMOUNT_DEAL_APP = "ADD_AMOUNT_DEAL_APP";//交易账户加款
-	public static final String DELETE_DEAL = "DELETE_DEAL";//交易减充值点数
-	public static final String DELETE_AMOUNT = "DELETE_AMOUNT";//人工减钱
-	public static final String DELETE_WITHDRAW = "DELETE_WITHDRAW";//提现withdraw
-	public static final String DELETE_FREEZE = "DELETE_FREEZE";//冻结  FreezeBalance
-	public static final String ADD_FREEZE = "ADD_FREEZE";//解冻 FreezeBalance
-	static Lock lock = new ReentrantLock();
+    public static final String ADD_AMOUNT_RECHARGE = "ADD_AMOUNT_RECHARGE";//资金充值
+    public static final String ADD_AMOUNT_PROFIT = "ADD_AMOUNT_PROFIT";//代理利润分成
+    public static final String ADD_AMOUNT = "ADD_AMOUNT";//人工加钱
+    public static final String ADD_AMOUNT_DEAL = "ADD_AMOUNT_DEAL";//交易利润加钱
+    public static final String ADD_AMOUNT_DEAL_APP = "ADD_AMOUNT_DEAL_APP";//交易账户加款
+    public static final String DELETE_DEAL = "DELETE_DEAL";//交易减充值点数
+    public static final String DELETE_AMOUNT = "DELETE_AMOUNT";//人工减钱
+    public static final String DELETE_WITHDRAW = "DELETE_WITHDRAW";//提现withdraw
+    public static final String DELETE_FREEZE = "DELETE_FREEZE";//冻结  FreezeBalance
+    public static final String ADD_FREEZE = "ADD_FREEZE";//解冻 FreezeBalance
 
-	/**
-	 * <p><strong>增加交易点数</strong></p>
-	 *
-	 * @param userFund 当前账户实体【必传字段为userId】
-	 * @param balance  当前操作金额
-	 * @return
-	 */
-	public Result addAmounRecharge(UserFund userFund, BigDecimal balance) {
-		return addAmountBalance(userFund, balance, ADD_AMOUNT_RECHARGE, new BigDecimal(0));
+
+    public static final String ADD_QUOTA = "ADD_QUOTA";//增加授权额度
+    public static final String DELETE_QUOTA = "DELETE_QUOTA";//减少授权额度
+
+
+    static Lock lock = new ReentrantLock();
+
+
+    /**
+     * 增加账户授权额度
+     *
+     * @param userFund 账户信息  userId 不为null 即可
+     * @param balance  金额
+     * @return
+     */
+    public Result addQuotaAmount(UserFund userFund, BigDecimal balance) {
+        return addAmountBalance(userFund, balance, ADD_QUOTA, new BigDecimal(0));
+    }
+
+    /**
+     * 减少账户授权额度
+     *
+     * @param userFund 账户信息  userId 不为null 即可
+     * @param balance  金额
+     * @return
+     */
+    public Result deleteQuotaAmount(UserFund userFund, BigDecimal balance) {
+        return deleteAmountBalance(userFund, balance, DELETE_QUOTA);
+    }
+
+
+    /**
+     * <p><strong>增加交易点数</strong></p>
+     *
+     * @param userFund 当前账户实体【必传字段为userId】
+     * @param balance  当前操作金额
+     * @return
+     */
+    public Result addAmounRecharge(UserFund userFund, BigDecimal balance) {
+        return addAmountBalance(userFund, balance, ADD_AMOUNT_RECHARGE, new BigDecimal(0));
 	}
 
 	/**
@@ -152,93 +182,132 @@ public class AmountUtil {
 	 *
 	 * @return
 	 */
-	public Result addAmountBalance(UserFund userFund1, final BigDecimal balance, final String addType, final BigDecimal dealAmount) {
-		lock.lock();
-		try {
-			boolean flag = true;
-			int lockMsg = 1;
-			do {
-				if (lockMsg != 1) {
-					log.info("【当前账户乐观锁发生作用，再次执行，当前账户：" + userFund1.getUserId() + "，金额："
-							+ dealAmount + "，方法：addAmountBalance，类型：" + addType + "】");
-					ThreadUtil.sleep(200 + lockMsg);
-				}
-				UserFund userFund = userInfoServiceImpl.findUserFundByAccount(userFund1.getUserId());
-				if (!clickUserFund(userFund).isSuccess())
-					return Result.buildFailMessage("【资金账户存在问题】");
-				if (ADD_AMOUNT_RECHARGE.equals(addType)) {//资金充值【加充值点数】
-					Result addAmountRecharge = addAmountRecharge(userFund, balance);
-					if (addAmountRecharge.isSuccess()) {
-						flag = false;
-						return addAmountRecharge;
-					}
-					lockMsg++;
-					log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
-				} else if (ADD_AMOUNT_PROFIT.equals(addType)) {//代理利润分成
-					Result profit = addAmountAgentProfit(userFund, balance);
-					if (profit.isSuccess()) {
-						flag = false;
-						return profit;
-					}
-					lockMsg++;
-					log.info("【账户代理商分润增加失败，请查询当前时间范围内的异常情况】");
-				} else if (ADD_AMOUNT.equals(addType)) {//手动加钱
-					Result addAmountRecharge = addAmountRecharge(userFund, balance);
-					if (addAmountRecharge.isSuccess()) {
-						flag = false;
-						return addAmountRecharge;
-					}
-					lockMsg++;
-					log.info("【手动加钱失败，请联系技术人员处理,请查询当前时间范围内的异常情况");
-					return Result.buildFailMessage("【手动加钱失败，请联系技术人员处理】");
-				} else if (ADD_AMOUNT_DEAL.equals(addType)) {//交易利润分成 ,统计交易笔数
-					Result addAmountDeal = addAmountDeal(userFund, balance, dealAmount);
-					if (addAmountDeal.isSuccess()) {
-						flag = false;
-						return addAmountDeal;
-					}
-					lockMsg++;
-					log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
-				} else if (ADD_AMOUNT_DEAL_APP.equals(addType)) {
-					Result addAmountDeal = addAmountDealApp(userFund, balance);
-					if (addAmountDeal.isSuccess()) {
-						flag = false;
-						return addAmountDeal;
-					}
-					lockMsg++;
-					log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
-				} else if (ADD_FREEZE.equals(addType)) {
-					Result addAmountDeal = addFreezeAmount(userFund, balance);
-					if (addAmountDeal.isSuccess()) {
-						flag = false;
-						return addAmountDeal;
-					}
-					lockMsg++;
-					log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
-				}
-				if (lockMsg > 20) {
-					log.info("【账户余额添加失败，请查询当前时间范围内的异常情况，当前账户：" + userFund1.getUserId() + "，金额：" +
-							dealAmount + "，方法：addAmountBalance，类型：" + addType + "】");
-					return Result.buildFailMessage("【账户余额添加失败，请联系技术人员查看当前服务异常】");
-				}
-			} while (flag);
-		} finally {
-			lock.unlock();
-		}
+    public Result addAmountBalance(UserFund userFund1, final BigDecimal balance, final String addType, final BigDecimal dealAmount) {
+        lock.lock();
+        try {
+            boolean flag = true;
+            int lockMsg = 1;
+            do {
+                if (lockMsg != 1) {
+                    log.info("【当前账户乐观锁发生作用，再次执行，当前账户：" + userFund1.getUserId() + "，金额："
+                            + dealAmount + "，方法：addAmountBalance，类型：" + addType + "】");
+                    ThreadUtil.sleep(200 + lockMsg);
+                }
+                UserFund userFund = userInfoServiceImpl.findUserFundByAccount(userFund1.getUserId());
+                if (!clickUserFund(userFund).isSuccess())
+                    return Result.buildFailMessage("【资金账户存在问题】");
+                if (ADD_AMOUNT_RECHARGE.equals(addType)) {//资金充值【加充值点数】
+                    Result addAmountRecharge = addAmountRecharge(userFund, balance);
+                    if (addAmountRecharge.isSuccess()) {
+                        flag = false;
+                        return addAmountRecharge;
+                    }
+                    lockMsg++;
+                    log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
+                } else if (ADD_AMOUNT_PROFIT.equals(addType)) {//代理利润分成
+                    Result profit = addAmountAgentProfit(userFund, balance);
+                    if (profit.isSuccess()) {
+                        flag = false;
+                        return profit;
+                    }
+                    lockMsg++;
+                    log.info("【账户代理商分润增加失败，请查询当前时间范围内的异常情况】");
+                } else if (ADD_AMOUNT.equals(addType)) {//手动加钱
+                    Result addAmountRecharge = addAmountRecharge(userFund, balance);
+                    if (addAmountRecharge.isSuccess()) {
+                        flag = false;
+                        return addAmountRecharge;
+                    }
+                    lockMsg++;
+                    log.info("【手动加钱失败，请联系技术人员处理,请查询当前时间范围内的异常情况");
+                    return Result.buildFailMessage("【手动加钱失败，请联系技术人员处理】");
+                } else if (ADD_AMOUNT_DEAL.equals(addType)) {//交易利润分成 ,统计交易笔数
+                    Result addAmountDeal = addAmountDeal(userFund, balance, dealAmount);
+                    if (addAmountDeal.isSuccess()) {
+                        flag = false;
+                        return addAmountDeal;
+                    }
+                    lockMsg++;
+                    log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
+                } else if (ADD_AMOUNT_DEAL_APP.equals(addType)) {
+                    Result addAmountDeal = addAmountDealApp(userFund, balance);
+                    if (addAmountDeal.isSuccess()) {
+                        flag = false;
+                        return addAmountDeal;
+                    }
+                    lockMsg++;
+                    log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
+                } else if (ADD_FREEZE.equals(addType)) {
+                    Result addAmountDeal = addFreezeAmount(userFund, balance);
+                    if (addAmountDeal.isSuccess()) {
+                        flag = false;
+                        return addAmountDeal;
+                    }
+                    lockMsg++;
+                    log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
+                } else if (ADD_QUOTA.equals(addType)) {
+                    Result addAmountDeal = addQuota(userFund, balance);
+                    if (addAmountDeal.isSuccess()) {
+                        flag = false;
+                        return addAmountDeal;
+                    }
+                    lockMsg++;
+                    log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
+                }
 
 
-		return Result.buildFailMessage("传参异常");
-	}
+                if (lockMsg > 20) {
+                    log.info("【账户余额添加失败，请查询当前时间范围内的异常情况，当前账户：" + userFund1.getUserId() + "，金额：" +
+                            dealAmount + "，方法：addAmountBalance，类型：" + addType + "】");
+                    return Result.buildFailMessage("【账户余额添加失败，请联系技术人员查看当前服务异常】");
+                }
+            } while (flag);
+        } finally {
+            lock.unlock();
+        }
 
-	private Result addFreezeAmount(UserFund userFund, BigDecimal amount) {
-		log.info("【当前方法为 【码商或者商户资金解冻】 ，当前操作金额为：" + amount + "】");
-		BigDecimal accountBalance = userFund.getAccountBalance();
-		BigDecimal rechargeNumber = userFund.getRechargeNumber();
-		BigDecimal cashBalance = userFund.getCashBalance();
-		BigDecimal freezeBalance = userFund.getFreezeBalance();
+
+        return Result.buildFailMessage("传参异常");
+    }
 
 
-		freezeBalance = freezeBalance.subtract(amount);//冻结余额 扣减
+    /**
+     * 增加授权额度
+     *
+     * @param userFund
+     * @param balance
+     * @return
+     */
+    private Result addQuota(UserFund userFund, BigDecimal balance) {
+        log.info("【当前方法为 【增加账户授权度】 ，当前操作金额为：" + balance + "】");
+        UserFund fund = new UserFund();
+        fund.setId(userFund.getId());
+        BigDecimal quota = userFund.getQuota();
+        log.info("【当前授权额度为：" + quota + "，增加后的授权额度为：" + quota.add(balance) + "】");
+        BigDecimal add = quota.add(balance);
+        fund.setQuota(add);
+        fund.setUserId(userFund.getUserId());
+        fund.setVersion(userFund.getVersion());
+        Boolean aBoolean = userInfoServiceImpl.updataAmount(fund);
+        if (aBoolean) {
+            log.info("【当前增加授权额度执行成功，操作的金额为：" + balance + "】");
+            log.info("【增加授权额度后的账户金额为：账户总余额：" + userFund.getAccountBalance() + "，当前利润账户【现金账户】：" + userFund.getCashBalance() + "，当前冻结账户：" + userFund.getFreezeBalance() + "当前操作金额为：" + balance + "】");
+            return Result.buildSuccessMessage("当前授权额度增加执行成功");
+        } else
+            return Result.buildFailMessage("当前授权额度增加执行失败");
+
+
+    }
+
+    private Result addFreezeAmount(UserFund userFund, BigDecimal amount) {
+        log.info("【当前方法为 【码商或者商户资金解冻】 ，当前操作金额为：" + amount + "】");
+        BigDecimal accountBalance = userFund.getAccountBalance();
+        BigDecimal rechargeNumber = userFund.getRechargeNumber();
+        BigDecimal cashBalance = userFund.getCashBalance();
+        BigDecimal freezeBalance = userFund.getFreezeBalance();
+
+
+        freezeBalance = freezeBalance.subtract(amount);//冻结余额 扣减
 		accountBalance = rechargeNumber.add(cashBalance).subtract(freezeBalance);//余额账户新增
 		userFund.setAccountBalance(accountBalance);
 		userFund.setFreezeBalance(freezeBalance);
@@ -307,79 +376,110 @@ public class AmountUtil {
 	protected static final String DELETE_KEY = "deleteAmountBalance";
 
 	@Transactional
-	public Result deleteAmountBalance(UserFund userFund, final BigDecimal balance, final String addType) {
+    public Result deleteAmountBalance(UserFund userFund, final BigDecimal balance, final String addType) {
 
-		lock.lock();
-		try {
-			boolean flag = true;
-			Integer lockMsg = 1;
-			do {
-				if (lockMsg != 1) {
-					log.info("【当前账户乐观锁发生作用，再次执行，当前账户：" + userFund.getUserId() + "，金额："
-							+ balance + "，方法：addAmountBalance，类型：" + addType + "】");
-					ThreadUtil.sleep(200 + lockMsg);
-				}
-				userFund = userInfoServiceImpl.findUserFundByAccount(userFund.getUserId());
-				if (!clickUserFund(userFund).isSuccess())
-					return Result.buildFailMessage("【资金账户存在问题】");
-				if (DELETE_DEAL.equals(addType)) {//交易减点数
-					Result deductRecharge = deductRecharge(userFund, balance);
-					if (deductRecharge.isSuccess()) {
-						flag = false;
-						return deductRecharge;
-					}
-					lockMsg++;
-					log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
-				} else if (DELETE_AMOUNT.equals(addType)) {//人工减钱
-					Result deductBalance = deductBalance(userFund, balance);
-					if (deductBalance.isSuccess()) {
-						flag = false;
-						return deductBalance;
-					}
-					log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
-				} else if (DELETE_WITHDRAW.equals(addType)) {
-					Result withdrawBalance = withdrawBalance(userFund, balance);
-					if (withdrawBalance.isSuccess()) {
-						flag = false;
-						return withdrawBalance;
-					}
-					lockMsg++;
-					log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
-				} else if (DELETE_FREEZE.equals(addType)) {
-					Result freezeBalance = freezeBalance(userFund, balance);
-					if (freezeBalance.isSuccess()) {
-						flag = false;
-						return freezeBalance;
-					}
-					lockMsg++;
-					log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
-				}
-				if (lockMsg > 20) {
-					log.info("【当前账户余额扣除失败，请查询当前时间范围内的异常情况，当前账户：" + userFund.getUserId() + "，金额：" +
-							balance + "，方法：addAmountBalance，类型：" + addType + "】");
-					log.info("【账户金额冻结失败，请查询当前时间范围内的异常情况，并修改当前账户交易和资金状态为 不可用】");
-					if (userInfoServiceImpl.updataStatusEr(userFund.getUserId()))
-						log.info("【账户已修改为不可使用，当前账号为：" + userFund.getUserId() + "】");
-					else
-						throw new UserException("账户修改异常", null);
-					log.info("【当前账户余额扣除失败，请联系技术人员查询情况，当前账户：" + userFund.getUserId() + "】");
-					return Result.buildFailMessage("【当前账户余额扣除失败，请联系技术人员查看当前服务异常】");
-				}
-			} while (flag);
-			lockMsg = null;
-		} finally {
-			lock.unlock();
-		}
-		return Result.buildFailMessage("传参异常");
-	}
-	/**
-	 * <p>账户冻结</p>
-	 * @param userFund
-	 * @param amount
-	 * @return
-	 */
-	public Result freezeBalance(UserFund userFund, BigDecimal amount) {
-		log.info("【当前方法为 【码商或者商户资金冻结】 ，当前操作金额为："+amount+"】");
+        lock.lock();
+        try {
+            boolean flag = true;
+            Integer lockMsg = 1;
+            do {
+                if (lockMsg != 1) {
+                    log.info("【当前账户乐观锁发生作用，再次执行，当前账户：" + userFund.getUserId() + "，金额："
+                            + balance + "，方法：addAmountBalance，类型：" + addType + "】");
+                    ThreadUtil.sleep(200 + lockMsg);
+                }
+                userFund = userInfoServiceImpl.findUserFundByAccount(userFund.getUserId());
+                if (!clickUserFund(userFund).isSuccess())
+                    return Result.buildFailMessage("【资金账户存在问题】");
+                if (DELETE_DEAL.equals(addType)) {//交易减点数
+                    Result deductRecharge = deductRecharge(userFund, balance);
+                    if (deductRecharge.isSuccess()) {
+                        flag = false;
+                        return deductRecharge;
+                    }
+                    lockMsg++;
+                    log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
+                } else if (DELETE_AMOUNT.equals(addType)) {//人工减钱
+                    Result deductBalance = deductBalance(userFund, balance);
+                    if (deductBalance.isSuccess()) {
+                        flag = false;
+                        return deductBalance;
+                    }
+                    log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
+                } else if (DELETE_WITHDRAW.equals(addType)) {
+                    Result withdrawBalance = withdrawBalance(userFund, balance);
+                    if (withdrawBalance.isSuccess()) {
+                        flag = false;
+                        return withdrawBalance;
+                    }
+                    lockMsg++;
+                    log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
+                } else if (DELETE_FREEZE.equals(addType)) {
+                    Result freezeBalance = freezeBalance(userFund, balance);
+                    if (freezeBalance.isSuccess()) {
+                        flag = false;
+                        return freezeBalance;
+                    }
+                    lockMsg++;
+                    log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
+                } else if (DELETE_QUOTA.equals(addType)) {
+                    Result freezeBalance = deleteQuota(userFund, balance);
+                    if (freezeBalance.isSuccess()) {
+                        flag = false;
+                        return freezeBalance;
+                    }
+                    lockMsg++;
+                    log.info("【账户授权额度失败，请查询当前时间范围内的异常情况】");
+                }
+                if (lockMsg > 20) {
+                    log.info("【当前账户余额扣除失败，请查询当前时间范围内的异常情况，当前账户：" + userFund.getUserId() + "，金额：" +
+                            balance + "，方法：addAmountBalance，类型：" + addType + "】");
+                    log.info("【账户金额冻结失败，请查询当前时间范围内的异常情况，并修改当前账户交易和资金状态为 不可用】");
+                    if (userInfoServiceImpl.updataStatusEr(userFund.getUserId()))
+                        log.info("【账户已修改为不可使用，当前账号为：" + userFund.getUserId() + "】");
+                    else
+                        throw new UserException("账户修改异常", null);
+                    log.info("【当前账户余额扣除失败，请联系技术人员查询情况，当前账户：" + userFund.getUserId() + "】");
+                    return Result.buildFailMessage("【当前账户余额扣除失败，请联系技术人员查看当前服务异常】");
+                }
+            } while (flag);
+            lockMsg = null;
+        } finally {
+            lock.unlock();
+        }
+        return Result.buildFailMessage("传参异常");
+    }
+
+    private Result deleteQuota(UserFund userFund, BigDecimal balance) {
+        log.info("【当前方法为 【减少账户授权度】 ，当前操作金额为：" + balance + "】");
+        UserFund fund = new UserFund();
+        fund.setId(userFund.getId());
+        BigDecimal quota = userFund.getQuota();
+        log.info("【当前授权额度为：" + quota + "，减少后的授权额度为：" + quota.subtract(balance) + "】");
+        BigDecimal add = quota.subtract(balance);
+        fund.setQuota(add);
+        fund.setUserId(userFund.getUserId());
+        fund.setVersion(userFund.getVersion());
+        Boolean aBoolean = userInfoServiceImpl.updataAmount(fund);
+        if (aBoolean) {
+            log.info("【当前减少授权额度执行成功，操作的金额为：" + balance + "】");
+            log.info("【减少授权额度后的账户金额为：账户总余额：" + userFund.getAccountBalance() + "，当前利润账户【现金账户】：" + userFund.getCashBalance() + "，当前冻结账户：" + userFund.getFreezeBalance() + "当前操作金额为：" + balance + "】");
+            return Result.buildSuccessMessage("当前授权额度减少执行成功");
+        } else
+            return Result.buildFailMessage("当前授权额度减少执行失败");
+
+
+    }
+
+    /**
+     * <p>账户冻结</p>
+     *
+     * @param userFund
+     * @param amount
+     * @return
+     */
+    public Result freezeBalance(UserFund userFund, BigDecimal amount) {
+        log.info("【当前方法为 【码商或者商户资金冻结】 ，当前操作金额为："+amount+"】");
 		BigDecimal accountBalance = userFund.getAccountBalance();
 		BigDecimal rechargeNumber = userFund.getRechargeNumber();
 		BigDecimal cashBalance = userFund.getCashBalance();

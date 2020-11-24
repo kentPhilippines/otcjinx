@@ -3,8 +3,6 @@ package alipay.manage.bean;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  * <p>用户资金账户表</p>
@@ -18,24 +16,33 @@ public class UserFund implements Serializable{
     private BigDecimal cashBalance;			//现金账户【分润】
     private BigDecimal rechargeNumber;		//充值点数
     private BigDecimal freezeBalance;		//冻结账户
-    private BigDecimal accountBalance;		//可取现账户金额【码商账户余额=冻结金额+现金账户+充值点数】
-    private BigDecimal sumDealAmount;		//累计交易额
+    private BigDecimal accountBalance;        //可取现账户金额【码商账户余额=冻结金额+现金账户+充值点数】
+    private BigDecimal quota;                //授权额度
+    private BigDecimal sumDealAmount;        //累计交易额
     private BigDecimal sumRechargeAmount;	//累计充值金额【充值成功时统计记录】
     private BigDecimal sumProfit;			//累计利润金额
     private BigDecimal sumAgentProfit;		//累计代理商利润【如果当前账户为商户则该数据为0】
     private Integer sumOrderCount;			//累计接单笔数
     private BigDecimal todayDealAmount;		//当日接单金额
-    private BigDecimal todayProfit;			//当日接单利润【代理利润+接单利润=当日利润】
-    private Integer todayOrderCount;		//当日接单笔数
-    private BigDecimal todayAgentProfit;	//当日代理商利润【如果当前账户为商户则该数据为0】
-    private String userType;				//用户类型,商户1 码商2
-    private String agent;					//代理商id【如果存在代理商则存在数据,如果不存在代理商则为null】
-    private String isAgent;					//是否为代理商:1代理商2普通码商【分润结算类型看用户类型userType】
+    private BigDecimal todayProfit;            //当日接单利润【代理利润+接单利润=当日利润】
+    private Integer todayOrderCount;        //当日接单笔数
+    private BigDecimal todayAgentProfit;    //当日代理商利润【如果当前账户为商户则该数据为0】
+    private String userType;                //用户类型,商户1 码商2
+    private String agent;                    //代理商id【如果存在代理商则存在数据,如果不存在代理商则为null】
+    private String isAgent;                    //是否为代理商:1代理商2普通码商【分润结算类型看用户类型userType】
     private Date createTime;
     private Date submitTime;
     private Integer status;
-    private Integer version;				//版本号
-    
+    private Integer version;                //版本号
+
+    public BigDecimal getQuota() {
+        return quota;
+    }
+
+    public void setQuota(BigDecimal quota) {
+        this.quota = quota;
+    }
+
     public Integer getId() {
         return id;
     }

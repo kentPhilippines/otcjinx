@@ -10,6 +10,7 @@
     <result column="freezeBalance" property="freezeBalance" jdbcType="DECIMAL" />
     <result column="accountBalance" property="accountBalance" jdbcType="DECIMAL" />
     <result column="sumDealAmount" property="sumDealAmount" jdbcType="DECIMAL" />
+    <result column="quota" property="quota" jdbcType="DECIMAL"/>
     <result column="sumRechargeAmount" property="sumRechargeAmount" jdbcType="DECIMAL" />
     <result column="sumProfit" property="sumProfit" jdbcType="DECIMAL" />
     <result column="sumAgentProfit" property="sumAgentProfit" jdbcType="DECIMAL" />
@@ -88,7 +89,7 @@
     id, userId, userName, cashBalance, rechargeNumber, freezeBalance, accountBalance, 
     sumDealAmount, sumRechargeAmount, sumProfit, sumAgentProfit, sumOrderCount, todayDealAmount, 
     todayProfit, todayOrderCount, todayAgentProfit, userType, agent, isAgent, createTime, 
-    submitTime, status, version
+    submitTime, status, version ,quota
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="alipay.manage.bean.UserFundExample" >
     select
@@ -129,7 +130,7 @@
       todayProfit, todayOrderCount, todayAgentProfit, 
       userType, agent, isAgent, 
       createTime, submitTime, status, 
-      version)
+      version,quota)
     values (#{userId,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, #{cashBalance,jdbcType=DECIMAL}, 
       #{rechargeNumber,jdbcType=DECIMAL}, #{freezeBalance,jdbcType=DECIMAL}, #{accountBalance,jdbcType=DECIMAL}, 
       #{sumDealAmount,jdbcType=DECIMAL}, #{sumRechargeAmount,jdbcType=DECIMAL}, #{sumProfit,jdbcType=DECIMAL}, 
@@ -137,7 +138,7 @@
       #{todayProfit,jdbcType=DECIMAL}, #{todayOrderCount,jdbcType=INTEGER}, #{todayAgentProfit,jdbcType=DECIMAL}, 
       #{userType,jdbcType=CHAR}, #{agent,jdbcType=VARCHAR}, #{isAgent,jdbcType=CHAR}, 
       #{createTime,jdbcType=TIMESTAMP}, #{submitTime,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, 
-      #{version,jdbcType=INTEGER})
+      #{version,jdbcType=INTEGER},#{quota})
   </insert>
   <insert id="insertSelective" parameterType="alipay.manage.bean.UserFund" useGeneratedKeys="true" keyProperty="id" >
     insert into alipay_user_fund
@@ -149,26 +150,29 @@
         userName,
       </if>
       <if test="cashBalance != null" >
-        cashBalance,
+          cashBalance,
       </if>
-      <if test="rechargeNumber != null" >
-        rechargeNumber,
-      </if>
-      <if test="freezeBalance != null" >
-        freezeBalance,
-      </if>
-      <if test="accountBalance != null" >
-        accountBalance,
-      </if>
-      <if test="sumDealAmount != null" >
-        sumDealAmount,
-      </if>
-      <if test="sumRechargeAmount != null" >
-        sumRechargeAmount,
-      </if>
-      <if test="sumProfit != null" >
-        sumProfit,
-      </if>
+        <if test="rechargeNumber != null">
+            rechargeNumber,
+        </if>
+        <if test="freezeBalance != null">
+            freezeBalance,
+        </if>
+        <if test="accountBalance != null">
+            accountBalance,
+        </if>
+        <if test="quota != null">
+            quota,
+        </if>
+        <if test="sumDealAmount != null">
+            sumDealAmount,
+        </if>
+        <if test="sumRechargeAmount != null">
+            sumRechargeAmount,
+        </if>
+        <if test="sumProfit != null">
+            sumProfit,
+        </if>
       <if test="sumAgentProfit != null" >
         sumAgentProfit,
       </if>
@@ -217,26 +221,29 @@
         #{userName,jdbcType=VARCHAR},
       </if>
       <if test="cashBalance != null" >
-        #{cashBalance,jdbcType=DECIMAL},
+          #{cashBalance,jdbcType=DECIMAL},
       </if>
-      <if test="rechargeNumber != null" >
-        #{rechargeNumber,jdbcType=DECIMAL},
-      </if>
-      <if test="freezeBalance != null" >
-        #{freezeBalance,jdbcType=DECIMAL},
-      </if>
-      <if test="accountBalance != null" >
-        #{accountBalance,jdbcType=DECIMAL},
-      </if>
-      <if test="sumDealAmount != null" >
-        #{sumDealAmount,jdbcType=DECIMAL},
-      </if>
-      <if test="sumRechargeAmount != null" >
-        #{sumRechargeAmount,jdbcType=DECIMAL},
-      </if>
-      <if test="sumProfit != null" >
-        #{sumProfit,jdbcType=DECIMAL},
-      </if>
+        <if test="rechargeNumber != null">
+            #{rechargeNumber,jdbcType=DECIMAL},
+        </if>
+        <if test="freezeBalance != null">
+            #{freezeBalance,jdbcType=DECIMAL},
+        </if>
+        <if test="accountBalance != null">
+            #{accountBalance,jdbcType=DECIMAL},
+        </if>
+        <if test="quota != null">
+            #{quota,jdbcType=DECIMAL},
+        </if>
+        <if test="sumDealAmount != null">
+            #{sumDealAmount,jdbcType=DECIMAL},
+        </if>
+        <if test="sumRechargeAmount != null">
+            #{sumRechargeAmount,jdbcType=DECIMAL},
+        </if>
+        <if test="sumProfit != null">
+            #{sumProfit,jdbcType=DECIMAL},
+        </if>
       <if test="sumAgentProfit != null" >
         #{sumAgentProfit,jdbcType=DECIMAL},
       </if>
@@ -298,26 +305,29 @@
         userName = #{record.userName,jdbcType=VARCHAR},
       </if>
       <if test="record.cashBalance != null" >
-        cashBalance = #{record.cashBalance,jdbcType=DECIMAL},
+          cashBalance = #{record.cashBalance,jdbcType=DECIMAL},
       </if>
-      <if test="record.rechargeNumber != null" >
-        rechargeNumber = #{record.rechargeNumber,jdbcType=DECIMAL},
-      </if>
-      <if test="record.freezeBalance != null" >
-        freezeBalance = #{record.freezeBalance,jdbcType=DECIMAL},
-      </if>
-      <if test="record.accountBalance != null" >
-        accountBalance = #{record.accountBalance,jdbcType=DECIMAL},
-      </if>
-      <if test="record.sumDealAmount != null" >
-        sumDealAmount = #{record.sumDealAmount,jdbcType=DECIMAL},
-      </if>
-      <if test="record.sumRechargeAmount != null" >
-        sumRechargeAmount = #{record.sumRechargeAmount,jdbcType=DECIMAL},
-      </if>
-      <if test="record.sumProfit != null" >
-        sumProfit = #{record.sumProfit,jdbcType=DECIMAL},
-      </if>
+        <if test="record.rechargeNumber != null">
+            rechargeNumber = #{record.rechargeNumber,jdbcType=DECIMAL},
+        </if>
+        <if test="record.freezeBalance != null">
+            freezeBalance = #{record.freezeBalance,jdbcType=DECIMAL},
+        </if>
+        <if test="record.accountBalance != null">
+            accountBalance = #{record.accountBalance,jdbcType=DECIMAL},
+        </if>
+        <if test="record.quota != null">
+            quota = #{record.quota,jdbcType=DECIMAL},
+        </if>
+        <if test="record.sumDealAmount != null">
+            sumDealAmount = #{record.sumDealAmount,jdbcType=DECIMAL},
+        </if>
+        <if test="record.sumRechargeAmount != null">
+            sumRechargeAmount = #{record.sumRechargeAmount,jdbcType=DECIMAL},
+        </if>
+        <if test="record.sumProfit != null">
+            sumProfit = #{record.sumProfit,jdbcType=DECIMAL},
+        </if>
       <if test="record.sumAgentProfit != null" >
         sumAgentProfit = #{record.sumAgentProfit,jdbcType=DECIMAL},
       </if>
@@ -363,15 +373,16 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map" >
-    update alipay_user_fund
-    set id = #{record.id,jdbcType=INTEGER},
-     version = version+1,
+      update alipay_user_fund
+      set id = #{record.id,jdbcType=INTEGER},
+      version = version+1,
       userId = #{record.userId,jdbcType=VARCHAR},
       userName = #{record.userName,jdbcType=VARCHAR},
       cashBalance = #{record.cashBalance,jdbcType=DECIMAL},
       rechargeNumber = #{record.rechargeNumber,jdbcType=DECIMAL},
       freezeBalance = #{record.freezeBalance,jdbcType=DECIMAL},
       accountBalance = #{record.accountBalance,jdbcType=DECIMAL},
+      quota = #{record.quota,jdbcType=DECIMAL},
       sumDealAmount = #{record.sumDealAmount,jdbcType=DECIMAL},
       sumRechargeAmount = #{record.sumRechargeAmount,jdbcType=DECIMAL},
       sumProfit = #{record.sumProfit,jdbcType=DECIMAL},
@@ -405,25 +416,28 @@
       <if test="cashBalance != null" >
         cashBalance = #{cashBalance,jdbcType=DECIMAL},
       </if>
-      <if test="rechargeNumber != null" >
-        rechargeNumber = #{rechargeNumber,jdbcType=DECIMAL},
-      </if>
-      <if test="freezeBalance != null" >
-        freezeBalance = #{freezeBalance,jdbcType=DECIMAL},
-      </if>
-      <if test="accountBalance != null" >
-        accountBalance = #{accountBalance,jdbcType=DECIMAL},
-      </if>
-      <if test="sumDealAmount != null" >
-        sumDealAmount = #{sumDealAmount,jdbcType=DECIMAL},
-      </if>
-      <if test="sumRechargeAmount != null" >
-        sumRechargeAmount = #{sumRechargeAmount,jdbcType=DECIMAL},
-      </if>
-      <if test="sumProfit != null" >
-        sumProfit = #{sumProfit,jdbcType=DECIMAL},
-      </if>
-      <if test="sumAgentProfit != null" >
+        <if test="rechargeNumber != null">
+            rechargeNumber = #{rechargeNumber,jdbcType=DECIMAL},
+        </if>
+        <if test="freezeBalance != null">
+            freezeBalance = #{freezeBalance,jdbcType=DECIMAL},
+        </if>
+        <if test="accountBalance != null">
+            accountBalance = #{accountBalance,jdbcType=DECIMAL},
+        </if>
+        <if test="quota != null">
+            quota = #{quota,jdbcType=DECIMAL},
+        </if>
+        <if test="sumDealAmount != null">
+            sumDealAmount = #{sumDealAmount,jdbcType=DECIMAL},
+        </if>
+        <if test="sumRechargeAmount != null">
+            sumRechargeAmount = #{sumRechargeAmount,jdbcType=DECIMAL},
+        </if>
+        <if test="sumProfit != null">
+            sumProfit = #{sumProfit,jdbcType=DECIMAL},
+        </if>
+        <if test="sumAgentProfit != null">
         sumAgentProfit = #{sumAgentProfit,jdbcType=DECIMAL},
       </if>
       <if test="sumOrderCount != null" >
@@ -474,6 +488,7 @@
       rechargeNumber = #{rechargeNumber,jdbcType=DECIMAL},
       freezeBalance = #{freezeBalance,jdbcType=DECIMAL},
       accountBalance = #{accountBalance,jdbcType=DECIMAL},
+      quota = #{quota,jdbcType=DECIMAL},
       sumDealAmount = #{sumDealAmount,jdbcType=DECIMAL},
       sumRechargeAmount = #{sumRechargeAmount,jdbcType=DECIMAL},
       sumProfit = #{sumProfit,jdbcType=DECIMAL},
