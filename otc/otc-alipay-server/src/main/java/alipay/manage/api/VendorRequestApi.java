@@ -156,12 +156,12 @@ public class VendorRequestApi {
                     exceptionOrderServiceImpl.addDealEx(
                             paramMap.get("appId").toString(),
                             paramMap.get("amount").toString(),
-                            "商户相应提示：今日下单金额已受限，请及时下发；" +
+                            "商户相应提示：当前留存过多，请及时下发；" +
                                     "处理方法：提示商户及时下发，当前商户余额：" + userFund.getAccountBalance()
                                     + "，受限额度：" + userInfo.getTotalAmount() + "，当前商户传入通道编码：" + passCode,
                             HttpUtil.getClientIP(request), paramMap.get("orderId").toString());
                 });
-                return Result.buildFailMessage("今日下单金额已受限，请及时下发");
+                return Result.buildFailMessage("当前留存过多，请及时下发");
             }
         }
         return Result.buildSuccessResult(paramMap);

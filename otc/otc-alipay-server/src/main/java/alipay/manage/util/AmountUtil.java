@@ -220,7 +220,6 @@ public class AmountUtil {
                     }
                     lockMsg++;
                     log.info("【手动加钱失败，请联系技术人员处理,请查询当前时间范围内的异常情况");
-                    return Result.buildFailMessage("【手动加钱失败，请联系技术人员处理】");
                 } else if (ADD_AMOUNT_DEAL.equals(addType)) {//交易利润分成 ,统计交易笔数
                     Result addAmountDeal = addAmountDeal(userFund, balance, dealAmount);
                     if (addAmountDeal.isSuccess()) {

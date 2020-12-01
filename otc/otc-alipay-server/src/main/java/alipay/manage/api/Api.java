@@ -540,7 +540,7 @@ public class Api {
 		}
 
 		if (amountType.toString().equals(Common.Deal.AMOUNT_ORDER_DELETE_FREEZE)) {
-			BigDecimal balance = userFund.getAccountBalance();
+			BigDecimal balance = userFund.getFreezeBalance();
 			BigDecimal deduct = new BigDecimal(amount.toString());
 			if (balance.compareTo(deduct) > -1) {//余额充足
 				Result deleteAmount2 = amountUtil.deleteFreeze(userFund, deduct);
@@ -576,7 +576,7 @@ public class Api {
 				return Result.buildFailMessage("操作失败，账户余额不足");
 			}
 		} else if (amountType.toString().equals(Common.Deal.AMOUNT_ORDER_DELETE_QUOTA)) {
-			BigDecimal balance = userFund.getAccountBalance();
+			BigDecimal balance = userFund.getQuota();
 			BigDecimal deduct = new BigDecimal(amount.toString());
 			if (balance.compareTo(deduct) > -1) {//余额充足
 				Result deleteAmount2 = amountUtil.deleteQuotaAmount(userFund, deduct);
