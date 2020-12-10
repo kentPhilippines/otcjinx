@@ -11,7 +11,6 @@ import java.util.Map;
 
 public class HuanYaUtil {
     public static final String NOTIFY = "/huanya-source-notify";
-
     public static String createParam(Map<String, Object> map) {
         try {
             if (map == null || map.isEmpty())
@@ -29,7 +28,6 @@ public class HuanYaUtil {
         }
         return null;
     }
-
     public static String md5(String a) {
         String c = "";
         MessageDigest md5;
@@ -46,7 +44,6 @@ public class HuanYaUtil {
         }
         return result;
     }
-
     public static String createParam(HashMap<String, String> decodeParamMap) {
         try {
             if (decodeParamMap == null || decodeParamMap.isEmpty())

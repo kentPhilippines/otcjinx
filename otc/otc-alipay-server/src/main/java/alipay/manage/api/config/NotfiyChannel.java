@@ -72,7 +72,7 @@ public abstract class NotfiyChannel {
     public Result witNotfyEr(String orderId, String ip, String msg) {
         log.info("【进入代付失败回调 抽象类：" + orderId + "】");
         Withdraw wit = withdrawServiceImpl.findOrderId(orderId);
-        Result result = orderUtilImpl.withrawOrderErBySystem(orderId, ip, msg);
+        Result result = orderUtilImpl.withrawOrderErBySystem(wit, ip, msg);
         if (result.isSuccess()) {
             ThreadUtil.execute(() -> {
                 wit(orderId);

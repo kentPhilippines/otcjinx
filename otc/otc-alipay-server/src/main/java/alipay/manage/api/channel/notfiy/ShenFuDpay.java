@@ -8,7 +8,6 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,12 +19,15 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 申付 代付回调处理类
+ */
 @RequestMapping(PayApiConstant.Notfiy.NOTFIY_API_WAI)
 @RestController
 public class ShenFuDpay extends NotfiyChannel {
     private static final Log log = LogFactory.get();
 
-    @PostMapping("/ShenFuDpay-noyfit")
+    @RequestMapping("/ShenFuDpay-noyfit")
     public String notify(HttpServletRequest req, HttpServletResponse res, @RequestBody String json) {
         String clientIP = HttpUtil.getClientIP(req);
         log.info("【当前回调ip为：" + clientIP + "】");
@@ -70,8 +72,13 @@ public class ShenFuDpay extends NotfiyChannel {
         log.info("【绅付代付签名前参数：" + createParam + "】");
         String md5 = PayUtil.md5(createParam + PayUtil.KEY01);
         if (sign.equals(md5)) {
-            Result result = witNotfy(no_order, clientIP);
-            if (result.isSuccess()) {
+            if (result_pay.equals("SUCCESS")) {
+                Result result = witNotfy(no_order, clientIP);
+                if (result.isSuccess()) {
+                    return "success";
+                }
+            } else if (result_pay.equals("FAILURE")) {
+                witNotfyEr(no_order, clientIP, "代付失败");
                 return "success";
             }
         } else

@@ -311,6 +311,21 @@ public class VendorRequestApi {
             });
             return Result.buildFailMessage("当前代付最低金额为300");
         }
+
+        if (checkUtils.isNumber(amount)) {
+            log.info("【代付金额不能存在小数】");
+            ThreadUtil.execute(() -> {
+                exceptionOrderServiceImpl.addWitEx(
+                        userId,
+                        paramMap.get("amount").toString(),
+                        "商户相应提示：代付金额不能存在小数；" +
+                                "处理方法：提醒商户更换代付金额",
+                        HttpUtil.getClientIP(request), paramMap.get("apporderid").toString());
+            });
+            return Result.buildFailMessage("代付金额不能存在小数");
+        }
+
+
         return Result.buildSuccessResult(paramMap);
     }
 

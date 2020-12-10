@@ -7,7 +7,6 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import otc.common.PayApiConstant;
@@ -24,12 +23,14 @@ public class HuanYaNotify extends NotfiyChannel {
     private static final Log log = LogFactory.get();
 
     @RequestMapping(HuanYaUtil.NOTIFY)
-    public String notify(HttpServletRequest req, HttpServletResponse res,
-                         @RequestBody JSONObject jsonObject) {
+    public String notify(HttpServletRequest req, HttpServletResponse res
+    ) {
         String clientIP = HttpUtil.getClientIP(req);
         Map mapip = new HashMap();
         mapip.put("202.46.44.121", "202.46.44.121");
         mapip.put("202.46.44.135", "202.46.44.135");
+        mapip.put("202.46.44.97", "202.46.44.97");
+        mapip.put("202.46.44.98", "202.46.44.98");
         Object object = mapip.get(clientIP);
         if (ObjectUtil.isNull(object)) {
             log.info("【当前回调ip为：" + clientIP + "，固定IP登记为：" + mapip.toString() + "】");
@@ -47,6 +48,15 @@ public class HuanYaNotify extends NotfiyChannel {
          支付成功时间	paySuccTime	是	long		精确到毫秒
          通知类型	backType	是	int	1	通知类型，1-前台通知，2-后台通知
          签名	sign	是	String(32)	C380BEC2BFD727A4B6845133519F3AD6	签名值，详见签名算法
+
+         渠道订单号	channelOrderNo	否	String(64)	wx2016081611532915ae15beab0167893571	三方支付渠道订单号
+         渠道数据包	channelAttach	否	String	{"bank_type":"CMB_DEBIT","trade_type":"pay.weixin.micropay"}	支付渠道数据包
+         扩展参数1	param1	否	String(64)		支付中心回调时会原样返回
+         扩展参数2	param2	否	String(64)
+
+
+
+
          */
 
         String payOrderId = req.getParameter("payOrderId");
@@ -58,6 +68,11 @@ public class HuanYaNotify extends NotfiyChannel {
         String status = req.getParameter("status");
         String paySuccTime = req.getParameter("paySuccTime");
         String backType = req.getParameter("backType");
+        String channelOrderNo = req.getParameter("channelOrderNo");
+        String channelAttach = req.getParameter("channelAttach");
+        String income = req.getParameter("income");
+        String param1 = req.getParameter("param1");
+        String param2 = req.getParameter("param2");
         String sign = req.getParameter("sign");
         Map<String, Object> map = new HashMap();
         map.put("payOrderId", payOrderId);
@@ -66,14 +81,17 @@ public class HuanYaNotify extends NotfiyChannel {
         map.put("productId", productId);
         map.put("mchOrderNo", mchOrderNo);
         map.put("amount", amount);
+        map.put("channelOrderNo", channelOrderNo);
+        map.put("channelAttach", channelAttach);
         map.put("status", status);
+        map.put("income", income);
         map.put("paySuccTime", paySuccTime);
         map.put("backType", backType);
         String channelKey = getChannelKey(mchOrderNo);
         String param = HuanYaUtil.createParam(map);
         param = param + "&key=" + channelKey;
         log.info("【环亚加密前参数：" + param + "】");
-        String md5 = HuanYaUtil.md5(param);
+        String md5 = HuanYaUtil.md5(param).toUpperCase();
         if (md5.equals(sign)) {
             log.info("【当前支付成功回调签名参数：" + sign + "，当前我方验证签名结果：" + md5 + "】");
             log.info("【签名成功】");

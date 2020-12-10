@@ -26,7 +26,6 @@ public class DealPay extends PayOrderService {
     private static final Log log = LogFactory.get();
     @Autowired
     private UserInfoService userInfoServiceImpl;
-
     @Override
     public Result deal(DealOrderApp dealOrderApp, String channel) throws Exception {
         log.info("【进入家宝支付，当前请求产品：" + dealOrderApp.getRetain1() + "，当前请求渠道：" + channel + "】");
@@ -63,7 +62,6 @@ public class DealPay extends PayOrderService {
      * 商品描述信息	body	是	String(256)	anypay测试商品描述	商品描述信息
      * 附加参数	extra	是	String(512)	{"openId":"o2RvowBf7sOVJf8kJksUEMceaDqo"}	特定渠道发起时额外参数,见下面说明
      * 签名	sign	是	String(32)	C380BEC2BFD727A4B6845133519F3AD6	签名值，详见签名算法
-     *
      * @param s
      * @param orderAmount
      * @param orderId
@@ -85,7 +83,7 @@ public class DealPay extends PayOrderService {
         String notifyUrl = s;
         String subject = "huanya";
         String body = "huanya";
-        String extra = "";
+        String extra = "huanya";
         mapp.put("mchId", mchId);
         mapp.put("appId", appId);
         mapp.put("productId", productId);

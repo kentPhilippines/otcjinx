@@ -18,6 +18,7 @@ import otc.bean.dealpay.Withdraw;
 import otc.common.PayApiConstant;
 import otc.result.Result;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,22 +35,15 @@ public class Shenfu03Dpay extends PayOrderService {
         return DateUtil.format(new Date(), DatePattern.PURE_DATETIME_FORMAT);
     }
 
-    @Override
-    public Result withdraw(Withdraw wit) {
-        log.info("【进入申付代付】");
-        try {
-            log.info("【本地订单创建成功，开始请求远程三方代付接口】");
-            Result config = configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.SERVER_IP);
-            log.info("【回调地址ip为：" + config.toString() + "】");
-            String createDpay = createDpay(config.getResult().toString() + PayApiConstant.Notfiy.NOTFIY_API_WAI + "/ShenFuDpay-noyfit", wit);
-            if (StrUtil.isNotBlank(createDpay) && createDpay.equals(WIT_RESULT))
-                return Result.buildSuccessMessage("代付成功等待处理");
-            else
-                return Result.buildFailMessage(createDpay);
-        } catch (Exception e) {
-            log.error("【错误信息打印】" + e.getMessage());
-            return Result.buildFailMessage("代付失败");
-        }
+    private static boolean isNumber(String str) {
+        BigDecimal a = new BigDecimal(str);
+        double dInput = a.doubleValue();
+        long longPart = (long) dInput;
+        BigDecimal bigDecimal = new BigDecimal(Double.toString(dInput));
+        BigDecimal bigDecimalLongPart = new BigDecimal(Double.toString(longPart));
+        double dPoint = bigDecimal.subtract(bigDecimalLongPart).doubleValue();
+        System.out.println("整数部分为:" + longPart + "\n" + "小数部分为: " + dPoint);
+        return dPoint > 0;
     }
 
     String createDpay(String notify, Withdraw wit) {
@@ -107,6 +101,30 @@ public class Shenfu03Dpay extends PayOrderService {
         else
             withdrawEr(wit, parseObj.getStr("ret_msg"), wit.getRetain2());
         return "";
+    }
+
+    @Override
+    public Result withdraw(Withdraw wit) {
+        log.info("【进入申付代付】");
+        try {
+            if (isNumber(wit.getAmount().toString())) {
+                Result result = withdrawEr(wit, "代付订单不支持小数提交", wit.getRetain2());
+                if (result.isSuccess()) {
+                    return Result.buildFailMessage("代付订单不支持小数提交");
+                }
+            }
+            log.info("【本地订单创建成功，开始请求远程三方代付接口】");
+            Result config = configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.SERVER_IP);
+            log.info("【回调地址ip为：" + config.toString() + "】");
+            String createDpay = createDpay(config.getResult().toString() + PayApiConstant.Notfiy.NOTFIY_API_WAI + "/ShenFuDpay-noyfit", wit);
+            if (StrUtil.isNotBlank(createDpay) && createDpay.equals(WIT_RESULT))
+                return Result.buildSuccessMessage("代付成功等待处理");
+            else
+                return Result.buildFailMessage(createDpay);
+        } catch (Exception e) {
+            log.error("【错误信息打印】" + e.getMessage());
+            return Result.buildFailMessage("代付失败");
+        }
     }
 
 }
