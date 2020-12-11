@@ -540,7 +540,7 @@ public class Api {
 		}
 
 		if (amountType.toString().equals(Common.Deal.AMOUNT_ORDER_DELETE_FREEZE)) {
-			BigDecimal balance = userFund.getFreezeBalance();
+			BigDecimal balance = userFund.getAccountBalance();
 			BigDecimal deduct = new BigDecimal(amount.toString());
 			if (balance.compareTo(deduct) > -1) {//余额充足
 				Result deleteAmount2 = amountUtil.deleteFreeze(userFund, deduct);

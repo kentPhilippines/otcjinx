@@ -735,27 +735,27 @@ public class AmountUtil {
 			log.info("【===========【当前账户被标记为禁止使用资金账户功能，请检查该账户存在的交易异常，当前账户为："+userInfo.getUserId()+"】===========】");
 			//TODO 当前位置除了做运行日志记录和数据日志记录，还应将该处存在的问题推送到系统醒目的地方
 			return Result.buildFailMessage("当前账户被禁止使用资金流水功能，请检查账户是否存在异常");
-		}
-		BigDecimal accountBalance = userFund.getAccountBalance();
-		BigDecimal cashBalance = userFund.getCashBalance();
-		BigDecimal freezeBalance = userFund.getFreezeBalance();
-		BigDecimal rechargeNumber = userFund.getRechargeNumber();
-		log.info("【当前账户余额："+accountBalance+"】");
-		log.info("【当前账户利润余额："+cashBalance+"】");
-		log.info("【当前账户冻结余额："+freezeBalance+"】");
-		log.info("【当前账户充值点数："+rechargeNumber+"】");
-		rechargeNumber = rechargeNumber.add(balance);
-		accountBalance = rechargeNumber.add(freezeBalance).add(cashBalance);
-		log.info("【当前金额加款操作。。。。。。。。。】");
-		userFund.setRechargeNumber(rechargeNumber);
-		userFund.setAccountBalance(accountBalance);
-		Boolean flag = userInfoServiceImpl.updataAmount(userFund);
-		if(flag) {
-			log.info("【当前账户添加充值点数成功资金详细情况如下：】");
-			log.info("【当前账户余额："+accountBalance+"】");
-			log.info("【当前账户利润余额："+cashBalance+"】");
-			log.info("【当前账户冻结余额："+freezeBalance+"】");
-			log.info("【当前账户充值点数："+rechargeNumber+"】");
+        }
+        BigDecimal accountBalance = userFund.getAccountBalance();
+        BigDecimal cashBalance = userFund.getCashBalance();
+        BigDecimal freezeBalance = userFund.getFreezeBalance();
+        BigDecimal rechargeNumber = userFund.getRechargeNumber();
+        log.info("【当前账户余额：" + accountBalance + "】");
+        log.info("【当前账户利润余额：" + cashBalance + "】");
+        log.info("【当前账户冻结余额：" + freezeBalance + "】");
+        log.info("【当前账户充值点数：" + rechargeNumber + "】");
+        rechargeNumber = rechargeNumber.add(balance);
+        accountBalance = rechargeNumber.subtract(freezeBalance).add(cashBalance);
+        log.info("【当前金额加款操作。。。。。。。。。】");
+        userFund.setRechargeNumber(rechargeNumber);
+        userFund.setAccountBalance(accountBalance);
+        Boolean flag = userInfoServiceImpl.updataAmount(userFund);
+        if (flag) {
+            log.info("【当前账户添加充值点数成功资金详细情况如下：】");
+            log.info("【当前账户余额：" + accountBalance + "】");
+            log.info("【当前账户利润余额：" + cashBalance + "】");
+            log.info("【当前账户冻结余额：" + freezeBalance + "】");
+            log.info("【当前账户充值点数：" + rechargeNumber + "】");
 			return Result.buildSuccessMessage("当前账户充值金额添加成功");
 		} else {
 			log.info("【当前账户添加充值点数【失败】，请联系技术检查当前账户存在的异常情况】");
