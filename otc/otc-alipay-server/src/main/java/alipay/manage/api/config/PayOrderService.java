@@ -5,9 +5,9 @@ import alipay.manage.api.feign.ConfigServiceClient;
 import alipay.manage.bean.*;
 import alipay.manage.mapper.ChannelFeeMapper;
 import alipay.manage.service.*;
-import alipay.manage.util.AmountRunUtil;
-import alipay.manage.util.AmountUtil;
 import alipay.manage.util.OrderUtil;
+import alipay.manage.util.amount.AmountPublic;
+import alipay.manage.util.amount.AmountRunUtil;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
@@ -36,11 +36,11 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public abstract class PayOrderService implements PayService {
     public static final Log log = LogFactory.get();
-    private static final String ORDER = "orderid";
-    @Autowired
-    private AmountUtil amountUtil;
-    @Autowired
-    private AmountRunUtil amountRunUtil;
+	private static final String ORDER = "orderid";
+	@Autowired
+	private AmountPublic amountPublic;
+	@Autowired
+	private AmountRunUtil amountRunUtil;
     @Autowired
     private UserInfoService userInfoServiceImpl;
     @Resource
@@ -183,21 +183,21 @@ public abstract class PayOrderService implements PayService {
 		 */
 		lock.lock();
 	    try {
-			UserFund userFund = new UserFund ();// userInfoServiceImpl.findUserFundByAccount(wit.getUserId());
+			UserFund userFund = new UserFund();// userInfoServiceImpl.findUserFundByAccount(wit.getUserId());
 			userFund.setUserId(wit.getUserId());
-			Result deleteWithdraw = amountUtil.deleteWithdraw(userFund, wit.getActualAmount());
-			if(!deleteWithdraw.isSuccess())
+			Result deleteWithdraw = amountPublic.deleteWithdraw(userFund, wit.getActualAmount());
+			if (!deleteWithdraw.isSuccess())
 				return Result.buildFailMessage("账户扣减失败,请联系技术人员处理");
 			Result deleteAmount = amountRunUtil.deleteAmount(wit, wit.getRetain2(), false);
-			if(!deleteAmount.isSuccess())
+			if (!deleteAmount.isSuccess())
 				return Result.buildFailMessage("账户扣减失败,请联系技术人员处理");
-			Result deleteWithdraw2 = amountUtil.deleteWithdraw(userFund, wit.getFee());
-			if(!deleteWithdraw2.isSuccess())
+			Result deleteWithdraw2 = amountPublic.deleteWithdraw(userFund, wit.getFee());
+			if (!deleteWithdraw2.isSuccess())
 				return Result.buildFailMessage("账户扣减失败,请联系技术人员处理");
 			Result deleteAmountFee = amountRunUtil.deleteAmountFee(wit, wit.getRetain2(), false);
-			if(!deleteAmountFee.isSuccess())
-				return  Result.buildFailMessage("账户扣减失败,请联系技术人员处理");
-	    }  finally {
+			if (!deleteAmountFee.isSuccess())
+				return Result.buildFailMessage("账户扣减失败,请联系技术人员处理");
+		}  finally {
 	        lock.unlock();
 	    }
 		return Result.buildSuccess();

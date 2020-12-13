@@ -20,7 +20,12 @@ import java.util.Map;
 public class witTest {
 	public static void main(String[] args) {
 
-		new witTest().deal();
+		//new witTest().deal();
+		String userid = "facai123";
+		String key = "52927A864A704AE384E4E167A9772CEB";//交易密钥
+		String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCZVMSZHduYMj+KCPhsGR+r/KsRdNlsOKav/aJ+Bo3aGDW7oTnRLs9NABQHrIiXf666AhzFLK6sAeplFCa16caUriZGE+hnJPVUYMuO73/Zq0QTTyCRVUmxF+i98Rqi2cJFBeTfK46RDAZojmtzD8d+j1/FzQ38cZT7FB3/XjsrewIDAQAB";
+		//	new witTest().wit(userid, key, publicKey);
+
 /*
 		String userid1 = "sx978";
 		String key1 = "52927A864A704AE384E4E167A9772CEB";
@@ -122,29 +127,33 @@ public class witTest {
 
 	void deal() {
 		SimpleDateFormat d = new SimpleDateFormat("yyyyMMddHHmmss");
+	/*	String userid = "facai123";
+		String key = "52927A864A704AE384E4E167A9772CEB";//交易密钥
+        String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCZVMSZHduYMj+KCPhsGR+r/KsRdNlsOKav/aJ+Bo3aGDW7oTnRLs9NABQHrIiXf666AhzFLK6sAeplFCa16caUriZGE+hnJPVUYMuO73/Zq0QTTyCRVUmxF+i98Rqi2cJFBeTfK46RDAZojmtzD8d+j1/FzQ38cZT7FB3/XjsrewIDAQAB";
+*/
 		String userid = "2u7rMduh";
 		String key = "bc64a6067ae6e7edcfd8c62ad3472d46";//交易密钥
-        String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCIU7OCf+4N47fbJMCpd68GileM6vz02Bi+nTrvuzn7uAn/g89WGE+/aYuFHzAOCsrZ17y26RkQimjbWISEkDd4izP0+w7D0qZCb2czE+UeV7Qvt/DuXpY+yGM1+EAnP/xTr4qmXAZDn3e+xSzU8VMDD/3cuGH6X0CbmQZeK+VVqQIDAQAB";
+		String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCIU7OCf+4N47fbJMCpd68GileM6vz02Bi+nTrvuzn7uAn/g89WGE+/aYuFHzAOCsrZ17y26RkQimjbWISEkDd4izP0+w7D0qZCb2czE+UeV7Qvt/DuXpY+yGM1+EAnP/xTr4qmXAZDn3e+xSzU8VMDD/3cuGH6X0CbmQZeK+VVqQIDAQAB";
 
 
-        Deal deal = new Deal();
-        deal.setAmount("1000");//金额
-        deal.setAppId(userid);//商户号
-        deal.setApplyDate(d.format(new Date()));
-        deal.setNotifyUrl("http://starpay168.com:5055");
-        deal.setPageUrl("http://starpay168.com:5055");
-        deal.setOrderId(IdUtil.objectId());
-        deal.setPassCode("ALIPAYSCANTOABNK");
-        deal.setSubject("订单交易");
-        deal.setUserid("ASDSADASDS");  //to userid
-        Map<String, Object> objectToMap = MapUtil.objectToMap(deal);
+		Deal deal = new Deal();
+		deal.setAmount("1000");//金额
+		deal.setAppId(userid);//商户号
+		deal.setApplyDate(d.format(new Date()));
+		deal.setNotifyUrl("http://starpay168.com:5055");
+		deal.setPageUrl("http://starpay168.com:5055");
+		deal.setOrderId(IdUtil.objectId());
+		deal.setPassCode("ALIPAYTOBANK");
+		deal.setSubject("订单交易");
+		deal.setUserid("ASDSADASDS");  //to userid
+		Map<String, Object> objectToMap = MapUtil.objectToMap(deal);
         String createParam = createParam(objectToMap);
         System.out.println("签名前请求串：" + createParam);
         String md5 = getKeyedDigestUTF8(createParam + key);
         System.out.println("签名：" + md5);
         deal.setSign(md5);
-        Map<String, Object> objectToMap2 = MapUtil.objectToMap(deal);
-        String createParam2 = createParam(objectToMap2);
+		Map<String, Object> objectToMap2 = MapUtil.objectToMap(deal);
+		String createParam2 = createParam(objectToMap2);
 		System.out.println("加密前字符串：" + createParam2);
 		XRsa rsa = new XRsa(publicKey);
 		String publicEncrypt = rsa.publicEncrypt(createParam2);
@@ -153,7 +162,7 @@ public class witTest {
 		postMap.put("cipherText", publicEncrypt);
 		postMap.put("userId", userid);
 		System.out.println("请求参数：" + postMap.toString());
-		String post = HttpUtil.post("http://starpay168.com:5055/api-alipay/deal/pay", postMap);
+		String post = HttpUtil.post("http://127.0.0.1:5055/api-alipay/deal/pay", postMap);
 		System.out.println("相应结果集：" + post);
 
 	}

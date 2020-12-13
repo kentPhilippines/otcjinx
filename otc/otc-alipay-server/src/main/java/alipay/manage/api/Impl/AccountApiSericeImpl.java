@@ -1,52 +1,55 @@
 package alipay.manage.api.Impl;
 
-import java.util.Date;
-import java.util.List;
-
-import alipay.manage.bean.UserRate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.stereotype.Component;
-
 import alipay.manage.api.AccountApiService;
 import alipay.manage.bean.UserFund;
 import alipay.manage.bean.UserInfo;
 import alipay.manage.bean.UserInfoExample;
 import alipay.manage.bean.UserInfoExample.Criteria;
+import alipay.manage.bean.UserRate;
 import alipay.manage.mapper.UserFundMapper;
 import alipay.manage.mapper.UserInfoMapper;
 import alipay.manage.mapper.UserRateMapper;
 import alipay.manage.service.UserInfoService;
-import alipay.manage.util.AmountUtil;
+import alipay.manage.util.amount.AmountPublic;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import otc.api.alipay.Common;
 import otc.result.Result;
 import otc.util.encode.HashKit;
 import otc.util.enums.BizStatusEnum;
 import otc.util.enums.UserStatusEnum;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 @Component
 public class AccountApiSericeImpl implements AccountApiService {
     Logger log = LoggerFactory.getLogger(AccountApiSericeImpl.class);
-    @Resource private UserRateMapper userRateDao;
-    @Resource private  UserInfoMapper userInfoDao;
-    @Resource private  UserFundMapper userFundDao;
-    @Autowired UserInfoService userInfoService;
-    @Autowired AmountUtil amountUtil;
+    @Resource
+    private UserRateMapper userRateDao;
+    @Resource
+    private UserInfoMapper userInfoDao;
+    @Resource
+    private UserFundMapper userFundDao;
+    @Autowired
+    UserInfoService userInfoService;
+    @Autowired
+    AmountPublic amountPublic;
 
     @Override
     public Result addAccount(UserInfo user) {
         if (ObjectUtil.isNull(user))
             return Result.buildFailMessage("实体类为空，请检查传递方法是否正确");
-        if (StrUtil.isBlank(user.getUserId()) 
-        		|| StrUtil.isBlank(user.getUserName())
+        if (StrUtil.isBlank(user.getUserId())
+                || StrUtil.isBlank(user.getUserName())
                 || ObjectUtil.isNull(user.getUserType())
                 || StrUtil.isBlank(user.getIsAgent())
         ) {
@@ -189,7 +192,7 @@ public class AccountApiSericeImpl implements AccountApiService {
     @Override
     public Result addAmount(UserFund userFund) {
         log.info("【调用加款接口】");
-        return amountUtil.addAmounRecharge(userFund, userFund.getRechargeNumber());
+        return amountPublic.addAmounRecharge(userFund, userFund.getRechargeNumber());
     }
 
     /**
@@ -200,8 +203,19 @@ public class AccountApiSericeImpl implements AccountApiService {
      * @return
      */
     @Override
-    public UserRate findUserRateByUserId(String userId, String passCode) {
-        return userInfoDao.selectUserRateByUserId(userId, passCode);
+    public UserRate findUserRateByUserId(String userId, String passCode, String amount) {
+        List<UserRate> userRate = userInfoDao.selectUserRateByUserId(userId, passCode);
+        CollUtil.sortByProperty(userRate, "retain1");
+        for (UserRate rate : userRate) {
+            BigDecimal systemAmount = new BigDecimal(rate.getRetain2());//金额限制
+            BigDecimal bigDecimal = new BigDecimal(amount);
+            if (bigDecimal.compareTo(systemAmount) >= 0) {
+                return rate;
+            } else {
+                continue;
+            }
+        }
+        return null;
     }
 
     @Override

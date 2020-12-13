@@ -13,6 +13,8 @@ import alipay.manage.service.MediumService;
 import alipay.manage.service.UserInfoService;
 import alipay.manage.service.WithdrawService;
 import alipay.manage.util.*;
+import alipay.manage.util.amount.AmountPublic;
+import alipay.manage.util.amount.AmountRunUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.thread.ThreadUtil;
@@ -51,7 +53,7 @@ public class Api {
 	@Autowired
 	LogUtil logUtil;
 	@Autowired
-	AmountUtil amountUtil;
+	AmountPublic amountPublic;
 	@Autowired
 	UserInfoService userInfoServiceImpl;
 	@Autowired
@@ -284,11 +286,11 @@ public class Api {
 				int a = amountDao.updataOrder( orderId.toString() ,  orderStatus.toString(), approval.toString(), comment.toString());
 				if(a > 0 && a< 2) {
 					UserFund userFund = userInfoServiceImpl.findUserFundByAccount(amount.getUserId());
-					Result addAmountAdd = amountUtil.addAmountAdd(userFund, amount.getAmount());
-					if(addAmountAdd.isSuccess()) {
-							Result addAmount = amountRunUtil.addAmount(amount, clientIP);
-							if(addAmount.isSuccess()) {
-							logUtil.addLog(request, "当前发起加钱操作，加款订单号："+amount.getOrderId()+"，加款成功，加款用户："+amount.getUserId()+"，操作人："+amount.getAccname()+"", amount.getAccname());
+					Result addAmountAdd = amountPublic.addAmountAdd(userFund, amount.getAmount());
+					if (addAmountAdd.isSuccess()) {
+						Result addAmount = amountRunUtil.addAmount(amount, clientIP);
+						if (addAmount.isSuccess()) {
+							logUtil.addLog(request, "当前发起加钱操作，加款订单号：" + amount.getOrderId() + "，加款成功，加款用户：" + amount.getUserId() + "，操作人：" + amount.getAccname() + "", amount.getAccname());
 							return Result.buildSuccessMessage("操作成功");
 						}
 					}
@@ -312,11 +314,11 @@ public class Api {
 				int a = amountDao.updataOrder( orderId.toString() ,  orderStatus.toString(), approval.toString(), comment.toString());
 				if(a > 0 && a< 2) {
 					UserFund userFund = userInfoServiceImpl.findUserFundByAccount(amount.getUserId());
-					Result addAmountAdd = amountUtil.addAmountAdd(userFund, amount.getAmount());
-					if(addAmountAdd.isSuccess()) {
-						Result deleteAmount = amountRunUtil.addAmount(amount, clientIP,"扣款失败，资金退回退回");
-						if(deleteAmount.isSuccess()) {
-							logUtil.addLog(request, "当前扣款订单置为失败，资金原路退回，扣款订单号："+amount.getOrderId()+"，扣款用户："+amount.getUserId()+"，操作人："+amount.getAccname()+"", amount.getAccname());
+					Result addAmountAdd = amountPublic.addAmountAdd(userFund, amount.getAmount());
+					if (addAmountAdd.isSuccess()) {
+						Result deleteAmount = amountRunUtil.addAmount(amount, clientIP, "扣款失败，资金退回退回");
+						if (deleteAmount.isSuccess()) {
+							logUtil.addLog(request, "当前扣款订单置为失败，资金原路退回，扣款订单号：" + amount.getOrderId() + "，扣款用户：" + amount.getUserId() + "，操作人：" + amount.getAccname() + "", amount.getAccname());
 							return Result.buildSuccessMessage("操作成功");
 						}
 					}
@@ -325,7 +327,7 @@ public class Api {
 				int a = amountDao.updataOrder( orderId.toString() ,  orderStatus.toString(), approval.toString(), comment.toString());
 				if(a > 0 &&  a < 2) {
 					UserFund userFund = userInfoServiceImpl.findUserFundByAccount(amount.getUserId());
-					Result deleteAmount2 = amountUtil.deleteAmount(userFund, amount.getAmount());
+					Result deleteAmount2 = amountPublic.deleteAmount(userFund, amount.getAmount());
 					if (deleteAmount2.isSuccess()) {
 						Result deleteAmount = amountRunUtil.deleteAmount(amount, clientIP);
 						if (deleteAmount.isSuccess()) {
@@ -347,7 +349,7 @@ public class Api {
 					int a = amountDao.updataOrder(orderId.toString(), orderStatus.toString(), approval.toString(), comment.toString());
 					if (a > 0 && a < 2) {
 						UserFund userFund = userInfoServiceImpl.findUserFundByAccount(amount.getUserId());
-						Result addAmountAdd = amountUtil.addFreeze(userFund, amount.getAmount());
+						Result addAmountAdd = amountPublic.addFreeze(userFund, amount.getAmount());
 						if (addAmountAdd.isSuccess()) {
 							Result deleteAmount = amountRunUtil.addFreeze(amount, clientIP);
 							if (deleteAmount.isSuccess()) {
@@ -363,7 +365,7 @@ public class Api {
 					int a = amountDao.updataOrder(orderId.toString(), orderStatus.toString(), approval.toString(), comment.toString());
 					if (a > 0 && a < 2) {
 						UserFund userFund = userInfoServiceImpl.findUserFundByAccount(amount.getUserId());
-						Result addAmountAdd = amountUtil.addFreeze(userFund, amount.getAmount());
+						Result addAmountAdd = amountPublic.addFreeze(userFund, amount.getAmount());
 						if (addAmountAdd.isSuccess()) {
 							Result addAmount = amountRunUtil.addFreeze(amount, clientIP);
 							if (addAmount.isSuccess()) {
@@ -385,7 +387,7 @@ public class Api {
 					int a = amountDao.updataOrder(orderId.toString(), orderStatus.toString(), approval.toString(), comment.toString());
 					if (a > 0 && a < 2) {
 						UserFund userFund = userInfoServiceImpl.findUserFundByAccount(amount.getUserId());
-						Result addAmountAdd = amountUtil.addQuotaAmount(userFund, amount.getAmount());
+						Result addAmountAdd = amountPublic.addQuotaAmount(userFund, amount.getAmount());
 						if (addAmountAdd.isSuccess()) {
 							Result addAmount = amountRunUtil.addQuota(amount, clientIP);
 							if (addAmount.isSuccess()) {
@@ -413,7 +415,7 @@ public class Api {
 					int a = amountDao.updataOrder(orderId.toString(), orderStatus.toString(), approval.toString(), comment.toString());
 					if (a > 0 && a < 2) {
 						UserFund userFund = userInfoServiceImpl.findUserFundByAccount(amount.getUserId());
-						Result addAmountAdd = amountUtil.addQuotaAmount(userFund, amount.getAmount());
+						Result addAmountAdd = amountPublic.addQuotaAmount(userFund, amount.getAmount());
 						if (addAmountAdd.isSuccess()) {
 							Result addAmount = amountRunUtil.addQuota(amount, clientIP);
 							if (addAmount.isSuccess()) {
@@ -543,7 +545,7 @@ public class Api {
 			BigDecimal balance = userFund.getAccountBalance();
 			BigDecimal deduct = new BigDecimal(amount.toString());
 			if (balance.compareTo(deduct) > -1) {//余额充足
-				Result deleteAmount2 = amountUtil.deleteFreeze(userFund, deduct);
+				Result deleteAmount2 = amountPublic.deleteFreeze(userFund, deduct);
 				if (deleteAmount2.isSuccess()) {
 					Result deleteAmount = amountRunUtil.deleteFreeze(alipayAmount, clientIP);
 					if (deleteAmount.isSuccess()) {
@@ -561,7 +563,7 @@ public class Api {
 			BigDecimal balance = userFund.getAccountBalance();
 			BigDecimal deduct = new BigDecimal(amount.toString());
 			if (balance.compareTo(deduct) > -1) {//余额充足
-				Result deleteAmount2 = amountUtil.deleteAmount(userFund, deduct);
+				Result deleteAmount2 = amountPublic.deleteAmount(userFund, deduct);
 				if (deleteAmount2.isSuccess()) {
 					Result deleteAmount = amountRunUtil.deleteAmount(alipayAmount, clientIP);
 					if (deleteAmount.isSuccess()) {
@@ -579,7 +581,7 @@ public class Api {
 			BigDecimal balance = userFund.getQuota();
 			BigDecimal deduct = new BigDecimal(amount.toString());
 			if (balance.compareTo(deduct) > -1) {//余额充足
-				Result deleteAmount2 = amountUtil.deleteQuotaAmount(userFund, deduct);
+				Result deleteAmount2 = amountPublic.deleteQuotaAmount(userFund, deduct);
 				if (deleteAmount2.isSuccess()) {
 					Result deleteAmount = amountRunUtil.deleteQuota(alipayAmount, clientIP);
 					if (deleteAmount.isSuccess()) {

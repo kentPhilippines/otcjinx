@@ -240,8 +240,8 @@ public class DealAppApi extends PayOrderService {
         UserRate userRate = null;
         ChannelFee channelFee = null;
         try {
-            userRate = accountApiServiceImpl.findUserRateByUserId(mapToBean.getAppId(), passcode);
-            channelFee = channelFeeDao.findImpl(userRate.getChannelId(), userRate.getPayTypr());
+            userRate = accountApiServiceImpl.findUserRateByUserId(mapToBean.getAppId(), passcode, mapToBean.getAmount());
+			channelFee = channelFeeDao.findImpl(userRate.getChannelId(), userRate.getPayTypr());
         } catch (Exception e) {
 			exceptionOrderServiceImpl.addDealOrder(mapToBean,"用户报错：当前通道编码有误，产品类型设置重复；处理方法：当前配置用户产品的时候配置用户产品重复",clientIP);
             log.info("【当前通道编码设置有误，产品类型设置重复：" + e.getMessage() + "】");
@@ -249,19 +249,19 @@ public class DealAppApi extends PayOrderService {
         }
         if (ObjectUtil.isNull(channelFee)) {
             log.info("【通道实体不存在，当前商户订单号：" + mapToBean.getOrderId() + "】");
-            log.info("【通道实体不存在，费率配置错误】");
-			exceptionOrderServiceImpl.addDealOrder(mapToBean,"用户报错：通道实体不存在；处理方法：渠道费率未设置",clientIP);
+			log.info("【通道实体不存在，费率配置错误】");
+			exceptionOrderServiceImpl.addDealOrder(mapToBean, "用户报错：通道实体不存在；处理方法：渠道费率未设置", clientIP);
 			return Result.buildFailMessage("通道实体不存在，费率配置错误");
-        }
-        DealOrderApp orderApp = orderAppServiceImpl.findOrderByApp(mapToBean.getAppId(), mapToBean.getOrderId());
-        if (ObjectUtil.isNotNull(orderApp)) {
-            log.info("【当前商户订单号重复：" + mapToBean.getOrderId() + "】");
-			exceptionOrderServiceImpl.addDealOrder(mapToBean,"用户报错：商户订单号重复；处理方法：提醒用户换一个订单号提交支付请求",clientIP);
+		}
+		DealOrderApp orderApp = orderAppServiceImpl.findOrderByApp(mapToBean.getAppId(), mapToBean.getOrderId());
+		if (ObjectUtil.isNotNull(orderApp)) {
+			log.info("【当前商户订单号重复：" + mapToBean.getOrderId() + "】");
+			exceptionOrderServiceImpl.addDealOrder(mapToBean, "用户报错：商户订单号重复；处理方法：提醒用户换一个订单号提交支付请求", clientIP);
 			return Result.buildFailMessage("商户订单号重复");
-        }
-	    DealOrderApp dealBean = createDealAppOrder(mapToBean);
-	    if(ObjectUtil.isNull(dealBean)){
-			exceptionOrderServiceImpl.addDealOrder(mapToBean,"用户报错：交易预订单生成出错；处理方法：让商户重新发起支付提交请求，或联系技术人员处理",clientIP);
+		}
+		DealOrderApp dealBean = createDealAppOrder(mapToBean, userRate);
+		if (ObjectUtil.isNull(dealBean)) {
+			exceptionOrderServiceImpl.addDealOrder(mapToBean, "用户报错：交易预订单生成出错；处理方法：让商户重新发起支付提交请求，或联系技术人员处理", clientIP);
 			return Result.buildFailMessage("交易预订单生成出错");
 		}
 		Result deal = null;
@@ -376,28 +376,28 @@ public class DealAppApi extends PayOrderService {
 	    witb.setNotify(wit.getNotifyurl());
 	    witb.setRetain2(wit.getIp());//代付ip
 	    witb.setAppOrderId(wit.getApporderid());
-	    witb.setRetain1(type);
-	    witb.setWitType(userRate.getPayTypr());//代付类型
-	    witb.setApply(wit.getApply());
-	    witb.setBankcode(wit.getBankcode());
-	    witb.setWitChannel(channelFee.getChannelId());
-	    boolean flag = withdrawServiceImpl.addOrder(witb);
-	    if(flag)
-	      return witb;
-	    return null;
-	  }
-	  DealOrderApp createDealAppOrder(DealBean dealBean){
-	    DealOrderApp dealApp = new DealOrderApp ();
-	    dealApp.setAppOrderId(dealBean.getOrderId());
-	    dealApp.setOrderId(Number.getAppOreder());
-	    dealApp.setNotify(dealBean.getNotifyUrl());
-	    dealApp.setOrderAmount(new BigDecimal(dealBean.getAmount()));
-	    String userId = dealBean.getAppId();
-	    String passcode = dealBean.getPassCode();
-	    UserRate userRate = accountApiServiceImpl.findUserRateByUserId(userId, passcode);
-	    dealApp.setFeeId(userRate.getId());
-	    dealApp.setOrderAccount(userId);
-	    if(StrUtil.isNotBlank(dealBean.getIp()))
+		witb.setRetain1(type);
+		witb.setWitType(userRate.getPayTypr());//代付类型
+		witb.setApply(wit.getApply());
+		witb.setBankcode(wit.getBankcode());
+		witb.setWitChannel(channelFee.getChannelId());
+		boolean flag = withdrawServiceImpl.addOrder(witb);
+		if (flag)
+			return witb;
+		return null;
+	}
+
+	DealOrderApp createDealAppOrder(DealBean dealBean, UserRate userRate) {
+		DealOrderApp dealApp = new DealOrderApp();
+		dealApp.setAppOrderId(dealBean.getOrderId());
+		dealApp.setOrderId(Number.getAppOreder());
+		dealApp.setNotify(dealBean.getNotifyUrl());
+		dealApp.setOrderAmount(new BigDecimal(dealBean.getAmount()));
+		String userId = dealBean.getAppId();
+		String passcode = dealBean.getPassCode();
+		dealApp.setFeeId(userRate.getId());
+		dealApp.setOrderAccount(userId);
+		if (StrUtil.isNotBlank(dealBean.getIp()))
 	      dealApp.setOrderIp(dealBean.getIp());
 	    dealApp.setBack(dealBean.getPageUrl());
 	    dealApp.setOrderStatus(Common.Order.DealOrder.ORDER_STATUS_DISPOSE.toString());

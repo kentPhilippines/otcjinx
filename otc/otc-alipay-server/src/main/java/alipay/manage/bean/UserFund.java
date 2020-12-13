@@ -19,11 +19,13 @@ public class UserFund implements Serializable{
     private BigDecimal accountBalance;        //可取现账户金额【码商账户余额=冻结金额+现金账户+充值点数】
     private BigDecimal quota;                //授权额度
     private BigDecimal sumDealAmount;        //累计交易额
-    private BigDecimal sumRechargeAmount;	//累计充值金额【充值成功时统计记录】
+    private BigDecimal sumWitAmount;        //累计交易额
+    private BigDecimal sumRechargeAmount;    //累计充值金额【充值成功时统计记录】
     private BigDecimal sumProfit;			//累计利润金额
     private BigDecimal sumAgentProfit;		//累计代理商利润【如果当前账户为商户则该数据为0】
     private Integer sumOrderCount;			//累计接单笔数
-    private BigDecimal todayDealAmount;		//当日接单金额
+    private BigDecimal todayDealAmount;        //当日接单金额
+    private BigDecimal todayWitAmount;        //当日接单金额
     private BigDecimal todayProfit;            //当日接单利润【代理利润+接单利润=当日利润】
     private Integer todayOrderCount;        //当日接单笔数
     private BigDecimal todayAgentProfit;    //当日代理商利润【如果当前账户为商户则该数据为0】
@@ -213,6 +215,22 @@ public class UserFund implements Serializable{
 
     public Integer getStatus() {
         return status;
+    }
+
+    public BigDecimal getSumWitAmount() {
+        return sumWitAmount;
+    }
+
+    public void setSumWitAmount(BigDecimal sumWitAmount) {
+        this.sumWitAmount = sumWitAmount;
+    }
+
+    public BigDecimal getTodayWitAmount() {
+        return todayWitAmount;
+    }
+
+    public void setTodayWitAmount(BigDecimal todayWitAmount) {
+        this.todayWitAmount = todayWitAmount;
     }
 
     public void setStatus(Integer status) {

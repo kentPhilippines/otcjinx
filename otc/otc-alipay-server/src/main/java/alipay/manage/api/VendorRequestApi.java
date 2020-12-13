@@ -88,7 +88,7 @@ public class VendorRequestApi {
         //后期优化从缓存读取数据
         UserRate userRate = null;
         try {
-            userRate = accountApiServiceImpl.findUserRateByUserId(userId, passCode);
+            userRate = accountApiServiceImpl.findUserRateByUserId(userId, passCode, paramMap.get("amount").toString());
         } catch (Exception e) {
             ThreadUtil.execute(()->{
                 exceptionOrderServiceImpl.addDealEx(
