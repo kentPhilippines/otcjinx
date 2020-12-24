@@ -51,8 +51,6 @@ public class DealApi extends NotfiyChannel {
 	static Lock lock = new ReentrantLock();
 	private static final String tinyurl =  "http://tinyurl.com/api-create.php";
 	private static final Log log = LogFactory.get();
-
-
 	@RequestMapping("/alipayScan/{param:.+}")
 	public String alipayScan(@PathVariable String param,HttpServletRequest request) {
 		log.info("【请求交易的终端用户交易请求参数为："+param+"】");

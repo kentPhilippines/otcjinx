@@ -311,7 +311,19 @@ public class VendorRequestApi {
             });
             return Result.buildFailMessage("当前代付最低金额为300");
         }
-
+        BigDecimal higMoney = new BigDecimal("49999");
+        if (!(higMoney.compareTo(new BigDecimal(amount)) > -1)) {
+            log.info("【当前代付最高金额为50000】");
+            ThreadUtil.execute(() -> {
+                exceptionOrderServiceImpl.addWitEx(
+                        userId,
+                        paramMap.get("amount").toString(),
+                        "商户相应提示：当前代付最高金额为50000；" +
+                                "处理方法：金额限制为300-49999",
+                        HttpUtil.getClientIP(request), paramMap.get("apporderid").toString());
+            });
+            return Result.buildFailMessage("当前代付最低金额为300");
+        }
         if (checkUtils.isNumber(amount)) {
             log.info("【代付金额不能存在小数】");
             ThreadUtil.execute(() -> {

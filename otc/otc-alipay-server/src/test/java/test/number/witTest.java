@@ -20,7 +20,7 @@ import java.util.Map;
 public class witTest {
 	public static void main(String[] args) {
 
-		//new witTest().deal();
+		new witTest().deal();
 		String userid = "facai123";
 		String key = "52927A864A704AE384E4E167A9772CEB";//交易密钥
 		String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCZVMSZHduYMj+KCPhsGR+r/KsRdNlsOKav/aJ+Bo3aGDW7oTnRLs9NABQHrIiXf666AhzFLK6sAeplFCa16caUriZGE+hnJPVUYMuO73/Zq0QTTyCRVUmxF+i98Rqi2cJFBeTfK46RDAZojmtzD8d+j1/FzQ38cZT7FB3/XjsrewIDAQAB";
@@ -162,7 +162,7 @@ public class witTest {
 		postMap.put("cipherText", publicEncrypt);
 		postMap.put("userId", userid);
 		System.out.println("请求参数：" + postMap.toString());
-		String post = HttpUtil.post("http://127.0.0.1:5055/api-alipay/deal/pay", postMap);
+		String post = HttpUtil.post("http://starpay168.com:5055/api-alipay/deal/pay", postMap);
 		System.out.println("相应结果集：" + post);
 
 	}

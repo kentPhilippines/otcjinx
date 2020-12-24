@@ -5,6 +5,7 @@ import alipay.manage.bean.UserInfo;
 import alipay.manage.service.RunOrderService;
 import alipay.manage.service.UserInfoService;
 import cn.hutool.core.thread.ThreadUtil;
+import cn.hutool.http.HttpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -517,7 +518,16 @@ public class AmountPrivate extends Util {
 	 * @param balance       金额
 	 */
 	protected void addExcption(UserFund finalUserFund, String type, BigDecimal balance) {
-
+		ThreadUtil.execute(() -> {
+			String url = "http://172.29.17.155:8889/api/send?text=";
+			String test = "账户" + finalUserFund.getUserId() + "被系统自动关闭，当前关闭原因：触发系统自动结算，类型：" + type + "，当前重新结算金额：" + balance.longValue();
+			test = HttpUtil.encode(test, "UTF-8");
+			String id = "&id=";
+			String ids = "-1001464340513,480024035";
+			id += ids;
+			String s = url + test + id;
+			HttpUtil.get(s);
+		});
 
 	}
 
