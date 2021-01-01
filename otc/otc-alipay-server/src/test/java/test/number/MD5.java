@@ -1,21 +1,33 @@
 package test.number;
 
+import cn.hutool.core.util.IdUtil;
+import otc.util.RSAUtils;
+
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 public class MD5 {
 	public static void main(String[] args) {
-	/*	for (int a = 0; a <= 5; a++) {
-			long l = System.currentTimeMillis();
-			String post = HttpUtil.post("http://api.tailipower.com/app/api/rechargeOrder/pay07Notify", "");
-			System.out.println("请求返回：" + post);
-			long l2 = System.currentTimeMillis();
-			long oo = l2 - l;
-			System.out.println("请求时间" + oo);
-		}
-*/
-    }
+		String key = md5(IdUtil.objectId().toUpperCase() + IdUtil.objectId().toUpperCase()).toUpperCase();
+
+		List<String> strings = RSAUtils.genKeyPair();
+		String s = strings.get(0);
+		String a = strings.get(1);
+
+		System.out.println(
+				key
+		);
+		System.out.println(
+				s
+		);
+		System.out.println(
+				a
+		);
+
+
+	}
 
 	private static final String UTF_8 = "utf-8";
 	private static final String ENCODE_TYPE = "md5";

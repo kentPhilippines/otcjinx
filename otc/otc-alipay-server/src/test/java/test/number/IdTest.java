@@ -1,13 +1,12 @@
 package test.number;
 
+import cn.hutool.core.util.NumberUtil;
+
 public class IdTest {
-	public static void main(String[] args) {
+    public static void main(String[] args) {
 
-        int a = 100;
-        while (a > 20) {
-            a--;
-        }
+        double sub = NumberUtil.sub(5.5, 2);
 
-        System.out.println("a = " + a);
+        System.out.println(sub);
     }
 }

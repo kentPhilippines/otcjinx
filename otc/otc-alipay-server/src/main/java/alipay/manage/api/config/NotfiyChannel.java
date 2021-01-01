@@ -12,6 +12,7 @@ import alipay.manage.util.NotifyUtil;
 import alipay.manage.util.OrderUtil;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
@@ -44,7 +45,6 @@ public abstract class NotfiyChannel {
     @Autowired private RedisLockUtil redisLockUtil;
 
     public Result witNotfy(String orderId, String ip) {
-        String lock = this.getClass().getName() + WIT_LOCK + ip;
         log.info("【进入代付回调抽象类，当前代付成功订单号：" + orderId + "】");
         Withdraw wit = withdrawServiceImpl.findOrderId(orderId);
         if (!wit.getStatus().toString().equals(Common.Order.Wit.ORDER_STATUS_YU)) {
@@ -52,7 +52,6 @@ public abstract class NotfiyChannel {
             return Result.buildFailMessage("当前代付回调重复");
         }
         wit.setComment("代付成功");
-        redisLockUtil.redisLock(lock);
         Result withrawOrderSu = orderUtilImpl.withrawOrderSu1(wit);
         if (withrawOrderSu.isSuccess()) {
             ThreadUtil.execute(() -> {
@@ -65,7 +64,6 @@ public abstract class NotfiyChannel {
             orderUtilImpl.channelWitSu(orderId, wit, ip, userFund);
         });
         Result result = orderUtilImpl.agentDpayChannel(wit, ip,true);
-        redisLockUtil.unLock(lock);
         return withrawOrderSu;
     }
 
@@ -82,7 +80,6 @@ public abstract class NotfiyChannel {
     }
 
     public Result dealpayNotfiy(String orderId, String ip, String msg) {
-        String redislock = this.getClass().getName() + DEAL_LOCK + ip;
         log.info("【进入支付成功回调处理类：" + orderId + "】");
         DealOrder order = orderServiceImpl.findOrderByOrderId(orderId);
         if (ObjectUtil.isNull(order)) {
@@ -91,7 +88,6 @@ public abstract class NotfiyChannel {
         }
         lock.lock();
         try {
-            redisLockUtil.redisLock(redislock);
             Result dealAmount = orderUtilImpl.updataDealOrderSu(order.getOrderId(), msg, ip, false);
             if (dealAmount.isSuccess()) {
                 log.info("【订单修改成功，向下游发送回调：" + orderId + "】");
@@ -101,7 +97,6 @@ public abstract class NotfiyChannel {
                 return Result.buildSuccessMessage("订单修改成功");
             }
         } finally {
-            redisLockUtil.unLock(redislock);
             lock.unlock();
         }
         return Result.buildFail();
@@ -154,6 +149,18 @@ public abstract class NotfiyChannel {
         DealOrder orderInfo = orderServiceImpl.findOrderByOrderId(orderId);
         String orderQrUser = orderInfo.getOrderQrUser();
         UserInfo userInfoByUserId = userInfoServiceImpl.findUserInfoByUserId(orderQrUser);
+        return userInfoByUserId.getPayPasword();
+    }
+
+    protected String getDPAyChannelKey(String orderId) {
+        Withdraw wit = withdrawServiceImpl.findOrderId(orderId);
+        String channel = "";
+        if (StrUtil.isNotBlank(wit.getChennelId())) {//支持运营手动推送出款
+            channel = wit.getChennelId();
+        } else {
+            channel = wit.getWitChannel();
+        }
+        UserInfo userInfoByUserId = userInfoServiceImpl.findUserInfoByUserId(channel);
         return userInfoByUserId.getPayPasword();
     }
 }
