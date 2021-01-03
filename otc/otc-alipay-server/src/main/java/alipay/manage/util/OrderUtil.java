@@ -260,14 +260,17 @@ public class OrderUtil {
 		if ("3".equals(user.getUserType().toString())) {//渠道账户结算
 			log.info("【进入渠道账户结算，当前渠道：" + user.getUserId() + "】");
 			userFund.setUserId(user.getUserId());
-			Result deleteDeal = amountPublic.deleteDeal(userFund, order.getDealAmount());//扣除交易点数账户变动
+			Result deleteDeal = amountPublic.deleteDeal(userFund, order.getDealAmount(), order.getOrderId());//扣除交易点数账户变动
 			if (!deleteDeal.isSuccess())
 				return deleteDeal;
 			Result deleteRechangerNumber = amountRunUtil.deleteRechangerNumber(order, ip, flag);//扣除交易点数 流水生成
 			if (!deleteRechangerNumber.isSuccess())
 				return deleteRechangerNumber;
+
 			log.info("【金额修改完毕，流水生成成功】");
 			return Result.buildSuccessResult();
+
+
 		}
 		if(true) {//顶代结算模式
 			String findAgent = correlationServiceImpl.findAgent(order.getOrderQrUser());
@@ -278,7 +281,7 @@ public class OrderUtil {
 			 * 3,单笔交易分润汇入普通码商账号
 			 */
 			userFund.setUserId(userId.getUserId());
-			Result deleteDeal = amountPublic.deleteDeal(userFund, order.getDealAmount());//扣除交易点数账户变动
+			Result deleteDeal = amountPublic.deleteDeal(userFund, order.getDealAmount(), order.getOrderId());//扣除交易点数账户变动
 			if (!deleteDeal.isSuccess())
 				return deleteDeal;
 			Result deleteRechangerNumber = amountRunUtil.deleteRechangerNumber(order, ip, flag);//扣除交易点数 流水生成
@@ -294,7 +297,7 @@ public class OrderUtil {
 			//		userFund.setUserId(userOrder.getUserId());
 
 			BigDecimal multiply = new BigDecimal("0");
-			Result addDeal = amountPublic.addDeal(userFund, multiply, dealAmount);
+			Result addDeal = amountPublic.addDeal(userFund, multiply, dealAmount, order.getOrderId());
 			if (!addDeal.isSuccess())
 				return addDeal;
 			Result addDealAmount = amountRunUtil.addDealAmount(order, ip, flag);
@@ -305,7 +308,7 @@ public class OrderUtil {
 
 
 		} else {//正常结算模式
-			Result deleteDeal = amountPublic.deleteDeal(userFund, order.getDealAmount());//扣除交易点数账户变动
+			Result deleteDeal = amountPublic.deleteDeal(userFund, order.getDealAmount(), order.getOrderId());//扣除交易点数账户变动
 			if (!deleteDeal.isSuccess())
 				return deleteDeal;
 			Result deleteRechangerNumber = amountRunUtil.deleteRechangerNumber(order, ip, flag);//扣除交易点数 流水生成
@@ -318,7 +321,7 @@ public class OrderUtil {
 			BigDecimal multiply = dealAmount.multiply(fee);
 			log.info("【当前分润费率：" + fee + "】");
 			log.info("【当前分润金额：" + multiply + "】");
-			Result addDeal = amountPublic.addDeal(userFund, multiply, dealAmount);
+			Result addDeal = amountPublic.addDeal(userFund, multiply, dealAmount, order.getOrderId());
 			if (!addDeal.isSuccess())
 				return addDeal;
 			Result addDealAmount = amountRunUtil.addDealAmount(order, ip, flag);
@@ -343,7 +346,7 @@ public class OrderUtil {
 			return Result.buildFailMessage("订单状态修改失败");
 		UserFund userFund = new UserFund();
 		userFund.setUserId(rechaege.getUserId());
-		Result addAmounRecharge = amountPublic.addAmounRecharge(userFund, rechaege.getAmount());
+		Result addAmounRecharge = amountPublic.addAmounRecharge(userFund, rechaege.getAmount(), rechaege.getOrderId());
 		if (!addAmounRecharge.isSuccess())
 			return addAmounRecharge;
 		Result addAmount = amountRunUtil.addAmount(rechaege, rechaege.getRetain1(), flag);
@@ -484,13 +487,13 @@ public class OrderUtil {
 		Withdraw wit = withdrawDao.findWitOrder(orderId);
 		UserFund userFund = new UserFund();
 		userFund.setUserId(wit.getUserId());
-		Result withdraw = amountPublic.deleteWithdraw(userFund, wit.getAmount());
+		Result withdraw = amountPublic.deleteWithdraw(userFund, wit.getAmount(), wit.getOrderId());
 		if (!withdraw.isSuccess())
 			return withdraw;
 		Result deleteAmount = amountRunUtil.deleteAmount(wit, ip, flag);
 		if (!deleteAmount.isSuccess())
 			return deleteAmount;
-		Result withdraws = amountPublic.deleteWithdraw(userFund, wit.getFee());
+		Result withdraws = amountPublic.deleteWithdraw(userFund, wit.getFee(), wit.getOrderId());
 		if (!withdraws.isSuccess())
 			return withdraws;
 		Result deleteAmountFee = amountRunUtil.deleteAmountFee(wit, ip, flag);
@@ -519,7 +522,7 @@ public class OrderUtil {
 		Integer feeId = orderApp.getFeeId();
 		String appId = orderApp.getOrderAccount();
 		UserFund userFund = userInfoServiceImpl.findUserFundByAccount(appId);
-		Result addDealApp = amountPublic.addDealApp(userFund, orderApp.getOrderAmount());
+		Result addDealApp = amountPublic.addDealApp(userFund, orderApp.getOrderAmount(), orderApp.getOrderId());
 		if (!addDealApp.isSuccess())
 			return Result.buildFail();
 		Result addDealAmountApp = amountRunUtil.addDealAmountApp(orderApp, ip, flag);
@@ -529,7 +532,7 @@ public class OrderUtil {
 		BigDecimal fee = findFeeById.getFee();
 		BigDecimal multiply = orderApp.getOrderAmount().multiply(fee);
 		log.info("【当前商户结算费率：" + fee + "，当前商户交易金额：" + orderApp.getOrderAmount() + "，当前商户收取交易手续费：" + multiply + "】");
-		Result deleteDeal = amountPublic.deleteDeal(userFund, multiply);
+		Result deleteDeal = amountPublic.deleteDeal(userFund, multiply, orderApp.getOrderId());
 		if (!deleteDeal.isSuccess())
 			throw new OrderException("订单修改异常", null);
 		Result feeApp = amountRunUtil.deleteDealAmountFeeApp(orderApp, ip, flag, multiply);
@@ -584,7 +587,7 @@ public class OrderUtil {
 		BigDecimal multiply = amount.multiply(subtract);
 		log.info("【当前结算订单金额为：" + amount + "，当前结算代理分润为：" + multiply + "】");
 		log.info("【开始结算】");
-		Result addAmounProfit = amountPublic.addAmounProfit(userFund, multiply);
+		Result addAmounProfit = amountPublic.addAmounProfit(userFund, multiply, orderApp.getOrderId());
 		if (addAmounProfit.isSuccess()) {
 			Result addAppProfit = amountRunUtil.addAppProfit(orderApp, userFund.getUserId(), multiply, ip, flag);
 			if (addAppProfit.isSuccess()) {
@@ -626,13 +629,13 @@ public class OrderUtil {
 			  return Result.buildFailMessage("订单状态修改失败");
 		  UserFund userFund = new UserFund();
 		  userFund.setUserId(wit.getUserId());
-		  Result addAmountAdd = amountPublic.addAmountAdd(userFund, wit.getAmount());
+		  Result addAmountAdd = amountPublic.addAmountAdd(userFund, wit.getAmount(), wit.getOrderId());
 		  if (!addAmountAdd.isSuccess())
 			  return addAmountAdd;
 		  Result addAmountW = amountRunUtil.addAmountW(wit, ip);
 		  if (!addAmountW.isSuccess())
 			  return addAmountW;
-		  Result addFee = amountPublic.addAmountAdd(userFund, wit.getFee());
+		  Result addFee = amountPublic.addAmountAdd(userFund, wit.getFee(), wit.getOrderId());
 		  if (!addFee.isSuccess())
 			  return addFee;
 		  Result addAmountWFee = amountRunUtil.addAmountWFee(wit, ip);
@@ -671,13 +674,13 @@ public class OrderUtil {
 		witd.setUserId(userId);
 		UserFund userFund = new UserFund();
 		userFund.setUserId(wit.getUserId());
-		Result addAmountAdd = amountPublic.addAmountAdd(userFund, wit.getAmount());
+		Result addAmountAdd = amountPublic.addAmountAdd(userFund, wit.getAmount(), wit.getOrderId());
 		if (!addAmountAdd.isSuccess())
 			return addAmountAdd;
 		Result addAmountW = amountRunUtil.addAmountW(wit, ip);
 		if (!addAmountW.isSuccess())
 			return addAmountW;
-		Result result = amountPublic.addAmountAdd(userFund, wit.getFee());
+		Result result = amountPublic.addAmountAdd(userFund, wit.getFee(), wit.getOrderId());
 		if (!result.isSuccess())
 			return result;
 		Result result1 = amountRunUtil.addAmountWFee(wit, ip);
@@ -697,7 +700,7 @@ public class OrderUtil {
 	 */
 	public Result channelWitSu(String orderId, Withdraw wit, String ip, UserFund channel) {
 		log.info("【当前代付订单成功，代付订单号为：" + orderId + "，对代付渠道进行加款操作】");
-		Result addAmountAdd = amountPublic.addAmountAdd(channel, wit.getAmount());
+		Result addAmountAdd = amountPublic.addAmountAdd(channel, wit.getAmount(), wit.getOrderId());
 		if (addAmountAdd.isSuccess())
 			log.info("【当前代付渠道账户加款成功，代付订单号为：" + orderId + "，生成渠道加款流水】");
 		else
@@ -710,7 +713,7 @@ public class OrderUtil {
 		ChannelFee findChannelFee = channelFeeDao.findChannelFee(wit.getWitChannel(), wit.getWitType());
 		String channelDFee = findChannelFee.getChannelDFee();
 		log.info("【当前渠道代付手续费为：" + channelDFee + " 】");
-		Result add = amountPublic.addAmountAdd(channel, new BigDecimal(channelDFee));
+		Result add = amountPublic.addAmountAdd(channel, new BigDecimal(channelDFee), wit.getOrderId());
 		log.info("【渠道账户记录代付手续费为：" + channelDFee + " 】");
 		if (add.isSuccess())
 			log.info("【当前代付渠道账户取款手续费加款成功，代付订单号为：" + orderId + "，生成渠道加款手续费流水】");
@@ -799,7 +802,7 @@ public class OrderUtil {
 		log.info("【当前结算费率差为：" + subtract + "】");
 		log.info("【当前结算费率差为代理商分润：" + subtract + "】");//这个钱要加给代理商
 		log.info("【开始结算】");
-		Result addAmounProfit = amountPublic.addAmounProfit(userFund, subtract);
+		Result addAmounProfit = amountPublic.addAmounProfit(userFund, subtract, wit.getOrderId());
 		if (addAmounProfit.isSuccess())
 			amountRunUtil.addWitFee(userFund, subtract, wit, ip, flag);
 		if (StrUtil.isNotBlank(userInfo.getAgent()))
@@ -811,7 +814,7 @@ public class OrderUtil {
 	 Result channelWitEr(Withdraw wit,String userId) {
 		 UserFund userFund = new UserFund();
 		 userFund.setUserId(userId);
-		 Result result1 = amountPublic.addAmountAdd(userFund, wit.getActualAmount());
+		 Result result1 = amountPublic.addAmountAdd(userFund, wit.getActualAmount(), wit.getOrderId());
 		 if (!result1.isSuccess()) {
 			 log.info("【代付订单置为失败渠道账户加减款异常，请详细查看原因，当前代付订单号：" + wit.getOrderId() + "】");
 			 return result1;
@@ -824,7 +827,7 @@ public class OrderUtil {
 		 }
 		 ChannelFee findChannelFee = channelFeeDao.findChannelFee(userId, wit.getWitType());
 
-		 Result result = amountPublic.addAmountAdd(userFund, new BigDecimal(findChannelFee.getChannelDFee()));
+		 Result result = amountPublic.addAmountAdd(userFund, new BigDecimal(findChannelFee.getChannelDFee()), wit.getOrderId());
 		 if (!result.isSuccess()) {
 			 log.info("【代付订单置为失败渠道账户手续费加减款生成异常，请详细查看原因，当前代付订单号：" + wit.getOrderId() + "】");
 			 return result;

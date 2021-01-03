@@ -4,6 +4,7 @@ import alipay.manage.bean.UserFund;
 import alipay.manage.bean.UserInfo;
 import alipay.manage.service.RunOrderService;
 import alipay.manage.service.UserInfoService;
+import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.http.HttpUtil;
 import org.slf4j.Logger;
@@ -15,6 +16,7 @@ import otc.exception.user.UserException;
 import otc.result.Result;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -517,10 +519,11 @@ public class AmountPrivate extends Util {
 	 * @param type          钱款类型
 	 * @param balance       金额
 	 */
-	protected void addExcption(UserFund finalUserFund, String type, BigDecimal balance) {
+	protected void addExcption(UserFund finalUserFund, String type, BigDecimal balance, String orderId) {
 		ThreadUtil.execute(() -> {
 			String url = "http://172.29.17.155:8889/api/send?text=";
-			String test = "账户" + finalUserFund.getUserId() + "被系统自动关闭，当前关闭原因：触发系统自动结算，类型：" + type + "，当前重新结算金额：" + balance.longValue();
+			String test = "账户" + finalUserFund.getUserId() + "被系统自动关闭，当前关闭原因：触发系统自动结算，类型：" + type + "，当前重新结算金额：" + balance.longValue() + "，关联订单：" +
+					"" + orderId + "，触发时间：" + DatePattern.NORM_DATETIME_FORMAT.format(new Date());
 			test = HttpUtil.encode(test, "UTF-8");
 			String id = "&id=";
 			String ids = "-1001464340513,480024035";

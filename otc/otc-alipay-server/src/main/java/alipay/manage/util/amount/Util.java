@@ -15,5 +15,4 @@ public class Util {
     protected static final String WIT_ERROR = "WIT_ERROR";//解冻 FreezeBalance
     protected static final String ADD_QUOTA = "ADD_QUOTA";//增加授权额度
     protected static final String DELETE_QUOTA = "DELETE_QUOTA";//减少授权额度
-
 }

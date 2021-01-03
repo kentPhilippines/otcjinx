@@ -298,15 +298,15 @@ public class VendorRequestApi {
             });
             return Result.buildFailMessage("当前账户金额不足");
         }
-        BigDecimal money = new BigDecimal("299");
+        BigDecimal money = new BigDecimal(userRate.getRetain2());
         if (!(money.compareTo(new BigDecimal(amount)) == -1)) {
-            log.info("【当前代付最低金额为300】");
+            log.info("【当前代付最低金额为+" + userRate.getRetain2() + "】");
             ThreadUtil.execute(() -> {
                 exceptionOrderServiceImpl.addWitEx(
                         userId,
                         paramMap.get("amount").toString(),
-                        "商户相应提示：当前代付最低金额为300；" +
-                                "处理方法：金额限制为300",
+                        "商户相应提示：当前代付最低金额为；" + userRate.getRetain2() +
+                                "处理方法：金额限制为" + userRate.getRetain2(),
                         HttpUtil.getClientIP(request), paramMap.get("apporderid").toString());
             });
             return Result.buildFailMessage("当前代付最低金额为300");

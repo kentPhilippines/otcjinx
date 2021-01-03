@@ -33,7 +33,8 @@ public class AmountConfig extends Util {
      *
      * @return
      */
-    protected Result addAmountBalance(UserFund userFund1, final BigDecimal balance, final String addType, final BigDecimal dealAmount) {
+    protected Result addAmountBalance(UserFund userFund1, final BigDecimal balance,
+                                      final String addType, final BigDecimal dealAmount, String orderId) {
         lock.lock();
         try {
             boolean flag = true;
@@ -42,10 +43,9 @@ public class AmountConfig extends Util {
                 if (lockMsg != 1) {
                     log.info("【当前账户乐观锁发生作用，再次执行，当前账户：" + userFund1.getUserId() + "，金额："
                             + dealAmount + "，方法：addAmountBalance，类型：" + addType + "】");
-                    ThreadUtil.sleep(200 + lockMsg);
                     final UserFund finalUserFund = userFund1;
                     ThreadUtil.execute(() -> {
-                        amountPrivate.addExcption(finalUserFund, addType, balance);
+                        amountPrivate.addExcption(finalUserFund, addType, balance, orderId);
                     });
                 }
                 UserFund userFund = userInfoServiceImpl.findUserFundByAccount(userFund1.getUserId());
@@ -122,7 +122,7 @@ public class AmountConfig extends Util {
 
 
     @Transactional
-    protected Result deleteAmountBalance(UserFund userFund, final BigDecimal balance, final String addType) {
+    protected Result deleteAmountBalance(UserFund userFund, final BigDecimal balance, final String addType, String orderId) {
         lock.lock();
         try {
             boolean flag = true;
@@ -131,10 +131,9 @@ public class AmountConfig extends Util {
                 if (lockMsg != 1) {
                     log.info("【当前账户乐观锁发生作用，再次执行，当前账户：" + userFund.getUserId() + "，金额："
                             + balance + "，方法：addAmountBalance，类型：" + addType + "】");
-                    ThreadUtil.sleep(200 + lockMsg);
                     final UserFund finalUserFund = userFund;
                     ThreadUtil.execute(() -> {
-                        amountPrivate.addExcption(finalUserFund, addType, balance);
+                        amountPrivate.addExcption(finalUserFund, addType, balance, orderId);
                     });
                 }
                 userFund = userInfoServiceImpl.findUserFundByAccount(userFund.getUserId());
