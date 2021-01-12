@@ -67,6 +67,7 @@ public class SettingFile {
 
     /**
      * <p>根据key值获取value</p>
+     *
      * @param key
      * @return
      */

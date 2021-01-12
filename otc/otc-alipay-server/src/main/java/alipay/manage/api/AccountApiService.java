@@ -47,7 +47,6 @@ public interface AccountApiService {
 	 * @return
 	 */
 	Result editAccountPassword(UserInfo user);
-	Result addAmount(UserFund userFund);
 
 	/**
      * 查询商户的费率

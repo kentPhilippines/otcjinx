@@ -219,7 +219,7 @@ public class AmountRunUtil {
         BigDecimal subtract = fee2.subtract(fee);
         log.info("【当前费率差为：" + subtract + "】");
         BigDecimal multiply = amount.multiply(subtract);
-        Result addAmounProfit = amountPublic.addAmounProfit(userAccount, multiply);
+        Result addAmounProfit = amountPublic.addAmounProfit(userAccount, multiply, orderId);
         if (addAmounProfit.isSuccess())
             return Result.buildFailMessage("资金账户修改失败");
         log.info("【当前代理商：" + userId3 + "，结算分润为：" + multiply + "】");

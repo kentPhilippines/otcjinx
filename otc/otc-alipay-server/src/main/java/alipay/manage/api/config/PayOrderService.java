@@ -185,13 +185,13 @@ public abstract class PayOrderService implements PayService {
 	    try {
 			UserFund userFund = new UserFund();// userInfoServiceImpl.findUserFundByAccount(wit.getUserId());
 			userFund.setUserId(wit.getUserId());
-			Result deleteWithdraw = amountPublic.deleteWithdraw(userFund, wit.getActualAmount());
+			Result deleteWithdraw = amountPublic.deleteWithdraw(userFund, wit.getActualAmount(), wit.getOrderId());
 			if (!deleteWithdraw.isSuccess())
 				return Result.buildFailMessage("账户扣减失败,请联系技术人员处理");
 			Result deleteAmount = amountRunUtil.deleteAmount(wit, wit.getRetain2(), false);
 			if (!deleteAmount.isSuccess())
 				return Result.buildFailMessage("账户扣减失败,请联系技术人员处理");
-			Result deleteWithdraw2 = amountPublic.deleteWithdraw(userFund, wit.getFee());
+			Result deleteWithdraw2 = amountPublic.deleteWithdraw(userFund, wit.getFee(), wit.getOrderId());
 			if (!deleteWithdraw2.isSuccess())
 				return Result.buildFailMessage("账户扣减失败,请联系技术人员处理");
 			Result deleteAmountFee = amountRunUtil.deleteAmountFee(wit, wit.getRetain2(), false);

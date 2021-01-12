@@ -1,25 +1,25 @@
 package test.number;
 
-import alipay.manage.api.channel.util.yifu.YiFu02Util;
+import cn.hutool.http.HttpUtil;
 
-import java.math.BigDecimal;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class AmountTest {
-	public static void main(String[] args) {
-		Map<String,Object> yifuMap = new HashMap<>();
-		yifuMap.put("order_id", "C1596119675803817527");
-		yifuMap.put("user_id", "2u7rMduh");
-		yifuMap.put("amount", "100000");
-		yifuMap.put("transact_id", "aca047bcdebb68598f5f719b9e86f8e4");
-		yifuMap.put("real_amount", "100000");
-		yifuMap.put("pay_time", "2020-07-30 22:35:25");
-		yifuMap.put("status","1");//7693189d0ed57388f8ab71464a1e8f29
-		String param = YiFu02Util.createParam(yifuMap);
-		System.out.println(param);
-		String s = YiFu02Util.md5(param + "key=" + YiFu02Util.KEY);
-		System.out.println(s);
+	public static void main(String[] args) throws NoSuchAlgorithmException, KeyManagementException {
+		Map<String, Object> map = new HashMap<>();
+		map.put("url", "https://ht-tw.maitoo998.com/v6/callback/JinXingInfrom");
+		map.put("amount", 500.000000);
+		map.put("tradesno", "C1609745418207841706");
+		map.put("appid", "tt678");
+		map.put("sign", "8f95c19a305da165b87813e7a22c1aca");
+		map.put("statusdesc", "成功");
+		map.put("apporderid", "JX9745418117177892");
+		map.put("status", "2");
+		String post = HttpUtil.post("http://47.242.50.29/forword", map);
+		System.out.println(post);
 
 	}
 

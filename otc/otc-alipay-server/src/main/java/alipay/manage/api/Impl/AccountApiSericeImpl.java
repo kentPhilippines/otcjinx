@@ -46,8 +46,9 @@ public class AccountApiSericeImpl implements AccountApiService {
 
     @Override
     public Result addAccount(UserInfo user) {
-        if (ObjectUtil.isNull(user))
+        if (ObjectUtil.isNull(user)) {
             return Result.buildFailMessage("实体类为空，请检查传递方法是否正确");
+        }
         if (StrUtil.isBlank(user.getUserId())
                 || StrUtil.isBlank(user.getUserName())
                 || ObjectUtil.isNull(user.getUserType())
@@ -56,23 +57,27 @@ public class AccountApiSericeImpl implements AccountApiService {
             return Result.buildFailMessage("必传参数为空");
         }
         UserInfo user1 = userInfoDao.findUserId(user.getUserId(), user.getUserName());
-        if (ObjectUtil.isNotNull(user1))
+        if (ObjectUtil.isNotNull(user1)) {
             return Result.buildFailMessage("当前账户、当前用户名已经被占用，请重新选择");
+        }
         String salt = HashKit.randomSalt();
         Result password = HashKit.encodePassword(user.getUserId(), user.getPassword(), salt);
         Result payPasword = HashKit.encodePassword(user.getUserId(), user.getPayPasword(), salt);
-        if (!password.isSuccess())
+        if (!password.isSuccess()) {
             return Result.buildFailMessage("生成密钥失败");
-        if (!payPasword.isSuccess())
+        }
+        if (!payPasword.isSuccess()) {
             return Result.buildFailMessage("生成支付密钥失败");
+        }
         user.setPassword(password.getResult().toString());
         user.setPayPasword(payPasword.getResult().toString());
         user.setSalt(salt);
         user.setCreateTime(new Date());
         int insertSelective = userInfoDao.insertSelective(user);
         boolean addUserFund = addUserFund(user);
-        if (insertSelective > 0 && insertSelective < 2 && addUserFund)
+        if (insertSelective > 0 && insertSelective < 2 && addUserFund) {
             return Result.buildSuccess();
+        }
         return Result.buildFailMessage("新增用户失败，联系技术人员处理");
     }
 
@@ -91,17 +96,21 @@ public class AccountApiSericeImpl implements AccountApiService {
     public Result login(UserInfo user) {
         UserInfoExample info = new UserInfoExample();
         Criteria criteria = info.createCriteria();
-        if (StrUtil.isNotBlank(user.getUserId()))
+        if (StrUtil.isNotBlank(user.getUserId())) {
             criteria.andUserIdEqualTo(user.getUserId());
+        }
         List<UserInfo> userList = userInfoDao.selectByExample(info);
-        if (userList.size() > 1)
+        if (userList.size() > 1) {
             return Result.buildFailMessage("当前用户错误，联系技术人员处理");
+        }
         UserInfo first = CollUtil.getFirst(userList);
         Result password = HashKit.encodePassword(user.getUserId(), user.getPassword(), first.getSalt());
-        if (!password.isSuccess())
-            return Result.buildFailMessage("当前用户错误，联系技术人员处理"); //password.getResult().toString()
-        if (first.getPassword().equals(password.getResult().toString()))
+        if (!password.isSuccess()) {
+            return Result.buildFailMessage("当前用户错误，联系技术人员处理");
+        } //password.getResult().toString()
+        if (first.getPassword().equals(password.getResult().toString())) {
             return Result.buildSuccess();
+        }
         return Result.buildFailMessage("密码错误，请检查!");
     }
 
@@ -177,22 +186,19 @@ public class AccountApiSericeImpl implements AccountApiService {
      */
     @Override
     public Result editAccountPassword(UserInfo user) {
-        if (StrUtil.isBlank(user.getUserId()) || StrUtil.isBlank(user.getPassword()) || StrUtil.isBlank(user.getNewPassword()))
+        if (StrUtil.isBlank(user.getUserId()) || StrUtil.isBlank(user.getPassword()) || StrUtil.isBlank(user.getNewPassword())) {
             return Result.buildSuccessMessage("必传参数未传，请核实修改");
+        }
         UserInfo userInfo = userInfoDao.findUserByUserId(user.getUserId());
         Result password = HashKit.encodePassword(userInfo.getUserId(), user.getPassword(), userInfo.getSalt());
-        if (!password.isSuccess() && userInfo.getPassword().equals(password.getResult().toString()))
+        if (!password.isSuccess() && userInfo.getPassword().equals(password.getResult().toString())) {
             return Result.buildFailMessage("密码错误，请重新出修改密码，或联系客服人处理");
+        }
         Result encodePassword = HashKit.encodePassword(userInfo.getUserId(), user.getNewPassword(), userInfo.getSalt());
-        if (!encodePassword.isSuccess())
+        if (!encodePassword.isSuccess()) {
             return Result.buildFailMessage("生成密钥失败，联系客服人员处理");
+        }
         return null;
-    }
-
-    @Override
-    public Result addAmount(UserFund userFund) {
-        log.info("【调用加款接口】");
-        return amountPublic.addAmounRecharge(userFund, userFund.getRechargeNumber());
     }
 
     /**
@@ -253,16 +259,17 @@ public class AccountApiSericeImpl implements AccountApiService {
             case "receiveOrderState"://接单状态
                 UserInfo userInfo = userInfoDao.findUserByUserId(userId);
                 UserStatusEnum userStatusEnum = UserStatusEnum.resolve(UserStatusEnum.CLOSE.getCode());
-                if (userStatusEnum.matches(userInfo.getSwitchs())){
+                if (userStatusEnum.matches(userInfo.getSwitchs())) {
                     return Result.buildFailMessage("此商户已被停用，无法操作");
                 }
                 i = userInfoDao.updateMerchantStatusByUserId(userId, paramKey, paramValue);
                 break;
         }
-        if (i == 1)//成功
+        if (i == 1) {//成功
             return Result.buildSuccess();
-        else
+        } else {
             return Result.buildFailMessage("更新商户状态失败");
+        }
     }
 
 }

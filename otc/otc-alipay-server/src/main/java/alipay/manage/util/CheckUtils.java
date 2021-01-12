@@ -1,12 +1,10 @@
 package alipay.manage.util;
 
-import alipay.manage.api.AccountApiService;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import otc.common.SystemConstants;
 import otc.result.Result;
@@ -25,11 +23,10 @@ import java.util.Map;
 
 @Component
 public class CheckUtils {
-    Logger log = LoggerFactory.getLogger(CheckUtils.class);
-    @Autowired
-    AccountApiService accountApiServiceImpl;
+    static Logger log = LoggerFactory.getLogger(CheckUtils.class);
 
-    public Result requestVerify(HttpServletRequest request, Map<String, Object> paramMap, String key) {
+
+    public static Result requestVerify(HttpServletRequest request, Map<String, Object> paramMap, String key) {
         if (!checkParam(paramMap))
             return Result.buildFailMessage("必传参数为空");
         log.info("【访问URL：" + request.getRequestURL() + "】");
@@ -38,13 +35,13 @@ public class CheckUtils {
         if (!flag)
             return Result.buildFailMessage("字符编码错误");
         log.info("--------------【用户开始MD5验签】----------------");
-        boolean vSign = verifySign(paramMap,key);
+        boolean vSign = verifySign(paramMap, key);
         if (!vSign)
             return Result.buildFailMessage("签名验证失败");
         return Result.buildSuccess();
     }
 
-    private boolean witcheckParam(Map<String, Object> map) {
+    private static boolean witcheckParam(Map<String, Object> map) {
         String appid = (String) map.get("appid");
         String orderId = (String) map.get("apporderid");
         String ordertime = (String) map.get("ordertime");
@@ -74,7 +71,7 @@ public class CheckUtils {
      * @param request
      * @return
      */
-    public boolean verifyUrl(HttpServletRequest request) {
+    public static boolean verifyUrl(HttpServletRequest request) {
         log.info("访问URL：" + request.getRequestURL());
         log.info("请求参数字符编码: " + request.getCharacterEncoding());
         if (StrUtil.isBlank(request.getCharacterEncoding())) {
@@ -94,7 +91,7 @@ public class CheckUtils {
      * @param map
      * @return
      */
-    public boolean checkParam(Map<String, Object> map) {
+    public static boolean checkParam(Map<String, Object> map) {
         String appId = (String) map.get("appId");
         String orderId = (String) map.get("orderId");
         String notifyUrl = (String) map.get("notifyUrl");
@@ -116,7 +113,7 @@ public class CheckUtils {
     }
 
 
-    public Result requestWithdrawalVerify(HttpServletRequest request, Map<String, Object> paramMap, String key) {
+    public static Result requestWithdrawalVerify(HttpServletRequest request, Map<String, Object> paramMap, String key) {
         if (!witcheckParam(paramMap))
             return Result.buildFailMessage("必传参数为空");
         log.info("【访问URL：" + request.getRequestURL() + "】");
@@ -138,10 +135,10 @@ public class CheckUtils {
      * @param key
      * @return 验签是否通过
      */
-    public boolean verifySign(Map<String, Object> map, String key) {
+    public static boolean verifySign(Map<String, Object> map, String key) {
         String paramStr = MapUtil.createParam(map);
-        log.info("【验证签名前的参数为："+paramStr.toString()+"】");
-        String md5 = RSAUtils.md5(paramStr+key);
+        log.info("【验证签名前的参数为：" + paramStr.toString() + "】");
+        String md5 = RSAUtils.md5(paramStr + key);
         Object oldmd5 = map.get("sign");
         if (!oldmd5.toString().equals(md5)) {
             log.info("【当前用户验签不通过】");
@@ -152,19 +149,17 @@ public class CheckUtils {
         return true;
     }
 
-     public String getSign(Map<String, Object> map, String key) {
-    	 String paramStr = MapUtil.createParam(map);
-    	 log.info("【签名前的参数为："+paramStr.toString()+"】");
-    	 String md5 = RSAUtils.md5(paramStr+key);
-		return md5;
-     }
+    public static String getSign(Map<String, Object> map, String key) {
+        String paramStr = MapUtil.createParam(map);
+        log.info("【签名前的参数为：" + paramStr.toString() + "】");
+        String md5 = RSAUtils.md5(paramStr + key);
+        return md5;
+    }
  	private static final String UTF_8 = "utf-8";
  	private static final String ENCODE_TYPE = "md5";
 
 
-
-
-    /** 
+    /**
      * 判断时间是否在某个时间段内 一天时间
      *
      * @param date      需要判断的时间
@@ -173,7 +168,7 @@ public class CheckUtils {
      * @return boolean
      * @throws Exception exception
      */
-    public boolean verifyTimeZone(Date date, String beginTime, String endTime) {
+    public static boolean verifyTimeZone(Date date, String beginTime, String endTime) {
         DateFormat SDF = new SimpleDateFormat("HH:mm:ss");
         Calendar now = Calendar.getInstance();
         Calendar begin = Calendar.getInstance();

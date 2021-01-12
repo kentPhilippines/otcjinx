@@ -41,7 +41,6 @@ public abstract class NotfiyChannel {
     @Autowired private NotifyUtil notifyUtilImpl;
     @Autowired private OrderUtil orderUtilImpl;
     @Autowired private WithdrawService withdrawServiceImpl;
-    @Autowired private CheckUtils checkUtils;
     @Autowired private RedisLockUtil redisLockUtil;
 
     public Result witNotfy(String orderId, String ip) {
@@ -119,7 +118,7 @@ public abstract class NotfiyChannel {
         map.put("status", wit.getOrderStatus());//0 预下单    1处理中  2 成功  3失败
         map.put("amount", wit.getAmount());
         map.put("appid", wit.getUserId());
-        String sign = checkUtils.getSign(map, userInfo.getPayPasword());
+        String sign = CheckUtils.getSign(map, userInfo.getPayPasword());
         map.put("sign", sign);
         send(wit.getNotify(), orderId, map);
     }

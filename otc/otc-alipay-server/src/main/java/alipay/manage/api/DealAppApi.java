@@ -9,11 +9,12 @@ import alipay.manage.bean.util.Fund;
 import alipay.manage.bean.util.FundBean;
 import alipay.manage.bean.util.WithdrawalBean;
 import alipay.manage.mapper.ChannelFeeMapper;
-import alipay.manage.mapper.ProductMapper;
-import alipay.manage.service.*;
+import alipay.manage.service.ExceptionOrderService;
+import alipay.manage.service.OrderAppService;
+import alipay.manage.service.UserInfoService;
+import alipay.manage.service.WithdrawService;
 import alipay.manage.util.BankTypeUtil;
 import alipay.manage.util.CheckUtils;
-import alipay.manage.util.OrderUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
@@ -49,39 +50,38 @@ public class DealAppApi extends PayOrderService {
     @Autowired private AccountApiService accountApiServiceImpl;
     @Autowired private OrderAppService orderAppServiceImpl;
     @Autowired private WithdrawService withdrawServiceImpl;
-    @Autowired private OrderUtil orderUtil;
-    @Resource private ProductMapper productDao;
-    @Autowired private UserFundService userFundServiceImpl;
     @Autowired private UserInfoService userInfoServiceImpl;
-    @Autowired private CheckUtils checkUtils;
     @Resource private ChannelFeeMapper channelFeeDao;
 	@Autowired private ExceptionOrderService exceptionOrderServiceImpl;
     @RequestMapping("/findFund")
     public Result findFund(HttpServletRequest request) {
-        String appId = request.getParameter("appId");
-        String sign = request.getParameter("sign");
-        if (StrUtil.isBlank(appId) || StrUtil.isBlank(sign))
-            return Result.buildFailMessage("必传参数为空");
-        UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(appId);
-        if (ObjectUtil.isNull(userInfo))
-            return Result.buildFailMessage("商户不存在");
-		Map<String,Object> map = new ConcurrentHashMap<String,Object>();
+		String appId = request.getParameter("appId");
+		String sign = request.getParameter("sign");
+		if (StrUtil.isBlank(appId) || StrUtil.isBlank(sign)) {
+			return Result.buildFailMessage("必传参数为空");
+		}
+		UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(appId);
+		if (ObjectUtil.isNull(userInfo)) {
+			return Result.buildFailMessage("商户不存在");
+		}
+		Map<String, Object> map = new ConcurrentHashMap<String, Object>();
 		map.put("appId", appId);
 		map.put("sign", sign);
-		boolean verifySign = checkUtils.verifySign(map, userInfo.getPayPasword());
+		boolean verifySign = CheckUtils.verifySign(map, userInfo.getPayPasword());
 		map = null;
-		if(!verifySign)
+		if (!verifySign) {
 			return Result.buildFailMessage("签名错误");
+		}
 		UserFund fund = userInfoServiceImpl.findUserFundByAccount(appId);
-		if(ObjectUtil.isNull(fund)) {
-			log.info("【当前查询的商户号不存在，请核实，商户号为："+appId+"】");
+		if (ObjectUtil.isNull(fund)) {
+			log.info("【当前查询的商户号不存在，请核实，商户号为：" + appId + "】");
 			return Result.buildFailMessage("当前查询的订单不存在，请核实");
 		}
 		Map<String, Object> mapr = new ConcurrentHashMap<String, Object>();
 		mapr.put("userId", fund.getUserId());
 		mapr.put("userName", fund.getUserName());
 		mapr.put("balance", fund.getAccountBalance());
-		String sign2 = checkUtils.getSign(mapr, userInfo.getPayPasword());
+		String sign2 = CheckUtils.getSign(mapr, userInfo.getPayPasword());
 		userInfo = null;
 		mapr = null;
 		Fund fundInfo = new Fund();
@@ -97,29 +97,32 @@ public class DealAppApi extends PayOrderService {
 		String appOrderId = request.getParameter("appOrderId");
 		String type = request.getParameter("type");
 		String sign = request.getParameter("sign");
-		if(StrUtil.isBlank(type) ){
-			if(StrUtil.isBlank(appId)||StrUtil.isBlank(appOrderId)|| StrUtil.isBlank(sign) )
+		if(StrUtil.isBlank(type) ) {
+			if (StrUtil.isBlank(appId) || StrUtil.isBlank(appOrderId) || StrUtil.isBlank(sign))
 				return Result.buildFailMessage("必传参数为空");
 			UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(appId);
-			if(ObjectUtil.isNull(userInfo))
+			if (ObjectUtil.isNull(userInfo)) {
 				return Result.buildFailMessage("商户不存在");
-			Map<String,Object> map = new ConcurrentHashMap<String,Object>();
-			if(StrUtil.isBlank(type))
+			}
+			Map<String, Object> map = new ConcurrentHashMap<String, Object>();
+			if (StrUtil.isBlank(type)) {
 				type = null;
+			}
 			map.put("appId", appId);
 			map.put("appOrderId", appOrderId);
 			map.put("sign", sign);
-			boolean verifySign = checkUtils.verifySign(map, userInfo.getPayPasword());
+			boolean verifySign = CheckUtils.verifySign(map, userInfo.getPayPasword());
 			map = null;
-			if(!verifySign)
+			if (!verifySign) {
 				return Result.buildFailMessage("签名错误");
-			DealOrderApp orderApp = orderAppServiceImpl.findOrderByApp(appId,appOrderId);
-			Map<String,Object> mapr = new ConcurrentHashMap<String,Object>();
+			}
+			DealOrderApp orderApp = orderAppServiceImpl.findOrderByApp(appId, appOrderId);
+			Map<String, Object> mapr = new ConcurrentHashMap<String, Object>();
 			mapr.put("appId", appId);
 			mapr.put("appOrderId", orderApp.getAppOrderId());
 			mapr.put("amount", orderApp.getOrderAmount());
 			mapr.put("orderStatus", orderApp.getOrderStatus());
-			String sign2 = checkUtils.getSign(mapr, userInfo.getPayPasword());
+			String sign2 = CheckUtils.getSign(mapr, userInfo.getPayPasword());
 			userInfo = null;
 			mapr = null;
 			FundBean fund = new FundBean();
@@ -129,30 +132,33 @@ public class DealAppApi extends PayOrderService {
 			fund.setSign(sign2);
 			return Result.buildSuccessResult(fund);
 		}
-		if("pay".equals(type) ){
-			if(StrUtil.isBlank(appId)||StrUtil.isBlank(appOrderId)|| StrUtil.isBlank(sign) )
+		if("pay".equals(type) ) {
+			if (StrUtil.isBlank(appId) || StrUtil.isBlank(appOrderId) || StrUtil.isBlank(sign))
 				return Result.buildFailMessage("必传参数为空");
 			UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(appId);
-			if(ObjectUtil.isNull(userInfo))
+			if (ObjectUtil.isNull(userInfo)) {
 				return Result.buildFailMessage("商户不存在");
-			Map<String,Object> map = new ConcurrentHashMap<String,Object>();
-			if(StrUtil.isBlank(type))
+			}
+			Map<String, Object> map = new ConcurrentHashMap<String, Object>();
+			if (StrUtil.isBlank(type)) {
 				type = null;
+			}
 			map.put("appId", appId);
 			map.put("appOrderId", appOrderId);
 			map.put("type", type);
 			map.put("sign", sign);
-			boolean verifySign = checkUtils.verifySign(map, userInfo.getPayPasword());
+			boolean verifySign = CheckUtils.verifySign(map, userInfo.getPayPasword());
 			map = null;
-			if(!verifySign)
+			if (!verifySign) {
 				return Result.buildFailMessage("签名错误");
-			DealOrderApp orderApp = orderAppServiceImpl.findOrderByApp(appId,appOrderId);
-			Map<String,Object> mapr = new ConcurrentHashMap<String,Object>();
+			}
+			DealOrderApp orderApp = orderAppServiceImpl.findOrderByApp(appId, appOrderId);
+			Map<String, Object> mapr = new ConcurrentHashMap<String, Object>();
 			mapr.put("appId", appId);
 			mapr.put("appOrderId", orderApp.getAppOrderId());
 			mapr.put("amount", orderApp.getOrderAmount());
 			mapr.put("orderStatus", orderApp.getOrderStatus());
-			String sign2 = checkUtils.getSign(mapr, userInfo.getPayPasword());
+			String sign2 = CheckUtils.getSign(mapr, userInfo.getPayPasword());
 			userInfo = null;
 			mapr = null;
 			FundBean fund = new FundBean();
@@ -163,43 +169,47 @@ public class DealAppApi extends PayOrderService {
 			return Result.buildSuccessResult(fund);
 		}
 		if("wit".equals(type)) {
-			if(StrUtil.isBlank(appId)||StrUtil.isBlank(appOrderId)|| StrUtil.isBlank(sign) )
+			if (StrUtil.isBlank(appId) || StrUtil.isBlank(appOrderId) || StrUtil.isBlank(sign))
 				return Result.buildFailMessage("必传参数为空");
 			UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(appId);
-			if(ObjectUtil.isNull(userInfo))
+			if (ObjectUtil.isNull(userInfo)) {
 				return Result.buildFailMessage("商户不存在");
-			Map<String,Object> map = new ConcurrentHashMap<String,Object>();
-			if(StrUtil.isBlank(type))
+			}
+			Map<String, Object> map = new ConcurrentHashMap<String, Object>();
+			if (StrUtil.isBlank(type)) {
 				type = null;
+			}
 			map.put("appId", appId);
 			map.put("appOrderId", appOrderId);
 			map.put("type", type);
 			map.put("sign", sign);
-			boolean verifySign = checkUtils.verifySign(map, userInfo.getPayPasword());
+			boolean verifySign = CheckUtils.verifySign(map, userInfo.getPayPasword());
 			map = null;
-			if(!verifySign)
+			if (!verifySign) {
 				return Result.buildFailMessage("签名错误");
-			log.info("【当前进入代付订单查询，订单号为："+appOrderId+"】");
-			Withdraw witb = withdrawServiceImpl.findOrderByApp(appId,appOrderId);
-			if(ObjectUtil.isNull(witb)) {
-				log.info("【当前查询的订单不存在，请核实，订单号为："+appOrderId+"】");
+			}
+			log.info("【当前进入代付订单查询，订单号为：" + appOrderId + "】");
+			Withdraw witb = withdrawServiceImpl.findOrderByApp(appId, appOrderId);
+			if (ObjectUtil.isNull(witb)) {
+				log.info("【当前查询的订单不存在，请核实，订单号为：" + appOrderId + "】");
 				return Result.buildFailMessage("当前查询的订单不存在，请核实");
 			}
 			String clientIP = HttpUtil.getClientIP(request);
-			if (StrUtil.isBlank(clientIP))
+			if (StrUtil.isBlank(clientIP)) {
 				return Result.buildFailMessage("未获取到代付查询ip");
-			Map<String,Object> mapr = new ConcurrentHashMap<String,Object>();
-			String commect = StrUtil.isBlank(witb.getComment())?"代付订单":witb.getComment();
+			}
+			Map<String, Object> mapr = new ConcurrentHashMap<String, Object>();
+			String commect = StrUtil.isBlank(witb.getComment()) ? "代付订单" : witb.getComment();
 			mapr.put("appId", appId);
 			mapr.put("appOrderId", witb.getAppOrderId());
 			mapr.put("amount", witb.getAmount());
 			mapr.put("orderStatus", witb.getOrderStatus());
-			mapr.put("msg",commect);
-			String sign2 = checkUtils.getSign(mapr, userInfo.getPayPasword());
+			mapr.put("msg", commect);
+			String sign2 = CheckUtils.getSign(mapr, userInfo.getPayPasword());
 			userInfo = null;
 			mapr = null;
 			FundBean fund = new FundBean();
-			fund.setAmount( witb.getAmount().toString());
+			fund.setAmount(witb.getAmount().toString());
 			fund.setOrderId(witb.getAppOrderId());
 			fund.setOrderStatus(witb.getOrderStatus());
 			//fund.setMsg(commect);
@@ -227,25 +237,28 @@ public class DealAppApi extends PayOrderService {
 		}
 		Object result = pay.getResult();
 		DealBean mapToBean = MapUtil.mapToBean((Map<String, Object>) result, DealBean.class);
-		if (ObjectUtil.isNull(mapToBean))
+		if (ObjectUtil.isNull(mapToBean)) {
 			return Result.buildFailMessage("加密前格式错误，参数为空");
+		}
 		String clientIP = HttpUtil.getClientIP(request);
-        if (StrUtil.isNotBlank(clientIP))
-            mapToBean.setIp(clientIP);
-        log.info("【当前请求交易实体类：" + mapToBean.toString() + "】");
-        String passcode = mapToBean.getPassCode(); //通道支付编码
-        if (StrUtil.isBlank(passcode))
-            return Result.buildFailMessage("通道编码为空");
-        log.info("【当前通道编码：" + passcode + "】");
-        UserRate userRate = null;
-        ChannelFee channelFee = null;
-        try {
-            userRate = accountApiServiceImpl.findUserRateByUserId(mapToBean.getAppId(), passcode, mapToBean.getAmount());
+		if (StrUtil.isNotBlank(clientIP)) {
+			mapToBean.setIp(clientIP);
+		}
+		log.info("【当前请求交易实体类：" + mapToBean.toString() + "】");
+		String passcode = mapToBean.getPassCode(); //通道支付编码
+		if (StrUtil.isBlank(passcode)) {
+			return Result.buildFailMessage("通道编码为空");
+		}
+		log.info("【当前通道编码：" + passcode + "】");
+		UserRate userRate = null;
+		ChannelFee channelFee = null;
+		try {
+			userRate = accountApiServiceImpl.findUserRateByUserId(mapToBean.getAppId(), passcode, mapToBean.getAmount());
 			channelFee = channelFeeDao.findImpl(userRate.getChannelId(), userRate.getPayTypr());
-        } catch (Exception e) {
-			exceptionOrderServiceImpl.addDealOrder(mapToBean,"用户报错：当前通道编码有误，产品类型设置重复；处理方法：当前配置用户产品的时候配置用户产品重复",clientIP);
-            log.info("【当前通道编码设置有误，产品类型设置重复：" + e.getMessage() + "】");
-            return Result.buildFailMessage("当前通道编码设置有误，产品类型设置重复");
+		} catch (Exception e) {
+			exceptionOrderServiceImpl.addDealOrder(mapToBean, "用户报错：当前通道编码有误，产品类型设置重复；处理方法：当前配置用户产品的时候配置用户产品重复", clientIP);
+			log.info("【当前通道编码设置有误，产品类型设置重复：" + e.getMessage() + "】");
+			return Result.buildFailMessage("当前通道编码设置有误，产品类型设置重复");
         }
         if (ObjectUtil.isNull(channelFee)) {
             log.info("【通道实体不存在，当前商户订单号：" + mapToBean.getOrderId() + "】");
@@ -292,20 +305,22 @@ public class DealAppApi extends PayOrderService {
 		redisLockUtil.redisLock(lock);
 		String manage = request.getParameter("manage");
 		boolean flag = false;
-		if (StrUtil.isNotBlank(manage))
+		if (StrUtil.isNotBlank(manage)) {
 			flag = true;
+		}
 		Result withdrawal = vendorRequestApi.withdrawal(request, flag);
-		if (!withdrawal.isSuccess())
+		if (!withdrawal.isSuccess()) {
 			return withdrawal;
+		}
 		Object result = withdrawal.getResult();
 		WithdrawalBean wit = MapUtil.mapToBean((Map<String, Object>) result, WithdrawalBean.class);
 		wit.setIp(HttpUtil.getClientIP(request));
-        UserRate userRate = accountApiServiceImpl.findUserRateWitByUserId(wit.getAppid());
-        UserInfo userInfo = accountApiServiceImpl.findUserInfo(wit.getAppid());
-        String dpaytype = wit.getDpaytype();
-        ChannelFee channelFee = channelFeeDao.findImpl(userRate.getChannelId(), userRate.getPayTypr());
-        if (ObjectUtil.isNull(channelFee)) {
-            log.info("【通道实体不存在，费率配置错误】");
+		UserRate userRate = accountApiServiceImpl.findUserRateWitByUserId(wit.getAppid());
+		UserInfo userInfo = accountApiServiceImpl.findUserInfo(wit.getAppid());
+		String dpaytype = wit.getDpaytype();
+		ChannelFee channelFee = channelFeeDao.findImpl(userRate.getChannelId(), userRate.getPayTypr());
+		if (ObjectUtil.isNull(channelFee)) {
+			log.info("【通道实体不存在，费率配置错误】");
 			exceptionOrderServiceImpl.addWitOrder(wit, "用户报错：通道实体不存在，费率配置错误；处理方法：请检查商户提交的通道编码，反复确认", HttpUtil.getClientIP(request));
 			Result.buildFailMessage("通道实体不存在，费率配置错误");
 		}
@@ -324,8 +339,9 @@ public class DealAppApi extends PayOrderService {
 		}
 		Withdraw bean = createWit(wit, userRate, flag, channelFee);
 		Result deal = null;
-		if (ObjectUtil.isNull(bean))
+		if (ObjectUtil.isNull(bean)) {
 			return Result.buildFailMessage("代付订单生成失败");
+		}
 		try {
 			Integer autoWit = userInfo.getAutoWit();
 			if (1 == autoWit) {
@@ -343,7 +359,7 @@ public class DealAppApi extends PayOrderService {
 			}
 		} catch (Exception e) {
 			log.error("[代码执行时候出现错误]", e);
-			super.withdrawEr(bean, "系统异常，请联系技术人员处理", HttpUtil.getClientIP(request));
+			//		super.withdrawEr(bean, "系统异常，请联系技术人员处理", HttpUtil.getClientIP(request));
 			exceptionOrderServiceImpl.addWitOrder(wit, "用户报错：当前通道编码不存在；处理方法：提交技术人员处理，报错信息：" + e.getMessage(), HttpUtil.getClientIP(request));
 			log.info("【当前通道编码对于的实体类不存在】");
 			withdrawServiceImpl.updateWitError(bean.getOrderId());
@@ -357,33 +373,36 @@ public class DealAppApi extends PayOrderService {
 	    log.info("【当前转换参数 代付实体类为："+wit.toString()+"】");
 	    String type = "";
 	    String bankName = "";
-	    if(fla)type=Common.Order.Wit.WIT_TYPE_API;else type = Common.Order.Wit.WIT_TYPE_MANAGE;
-	    Withdraw witb = new Withdraw();
-	    witb.setUserId(wit.getAppid());
-	    witb.setAmount(new BigDecimal(wit.getAmount()));
-	    witb.setFee(userRate.getFee());
-	    witb.setActualAmount(new BigDecimal(wit.getAmount()));
-	    witb.setMobile(wit.getMobile());
-	    witb.setBankNo(wit.getAcctno());
-	    witb.setAccname(wit.getAcctname());
+		if (fla) type = Common.Order.Wit.WIT_TYPE_API;
+		else type = Common.Order.Wit.WIT_TYPE_MANAGE;
+		Withdraw witb = new Withdraw();
+		witb.setUserId(wit.getAppid());
+		witb.setAmount(new BigDecimal(wit.getAmount()));
+		witb.setFee(userRate.getFee());
+		witb.setActualAmount(new BigDecimal(wit.getAmount()));
+		witb.setMobile(wit.getMobile());
+		witb.setBankNo(wit.getAcctno());
+		witb.setAccname(wit.getAcctname());
 		bankName = wit.getBankName();
-	    if(StrUtil.isBlank(bankName));
+		if (StrUtil.isBlank(bankName)) {
 			bankName = BankTypeUtil.getBankName(wit.getBankcode());
-	    witb.setBankName(bankName);
-	    witb.setWithdrawType(Common.Order.Wit.WIT_ACC);
-	    witb.setOrderId(Number.getWitOrder());
-	    witb.setOrderStatus(Common.Order.DealOrderApp.ORDER_STATUS_DISPOSE.toString());
-	    witb.setNotify(wit.getNotifyurl());
-	    witb.setRetain2(wit.getIp());//代付ip
-	    witb.setAppOrderId(wit.getApporderid());
+		}
+		witb.setBankName(bankName);
+		witb.setWithdrawType(Common.Order.Wit.WIT_ACC);
+		witb.setOrderId(Number.getWitOrder());
+		witb.setOrderStatus(Common.Order.DealOrderApp.ORDER_STATUS_DISPOSE.toString());
+		witb.setNotify(wit.getNotifyurl());
+		witb.setRetain2(wit.getIp());//代付ip
+		witb.setAppOrderId(wit.getApporderid());
 		witb.setRetain1(type);
 		witb.setWitType(userRate.getPayTypr());//代付类型
 		witb.setApply(wit.getApply());
 		witb.setBankcode(wit.getBankcode());
 		witb.setWitChannel(channelFee.getChannelId());
 		boolean flag = withdrawServiceImpl.addOrder(witb);
-		if (flag)
+		if (flag) {
 			return witb;
+		}
 		return null;
 	}
 
@@ -397,17 +416,19 @@ public class DealAppApi extends PayOrderService {
 		String passcode = dealBean.getPassCode();
 		dealApp.setFeeId(userRate.getId());
 		dealApp.setOrderAccount(userId);
-		if (StrUtil.isNotBlank(dealBean.getIp()))
-	      dealApp.setOrderIp(dealBean.getIp());
-	    dealApp.setBack(dealBean.getPageUrl());
-	    dealApp.setOrderStatus(Common.Order.DealOrder.ORDER_STATUS_DISPOSE.toString());
-	    dealApp.setOrderType(Common.Order.ORDER_TYPE_DEAL);
-	    dealApp.setDealDescribe("下游商户发起充值交易");
-	    dealApp.setRetain1(userRate.getPayTypr());
-	    dealApp.setRetain3(userRate.getFee().multiply(new BigDecimal(dealBean.getAmount())).toString());
-	    boolean add = orderAppServiceImpl.add(dealApp);
-	    if(add)
-	      return dealApp;
-	    return null;
-	  }
+		if (StrUtil.isNotBlank(dealBean.getIp())) {
+			dealApp.setOrderIp(dealBean.getIp());
+		}
+		dealApp.setBack(dealBean.getPageUrl());
+		dealApp.setOrderStatus(Common.Order.DealOrder.ORDER_STATUS_DISPOSE.toString());
+		dealApp.setOrderType(Common.Order.ORDER_TYPE_DEAL);
+		dealApp.setDealDescribe("下游商户发起充值交易");
+		dealApp.setRetain1(userRate.getPayTypr());
+		dealApp.setRetain3(userRate.getFee().multiply(new BigDecimal(dealBean.getAmount())).toString());
+		boolean add = orderAppServiceImpl.add(dealApp);
+		if (add) {
+			return dealApp;
+		}
+		return null;
+	}
 }

@@ -1,12 +1,9 @@
 package alipay.manage.mapper;
 
-import java.util.List;
-
+import alipay.manage.bean.ChannelFee;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
-
-import alipay.manage.bean.ChannelFee;
 
 @Mapper
 public interface ChannelFeeMapper {

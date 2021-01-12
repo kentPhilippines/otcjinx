@@ -54,7 +54,7 @@ public class Hengtong extends PayOrderService {
         String merchant = channelInfo.getChannelAppId();
         String amount = orderAmount.toString();
         String paymentType = channelInfo.getChannelType();
-        String username = "";
+        String username = StrUtil.uuid();
         String depositRealname = "";
         String callback = notify;
         String remark = "";

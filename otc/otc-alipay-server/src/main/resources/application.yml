@@ -33,6 +33,8 @@ spring:
       discovery:
         enabled: true
         serviceId: otc-alipay-server
+      refresh:
+        refreshable: none
     bus:
       enabled: true
       trace:

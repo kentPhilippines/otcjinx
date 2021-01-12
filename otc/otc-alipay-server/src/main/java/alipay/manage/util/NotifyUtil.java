@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import otc.api.alipay.Common;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
@@ -32,8 +33,7 @@ public class NotifyUtil {
     OrderService orderSerciceImpl;
     @Autowired
     SettingFile settingFile;
-    @Autowired
-    DealOrderAppMapper dealOrderAppDao;
+    public static ConcurrentHashMap<String, Integer> map = new ConcurrentHashMap<>();//单台服务器推送30次   20秒推送一次    也就是一个订单最多推送 一台机器30次  分布式部署 1台 * 30
     @Autowired
     CheckUtils checkUtils;
     @Autowired
@@ -48,7 +48,8 @@ public class NotifyUtil {
     private static final String SU_MSG = "成功";
     private static final String ER_MSG = "失败";
     private static final String YU_MSG = "处理中";
-    static ConcurrentHashMap<String, Integer> map = new ConcurrentHashMap<>();//单台服务器推送30次   20秒推送一次    也就是一个订单最多推送 一台机器30次  分布式部署 1台 * 30
+    @Resource
+    DealOrderAppMapper dealOrderAppDao;
 
     static {
         //开启单机版定时任务
@@ -92,7 +93,7 @@ public class NotifyUtil {
         map.put("amount", amount);
         map.put("appid", appid);
         map.put("statusdesc", statusdesc);
-        String sign = checkUtils.getSign(map, userInfo.getPayPasword());
+        String sign = CheckUtils.getSign(map, userInfo.getPayPasword());
         map.put("sign", sign);
         send(order.getNotify(), order.getOrderId(), map, true);
     }
@@ -124,7 +125,8 @@ public class NotifyUtil {
         String result = "";
         try {
             if (url.contains("https")) {
-                result = HttpUtils.postHttps(url, msg);
+                msg.put("url", url);
+                result = HttpUtil.post("http://47.242.50.29/forword", msg);
             } else {
                 result = HttpUtil.post(url, msg, 2000);
             }

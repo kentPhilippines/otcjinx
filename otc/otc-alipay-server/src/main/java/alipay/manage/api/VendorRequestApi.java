@@ -31,7 +31,6 @@ import java.util.Map;
 public class VendorRequestApi {
     Logger log = LoggerFactory.getLogger(VendorRequestApi.class);
     @Autowired private AccountApiService accountApiServiceImpl;
-    @Autowired private CheckUtils checkUtils;
     @Autowired private UserInfoService userInfoServiceImpl;
     @Autowired private ExceptionOrderService exceptionOrderServiceImpl;
     /**
@@ -52,7 +51,7 @@ public class VendorRequestApi {
         Map<String, Object> paramMap = RSAUtils.getDecodePrivateKey(rsaSign, userInfo.getPrivateKey());
         log.info("【商户RSA解密的参数：" + paramMap.toString()+"】 ");
         //验证结果
-        Result result = checkUtils.requestVerify(request, paramMap,userInfo.getPayPasword());
+        Result result = CheckUtils.requestVerify(request, paramMap, userInfo.getPayPasword());
         if (result.isSuccess()){
             log.info("【requestVerif】方法验证通过");
         } else {
@@ -120,7 +119,7 @@ public class VendorRequestApi {
         String end = userInfo.getEndTime();
         if(StringUtils.isNotEmpty(start) && StringUtils.isNotEmpty(end)){
             log.info("--------------【未设置时间风控】----------------");
-            boolean isTime = checkUtils.verifyTimeZone(new Date(), userInfo.getStartTime(),  userInfo.getEndTime());
+            boolean isTime = CheckUtils.verifyTimeZone(new Date(), userInfo.getStartTime(), userInfo.getEndTime());
             if(isTime){//在时间内
                 return Result.buildFailResult("在风控时间段不允许下单");
             }
@@ -188,7 +187,7 @@ public class VendorRequestApi {
         log.info("【商户RSA解密的参数：" + paramMap.toString()+"】 " );
         if (CollUtil.isEmpty(paramMap))
             return Result.buildFailMessage("RSA解密参数为空");
-        Result result = checkUtils.requestWithdrawalVerify(request, paramMap,userInfo.getPayPasword());
+        Result result = CheckUtils.requestWithdrawalVerify(request, paramMap, userInfo.getPayPasword());
         if (result.isSuccess()){
             log.info("【requestVerif】方法验证通过");
         } else{
@@ -268,8 +267,9 @@ public class VendorRequestApi {
                 return Result.buildFailMessage("请绑定正确的代付ip");
             }
 
-        } else
+        } else {
             log.info("【商户从后台提现不验证代付ip】");
+        }
         String bankNo = paramMap.get("acctno").toString();
         String amount = paramMap.get("amount").toString();
         /*
@@ -324,7 +324,7 @@ public class VendorRequestApi {
             });
             return Result.buildFailMessage("金额限制为300-49999");
         }
-        if (checkUtils.isNumber(amount)) {
+        if (CheckUtils.isNumber(amount)) {
             log.info("【代付金额不能存在小数】");
             ThreadUtil.execute(() -> {
                 exceptionOrderServiceImpl.addWitEx(
@@ -361,7 +361,7 @@ public class VendorRequestApi {
         log.info("【商户RSA解密的参数：" + paramMap.toString()+"】 " );
         if (CollUtil.isEmpty(paramMap))
             return Result.buildFailMessage("RSA解密参数为空");
-        Result result = checkUtils.requestWithdrawalVerify(request, paramMap,userInfo.getPayPasword());
+        Result result = CheckUtils.requestWithdrawalVerify(request, paramMap, userInfo.getPayPasword());
         if (result.isSuccess())
             log.info("【requestVerif】方法验证通过");
         else

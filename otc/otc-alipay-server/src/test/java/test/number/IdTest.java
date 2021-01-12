@@ -1,12 +1,12 @@
 package test.number;
 
-import cn.hutool.core.util.NumberUtil;
+import cn.hutool.core.lang.UUID;
 
 public class IdTest {
     public static void main(String[] args) {
+        String s = UUID.randomUUID().toString(true);
+        System.out.println(s);
 
-        double sub = NumberUtil.sub(5.5, 2);
 
-        System.out.println(sub);
     }
 }

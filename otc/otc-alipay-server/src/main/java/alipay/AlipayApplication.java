@@ -14,6 +14,8 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -24,23 +26,23 @@ import java.util.concurrent.TimeoutException;
  * @author K
  */
 @SpringBootApplication
-@EnableEurekaClient		//服务注册
-@EnableFeignClients		//远程调用
+@EnableEurekaClient        //服务注册
+@EnableFeignClients        //远程调用
 @ServletComponentScan(basePackages = "alipay.*")
 @ComponentScan(basePackages = "alipay.*") //注入扫描
 @EnableTransactionManagement //事务
 @EnableRedisHttpSession //redis   session 共享
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public class AlipayApplication {
-	public static void main(String[] args) {
+	public static void main(String[] args) throws NoSuchAlgorithmException, KeyManagementException {
 		int port = 0;
 		int defaultPort = 9010;
-		Future<Integer> future = ThreadUtil.execAsync(() ->{
+		Future<Integer> future = ThreadUtil.execAsync(() -> {
 			int p = 0;
 			Scanner scanner = new Scanner(System.in);
-			while(true) {
+			while (true) {
 				String strPort = scanner.nextLine();
-				if(!NumberUtil.isInteger(strPort)) {
+				if (!NumberUtil.isInteger(strPort)) {
 					System.err.println("只能是数字");
 					continue;
 				} else {
@@ -60,6 +62,7 @@ public class AlipayApplication {
 			System.err.print("端口%d被占用了，无法启动%n");
 			port = ++defaultPort;
 		}
+
 		new SpringApplicationBuilder(AlipayApplication.class).properties("server.port=" + port).run(args);
 	}
 }

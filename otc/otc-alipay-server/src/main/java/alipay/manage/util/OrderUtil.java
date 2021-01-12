@@ -413,7 +413,7 @@ public class OrderUtil {
 		map.put("status", wit.getOrderStatus());//0 预下单    1处理中  2 成功  3失败
 		map.put("amount", wit.getAmount());
 		map.put("appid", wit.getUserId());
-		String sign = checkUtils.getSign(map, userInfo.getPayPasword());
+		String sign = CheckUtils.getSign(map, userInfo.getPayPasword());
 		map.put("sign", sign);
 		send(wit.getNotify(), orderId, map);
 	}
