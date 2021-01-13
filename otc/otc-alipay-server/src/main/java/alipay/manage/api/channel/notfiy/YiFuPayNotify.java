@@ -31,7 +31,7 @@ public class YiFuPayNotify  extends NotfiyChannel {
          */
         log.info("【收到UzPay回调】");
         String clientIP = HttpUtil.getClientIP(request);
-        if (!clientIP.equals("13.250.191.201")) {
+        if (!"13.250.191.201".equals(clientIP)) {
             log.info("【当前回调ip为：" + clientIP + "，固定IP登记为：" + "13.250.191.201" + "】");
             log.info("【当前回调ip不匹配】");
             return "ip errer";

@@ -1,17 +1,5 @@
 package alipay.manage.util;
 
-import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import javax.annotation.Resource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
 import alipay.config.redis.RedisUtil;
 import alipay.manage.api.feign.ConfigServiceClient;
 import alipay.manage.bean.DealOrder;
@@ -23,20 +11,34 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import otc.api.alipay.Common;
 import otc.bean.alipay.FileList;
 import otc.bean.config.ConfigFile;
 import otc.util.date.DateUtils;
 
+import javax.annotation.Resource;
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  * <p>选码风控工具类</p>
+ *
  * @author kent
- * @date	2020-3-31 21:17:35
+ * @date 2020-3-31 21:17:35
  */
 @Component
 public class RiskUtil {
 	private static final Log log = LogFactory.get();
-	@Resource  RedisUtil redisUtil;
+	@Resource
+	RedisUtil redisUtil;
 	@Autowired ConfigServiceClient configServiceClientImpl;
 	@Autowired CorrelationService correlationServiceImpl;
 	DateFormat formatter = new SimpleDateFormat(Common.Order.DATE_TYPE);
@@ -60,8 +62,9 @@ public class RiskUtil {
 				Date parse = formatter.parse(subSuf);
 				Object object = hmget.get(obj.toString());// 当前金额
 				if (!DateUtil.isExpired(parse, DateField.SECOND,
-						Integer.valueOf( configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.FREEZE_PLAIN_VIRTUAL).getResult().toString()), new Date()))
+						Integer.valueOf(configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.FREEZE_PLAIN_VIRTUAL).getResult().toString()), new Date())) {
 					redisUtil.hdel(user.getUserId(), obj.toString());
+				}
 			}
 			return;
 		}
@@ -74,8 +77,9 @@ public class RiskUtil {
 			Date parse = formatter.parse(subSuf);
 			Object object = hmget.get(obj.toString());// 当前金额
 			if (!DateUtil.isExpired(parse, DateField.SECOND,
-					Integer.valueOf( configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.FREEZE_PLAIN_VIRTUAL).getResult().toString()), new Date()))
+					Integer.valueOf(configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.FREEZE_PLAIN_VIRTUAL).getResult().toString()), new Date())) {
 				redisUtil.hdel(user.getUserId(), obj.toString());
+			}
 		}
 	}
 
@@ -100,8 +104,9 @@ public class RiskUtil {
 			BigDecimal amount = amount2;
 			for (Object obj : keySet) {
 				Object object = hmget.get(obj);
-				if (ObjectUtil.isNull(object))
+				if (ObjectUtil.isNull(object)) {
 					object = "0";
+				}
 				BigDecimal bigDecimal = new BigDecimal(object.toString());
 				amount = amount.add(bigDecimal);
 			}
@@ -113,8 +118,9 @@ public class RiskUtil {
 		BigDecimal amount = amount2;
 		for (Object obj : keySet) {
 			Object object = hmget.get(obj);
-			if (ObjectUtil.isNull(object))
+			if (ObjectUtil.isNull(object)) {
 				object = "0";
+			}
 			BigDecimal bigDecimal = new BigDecimal(object.toString());
 			amount = amount.add(bigDecimal);
 		}
@@ -165,14 +171,17 @@ public class RiskUtil {
 		Map<Object, Object> hmget = redisUtil.hmget(qrcodeDealOrder.getOrderQr());
 		if(hmget.size() > 0) {//两次锁定二维码   成功解锁
 			Set<Object> keySet = hmget.keySet();
-			for(Object obj : keySet) 
-				redisUtil.hdel(qrcodeDealOrder.getOrderQr(),obj.toString());//二维码三次未收到回调锁定一小时
+			for (Object obj : keySet) {
+				redisUtil.hdel(qrcodeDealOrder.getOrderQr(), obj.toString());//二维码三次未收到回调锁定一小时
+			}
 		}
 	}
 	private void deleteRedisAmount(DealOrder qrcodeDealOrder) throws ParseException{
 		Map<Object, Object> hmget2 = redisUtil.hmget(qrcodeDealOrder.getOrderQrUser());
-		if(hmget2.size()<=0) //成功订单提前解锁金额
-			return ;
+		if (hmget2.size() <= 0) //成功订单提前解锁金额
+		{
+			return;
+		}
 			Set<Object> keySet = hmget2.keySet();
 			for(Object obj : keySet) {
 				String accountId = qrcodeDealOrder.getOrderQrUser();
@@ -185,11 +194,12 @@ public class RiskUtil {
 				}
 			}
 	}
-	private  void addDealSu(DealOrder qrcodeDealOrder){
+	private  void addDealSu(DealOrder qrcodeDealOrder) {
 		Map<Object, Object> hmget = redisUtil.hmget(qrcodeDealOrder.getOrderQr());
-		if(hmget.size() > 0) 
-			redisUtil.hset(qrcodeDealOrder.getOrderQr()+qrcodeDealOrder.getOrderQrUser(), qrcodeDealOrder.getOrderQr()+qrcodeDealOrder.getOrderId(), qrcodeDealOrder.getOrderId());
-		 else 
-			redisUtil.hset(qrcodeDealOrder.getOrderQr()+qrcodeDealOrder.getOrderQrUser(), qrcodeDealOrder.getOrderQr()+qrcodeDealOrder.getOrderId(), qrcodeDealOrder.getOrderId(), 1800);
-	 }
+		if (hmget.size() > 0) {
+			redisUtil.hset(qrcodeDealOrder.getOrderQr() + qrcodeDealOrder.getOrderQrUser(), qrcodeDealOrder.getOrderQr() + qrcodeDealOrder.getOrderId(), qrcodeDealOrder.getOrderId());
+		} else {
+			redisUtil.hset(qrcodeDealOrder.getOrderQr() + qrcodeDealOrder.getOrderQrUser(), qrcodeDealOrder.getOrderQr() + qrcodeDealOrder.getOrderId(), qrcodeDealOrder.getOrderId(), 1800);
+		}
+	}
 }

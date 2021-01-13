@@ -60,7 +60,7 @@ public class DateTools {
      * @return 格式化后的Date日期
      */
     public static Date parseStrToDate(String time, String timeFromat) {
-        if (time == null || time.equals("")) {
+        if (time == null || "".equals(time)) {
             return null;
         }
         Date date = null;

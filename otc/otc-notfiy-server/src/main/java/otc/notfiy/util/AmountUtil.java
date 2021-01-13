@@ -1,16 +1,15 @@
 package otc.notfiy.util;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.StrUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.StrUtil;
 
 public class AmountUtil {
 	static Logger log = LoggerFactory.getLogger(AmountUtil.class);
@@ -19,15 +18,17 @@ public class AmountUtil {
 	 * @param charAt				字符串
 	 * @return
 	 */
-	public static String isNumber( CharSequence charAt ){
-		String regex="\\d+(?:\\.\\d+)?";
-	    Matcher m=Pattern.compile(regex, Pattern.MULTILINE).matcher(charAt);
-	    List<String> result=new ArrayList<String>();
-	    while(m.find())
-	        result.add(m.group());
-	    if(CollUtil.isNotEmpty(result)) 
-	    	return CollUtil.getLast(result);
-	    return null;
+	public static String isNumber( CharSequence charAt ) {
+		String regex = "\\d+(?:\\.\\d+)?";
+		Matcher m = Pattern.compile(regex, Pattern.MULTILINE).matcher(charAt);
+		List<String> result = new ArrayList<String>();
+		while (m.find()) {
+			result.add(m.group());
+		}
+		if (CollUtil.isNotEmpty(result)) {
+			return CollUtil.getLast(result);
+		}
+		return null;
 	}
 	/**
 	 * <p>接收短信收款回调</p>

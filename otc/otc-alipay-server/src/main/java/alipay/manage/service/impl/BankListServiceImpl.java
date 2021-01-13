@@ -1,19 +1,19 @@
 package alipay.manage.service.impl;
 
-import java.util.List;
+import alipay.manage.bean.BankList;
 import alipay.manage.bean.BankListExample;
 import alipay.manage.mapper.BankListMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import alipay.manage.bean.BankList;
 import alipay.manage.service.BankListService;
 import cn.hutool.core.util.StrUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import otc.api.alipay.Common;
 import otc.util.number.Number;
 
+import java.util.List;
+
 @Component
-public class BankListServiceImpl implements BankListService{
+public class BankListServiceImpl implements BankListService {
 	@Autowired
 	BankListMapper bankListMapper;
 
@@ -21,8 +21,9 @@ public class BankListServiceImpl implements BankListService{
 	public List<BankList> findBankCardByQr(String userId) {
 		BankListExample example = new BankListExample();
 		BankListExample.Criteria criteria = example.createCriteria();
-		if(StrUtil.isBlank(userId))
+		if (StrUtil.isBlank(userId)) {
 			criteria.andAccountEqualTo(userId);
+		}
 		List<BankList> selectByExample = bankListMapper.selectByExample(example);
 		return selectByExample;
 	}

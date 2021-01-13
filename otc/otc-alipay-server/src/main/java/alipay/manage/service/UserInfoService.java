@@ -169,4 +169,24 @@ public interface UserInfoService {
 	 * @return
 	 */
 	UserInfo findChannelAppId(String oid_partner);
+
+
+	UserFund fundUserFundAccounrBalace(String userId);
+
+
+	/**
+	 * 查询商户余额
+	 *
+	 * @param userId
+	 * @return
+	 */
+	UserFund findBalace(String userId);
+
+	/**
+	 * 查询商户交易url
+	 *
+	 * @param orderAccount
+	 * @return
+	 */
+	UserInfo findDealUrl(String orderAccount);
 }

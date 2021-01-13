@@ -37,6 +37,32 @@ public class XianYuScanNotfiy extends NotfiyChannel {
 	@Autowired
 	DealOrderMapper dealOrderDao;
 
+	public static String md5(String a) {
+		String c = "";
+		MessageDigest md5;
+		String result = "";
+		try {
+			md5 = MessageDigest.getInstance("md5");
+			md5.update(a.getBytes("utf-8"));
+			byte[] temp;
+			temp = md5.digest(c.getBytes("utf-8"));
+			for (int i = 0; i < temp.length; i++) {
+				result += Integer.toHexString((0x000000ff & temp[i]) | 0xffffff00).substring(6);
+			}
+		} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+		}
+		return result;
+	}
+
+	String enterOrder(String orderId, String ip) {
+		Result dealpayNotfiy = dealpayNotfiy(orderId, ip);
+		if (dealpayNotfiy.isSuccess()) {
+			log.info("【支付宝扫码 交易成功】");
+			return "success";
+		}
+		return null;
+	}
+
 	@RequestMapping("/xianyu-scan-notfiy")
 	public void notify(
 			HttpServletRequest request,
@@ -45,7 +71,7 @@ public class XianYuScanNotfiy extends NotfiyChannel {
 		log.info("进入咸鱼支付宝扫码 回调处理");
 		String clientIP = HttpUtil.getClientIP(request);
 		log.info("【当前回调ip为：" + clientIP + "】");
-		if (!clientIP.equals("185.207.152.11")) {
+		if (!"185.207.152.11".equals(clientIP)) {
 			log.info("【当前回调ip为：" + clientIP + "，固定IP登记为：" + "185.207.152.11" + "】");
 			log.info("【当前回调ip不匹配】");
 			response.getWriter().write("ip错误");
@@ -59,26 +85,26 @@ public class XianYuScanNotfiy extends NotfiyChannel {
 				log.info("【当前咸鱼支付宝扫码订单号：" + order.getOrderId() + "】 ");
 				String fxddh = order.getOrderId();//咸鱼订单号
 				String fxaction = ORDER_QUERY;
-				Map<String, Object>  map = new ConcurrentHashMap<String, Object>();
+				Map<String, Object> map = new ConcurrentHashMap<String, Object>();
 				map.put("fxid", FX_ID);
 				map.put("fxddh", fxddh);
 				map.put("fxaction", fxaction);
-				map.put("fxsign", md5(FX_ID+fxddh+fxaction+KEY));
-				String post = HttpUtil.post("https://csj.fenvun.com/Pay"  , map);
-				log.info("【当前返回数据为：】"+post.toString());
+				map.put("fxsign", md5(FX_ID + fxddh + fxaction + KEY));
+				String post = HttpUtil.post("https://csj.fenvun.com/Pay", map);
+				log.info("【当前返回数据为：】" + post.toString());
 				JSONObject parseObj = JSONUtil.parseObj(post);
 				XianYu bean = JSONUtil.toBean(parseObj, XianYu.class);
-				log.info("【当前返回数据为：】"+bean.toString());
-				if(bean.getFxstatus().equals("1")) {
+				log.info("【当前返回数据为：】" + bean.toString());
+				if ("1".equals(bean.getFxstatus())) {
 					String enterOrder = enterOrder(order.getOrderId(), clientIP);
-					if(StrUtil.isNotBlank(enterOrder)) {
+					if (StrUtil.isNotBlank(enterOrder)) {
 						try {
 							response.getWriter().write("success");
 						} catch (IOException e) {
-							log.info("【响应数据出错，当前订单号："+order.getOrderId()+"，咸鱼支付宝扫码订单号："+order.getOrderId()+"】 ");
+							log.info("【响应数据出错，当前订单号：" + order.getOrderId() + "，咸鱼支付宝扫码订单号：" + order.getOrderId() + "】 ");
 						}
 					}
-				}else {
+				} else {
 					map = null;
 					fxddh =null;
 					fxaction = null;
@@ -86,27 +112,4 @@ public class XianYuScanNotfiy extends NotfiyChannel {
 			});
 		}
 	}
-	String enterOrder(String orderId ,String ip){
-		 Result dealpayNotfiy = dealpayNotfiy(orderId, ip);
-		 if(dealpayNotfiy.isSuccess()) {
-			 log.info("【支付宝扫码 交易成功】");
-			 return "success";
-		 }
-		return null;
-	}
-	 public static String md5(String a) {
-	    	String c = "";
-	    	MessageDigest md5;
-		   	String result="";
-			try {
-				md5 = MessageDigest.getInstance("md5");
-				md5.update(a.getBytes("utf-8"));
-				byte[] temp;
-				temp=md5.digest(c.getBytes("utf-8"));
-				for (int i=0; i<temp.length; i++)
-					result+=Integer.toHexString((0x000000ff & temp[i]) | 0xffffff00).substring(6);
-			} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
-			}
-			return result;
-	    }
 }

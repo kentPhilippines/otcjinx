@@ -20,14 +20,16 @@ public class FactoryForStrategy {
 
     public PayService getStrategy(String component) throws Exception{
     	PayService strategy = strategys.get(component);
-        if (strategy == null)
+        if (strategy == null) {
             throw new RuntimeException("没有这个实现类，参数配置错误");
+        }
         return strategy;
     }
     public AmountChannel getAmountChannel(String component) throws Exception {
         AmountChannel strategy = strateamount.get(component);
-        if (strategy == null)
+        if (strategy == null) {
             throw new RuntimeException("没有这个实现类，参数配置错误");
+        }
         return strategy;
     }
 }

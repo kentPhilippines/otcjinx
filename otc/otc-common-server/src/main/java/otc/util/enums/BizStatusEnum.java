@@ -1,6 +1,6 @@
 package otc.util.enums;
 
-import com.google.common.collect.Maps;
+import cn.hutool.core.map.MapUtil;
 import otc.exception.BusinessException;
 
 import java.util.Map;
@@ -37,7 +37,7 @@ public enum BizStatusEnum {
         this.desc = desc;
     }
 
-    private static final Map<Integer, BizStatusEnum> HOLDER = Maps.newHashMap();
+    private static final Map<Integer, BizStatusEnum> HOLDER = MapUtil.newHashMap();
 
     static {
         for (BizStatusEnum value : BizStatusEnum.values()) {

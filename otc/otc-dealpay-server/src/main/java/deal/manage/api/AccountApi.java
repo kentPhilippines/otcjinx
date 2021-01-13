@@ -1,25 +1,22 @@
 package deal.manage.api;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import deal.manage.bean.UserInfo;
 import deal.manage.util.CheckUtils;
 import deal.manage.util.LogUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import otc.api.dealpay.Common;
 import otc.common.PayApiConstant;
 import otc.result.Result;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 @RequestMapping(PayApiConstant.Dealpay.ACCOUNT_API)
@@ -38,8 +35,9 @@ public class AccountApi {
     @PostMapping(PayApiConstant.Dealpay.ADD_ACCOUNT)
     @Transactional
     public Result addAccount(UserInfo user) {
-        if (ObjectUtil.isNull(user))
+        if (ObjectUtil.isNull(user)) {
             return Result.buildFailMessage("实体类为空，请检查传递方法是否正确");
+        }
         log.info("【远程调用开通顶级代理的方法】");
         if (StrUtil.isBlank(user.getUserId())
                 || StrUtil.isBlank(user.getUserName())
@@ -49,8 +47,9 @@ public class AccountApi {
         ) {
             return Result.buildFailMessage("必传参数为空");
         }
-        if (user.getUserType().toString().equals(Common.User.USER_TYPE_APP))
+        if (user.getUserType().toString().equals(Common.User.USER_TYPE_APP)) {
             return Result.buildFailMessage("开户账户类型不符合");
+        }
         user.setIsAgent(Common.User.USER_IS_AGENT);
         Result addAccount = accountApiServiceImpl.addAccount(user);
         return addAccount;
@@ -60,10 +59,12 @@ public class AccountApi {
     @Transactional
     public Result editAccount(UserInfo user) {
         log.info("【远程调用修改用户的方法】");
-        if (ObjectUtil.isNull(user))
+        if (ObjectUtil.isNull(user)) {
             return Result.buildFailMessage("实体类为空，请检查传递方法是否正确");
-        if (StrUtil.isBlank(user.getUserId()))
+        }
+        if (StrUtil.isBlank(user.getUserId())) {
             return Result.buildFailMessage("必传参数为空");
+        }
         return accountApiServiceImpl.editAccount(user);
     }
 

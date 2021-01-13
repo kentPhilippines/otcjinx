@@ -53,10 +53,11 @@ public class YiFu02AlipayH5 extends PayOrderService {
                     userInfo.getDealUrl() + PayApiConstant.Notfiy.NOTFIY_API_WAI +
                             "/YiFuH502-notfiy", dealOrderApp.getOrderAmount(),
                     orderId, getChannelInfo(channel, dealOrderApp.getRetain1()));
-            if (StrUtil.isBlank(url))
+            if (StrUtil.isBlank(url)) {
                 return Result.buildFailMessage("支付失败");
-            else
+            } else {
                 return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(url));
+            }
         }
         return Result.buildFailMessage("支付失败");
     }

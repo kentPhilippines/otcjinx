@@ -41,10 +41,11 @@ public class YiFuKuaiJiePay extends PayOrderService {
             log.info("【回调地址ip为：" + userInfo.getDealUrl() + "】");
             log.info("【本地订单创建成功，开始请求远程三方支付】");
             String url = createOrder(dealOrderApp, userInfo.getDealUrl() + PayApiConstant.Notfiy.NOTFIY_API_WAI + "/YiFu-notfiy", dealOrderApp.getOrderAmount(), orderId);
-            if (StrUtil.isBlank(url))
+            if (StrUtil.isBlank(url)) {
                 return Result.buildFailMessage("支付失败");
-            else
+            } else {
                 return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(url));
+            }
         }
         return Result.buildFailMessage("支付失败");
     }

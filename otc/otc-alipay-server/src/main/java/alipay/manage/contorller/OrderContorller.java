@@ -1,54 +1,41 @@
 package alipay.manage.contorller;
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
-import javax.servlet.http.HttpServletRequest;
-
-import alipay.manage.service.UserRateService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
-
 import alipay.manage.bean.DealOrder;
 import alipay.manage.bean.RunOrder;
 import alipay.manage.bean.UserInfo;
 import alipay.manage.bean.util.PageResult;
 import alipay.manage.service.OrderService;
 import alipay.manage.service.UserInfoService;
+import alipay.manage.service.UserRateService;
 import alipay.manage.util.LogUtil;
 import alipay.manage.util.OrderUtil;
 import alipay.manage.util.SessionUtil;
 import alipay.manage.util.SettingFile;
-import cn.hutool.core.date.DateField;
-import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import otc.api.alipay.Common;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.*;
 import otc.bean.dealpay.Recharge;
 import otc.bean.dealpay.Withdraw;
 import otc.exception.user.UserException;
 import otc.result.Result;
-import otc.util.StringUtils;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 @Controller
 @RequestMapping("/order")
@@ -121,17 +108,20 @@ public class OrderContorller {
 	@Transactional
 	public Result findMyReceiveOrderRecordByPage(HttpServletRequest request,String receiveOrderTime,String pageNum,String pageSize,String productId) {
 		UserInfo user = sessionUtil.getUser(request);
-		if(ObjectUtil.isNull(user))
-			throw new UserException("当前用户未登录",null);
+		if (ObjectUtil.isNull(user)) {
+			throw new UserException("当前用户未登录", null);
+		}
 		//通过产品的code费率产品信息		
-		DealOrder order = new DealOrder();		
+		DealOrder order = new DealOrder();
 		order.setOrderQrUser(user.getUserId());
-		if(StrUtil.isNotBlank(receiveOrderTime)) 
+		if (StrUtil.isNotBlank(receiveOrderTime)) {
 			order.setTime(receiveOrderTime);
-		if(StrUtil.isNotBlank(productId))
+		}
+		if (StrUtil.isNotBlank(productId)) {
 			order.setRetain1(productId);
+		}
 		List<DealOrder> orderList = orderServiceImpl.findMyOrder(order);
-		
+
 		PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
 		PageInfo<DealOrder> pageInfo = new PageInfo<DealOrder>(orderList);
 		PageResult<DealOrder> pageR = new PageResult<DealOrder>();
@@ -202,8 +192,9 @@ public class OrderContorller {
 	    }
 		List<String> userList =  accountServiceImpl.findSunAccountByUserId(user.getUserId());	
 		if(StrUtil.isNotBlank(userName)) {
-			if(!userList.contains(userName)) 
+			if (!userList.contains(userName)) {
 				return Result.buildFailMessage("输入账号有误");
+			}
 			userList.clear();
 			userList.add(userName);
 		} 
@@ -215,11 +206,13 @@ public class OrderContorller {
 		//所有下级的账号  带入到 流水  表里面看所有的流水[参数为null]查询所有下级账号流水
 		if(StrUtil.isEmpty(startTime) || StrUtil.isEmpty(accountChangeTypeCode)) {
 			orderList=orderServiceImpl.findAllOrderRunByPage(orderRun);			
-		}else {	
-			if(StrUtil.isNotBlank(startTime))
+		}else {
+			if (StrUtil.isNotBlank(startTime)) {
 				orderRun.setTime(startTime);
-			if(StrUtil.isNotBlank(accountChangeTypeCode))
+			}
+			if (StrUtil.isNotBlank(accountChangeTypeCode)) {
 				orderRun.setRunOrderType(Integer.valueOf(accountChangeTypeCode));
+			}
 			orderList = orderServiceImpl.findOrderRunByPage(orderRun);
 		}
 		PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
@@ -252,21 +245,24 @@ public class OrderContorller {
 	        log.info("当前用户未登陆");
 	        return Result.buildFailMessage("当前用户未登陆");
 	    }
-		List<String> userList =  accountServiceImpl.findSunAccountByUserId(user.getUserId());	
-		if(StrUtil.isNotBlank(userName)) {
-			if(!userList.contains(userName)) 
+		List<String> userList =  accountServiceImpl.findSunAccountByUserId(user.getUserId());
+		if (StrUtil.isNotBlank(userName)) {
+			if (!userList.contains(userName)) {
 				return Result.buildFailMessage("输入账号有误");
+			}
 			userList.clear();
 			userList.add(userName);
-		} 
+		}
 		userList.add(user.getUserId());
-		log.info("子账户"+userList.toString());
+		log.info("子账户" + userList.toString());
 		DealOrder order = new DealOrder();
-		if(StrUtil.isNotBlank(startTime)) 
+		if (StrUtil.isNotBlank(startTime)) {
 			order.setTime(startTime);
-		if(StrUtil.isNotBlank(orderState))
-			order.setOrderStatus( orderState);
-		order.setOrderQrUserList(userList); 
+		}
+		if (StrUtil.isNotBlank(orderState)) {
+			order.setOrderStatus(orderState);
+		}
+		order.setOrderQrUserList(userList);
 		PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
 		List<DealOrder> orderList = orderServiceImpl.findOrderByPage(order);
 		PageInfo<DealOrder> pageInfo = new PageInfo<DealOrder>(orderList);
@@ -296,16 +292,18 @@ public class OrderContorller {
 			) {
 		UserInfo user = sessionUtil.getUser(request);
 		if (ObjectUtil.isNull(user)) {
-	        log.info("当前用户未登陆");
-	        return Result.buildFailMessage("当前用户未登陆");
-	    }
-		if(StrUtil.isBlank(orderType))
+			log.info("当前用户未登陆");
+			return Result.buildFailMessage("当前用户未登陆");
+		}
+		if (StrUtil.isBlank(orderType)) {
 			orderType = "1";
-		if(orderType.equals("1")) {//充值
+		}
+		if ("1".equals(orderType)) {//充值
 			Recharge bean = new Recharge();
 			bean.setUserId(user.getUserId());
-			if(StrUtil.isNotBlank(startTime))
+			if (StrUtil.isNotBlank(startTime)) {
 				bean.setTime(startTime);
+			}
 			PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
 			List<Recharge> witList = orderServiceImpl.findRechargeOrder(bean);
 			PageInfo<Recharge> pageInfo = new PageInfo<Recharge>(witList);
@@ -318,8 +316,9 @@ public class OrderContorller {
 		}else {//提现
 			Withdraw bean = new Withdraw();
 			bean.setUserId(user.getUserId());
-			if(StrUtil.isNotBlank(startTime))
+			if (StrUtil.isNotBlank(startTime)) {
 				bean.setTime(startTime);
+			}
 			PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
 			List<Withdraw> witList = orderServiceImpl.findWithdrawOrder(bean);
 			PageInfo<Withdraw> pageInfo = new PageInfo<Withdraw>(witList);
@@ -341,12 +340,13 @@ public class OrderContorller {
 	public Result enterOrderSu(String orderId,HttpServletRequest request) {
 		UserInfo user = sessionUtil.getUser(request);
 		if (ObjectUtil.isNull(user)) {
-	        log.info("当前用户未登陆");
-	        return Result.buildFailMessage("当前用户未登陆");
-	    }
-		if(StrUtil.isBlank(orderId)) 
+			log.info("当前用户未登陆");
+			return Result.buildFailMessage("当前用户未登陆");
+		}
+		if (StrUtil.isBlank(orderId)) {
 			return Result.buildFailResult("参数为空");
-		Map<String,Object> paramMap = new HashMap();
+		}
+		Map<String, Object> paramMap = new HashMap();
 		paramMap.put("orderId", orderId);
 		paramMap.put("userId", user.getUserId());
 		String URL = settingFile.getName(SettingFile.ENTER_ORDER_SU);

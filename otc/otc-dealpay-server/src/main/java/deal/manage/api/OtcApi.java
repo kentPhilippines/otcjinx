@@ -1,27 +1,5 @@
 package deal.manage.api;
 
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
@@ -31,29 +9,43 @@ import deal.manage.bean.Withdraw;
 import deal.manage.bean.util.OTC365Bean;
 import deal.manage.bean.util.OTC365Bean.orderPayinfo;
 import deal.manage.bean.util.OTCLimitBean;
-import deal.manage.service.BankListService;
-import deal.manage.service.OrderService;
-import deal.manage.service.OrderStatusService;
-import deal.manage.service.RechargeService;
-import deal.manage.service.WithdrawService;
-import deal.manage.util.CardBankOrderUtil;
-import deal.manage.util.EnterOrderUtil;
-import deal.manage.util.IsDealIpUtil;
-import deal.manage.util.LogUtil;
-import deal.manage.util.SessionUtil;
-import otc.api.dealpay.Common;
+import deal.manage.service.*;
+import deal.manage.util.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import otc.bean.dealpay.Recharge;
 import otc.result.Result;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Controller
 @RequestMapping("/third")
 public class OtcApi {
 	Logger log = LoggerFactory.getLogger(OtcApi.class);
-	@Autowired OrderService orderSerciceImpl;
-	@Autowired WithdrawService withdrawServiceImpl;
-	@Autowired BankListService bankListServiceImpl;
-	@Autowired CardBankOrderUtil cardBankOrderUtil;
-	@Autowired IsDealIpUtil isDealIpUtil;
+	@Autowired
+	OrderService orderSerciceImpl;
+	@Autowired
+	WithdrawService withdrawServiceImpl;
+	@Autowired
+	BankListService bankListServiceImpl;
+	@Autowired
+	CardBankOrderUtil cardBankOrderUtil;
+	@Autowired
+	IsDealIpUtil isDealIpUtil;
 	@Autowired OrderStatusService orderStatusServiceImpl;
 	@Autowired RechargeService rechargeServiceImpl;
 	@Autowired LogUtil logUtil;
@@ -185,17 +177,19 @@ public class OtcApi {
 			first =  orderSerciceImpl.findOrderByOrderId(orderId);
 		}else if(TYPE_CARD.equals(type)) {
 			first = orderSerciceImpl.findOrderByOrderId(orderId);
-		}else if(TYPE_CARD_RE.equals(type)) {//卡商取消充值   将充值订单置为失败
+		} else if (TYPE_CARD_RE.equals(type)) {//卡商取消充值   将充值订单置为失败
 			Recharge rechargeOrder = rechargeServiceImpl.findOrderId(orderId);
-			boolean flag = rechargeServiceImpl.updateStatusEr(rechargeOrder.getOrderId(),"卡商自己置订单为失败");
-			if(flag)
+			boolean flag = rechargeServiceImpl.updateStatusEr(rechargeOrder.getOrderId(), "卡商自己置订单为失败");
+			if (flag) {
 				return Result.buildSuccessResult();
+			}
 			return Result.buildFailResult("订单修改失败");
 		}
-		Result updataOrderStatusEr = cardBankOrderUtil.updataOrderEr(first.getOrderId(), HttpUtil.getClientIP(request)) ;
-		log.info("订单修改成功"+updataOrderStatusEr.toString());
-		if(!updataOrderStatusEr.isSuccess())
+		Result updataOrderStatusEr = cardBankOrderUtil.updataOrderEr(first.getOrderId(), HttpUtil.getClientIP(request));
+		log.info("订单修改成功" + updataOrderStatusEr.toString());
+		if (!updataOrderStatusEr.isSuccess()) {
 			return Result.buildFailResult("订单修改失败");
+		}
 		return Result.buildSuccessResult();
 	}
 	/**
@@ -211,17 +205,19 @@ public class OtcApi {
 	public Result confirm_pay(String orderId,HttpServletRequest request,String type) throws NumberFormatException, UnsupportedEncodingException {
 		log.info("【点击确认按钮】");
 		log.info(orderId);
-		if(TYPE_CARD_RE.equals(type)) 
+		if (TYPE_CARD_RE.equals(type)) {
 			return Result.buildSuccessResult();
+		}
 		DealOrder findOrderByOrderId = orderSerciceImpl.findOrderByOrderId(orderId);
 		String userId = "";
-		if(TYPE_QR.equals(type)) 
+		if (TYPE_QR.equals(type)) {
 			userId = findOrderByOrderId.getOrderAccount();
-		else
+		} else {
 			userId = findOrderByOrderId.getOrderQrUser();
-		Result enterOrderSu = enterOrderUtil.EnterOrderSu(orderId, userId,HttpUtil.getClientIP(request));
-		log.info("【确认后返回值："+enterOrderSu.toString()+"】");
-		return enterOrderSu ;
+		}
+		Result enterOrderSu = enterOrderUtil.EnterOrderSu(orderId, userId, HttpUtil.getClientIP(request));
+		log.info("【确认后返回值：" + enterOrderSu.toString() + "】");
+		return enterOrderSu;
 	}
 	long dataSu(Date  timeBe , Date timeEnd) throws ParseException{
 		SimpleDateFormat dfs = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -245,11 +241,12 @@ public class OtcApi {
 	@ResponseBody
 	@Transactional
 	public Result enterOrderSu(String orderId,HttpServletRequest request,String userId) throws NumberFormatException, UnsupportedEncodingException {
-		if(StrUtil.isBlank(orderId)||StrUtil.isBlank(userId) ) 
+		if (StrUtil.isBlank(orderId) || StrUtil.isBlank(userId)) {
 			return Result.buildFailResult("参数为空");
-		logUtil.addLog(request, "下游提现码商确认已收到提现转账,提现订单号:"+orderId+",提现码商账号", userId);
+		}
+		logUtil.addLog(request, "下游提现码商确认已收到提现转账,提现订单号:" + orderId + ",提现码商账号", userId);
 		DealOrder order = orderSerciceImpl.findOrderByOrderId(orderId);
-		Result enterOrderSu = enterOrderUtil.EnterOrderSu(order.getOrderId(), userId,HttpUtil.getClientIP(request));
+		Result enterOrderSu = enterOrderUtil.EnterOrderSu(order.getOrderId(), userId, HttpUtil.getClientIP(request));
 		return enterOrderSu;
 	}
 }

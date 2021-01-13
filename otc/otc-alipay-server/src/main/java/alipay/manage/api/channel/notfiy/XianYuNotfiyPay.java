@@ -36,6 +36,32 @@ public class XianYuNotfiyPay extends NotfiyChannel {
     @Autowired
     DealOrderMapper dealOrderDao;
 
+    public static String md5(String a) {
+        String c = "";
+        MessageDigest md5;
+        String result = "";
+        try {
+            md5 = MessageDigest.getInstance("md5");
+            md5.update(a.getBytes("utf-8"));
+            byte[] temp;
+            temp = md5.digest(c.getBytes("utf-8"));
+            for (int i = 0; i < temp.length; i++) {
+                result += Integer.toHexString((0x000000ff & temp[i]) | 0xffffff00).substring(6);
+            }
+        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+        }
+        return result;
+    }
+
+    String enterOrder(String orderId, String ip) {
+        Result dealpayNotfiy = dealpayNotfiy(orderId, ip);
+        if (dealpayNotfiy.isSuccess()) {
+            log.info("【咸鱼H5 交易成功】");
+            return "success";
+        }
+        return null;
+    }
+
     @RequestMapping("/xianyu-notfiy")
     public void notify(
             HttpServletRequest request,
@@ -44,7 +70,7 @@ public class XianYuNotfiyPay extends NotfiyChannel {
         log.info("进入咸鱼支付宝H5 回调处理");
         String clientIP = HttpUtil.getClientIP(request);
         log.info("【当前回调ip为：" + clientIP + "】");
-        if (!clientIP.equals("103.84.90.39")) {
+        if (!"103.84.90.39".equals(clientIP)) {
             log.info("【当前回调ip为：" + clientIP + "，固定IP登记为：" + "103.84.90.39" + "】");
             log.info("【当前回调ip不匹配】");
             response.getWriter().write("ip错误");
@@ -67,7 +93,7 @@ public class XianYuNotfiyPay extends NotfiyChannel {
                 JSONObject parseObj = JSONUtil.parseObj(post);
                 XianYu bean = JSONUtil.toBean(parseObj, XianYu.class);
                 log.info("【当前返回数据为：】" + bean.toString());
-                if (bean.getFxstatus().equals("1")) {
+                if ("1".equals(bean.getFxstatus())) {
                     String enterOrder = enterOrder(order.getOrderId(), clientIP);
                     if (StrUtil.isNotBlank(enterOrder)) {
                         try {
@@ -80,31 +106,6 @@ public class XianYuNotfiyPay extends NotfiyChannel {
             });
         }
     }
-
-    String enterOrder(String orderId, String ip) {
-        Result dealpayNotfiy = dealpayNotfiy(orderId, ip);
-        if (dealpayNotfiy.isSuccess()) {
-            log.info("【咸鱼H5 交易成功】");
-            return "success";
-        }
-        return null;
-    }
-
-    public static String md5(String a) {
-        String c = "";
-	    	MessageDigest md5;
-		   	String result="";
-			try {
-				md5 = MessageDigest.getInstance("md5");
-				md5.update(a.getBytes("utf-8"));
-				byte[] temp;
-				temp=md5.digest(c.getBytes("utf-8"));
-				for (int i=0; i<temp.length; i++)
-					result+=Integer.toHexString((0x000000ff & temp[i]) | 0xffffff00).substring(6);
-			} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
-			}
-			return result;
-	    }
 }
 class XianYu {
 	//{"fxid":"2020177","fxstatus":"1","fxddh":"12365441234","fxorder":"qzf20200516171826589638709215147","fxdesc":"000000","fxfee":"2000.00","fxattch":"test","fxtime":"1589620706","fxsign":"8f31d1ccd2ffeae15885c4e33b08c01c"}

@@ -125,4 +125,22 @@ public interface OrderService {
 	 * @return
 	 */
 	boolean updateBankInfoByOrderId(String bank, String orderId);
+
+
+	/**
+	 * 订单回调专用查询接口
+	 *
+	 * @param orderId
+	 * @return
+	 */
+	DealOrder findOrderNotify(String orderId);
+
+
+	/**
+	 * 订单状态订单号查询
+	 *
+	 * @param orderId
+	 * @return
+	 */
+	DealOrder findOrderStatus(String orderId);
 }

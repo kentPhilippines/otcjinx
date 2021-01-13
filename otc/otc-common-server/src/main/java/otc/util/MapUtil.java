@@ -1,5 +1,9 @@
 package otc.util;
 
+import cn.hutool.core.util.ObjectUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
@@ -8,14 +12,6 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.google.common.collect.Maps;
-
-import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.core.util.StrUtil;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 /**
  * <p>map工具类</p>
  * @author K
@@ -28,19 +24,20 @@ public class MapUtil {
 	 * @return
 	 */
 	public static Map<String, Object> objectToMap(Object obj) {
-        Map<String, Object> map = new HashMap<>();
-        if (obj == null) 
-            return map;
-        Class clazz = obj.getClass();
-        Field[] fields = clazz.getDeclaredFields();
-        try { 
-        	for (Field field : fields) {
-	            field.setAccessible(true);
-	            map.put(field.getName(), field.get(obj));
-        	}
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+		Map<String, Object> map = new HashMap<>();
+		if (obj == null) {
+			return map;
+		}
+		Class clazz = obj.getClass();
+		Field[] fields = clazz.getDeclaredFields();
+		try {
+			for (Field field : fields) {
+				field.setAccessible(true);
+				map.put(field.getName(), field.get(obj));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
         return map;
     }
 	/**
@@ -50,18 +47,19 @@ public class MapUtil {
 	 * @return bean对象
 	 */
 	public static <T> T mapToBean(Map<String, Object> map, Class<T> beanClass) {
-	    if (cn.hutool.core.map.MapUtil.isEmpty(map)) 
-	        return null;
-	    try {
-	        T t = beanClass.newInstance();
-	        BeanInfo beanInfo = Introspector.getBeanInfo(t.getClass());
-	        PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
-	        for (PropertyDescriptor property : propertyDescriptors) {
-	            Method setter = property.getWriteMethod();
-	            if (setter != null) {
-	                setter.invoke(t, map.get(property.getName()));
-	            }
-	        }
+		if (cn.hutool.core.map.MapUtil.isEmpty(map)) {
+			return null;
+		}
+		try {
+			T t = beanClass.newInstance();
+			BeanInfo beanInfo = Introspector.getBeanInfo(t.getClass());
+			PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
+			for (PropertyDescriptor property : propertyDescriptors) {
+				Method setter = property.getWriteMethod();
+				if (setter != null) {
+					setter.invoke(t, map.get(property.getName()));
+				}
+			}
 	        return t;
 	    } catch (Exception ex) {
 	    	log.error("########map集合转javabean出错######，错误信息，{}", ex.getMessage());
@@ -75,10 +73,10 @@ public class MapUtil {
 	 * @param paramStr	解密后的拼接参数
 	 * @return			返回map结果
 	 */
-	public static Map<String,Object> paramToMap(String paramStr){
+	public static Map<String,Object> paramToMap(String paramStr) {
 		//将字符串参数转成数据组
 		String[] params = paramStr.split("&");
-		Map<String, Object> resMap = Maps.newHashMap();
+		Map<String, Object> resMap = cn.hutool.core.map.MapUtil.newHashMap();
 		for (int i = 0; i < params.length; i++) {
 			String[] param = params[i].split("=");
 			if (param.length >= 2) {
@@ -101,14 +99,17 @@ public class MapUtil {
 	 */
 	public static String createParam(Map<String, Object> map) {
 		try {
-			if (map == null || map.isEmpty())
+			if (map == null || map.isEmpty()) {
 				return null;
+			}
 			Object[] key = map.keySet().toArray();
 			Arrays.sort(key);
 			StringBuffer res = new StringBuffer(128);
-			for (int i = 0; i < key.length; i++) 
-				if(ObjectUtil.isNotNull(map.get(key[i])) && !"sign".equals(key[i]))
+			for (int i = 0; i < key.length; i++) {
+				if (ObjectUtil.isNotNull(map.get(key[i])) && !"sign".equals(key[i])) {
 					res.append(key[i] + "=" + map.get(key[i]) + "&");
+				}
+			}
 			String rStr = res.substring(0, res.length() - 1);
 			return rStr;
 		} catch (Exception e) {

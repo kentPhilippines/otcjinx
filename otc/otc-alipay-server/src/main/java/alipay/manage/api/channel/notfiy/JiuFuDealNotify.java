@@ -53,18 +53,18 @@ public class JiuFuDealNotify extends NotfiyChannel {
         String createParam = JiUFuUtil.createParam(map);
         log.info("【豪富返回参数加密验签串：" + createParam + "】");
         String md5 = JiUFuUtil.md5(createParam + "&" + JiUFuUtil.KEY);
-		if(md5.equals(sign)) {
-			log.info("【当前验签正确："+map.toString()+"】");
-		} else {
-			log.info("当前验签错误，我方验签串"+md5+"，对方验签串："+sign+"");
-			return "errer";
-		}
-		if(status.equals("1")) {
-			Result dealpayNotfiy = dealpayNotfiy(outTradeNo, clientIP,"玖富回调成功");
-			if(dealpayNotfiy.isSuccess()) {
-				return "success";
-			}
-		}
-		return "end errer";
-	}
+        if (md5.equals(sign)) {
+            log.info("【当前验签正确：" + map.toString() + "】");
+        } else {
+            log.info("当前验签错误，我方验签串" + md5 + "，对方验签串：" + sign + "");
+            return "errer";
+        }
+        if ("1".equals(status)) {
+            Result dealpayNotfiy = dealpayNotfiy(outTradeNo, clientIP, "玖富回调成功");
+            if (dealpayNotfiy.isSuccess()) {
+                return "success";
+            }
+        }
+        return "end errer";
+    }
 }

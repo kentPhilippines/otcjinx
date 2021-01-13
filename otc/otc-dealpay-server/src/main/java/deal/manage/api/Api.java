@@ -1,15 +1,4 @@
 package deal.manage.api;
-import java.math.BigDecimal;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.thread.ThreadUtil;
@@ -19,7 +8,6 @@ import cn.hutool.http.HttpUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
 import deal.config.feign.ConfigServiceClient;
-import deal.config.redis.RedisUtil;
 import deal.manage.bean.Amount;
 import deal.manage.bean.DealOrder;
 import deal.manage.bean.UserFund;
@@ -28,11 +16,13 @@ import deal.manage.service.OrderService;
 import deal.manage.service.RechargeService;
 import deal.manage.service.UserInfoService;
 import deal.manage.service.WithdrawService;
-import deal.manage.util.AmountRunUtil;
-import deal.manage.util.AmountUtil;
-import deal.manage.util.CardBankOrderUtil;
-import deal.manage.util.LogUtil;
-import deal.manage.util.OrderUtil;
+import deal.manage.util.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 import otc.api.dealpay.Common;
 import otc.bean.config.ConfigFile;
 import otc.bean.dealpay.Recharge;
@@ -44,58 +34,80 @@ import otc.result.DealBean;
 import otc.result.Result;
 import otc.util.RSAUtils;
 import otc.util.enums.DeductStatusEnum;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
+import java.util.Map;
+
 @RestController
 public class Api {
 	private static final Log log = LogFactory.get();
-	@Autowired CardBankOrderUtil cardBankOrderUtil;
-	@Autowired RechargeService rechargeServiceImpl;
-	@Autowired WithdrawService withdrawServiceImpl;
-	@Autowired ConfigServiceClient configServiceClientImpl;
-	@Autowired OrderService orderServiceImpl;
-	@Autowired UserInfoService userInfoServiceImpl;
-	@Autowired AmountMapper amountDao;
-	@Autowired AmountUtil amountUtil;
-	@Autowired AmountRunUtil amountRunUtil;
-	@Autowired LogUtil logUtil;
-	@Autowired OrderUtil orderUtil;
-	private static String Url ;
+	@Autowired
+	CardBankOrderUtil cardBankOrderUtil;
+	@Autowired
+	RechargeService rechargeServiceImpl;
+	@Autowired
+	WithdrawService withdrawServiceImpl;
+	@Autowired
+	ConfigServiceClient configServiceClientImpl;
+	@Autowired
+	OrderService orderServiceImpl;
+	@Autowired
+	UserInfoService userInfoServiceImpl;
+	@Resource
+	AmountMapper amountDao;
+	@Autowired
+	AmountUtil amountUtil;
+	@Autowired
+	AmountRunUtil amountRunUtil;
+	@Autowired
+	LogUtil logUtil;
+	@Autowired
+	OrderUtil orderUtil;
+	private static String Url;
+
 	/**
 	 * <p>后台人员置卡商代付订单为成功或者失败</p>
-	 * @param param					加密参数
+	 * @param param                    加密参数
 	 * @param request
 	 * @return
 	 */
 	@Transactional
 	@PostMapping(PayApiConstant.Dealpay.ACCOUNT_API+PayApiConstant.Dealpay.WIT_ORDER+"/{param:.+}")
 	public Result witOrder(@PathVariable("param") String param, HttpServletRequest request) {
-		log.info("【后台人员请求代付订单修改方法："+param+"】");
+		log.info("【后台人员请求代付订单修改方法：" + param + "】");
 		Map<String, Object> stringObjectMap = RSAUtils.retMapDecode(param, SystemConstants.INNER_PLATFORM_PRIVATE_KEY);
-		if(CollUtil.isEmpty(stringObjectMap)) {
+		if (CollUtil.isEmpty(stringObjectMap)) {
 			log.info("【参数解密为空】");
 			return Result.buildFailMessage("参数为空");
 		}
 		Object orderId = stringObjectMap.get("orderId");
-		if(ObjectUtil.isNull(orderId))
+		if (ObjectUtil.isNull(orderId)) {
 			return Result.buildFailMessage("订单号为空");
+		}
 		Object orderStatus = stringObjectMap.get("orderStatus");
-		if(ObjectUtil.isNull(orderStatus))
+		if (ObjectUtil.isNull(orderStatus)) {
 			return Result.buildFailMessage("订单状态为空");
+		}
 		Object userId = stringObjectMap.get("userId");
-		if(ObjectUtil.isNull(userId))
+		if (ObjectUtil.isNull(userId)) {
 			return Result.buildFailMessage("操作人为空");
+		}
 		String clientIP = HttpUtil.getClientIP(request);
-		if(StrUtil.isBlank(clientIP))
+		if (StrUtil.isBlank(clientIP)) {
 			return Result.buildFailMessage("当前使用代理服务器 或是操作ip识别出错，不允许操作");
+		}
 		deal.manage.bean.Withdraw wit = withdrawServiceImpl.findOrderId(orderId.toString());
-		if(Common.Order.Wit.ORDER_STATUS_SU.toString().equals(orderStatus.toString())) {
-			ThreadUtil.execAsync(()->{
-				log.info("【当前调用代付订单置为成功接口，当前订单号："+orderId+"，当前修改订单状态："+wit.getOrderStatus()+"，当前操作人："+userId+"】");
-				logUtil.addLog(request, "后台人员置代付订单成功，操作人："+userId.toString()+"", userId.toString());
+		if (Common.Order.Wit.ORDER_STATUS_SU.toString().equals(orderStatus.toString())) {
+			ThreadUtil.execAsync(() -> {
+				log.info("【当前调用代付订单置为成功接口，当前订单号：" + orderId + "，当前修改订单状态：" + wit.getOrderStatus() + "，当前操作人：" + userId + "】");
+				logUtil.addLog(request, "后台人员置代付订单成功，操作人：" + userId.toString() + "", userId.toString());
 			});
-			return orderUtil.witSu(wit.getOrderId(), userId+"  置代付订单为成成功，操作ip ："+  clientIP);
-			
-		}else if(Common.Order.Wit.ORDER_STATUS_ER.toString().equals(orderStatus.toString())) {
-			ThreadUtil.execAsync(()->{
+			return orderUtil.witSu(wit.getOrderId(), userId + "  置代付订单为成成功，操作ip ：" + clientIP);
+
+		} else if (Common.Order.Wit.ORDER_STATUS_ER.toString().equals(orderStatus.toString())) {
+			ThreadUtil.execAsync(() -> {
 				log.info("【当前调用充值订单置为成功接口，当前订单号："+orderId+"，当前修改订单状态："+wit.getOrderStatus()+"，当前操作人："+userId+"】");
 				logUtil.addLog(request, "后台人员置充值订单成功，操作人："+userId.toString()+"", userId.toString());
 			});
@@ -114,34 +126,38 @@ public class Api {
 	@Transactional
 	@PostMapping(PayApiConstant.Dealpay.ACCOUNT_API+PayApiConstant.Dealpay.RECHARGE_ORDER+"/{param:.+}")
 	public Result recharge(@PathVariable("param") String param, HttpServletRequest request) {
-		log.info("【后台人员请求充值订单修改方法："+param+"】");
+		log.info("【后台人员请求充值订单修改方法：" + param + "】");
 		Map<String, Object> stringObjectMap = RSAUtils.retMapDecode(param, SystemConstants.INNER_PLATFORM_PRIVATE_KEY);
-		if(CollUtil.isEmpty(stringObjectMap)) {
+		if (CollUtil.isEmpty(stringObjectMap)) {
 			log.info("【参数解密为空】");
 			return Result.buildFailMessage("参数为空");
 		}
 		Object orderId = stringObjectMap.get("orderId");
-		if(ObjectUtil.isNull(orderId))
+		if (ObjectUtil.isNull(orderId)) {
 			return Result.buildFailMessage("订单号为空");
+		}
 		Object orderStatus = stringObjectMap.get("orderStatus");
-		if(ObjectUtil.isNull(orderStatus))
+		if (ObjectUtil.isNull(orderStatus)) {
 			return Result.buildFailMessage("订单状态为空");
+		}
 		Object userId = stringObjectMap.get("userId");
-		if(ObjectUtil.isNull(userId))
+		if (ObjectUtil.isNull(userId)) {
 			return Result.buildFailMessage("操作人为空");
+		}
 		String clientIP = HttpUtil.getClientIP(request);
-		if(StrUtil.isBlank(clientIP))
+		if (StrUtil.isBlank(clientIP)) {
 			return Result.buildFailMessage("当前使用代理服务器 或是操作ip识别出错，不允许操作");
+		}
 		Recharge recharge = rechargeServiceImpl.findOrderId(orderId.toString());
-		if(Common.Order.Recharge.ORDER_STATUS_SU.toString().equals(orderStatus.toString())) {
-			ThreadUtil.execAsync(()->{
-				log.info("【当前调用充值订单置为成功接口，当前订单号："+orderId+"，当前修改订单状态："+recharge.getOrderStatus()+"，当前操作人："+userId+"】");
-				logUtil.addLog(request, "后台人员置充值订单成功，操作人："+userId.toString()+"", userId.toString());
+		if (Common.Order.Recharge.ORDER_STATUS_SU.toString().equals(orderStatus.toString())) {
+			ThreadUtil.execAsync(() -> {
+				log.info("【当前调用充值订单置为成功接口，当前订单号：" + orderId + "，当前修改订单状态：" + recharge.getOrderStatus() + "，当前操作人：" + userId + "】");
+				logUtil.addLog(request, "后台人员置充值订单成功，操作人：" + userId.toString() + "", userId.toString());
 			});
-			Result rechargeOrderSu = orderUtil.rechargeOrderSu(recharge.getOrderId(), clientIP,userId+"  置充值订单为成功，操作ip ："+  clientIP);
+			Result rechargeOrderSu = orderUtil.rechargeOrderSu(recharge.getOrderId(), clientIP, userId + "  置充值订单为成功，操作ip ：" + clientIP);
 			return rechargeOrderSu;
-		}else if(Common.Order.Recharge.ORDER_STATUS_ER.toString().equals(orderStatus.toString())) {
-			ThreadUtil.execAsync(()->{
+		} else if (Common.Order.Recharge.ORDER_STATUS_ER.toString().equals(orderStatus.toString())) {
+			ThreadUtil.execAsync(() -> {
 				log.info("【当前调用充值订单置为失败接口，当前订单号："+orderId+"，当前修改订单状态："+recharge.getOrderStatus()+"，当前操作人："+userId+"】");
 				logUtil.addLog(request, "后台人员置充值订单失败，操作人："+userId.toString()+"", userId.toString());
 			});
@@ -165,41 +181,47 @@ public class Api {
 	@Transactional
 	@PostMapping(PayApiConstant.Alipay.ACCOUNT_API+PayApiConstant.Alipay.AMOUNT+"/{param:.+}")
 	public Result addAmount(@PathVariable("param") String param, HttpServletRequest request) {
-		log.info("【后台人员请求人工加减款的资金处理的方法参数为："+param+"】");
+		log.info("【后台人员请求人工加减款的资金处理的方法参数为：" + param + "】");
 		Map<String, Object> stringObjectMap = RSAUtils.retMapDecode(param, SystemConstants.INNER_PLATFORM_PRIVATE_KEY);
-		if(CollUtil.isEmpty(stringObjectMap)) {
+		if (CollUtil.isEmpty(stringObjectMap)) {
 			log.info("【参数解密为空】");
 			return Result.buildFailMessage("参数为空");
 		}
 		Object orderId = stringObjectMap.get("orderId");
-		if(ObjectUtil.isNull(orderId))
+		if (ObjectUtil.isNull(orderId)) {
 			return Result.buildFailMessage("订单号为空");
+		}
 		Object orderStatus = stringObjectMap.get("orderStatus");
-		if(ObjectUtil.isNull(orderStatus))
+		if (ObjectUtil.isNull(orderStatus)) {
 			return Result.buildFailMessage("订单状态为空");
+		}
 		Object approval = stringObjectMap.get("approval");
-		if(ObjectUtil.isNull(approval))
+		if (ObjectUtil.isNull(approval)) {
 			return Result.buildFailMessage("审核人为空");
+		}
 		Object comment = stringObjectMap.get("comment");
-		if(ObjectUtil.isNull(comment))
+		if (ObjectUtil.isNull(comment)) {
 			return Result.buildFailMessage("审核意见为空");
-		Amount amount =  amountDao.findOrder(orderId.toString());
-		if(ObjectUtil.isNull(amount))
+		}
+		Amount amount = amountDao.findOrder(orderId.toString());
+		if (ObjectUtil.isNull(amount)) {
 			return Result.buildFailMessage("当前订单不存在");
-		log.info("【当前调用人工资金处理接口，当前订单号："+orderId+"】");
+		}
+		log.info("【当前调用人工资金处理接口，当前订单号：" + orderId + "】");
 		String clientIP = HttpUtil.getClientIP(request);
-		if(StrUtil.isBlank(clientIP))
+		if (StrUtil.isBlank(clientIP)) {
 			return Result.buildFailMessage("当前使用代理服务器 或是操作ip识别出错，不允许操作");
+		}
 		String amountType = amount.getAmountType();
 		String oldStatus = amount.getOrderStatus();//订单原始状态
-		if(!DeductStatusEnum.DEDUCT_STATUS_PROCESS.matches(Integer.parseInt(oldStatus))){//状态不相等，说明订单已经被处理
+		if (!DeductStatusEnum.DEDUCT_STATUS_PROCESS.matches(Integer.parseInt(oldStatus))) {//状态不相等，说明订单已经被处理
 			return Result.buildFailMessage("订单已被处理，不允许重复操作");
 		}
 		switch (amountType) {
-		case Common.Deal.AMOUNT_ORDER_ADD :
-			if(orderStatus.equals(Common.Deal.AMOUNT_ORDER_SU)) {//加款订单成功，
-				int a = amountDao.updataOrder( orderId.toString() ,  orderStatus.toString(), approval.toString(), comment.toString());
-				if(a > 0 && a< 2) {
+			case Common.Deal.AMOUNT_ORDER_ADD:
+				if (orderStatus.equals(Common.Deal.AMOUNT_ORDER_SU)) {//加款订单成功，
+					int a = amountDao.updataOrder(orderId.toString(), orderStatus.toString(), approval.toString(), comment.toString());
+					if (a > 0 && a < 2) {
 					UserFund userFund = userInfoServiceImpl.findUserFundByAccount(amount.getUserId());
 					Result addAmountAdd = amountUtil.addAmountAdd(userFund, amount.getAmount());
 					if(addAmountAdd.isSuccess()) {
@@ -266,46 +288,54 @@ public class Api {
 
 	@Transactional
 	@PostMapping(PayApiConstant.Alipay.ACCOUNT_API+PayApiConstant.Alipay.GENERATE_ORDER_DEDUCT+"/{param:.+}")
-	public Result generateOrderDeduct(@PathVariable("param") String param, HttpServletRequest request){
-		log.info("【请求交易的终端用户交易请求参数为："+param+"】");
+	public Result generateOrderDeduct(@PathVariable("param") String param, HttpServletRequest request) {
+		log.info("【请求交易的终端用户交易请求参数为：" + param + "】");
 		Map<String, Object> stringObjectMap = RSAUtils.retMapDecode(param, SystemConstants.INNER_PLATFORM_PRIVATE_KEY);
 		Amount alipayAmount = new Amount();
-		if(CollUtil.isEmpty(stringObjectMap)) {
+		if (CollUtil.isEmpty(stringObjectMap)) {
 			log.info("【参数解密为空】");
 			return Result.buildFailMessage("参数为空");
 		}
 		Object userId = stringObjectMap.get("userId");
-		if(ObjectUtil.isNull(userId))
+		if (ObjectUtil.isNull(userId)) {
 			return Result.buildFailMessage("用户ID不能为空");
+		}
 		alipayAmount.setUserId(userId.toString());
 		Object orderId = stringObjectMap.get("orderId");
-		if(ObjectUtil.isNull(orderId))
+		if (ObjectUtil.isNull(orderId)) {
 			return Result.buildFailMessage("订单号不能为空");
+		}
 		alipayAmount.setOrderId(orderId.toString());
 		Object orderStatus = stringObjectMap.get("orderStatus");
-		if(ObjectUtil.isNull(orderStatus))
+		if (ObjectUtil.isNull(orderStatus)) {
 			return Result.buildFailMessage("订单状态为空");
+		}
 		alipayAmount.setOrderStatus(orderStatus.toString());
 		Object amount = stringObjectMap.get("amount");
-		if(ObjectUtil.isNull(amount))
+		if (ObjectUtil.isNull(amount)) {
 			return Result.buildFailMessage("减款金额不能为空");
+		}
 		alipayAmount.setAmount(new BigDecimal(amount.toString()));
 		Object dealDescribe = stringObjectMap.get("dealDescribe");
-		if(ObjectUtil.isNull(dealDescribe))
+		if (ObjectUtil.isNull(dealDescribe)) {
 			return Result.buildFailMessage("扣款描述不能为空");
+		}
 		alipayAmount.setDealDescribe(dealDescribe.toString());
 		Object amountType = stringObjectMap.get("amountType");
-		if(ObjectUtil.isNull(amountType))
+		if (ObjectUtil.isNull(amountType)) {
 			return Result.buildFailMessage("申请类型不能为空");
+		}
 		alipayAmount.setAmountType(amountType.toString());
 		Object accname = stringObjectMap.get("accname");
-		if(ObjectUtil.isNull(accname))
+		if (ObjectUtil.isNull(accname)) {
 			return Result.buildFailMessage("申请人不能为空");
+		}
 		alipayAmount.setAccname(accname.toString());
 		alipayAmount.setActualAmount(new BigDecimal(amount.toString()));
 		String clientIP = HttpUtil.getClientIP(request);
-		if(StrUtil.isBlank(clientIP))
+		if (StrUtil.isBlank(clientIP)) {
 			return Result.buildFailMessage("当前使用代理服务器 或是操作ip识别出错，不允许操作");
+		}
 		UserFund userFund = userInfoServiceImpl.findUserFundByAccount(userId.toString());
 		if (userFund == null) {
 			throw new BusinessException("此用户不存在");
@@ -324,10 +354,11 @@ public class Api {
 				Result deleteAmount = amountRunUtil.deleteAmount(alipayAmount, clientIP);
 				if(deleteAmount.isSuccess()) {
 					int i = amountDao.insertAmountEntitys(alipayAmount);
-					if (i == 1)
+					if (i == 1) {
 						return Result.buildSuccessMessage("创建订单成功");
-					else
+					} else {
 						return Result.buildFailMessage("创建订单失败");
+					}
 				}
 			}
 		}else{//余额不足
@@ -345,39 +376,48 @@ public class Api {
 	 */
 	@PostMapping(PayApiConstant.Alipay.ORDER_API+PayApiConstant.Alipay.ORDER_ENTER_ORDER+"/{param:.+}")
 	public Result enterOrder(@PathVariable("param") String param, HttpServletRequest request) {
-		log.info("【请求交易的终端用户交易请求参数为："+param+"】");
+		log.info("【请求交易的终端用户交易请求参数为：" + param + "】");
 		Map<String, Object> stringObjectMap = RSAUtils.retMapDecode(param, SystemConstants.INNER_PLATFORM_PRIVATE_KEY);
-		if(CollUtil.isEmpty(stringObjectMap)) {
+		if (CollUtil.isEmpty(stringObjectMap)) {
 			log.info("【参数解密为空】");
 			return Result.buildFailMessage("参数为空");
 		}
 		Object obj = stringObjectMap.get("orderId");
-		if(ObjectUtil.isNull(obj)) return Result.buildFailMessage("未识别当前订单号");
+		if (ObjectUtil.isNull(obj)) {
+			return Result.buildFailMessage("未识别当前订单号");
+		}
 		Object sta = stringObjectMap.get("orderStatus");
-		if(ObjectUtil.isNull(sta)) return Result.buildFailMessage("未识别当前订单状态");
+		if (ObjectUtil.isNull(sta)) {
+			return Result.buildFailMessage("未识别当前订单状态");
+		}
 		Object user = stringObjectMap.get("userName");
-		if(ObjectUtil.isNull(user)) return Result.buildFailMessage("未识别当前操作人");
+		if (ObjectUtil.isNull(user)) {
+			return Result.buildFailMessage("未识别当前操作人");
+		}
 		String orderId = obj.toString();//订单号
 		String orderstatus = sta.toString();//将要改变订单状态
 		String userop = user.toString();//操作人
-		log.info("【当前调用人工处理订单接口，当前订单号："+orderId+"，当前修改订单状态："+orderstatus+"，当前操作人："+userop+"】");
-		DealOrder order  =  orderServiceImpl.findOrderByOrderId(orderId);
+		log.info("【当前调用人工处理订单接口，当前订单号：" + orderId + "，当前修改订单状态：" + orderstatus + "，当前操作人：" + userop + "】");
+		DealOrder order = orderServiceImpl.findOrderByOrderId(orderId);
 		String clientIP = HttpUtil.getClientIP(request);
-		if(StrUtil.isBlank(clientIP))
+		if (StrUtil.isBlank(clientIP)) {
 			return Result.buildFailMessage("当前使用代理服务器 或是操作ip识别出错，不允许操作");
-		if(ObjectUtil.isNull(order))
+		}
+		if (ObjectUtil.isNull(order)) {
 			return Result.buildFailMessage("当前订单不存在");
-		if(order.getOrderStatus().equals(Common.Order.DealOrder.ORDER_STATUS_ER.toString()) || order.getOrderStatus().equals(Common.Order.DealOrder.ORDER_STATUS_SU.toString()))
+		}
+		if (order.getOrderStatus().equals(Common.Order.DealOrder.ORDER_STATUS_ER.toString()) || order.getOrderStatus().equals(Common.Order.DealOrder.ORDER_STATUS_SU.toString())) {
 			return Result.buildFailMessage("当前订单状态不允许操作");
-		if(orderstatus.equals(Common.Order.DealOrder.ORDER_STATUS_ER.toString())) {
-			ThreadUtil.execAsync(()->{
-				logUtil.addLog(request, "后台人员置交易订单失败，操作人："+userop+"", userop);
+		}
+		if (orderstatus.equals(Common.Order.DealOrder.ORDER_STATUS_ER.toString())) {
+			ThreadUtil.execAsync(() -> {
+				logUtil.addLog(request, "后台人员置交易订单失败，操作人：" + userop + "", userop);
 			});
 			Result updataOrderErOperation = cardBankOrderUtil.updataOrderErOperation(orderId, userop, clientIP);
 			return updataOrderErOperation;
 		} else if (orderstatus.equals(Common.Order.DealOrder.ORDER_STATUS_SU.toString())) {
-			ThreadUtil.execAsync(()->{
-			 logUtil.addLog(request, "后台人员置交易订单成功，操作人："+userop+"", userop);
+			ThreadUtil.execAsync(() -> {
+				logUtil.addLog(request, "后台人员置交易订单成功，操作人：" + userop + "", userop);
 			});
 			Result updateOrderSu = cardBankOrderUtil.updateOrderSu(orderId, clientIP, userop);
 			return updateOrderSu;
@@ -464,12 +504,13 @@ public class Api {
 		boolean order = withdrawServiceImpl.addOrder(with);
 		if(order) {
 			Result orderW = cardBankOrderUtil.createBankOrderW(with.getOrderId());
-			if(orderW.isSuccess())
+			if (orderW.isSuccess()) {
 				return orderW;
-			
-			ThreadUtil.execute(()->{
-				boolean a = withdrawServiceImpl.updateStatusEr(wit.getOrderId(),orderW.getMessage());
-				log.info("【代付预订单失败的时候，修改订单成功】");		
+			}
+
+			ThreadUtil.execute(() -> {
+				boolean a = withdrawServiceImpl.updateStatusEr(wit.getOrderId(), orderW.getMessage());
+				log.info("【代付预订单失败的时候，修改订单成功】");
 			});
 		}
 		return Result.buildFailMessage("代付失败"); 

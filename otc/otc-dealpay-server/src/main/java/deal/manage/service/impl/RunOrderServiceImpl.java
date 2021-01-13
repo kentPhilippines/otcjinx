@@ -1,14 +1,5 @@
 package deal.manage.service.impl;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import deal.manage.bean.Runorder;
@@ -16,6 +7,14 @@ import deal.manage.bean.RunorderExample;
 import deal.manage.bean.RunorderExample.Criteria;
 import deal.manage.mapper.RunorderMapper;
 import deal.manage.service.RunOrderService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
 @Component
 public class RunOrderServiceImpl implements RunOrderService {
 	@Autowired RunorderMapper runorderDao;
@@ -29,19 +28,21 @@ public class RunOrderServiceImpl implements RunOrderService {
 	public List<Runorder> findOrderRunByPage(Runorder order) {
 		RunorderExample example = new RunorderExample();
 		Criteria criteria = example.createCriteria();
-		if(ObjectUtil.isNotNull(order.getRunOrderType()))
+		if (ObjectUtil.isNotNull(order.getRunOrderType())) {
 			criteria.andRunOrderTypeEqualTo(order.getRunOrderType());
-		if(ObjectUtil.isNotNull(order.getOrderAccountList())) 
+		}
+		if (ObjectUtil.isNotNull(order.getOrderAccountList())) {
 			criteria.andOrderAccountIn(order.getOrderAccountList());
-		if(StrUtil.isNotBlank(order.getTime())) {
+		}
+		if (StrUtil.isNotBlank(order.getTime())) {
 			Date date = getDate(order.getTime());
 			Calendar calendar = new GregorianCalendar();
 			calendar.setTime(date);
-			calendar.set(Calendar.HOUR,0);
-			calendar.set(Calendar.MINUTE,0);
-			calendar.set(Calendar.SECOND,0);
-			calendar.set(Calendar.MILLISECOND,0);
-			System.out.println("开始时间："+calendar.getTime());
+			calendar.set(Calendar.HOUR, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+			System.out.println("开始时间：" + calendar.getTime());
 			Date time = calendar.getTime();
 			calendar.set(Calendar.HOUR,23);
 			calendar.set(Calendar.MINUTE,59);

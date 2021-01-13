@@ -100,4 +100,12 @@ public interface DealOrderMapper {
 
     @Update("update alipay_deal_order set orderQr = #{bank} where orderId = #{orderId}")
     int updateBankInfoByOrderId(String bank, String orderId);
+
+
+    @Select("id, orderId, associatedId, orderStatus, dealAmount ,orderAccount, orderQrUser,externalOrderId,  notify  , isNotify  FROM alipay_deal_order  where  orderId = #{orderId}")
+    DealOrder findOrderNotify(@Param("orderId") String orderId);
+
+
+    @Select("id, orderId, associatedId, orderStatus, dealAmount ,orderAccount, orderQrUser,externalOrderId FROM alipay_deal_order  where  orderId = #{orderId}")
+    DealOrder findOrderStatus(String orderId);
 }

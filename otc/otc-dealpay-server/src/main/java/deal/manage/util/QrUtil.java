@@ -1,5 +1,16 @@
 package deal.manage.util;
 
+import cn.hutool.core.date.DateField;
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
+import deal.config.redis.RedisUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import otc.api.dealpay.Common;
+
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -7,19 +18,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
-
-import javax.annotation.Resource;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import cn.hutool.core.date.DateField;
-import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.StrUtil;
-import deal.config.redis.RedisUtil;
-import otc.api.dealpay.Common;
 
 @Component
 public class QrUtil {
@@ -59,8 +57,9 @@ public class QrUtil {
 			Date parse = formatter.parse(subSuf);
 			Object object = hmget.get(obj.toString());// 当前金额
 			if (!DateUtil.isExpired(parse, DateField.SECOND,
-					Integer.valueOf(settingFile.getName(settingFile.FREEZE_PLAIN_VIRTUAL)), new Date()))
+					Integer.valueOf(settingFile.getName(SettingFile.FREEZE_PLAIN_VIRTUAL)), new Date())) {
 				redisUtil.hdel(userId, obj.toString());
+			}
 		}
 		Map<Object, Object> hmget2 = redisUtil.hmget(userId);
 		Set<Object> keySet2 = hmget2.keySet();

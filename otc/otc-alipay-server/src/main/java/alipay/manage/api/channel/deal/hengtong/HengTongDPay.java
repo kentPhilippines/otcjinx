@@ -45,10 +45,11 @@ public class HengTongDPay extends PayOrderService {
             ChannelInfo channelInfo = getChannelInfo(channel, wit.getWitType());
             String createDpay = createDpay(userInfo.getDealUrl() +
                     PayApiConstant.Notfiy.NOTFIY_API_WAI + HengtongUtil.D_NOTIFY, wit, channelInfo);
-            if (StrUtil.isNotBlank(createDpay) && createDpay.equals(WIT_RESULT))
+            if (StrUtil.isNotBlank(createDpay) && createDpay.equals(WIT_RESULT)) {
                 return Result.buildSuccessMessage("代付成功等待处理");
-            else
+            } else {
                 return Result.buildFailMessage(createDpay);
+            }
         } catch (Exception e) {
             log.error("【错误信息打印】" + e.getMessage());
             return Result.buildFailMessage("代付失败");
@@ -113,7 +114,7 @@ public class HengTongDPay extends PayOrderService {
          */
         JSONObject jsonObject = JSONUtil.parseObj(post);
         String whether = jsonObject.getStr("success");
-        if (whether.equals("true")) {
+        if ("true".equals(whether)) {
             return WIT_RESULT;
         } else {
             withdrawEr(wit, jsonObject.getStr("message"), wit.getRetain2());

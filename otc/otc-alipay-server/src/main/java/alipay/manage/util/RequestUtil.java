@@ -1,16 +1,16 @@
 package alipay.manage.util;
 
-import java.util.Map;
-
+import cn.hutool.core.util.StrUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import cn.hutool.core.util.StrUtil;
 import otc.result.Result;
 import otc.util.encode.XRsa;
 
+import java.util.Map;
+
 /**
  * <p>请求参数加解密工具类</p>
+ *
  * @author kent
  */
 public class RequestUtil {
@@ -43,12 +43,13 @@ public class RequestUtil {
 	 * @param param			加密参数
 	 * @return
 	 */
-	public Result publicEncrypt(String param){
-		if(StrUtil.isBlank(param))
+	public Result publicEncrypt(String param) {
+		if (StrUtil.isBlank(param)) {
 			return Result.buildFailMessage("加密参数为空");
+		}
 		String publicEncrypt = rsa.publicEncrypt(param);
-		log.info("加密密参数为："+param);
-		log.info("加密后的值为："+publicEncrypt);
+		log.info("加密密参数为：" + param);
+		log.info("加密后的值为：" + publicEncrypt);
 		return Result.buildSuccessResult(publicEncrypt);
 	}
 	
@@ -58,22 +59,24 @@ public class RequestUtil {
 	 * @return
 	 */
 	public Result privateEncrypt(String param) {
-		if(StrUtil.isBlank(param))
+		if (StrUtil.isBlank(param)) {
 			return Result.buildFailMessage("加密参数为空");
+		}
 		String publicEncrypt = rsa.privateEncrypt(param);
-		log.info("加密密参数为："+param);
-		log.info("加密后的值为："+publicEncrypt);
+		log.info("加密密参数为：" + param);
+		log.info("加密后的值为：" + publicEncrypt);
 		return Result.buildSuccessResult(publicEncrypt);
 	}
 	
 	
 	
 	public Result privateDecrypt(String param) {
-		if(StrUtil.isBlank(param))
+		if (StrUtil.isBlank(param)) {
 			return Result.buildFailMessage("解密参数为空");
+		}
 		String privateDecrypt = rsa.privateDecrypt(param);
-		log.info("解密参数为："+param);
-		log.info("解密后的值为："+privateDecrypt);
+		log.info("解密参数为：" + param);
+		log.info("解密后的值为：" + privateDecrypt);
 		return Result.buildSuccessResult(privateDecrypt);
 	}
 	

@@ -8,12 +8,12 @@ import alipay.manage.service.*;
 import alipay.manage.util.OrderUtil;
 import alipay.manage.util.amount.AmountPublic;
 import alipay.manage.util.amount.AmountRunUtil;
+import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
-import com.google.common.collect.Maps;
 import org.springframework.beans.factory.annotation.Autowired;
 import otc.api.alipay.Common;
 import otc.bean.config.ConfigFile;
@@ -60,12 +60,13 @@ public abstract class PayOrderService implements PayService {
 
     @Override
     public Result deal(DealOrderApp dealOrderApp, String channel) throws Exception {
-        if (Common.Deal.PRODUCT_ALIPAY_SCAN.equals(channel))
-            return dealAlipayScan(dealOrderApp);
-        else if (Common.Deal.PRODUCT_ALIPAY_H5.equals(channel))
-            return dealAlipayH5(dealOrderApp);
-        return null;
-    }
+		if (Common.Deal.PRODUCT_ALIPAY_SCAN.equals(channel)) {
+			return dealAlipayScan(dealOrderApp);
+		} else if (Common.Deal.PRODUCT_ALIPAY_H5.equals(channel)) {
+			return dealAlipayH5(dealOrderApp);
+		}
+		return null;
+	}
 
 	public boolean orderEr(DealOrderApp orderApp, String msg) {
 		log.info("【将当前订单置为失败，当前交易订单号：" + orderApp.getOrderId() + "】");
@@ -138,13 +139,14 @@ public abstract class PayOrderService implements PayService {
 			corr.setUserId(order.getOrderQrUser());
 			corr.setAppId(order.getOrderAccount());
 			corr.setFee(rate.getFee());
-			corr.setChannelFee(new BigDecimal(channelFee.getChannelRFee() ));
+			corr.setChannelFee(new BigDecimal(channelFee.getChannelRFee()));
 			corr.setProfit(new BigDecimal(order.getRetain3()));
 			boolean addCorrelationDate = correlationServiceImpl.addCorrelationDate(corr);
-			if(addCorrelationDate)
-				log.info("【订单号："+order.getOrderId()+"，添加数据统计成功】");
-			else
-				log.info("【订单号："+order.getOrderId()+"，添加数据统计失败】");
+			if (addCorrelationDate) {
+				log.info("【订单号：" + order.getOrderId() + "，添加数据统计成功】");
+			} else {
+				log.info("【订单号：" + order.getOrderId() + "，添加数据统计失败】");
+			}
 		});
 	}
 	/**
@@ -155,11 +157,11 @@ public abstract class PayOrderService implements PayService {
 		 * #############################
 		 * 生成预订单病返回支付连接
 		 */
-		Map<String, Object> param = Maps.newHashMap();
+		Map<String, Object> param = MapUtil.newHashMap();
 		param.put(ORDER, dealOrderApp.getOrderId());
 		String encryptPublicKey = RSAUtils.getEncryptPublicKey(param, SystemConstants.INNER_PLATFORM_PUBLIC_KEY);
 		String URL = configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.SERVER_IP).getResult().toString();
-		return Result.buildSuccessResult(URL+"/pay/alipayScan/"+encryptPublicKey);
+		return Result.buildSuccessResult(URL + "/pay/alipayScan/" + encryptPublicKey);
 	}
 	/**
 	 * <p>支付宝H5</p>
@@ -186,17 +188,21 @@ public abstract class PayOrderService implements PayService {
 			UserFund userFund = new UserFund();// userInfoServiceImpl.findUserFundByAccount(wit.getUserId());
 			userFund.setUserId(wit.getUserId());
 			Result deleteWithdraw = amountPublic.deleteWithdraw(userFund, wit.getActualAmount(), wit.getOrderId());
-			if (!deleteWithdraw.isSuccess())
+			if (!deleteWithdraw.isSuccess()) {
 				return Result.buildFailMessage("账户扣减失败,请联系技术人员处理");
+			}
 			Result deleteAmount = amountRunUtil.deleteAmount(wit, wit.getRetain2(), false);
-			if (!deleteAmount.isSuccess())
+			if (!deleteAmount.isSuccess()) {
 				return Result.buildFailMessage("账户扣减失败,请联系技术人员处理");
+			}
 			Result deleteWithdraw2 = amountPublic.deleteWithdraw(userFund, wit.getFee(), wit.getOrderId());
-			if (!deleteWithdraw2.isSuccess())
+			if (!deleteWithdraw2.isSuccess()) {
 				return Result.buildFailMessage("账户扣减失败,请联系技术人员处理");
+			}
 			Result deleteAmountFee = amountRunUtil.deleteAmountFee(wit, wit.getRetain2(), false);
-			if (!deleteAmountFee.isSuccess())
+			if (!deleteAmountFee.isSuccess()) {
 				return Result.buildFailMessage("账户扣减失败,请联系技术人员处理");
+			}
 		}  finally {
 	        lock.unlock();
 	    }

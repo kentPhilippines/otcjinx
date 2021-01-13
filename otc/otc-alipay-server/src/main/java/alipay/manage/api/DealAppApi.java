@@ -72,7 +72,7 @@ public class DealAppApi extends PayOrderService {
 		if (!verifySign) {
 			return Result.buildFailMessage("签名错误");
 		}
-		UserFund fund = userInfoServiceImpl.findUserFundByAccount(appId);
+		UserFund fund = userInfoServiceImpl.fundUserFundAccounrBalace(appId);
 		if (ObjectUtil.isNull(fund)) {
 			log.info("【当前查询的商户号不存在，请核实，商户号为：" + appId + "】");
 			return Result.buildFailMessage("当前查询的订单不存在，请核实");
@@ -98,8 +98,9 @@ public class DealAppApi extends PayOrderService {
 		String type = request.getParameter("type");
 		String sign = request.getParameter("sign");
 		if(StrUtil.isBlank(type) ) {
-			if (StrUtil.isBlank(appId) || StrUtil.isBlank(appOrderId) || StrUtil.isBlank(sign))
+			if (StrUtil.isBlank(appId) || StrUtil.isBlank(appOrderId) || StrUtil.isBlank(sign)) {
 				return Result.buildFailMessage("必传参数为空");
+			}
 			UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(appId);
 			if (ObjectUtil.isNull(userInfo)) {
 				return Result.buildFailMessage("商户不存在");
@@ -133,8 +134,9 @@ public class DealAppApi extends PayOrderService {
 			return Result.buildSuccessResult(fund);
 		}
 		if("pay".equals(type) ) {
-			if (StrUtil.isBlank(appId) || StrUtil.isBlank(appOrderId) || StrUtil.isBlank(sign))
+			if (StrUtil.isBlank(appId) || StrUtil.isBlank(appOrderId) || StrUtil.isBlank(sign)) {
 				return Result.buildFailMessage("必传参数为空");
+			}
 			UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(appId);
 			if (ObjectUtil.isNull(userInfo)) {
 				return Result.buildFailMessage("商户不存在");
@@ -169,8 +171,9 @@ public class DealAppApi extends PayOrderService {
 			return Result.buildSuccessResult(fund);
 		}
 		if("wit".equals(type)) {
-			if (StrUtil.isBlank(appId) || StrUtil.isBlank(appOrderId) || StrUtil.isBlank(sign))
+			if (StrUtil.isBlank(appId) || StrUtil.isBlank(appOrderId) || StrUtil.isBlank(sign)) {
 				return Result.buildFailMessage("必传参数为空");
+			}
 			UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(appId);
 			if (ObjectUtil.isNull(userInfo)) {
 				return Result.buildFailMessage("商户不存在");
@@ -370,11 +373,14 @@ public class DealAppApi extends PayOrderService {
 		return deal;
 	}
 	private Withdraw createWit(WithdrawalBean wit, UserRate userRate,Boolean fla, ChannelFee channelFee ) {
-	    log.info("【当前转换参数 代付实体类为："+wit.toString()+"】");
-	    String type = "";
-	    String bankName = "";
-		if (fla) type = Common.Order.Wit.WIT_TYPE_API;
-		else type = Common.Order.Wit.WIT_TYPE_MANAGE;
+		log.info("【当前转换参数 代付实体类为：" + wit.toString() + "】");
+		String type = "";
+		String bankName = "";
+		if (fla) {
+			type = Common.Order.Wit.WIT_TYPE_API;
+		} else {
+			type = Common.Order.Wit.WIT_TYPE_MANAGE;
+		}
 		Withdraw witb = new Withdraw();
 		witb.setUserId(wit.getAppid());
 		witb.setAmount(new BigDecimal(wit.getAmount()));

@@ -33,7 +33,7 @@ public class ShenFuSourcePay extends PayOrderService {
     public Result deal(DealOrderApp dealOrderApp, String channel) throws Exception {
         log.info("【进入申付支付，当前请求产品：" + dealOrderApp.getRetain1() + "，当前请求渠道：" + channel + "】");
         String orderId = create(dealOrderApp, channel);
-        UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(dealOrderApp.getOrderAccount());
+        UserInfo userInfo = userInfoServiceImpl.findDealUrl(dealOrderApp.getOrderAccount());
         if (StrUtil.isBlank(userInfo.getDealUrl())) {
             orderEr(dealOrderApp, "当前商户交易url未设置");
             return Result.buildFailMessage("请联系运营为您的商户好设置交易url");
@@ -73,7 +73,7 @@ public class ShenFuSourcePay extends PayOrderService {
         log.info(post);
         PddBean bean = JSONUtil.toBean(post, PddBean.class);
         if (ObjectUtil.isNotNull(bean)) {
-            if (bean.getRet_code().equals("0000")) {
+            if ("0000".equals(bean.getRet_code())) {
                 return Result.buildSuccessResult(bean.getRedirect_url());
             } else {
                 return Result.buildFailMessage(bean.getRet_msg());

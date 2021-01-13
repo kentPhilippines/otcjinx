@@ -89,7 +89,7 @@ public class ShenfuHuafeiNotify extends NotfiyChannel {
             log.info("【签名失败】");
             return "sign is error";
         }
-        if (p4_status.equals("2")) {
+        if ("2".equals(p4_status)) {
             Result dealpayNotfiy = dealpayNotfiy(p3_orderno, clientIP, "申付话费回调成功");
             if (dealpayNotfiy.isSuccess()) {
                 return "SUCCESS";

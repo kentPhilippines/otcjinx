@@ -124,10 +124,11 @@ public class AccountApiSericeImpl implements AccountApiService {
     	if(password.isSuccess()) {
     		boolean equals = userInfo.getPassword().equals(password.getResult().toString());
     		if(equals) {
-    			int a = userInfoDao.updataPassword( user.getUserId(),   user.getNewPassword());
-    			if(a>0 && a < 2) 
-    				return Result.buildSuccessMessage("密码修改成功");
-    		}
+                int a = userInfoDao.updataPassword(user.getUserId(), user.getNewPassword());
+                if (a > 0 && a < 2) {
+                    return Result.buildSuccessMessage("密码修改成功");
+                }
+            }
     	}
         return Result.buildFailMessage("密码修改失败，请检查密码是否正确");
     }
@@ -142,10 +143,11 @@ public class AccountApiSericeImpl implements AccountApiService {
     	if(password.isSuccess()) {
     		boolean equals = userInfo.getPayPasword().equals(password.getResult().toString());
     		if(equals) {
-    			int a = userInfoDao.updataPayPassword( user.getUserId(),user.getNewPayPassword());
-    			if(a>0 && a < 2) 
-    				return Result.buildSuccessMessage("密码修改成功");
-    		}
+                int a = userInfoDao.updataPayPassword(user.getUserId(), user.getNewPayPassword());
+                if (a > 0 && a < 2) {
+                    return Result.buildSuccessMessage("密码修改成功");
+                }
+            }
     	}
         return Result.buildFailMessage("密码修改失败，请检查密码是否正确");
     }
@@ -176,8 +178,9 @@ public class AccountApiSericeImpl implements AccountApiService {
         Criteria criteria = example.createCriteria();
         criteria.andUserIdEqualTo(user.getUserId());
         int updateByExampleSelective = userInfoDao.updateByExampleSelective(user, example);
-        if (updateByExampleSelective > 0 && updateByExampleSelective < 2)
+        if (updateByExampleSelective > 0 && updateByExampleSelective < 2) {
             return Result.buildSuccessMessage("用户修改成功");
+        }
         return Result.buildFail();
     }
 

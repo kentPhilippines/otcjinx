@@ -33,13 +33,15 @@ public class UzPayNotify extends NotfiyChannel {
         log.info("【收到UzPay回调】");
         String clientIP = HttpUtil.getClientIP(request);
         log.info("【当前回调ip为：" + clientIP + "】");
-        if (!clientIP.equals("52.193.97.128")) {
+        if (!"52.193.97.128".equals(clientIP)) {
             log.info("【当前回调ip为：" + clientIP + "，固定IP登记为：" + "52.193.97.128" + "】");
             log.info("【当前回调ip不匹配】");
             return "ip errer";
         }
         JSONObject rtJson = JSONUtil.parseObj(json);
-        if (null == rtJson) return "ERROR";
+        if (null == rtJson) {
+            return "ERROR";
+        }
         orderid = rtJson.getStr("orderid");
         if (StrUtil.isBlank(orderid)) {
             log.info("【回调参数异常，订单号为获取到】");

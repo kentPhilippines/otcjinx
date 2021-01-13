@@ -91,7 +91,7 @@ public class ShunYiAlipayScan extends PayOrderService{
         JSONObject jsonObject = JSONUtil.parseObj(post);
 
         if (ObjectUtil.isNotNull(jsonObject)) {
-            if (jsonObject.getStr("ret_code").equals("0000")) {
+            if ("0000".equals(jsonObject.getStr("ret_code"))) {
                 return jsonObject;
             } else {
                 //	{"ret_code":"4008","ret_msg":"服务未开通"}

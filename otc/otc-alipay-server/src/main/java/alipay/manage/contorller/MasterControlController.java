@@ -3,6 +3,7 @@ package alipay.manage.contorller;
 import alipay.config.redis.RedisUtil;
 import alipay.manage.bean.UserInfo;
 import alipay.manage.bean.util.OnlineVO;
+import alipay.manage.bean.util.RegisterSetting;
 import alipay.manage.service.UserInfoService;
 import alipay.manage.util.SessionUtil;
 import alipay.manage.util.SettingFile;
@@ -16,18 +17,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import alipay.manage.bean.util.RegisterSetting;
 import otc.api.ConfigServiceClientFeign;
 import otc.bean.config.ConfigFile;
 import otc.common.RedisConstant;
 import otc.exception.user.UserException;
 import otc.result.Result;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Set;
+
 import static java.util.stream.Collectors.toList;
 
 @Controller
@@ -58,10 +57,10 @@ public class MasterControlController {
 	@ResponseBody
 	public Result getRegisterSetting() {
 		RegisterSetting bean = new RegisterSetting();
-		bean.setInviteCodeEffectiveDuration(50000000); 
+		bean.setInviteCodeEffectiveDuration(50000000);
 		Result config = configServiceClientFeignImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.REGISTER_ENABLED);
-		bean.setRegisterEnabled(settingFile.getName(settingFile.REGISTER_ENABLED)!=null?true:false);//是否开放注册功能 config.getResult().toString().equals("1")?true:false
-		bean.setInviteRegisterEnabled(false); 
+		bean.setRegisterEnabled(settingFile.getName(SettingFile.REGISTER_ENABLED) != null ? true : false);//是否开放注册功能 config.getResult().toString().equals("1")?true:false
+		bean.setInviteRegisterEnabled(false);
 		bean.setRegitserDefaultRebate(0.01);
 		return Result.buildSuccessResult(bean);
 	}

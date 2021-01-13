@@ -2,7 +2,6 @@ package otc.util;
 
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
-import com.google.common.collect.ImmutableList;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import otc.exception.BusinessException;
@@ -10,13 +9,15 @@ import otc.exception.BusinessException;
 import javax.crypto.Cipher;
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
-import java.security.*;
+import java.security.KeyFactory;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.Signature;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.List;
 import java.util.Map;
 
 
@@ -29,33 +30,11 @@ public class RSAUtils {
     /**
      * 随机生成密钥对
      */
-    public static List<String> genKeyPair() {
-        try {
-            // KeyPairGenerator类用于生成公钥和私钥对，基于RSA算法生成对象
-            KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("RSA");
-            // 初始化密钥对生成器
-            keyPairGen.initialize(KEY_SIZE);
-            // 生成一个密钥对，保存在keyPair中
-            KeyPair keyPair = keyPairGen.generateKeyPair();
-            // 得到私钥
-            RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
-            // 得到公钥
-            RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
-            String publicKeyString = java.util.Base64.getEncoder().encodeToString(publicKey.getEncoded());
-            // 得到私钥字符串
-            String privateKeyString = java.util.Base64.getEncoder().encodeToString(privateKey.getEncoded());
-            // 将公钥和私钥保存到List
-            return ImmutableList.of(publicKeyString, privateKeyString);
-        } catch (NoSuchAlgorithmException var15) {
-            return null;
-        }
-    }
 
     /**
      * 公钥对象
      *
      * @param publicKey
-     * @return
      * @throws NoSuchAlgorithmException
      * @throws InvalidKeySpecException
      */
@@ -244,7 +223,6 @@ public class RSAUtils {
 	private static final String ENCODE_TYPE = "md5";
     /**
      * md5加密
-     * @param str
      * @return
      */
     public static String md5(String a) {
@@ -252,13 +230,14 @@ public class RSAUtils {
     	MessageDigest md5;
 	   	String result="";
 		try {
-			md5 = MessageDigest.getInstance(ENCODE_TYPE);
-			md5.update(a.getBytes(UTF_8));
-			byte[] temp;
-			temp=md5.digest(c.getBytes(UTF_8));
-			for (int i=0; i<temp.length; i++)
-				result+=Integer.toHexString((0x000000ff & temp[i]) | 0xffffff00).substring(6);
-		} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+            md5 = MessageDigest.getInstance(ENCODE_TYPE);
+            md5.update(a.getBytes(UTF_8));
+            byte[] temp;
+            temp = md5.digest(c.getBytes(UTF_8));
+            for (int i = 0; i < temp.length; i++) {
+                result += Integer.toHexString((0x000000ff & temp[i]) | 0xffffff00).substring(6);
+            }
+        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
 			log.info("获取秘钥失败");
 		}
 		return result;
@@ -277,8 +256,9 @@ public class RSAUtils {
         //私钥解密密文得到字符串参数
         String cipherText = publicEncrypt(urlParam, privateKey);
         //调用方法转成map
-        if (StringUtils.isEmpty(cipherText)) 
+        if (StringUtils.isEmpty(cipherText)) {
             throw new BusinessException("加密字符串为空");
+        }
         return cipherText;
     }
 
@@ -293,8 +273,9 @@ public class RSAUtils {
         //私钥解密密文得到字符串参数
         String urlParam = privateDecrypt(cipherText, privateKey);
         //调用方法转成map
-        if (StringUtils.isEmpty(urlParam)) 
+        if (StringUtils.isEmpty(urlParam)) {
             throw new BusinessException("解密字符串为空");
+        }
         return MapUtil.paramToMap(urlParam);
     }
 
@@ -307,9 +288,10 @@ public class RSAUtils {
      */
     public static Map<String, Object> getDecodePrivateKey(String cipherText, String privateKey) {
         String urlParam = privateDecrypt(cipherText, privateKey);
-        log.info("【解密数据："+urlParam+"】");
-        if (StringUtils.isEmpty(urlParam)) 
+        log.info("【解密数据：" + urlParam + "】");
+        if (StringUtils.isEmpty(urlParam)) {
             throw new BusinessException("解密字符串为空,请核对密钥正确醒和确认好当前加密方法是否有误");
+        }
         return MapUtil.paramToMap(urlParam);
     }
 

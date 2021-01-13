@@ -53,35 +53,39 @@ public class DealApi extends NotfiyChannel {
 	private static final Log log = LogFactory.get();
 	@RequestMapping("/alipayScan/{param:.+}")
 	public String alipayScan(@PathVariable String param,HttpServletRequest request) {
-		log.info("【请求交易的终端用户交易请求参数为："+param+"】");
+		log.info("【请求交易的终端用户交易请求参数为：" + param + "】");
 		Map<String, Object> stringObjectMap = RSAUtils.retMapDecode(param, SystemConstants.INNER_PLATFORM_PRIVATE_KEY);
-		if(CollUtil.isEmpty(stringObjectMap)) 
+		if (CollUtil.isEmpty(stringObjectMap)) {
 			log.info("【参数解密为空】");
+		}
 		String orderId = stringObjectMap.get(ORDER).toString();
-		log.info("【当前请求交易订单号为："+orderId+"】");
+		log.info("【当前请求交易订单号为：" + orderId + "】");
 		DealOrder order = orderServiceImpl.findAssOrder(orderId);
-		if(ObjectUtil.isNotNull(order))
+		if (ObjectUtil.isNotNull(order)) {
 			return "toFixationPay";
+		}
 		DealOrderApp orderApp = orderAppServiceImpl.findOrderByOrderId(orderId);
-		boolean flag = addOrder(orderApp,request);
-		if(!flag) {
+		boolean flag = addOrder(orderApp, request);
+		if (!flag) {
 			log.info("【订单生成有误，或者当前武可用渠道】");
-			ThreadUtil.execute(()->{
-				orderAppServiceImpl.updateOrderEr(orderId,"当前无可用渠道");
+			ThreadUtil.execute(() -> {
+				orderAppServiceImpl.updateOrderEr(orderId, "当前无可用渠道");
 			});
 			return "payEr";
 		}
 		return "toFixationPay";
 	}
 	private boolean addOrder(DealOrderApp orderApp, HttpServletRequest request) {
-		if(!orderApp.getOrderStatus().toString().equals(Common.Order.DealOrder.ORDER_STATUS_DISPOSE.toString()))
+		if (!orderApp.getOrderStatus().toString().equals(Common.Order.DealOrder.ORDER_STATUS_DISPOSE.toString())) {
 			return false;
+		}
 		DealOrder order = new DealOrder();
 		String orderAccount = orderApp.getOrderAccount();//交易商户号
 		UserInfo accountInfo = userInfoServiceImpl.findUserInfoByUserId(orderAccount);//这里有为商户配置的 供应队列属性
 		String[] split = {};
-		if(StrUtil.isNotBlank(accountInfo.getQueueList()))
-			split  = accountInfo.getQueueList().split(",");//队列供应标识数组
+		if (StrUtil.isNotBlank(accountInfo.getQueueList())) {
+			split = accountInfo.getQueueList().split(",");//队列供应标识数组
+		}
 		order.setAssociatedId(orderApp.getOrderId());
 		order.setDealDescribe("正常交易订单");
 		order.setActualAmount(orderApp.getOrderAmount());
@@ -91,25 +95,27 @@ public class DealApi extends NotfiyChannel {
 		order.setGenerationIp(HttpUtil.getClientIP(request));
 		order.setOrderAccount(orderApp.getOrderAccount());
 		order.setNotify(orderApp.getNotify());
-		FileList findQr = null ;
+		FileList findQr = null;
 		try {
-			findQr = qrUtil.findQr(orderApp.getOrderId(), orderApp.getOrderAmount(), split,true);
+			findQr = qrUtil.findQr(orderApp.getOrderId(), orderApp.getOrderAmount(), split, true);
 		} catch (ParseException e) {
 			log.info("【选码出现异常】");
 		}
-		if(ObjectUtil.isNull(findQr))
+		if (ObjectUtil.isNull(findQr)) {
 			return false;
+		}
 		order.setOrderQrUser(findQr.getFileholder());
 		order.setOrderQr(findQr.getFileId());
 		order.setOrderStatus(Common.Order.DealOrder.ORDER_STATUS_DISPOSE.toString());
 		order.setOrderType(Common.Order.ORDER_TYPE_DEAL.toString());
-		UserRate rate = userInfoServiceImpl.findUserRate(findQr.getFileholder(),Common.Deal.PRODUCT_ALIPAY_SCAN);
+		UserRate rate = userInfoServiceImpl.findUserRate(findQr.getFileholder(), Common.Deal.PRODUCT_ALIPAY_SCAN);
 		order.setOrderId(Number.getOrderQr());
 		order.setFeeId(rate.getId());
 		order.setRetain1(rate.getPayTypr());
 		boolean addOrder = orderServiceImpl.addOrder(order);
-		if(addOrder)
+		if (addOrder) {
 			corr(order.getOrderId());
+		}
 		return addOrder;
 	}
 	/**
@@ -129,10 +135,11 @@ public class DealApi extends NotfiyChannel {
 			corr.setUserId(order.getOrderQrUser());
 			corr.setAppId(order.getOrderAccount());
 			boolean addCorrelationDate = correlationServiceImpl.addCorrelationDate(corr);
-			if(addCorrelationDate) 
-				log.info("【订单号："+order.getOrderId()+"，添加数据统计成功】");
-			else
-				log.info("【订单号："+order.getOrderId()+"，添加数据统计失败】");
+			if (addCorrelationDate) {
+				log.info("【订单号：" + order.getOrderId() + "，添加数据统计成功】");
+			} else {
+				log.info("【订单号：" + order.getOrderId() + "，添加数据统计失败】");
+			}
 		});
 	}
 	

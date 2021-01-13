@@ -1,16 +1,5 @@
 package alipay.manage.api.channel.wit;
 
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.sql.Struct;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import alipay.manage.api.channel.util.haofu.HaoFuUtil;
 import alipay.manage.api.config.PayOrderService;
 import alipay.manage.api.feign.ConfigServiceClient;
@@ -21,34 +10,84 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
-import otc.api.alipay.Common;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import otc.bean.config.ConfigFile;
 import otc.bean.dealpay.Withdraw;
 import otc.common.PayApiConstant;
 import otc.result.Result;
 
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
 @Component("HaoFuDpay")
-public class HaoFuDpay extends PayOrderService{
+public class HaoFuDpay extends PayOrderService {
 	private static final Log log = LogFactory.get();
-	@Autowired ConfigServiceClient configServiceClientImpl;
+	@Autowired
+	ConfigServiceClient configServiceClientImpl;
+
+	public static String createParam(Map<String, Object> map) {
+		try {
+			if (map == null || map.isEmpty()) {
+				return null;
+			}
+			Object[] key = map.keySet().toArray();
+			Arrays.sort(key);
+			StringBuffer res = new StringBuffer(128);
+			for (int i = 0; i < key.length; i++) {
+				if (ObjectUtil.isNotNull(map.get(key[i])) && map.get(key[i]) != "") {
+					res.append(key[i] + "=" + map.get(key[i]) + "&");
+				}
+			}
+			String rStr = res.substring(0, res.length() - 1);
+			return rStr;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static String md5(String a) {
+		String c = "";
+		MessageDigest md5;
+		String result = "";
+		try {
+			md5 = MessageDigest.getInstance("md5");
+			md5.update(a.getBytes("utf-8"));
+			byte[] temp;
+			temp = md5.digest(c.getBytes("utf-8"));
+			for (int i = 0; i < temp.length; i++) {
+				result += Integer.toHexString((0x000000ff & temp[i]) | 0xffffff00).substring(6);
+			}
+		} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+		}
+		return result;
+	}
+
 	@Override
 	public Result withdraw(Withdraw wit) {
-			log.info("【进入豪富代付】");
-				try {
-					log.info("【本地订单创建成功，开始请求远程三方代付接口】");
-					Result config = configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.SERVER_IP);
-					log.info("【回调地址ip为："+config.toString()+"】" );
-					String createDpay = createDpay(config.getResult().toString()+PayApiConstant.Notfiy.NOTFIY_API_WAI+"/HaoFuDpay-noyfit", wit.getOrderId(), wit.getAmount().doubleValue()+"",  wit.getBankcode(), wit.getAccname(), wit.getBankNo());
-					//create(wit.getBankcode(), intValue*100+"", wit.getOrderId(), wit.getBankNo(), wit.getAccname(),PayApiConstant.Notfiy.NOTFIY_API_WAI+"/zuanshiDpay-notfiy");
-				if(StrUtil.isNotBlank(createDpay) && createDpay.equals("SUCCESS") )
-					return  Result.buildSuccessMessage("代付成功等待处理");
-				else
-					return Result.buildFailMessage(createDpay);
-				} catch (Exception e) {
+		log.info("【进入豪富代付】");
+		try {
+			log.info("【本地订单创建成功，开始请求远程三方代付接口】");
+			Result config = configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.SERVER_IP);
+			log.info("【回调地址ip为：" + config.toString() + "】");
+			String createDpay = createDpay(config.getResult().toString() + PayApiConstant.Notfiy.NOTFIY_API_WAI + "/HaoFuDpay-noyfit", wit.getOrderId(), wit.getAmount().doubleValue() + "", wit.getBankcode(), wit.getAccname(), wit.getBankNo());
+			//create(wit.getBankcode(), intValue*100+"", wit.getOrderId(), wit.getBankNo(), wit.getAccname(),PayApiConstant.Notfiy.NOTFIY_API_WAI+"/zuanshiDpay-notfiy");
+			if (StrUtil.isNotBlank(createDpay) && "SUCCESS".equals(createDpay)) {
+				return Result.buildSuccessMessage("代付成功等待处理");
+			} else {
+				return Result.buildFailMessage(createDpay);
+			}
+		} catch (Exception e) {
 					log.error("【错误信息打印】"+e.getMessage());
 					return  Result.buildFailMessage("代付失败");
 					}
 		}
+
 	String createDpay(String notify ,String orderId , String money,String bankcode ,String accname,String bankNo) {
 		Map<String,Object> map = new HashMap<String,Object>();
 		/**
@@ -106,50 +145,18 @@ public class HaoFuDpay extends PayOrderService{
 		JSONObject parseObj = JSONUtil.parseObj(post);
 		Object object = parseObj.get("is_success");
 		if(ObjectUtil.isNotNull(object)) {
-			log.info("当前豪富的订单为："+object+"");
-			if(object.equals("T")) {
-					return "SUCCESS";
-			}else {
+			log.info("当前豪富的订单为：" + object + "");
+			if ("T".equals(object)) {
+				return "SUCCESS";
+			} else {
 				Object object2 = parseObj.get("fail_msg");
-				if(ObjectUtil.isNotNull(object2)) {
-					log.info("【代付错误数据为："+object2+"】");
+				if (ObjectUtil.isNotNull(object2)) {
+					log.info("【代付错误数据为：" + object2 + "】");
 					return object2.toString();
 				}
 			}
 		}
 		return "";
 	}
-	public static String createParam(Map<String, Object> map) {
-		try {
-			if (map == null || map.isEmpty())
-				return null;
-			Object[] key = map.keySet().toArray();
-			Arrays.sort(key);
-			StringBuffer res = new StringBuffer(128);
-			for (int i = 0; i < key.length; i++)
-				if(ObjectUtil.isNotNull(map.get(key[i])) && map.get(key[i]) != "")
-					res.append(key[i] + "=" + map.get(key[i]) + "&");
-			String rStr = res.substring(0, res.length() - 1);
-			return rStr;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-	 public static String md5(String a) {
-	    	String c = "";
-	    	MessageDigest md5;
-		   	String result="";
-			try {
-				md5 = MessageDigest.getInstance("md5");
-				md5.update(a.getBytes("utf-8"));
-				byte[] temp;
-				temp=md5.digest(c.getBytes("utf-8"));
-				for (int i=0; i<temp.length; i++)
-					result+=Integer.toHexString((0x000000ff & temp[i]) | 0xffffff00).substring(6);
-			} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
-			}
-			return result;
-	    }
 
 }

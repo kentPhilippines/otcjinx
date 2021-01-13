@@ -76,15 +76,15 @@ public class BaGPayNotify extends NotfiyChannel {
         log.info("【8Gpay回调参数为："+map1.toString()+"】");
         String param = MapUtil.createParam(map1);
         log.info("【8Gpay回调参数为："+map1.toString()+"】");
-        if(BaGPayUtil.verify(param.getBytes("UTF-8"),PUBLIC_KEY,sign)) {
+        if (BaGPayUtil.verify(param.getBytes("UTF-8"), PUBLIC_KEY, sign)) {
             log.info("【验签成功】");
-        }else{
-            log.info("【验签失败， 对方系统签名为："+sign+"】");
+        } else {
+            log.info("【验签失败， 对方系统签名为：" + sign + "】");
             return "sign is error";
         }
-        if(pay_status.equals("2")) {
-            Result dealpayNotfiy = dealpayNotfiy(order_id, clientIP,"8G回调成功");
-            if(dealpayNotfiy.isSuccess()) {
+        if ("2".equals(pay_status)) {
+            Result dealpayNotfiy = dealpayNotfiy(order_id, clientIP, "8G回调成功");
+            if (dealpayNotfiy.isSuccess()) {
                 return "success";
             }
         }

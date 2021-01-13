@@ -85,11 +85,11 @@ public class ToCard extends PayOrderService {
         // "data":{"sn":"894327","amount":100.09,"pay_type":"5",
         // "code_url":"http:\/\/api.lalarfb.cn\/pay\/imlayuvubbbm82o.html"}}
         String code = JSONUtil.parseObj(post).getStr("code");
-        if (code.equals("0")) {
+        if ("0".equals(code)) {
             orderEr(dealOrderApp, JSONUtil.parseObj(post).getStr("msg"));
             return "";
         }
-        if (code.equals("1")) {
+        if ("1".equals(code)) {
             JSONObject jsonObject = JSONUtil.parseObj(post);
             String data = jsonObject.getStr("data");
             JSONObject jsonObject1 = JSONUtil.parseObj(data);

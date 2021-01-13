@@ -27,14 +27,17 @@ public class ShanFuPayNotfiy extends NotfiyChannel {
 
     public static String createParam(Map<String, String> map) {
         try {
-            if (map == null || map.isEmpty())
+            if (map == null || map.isEmpty()) {
                 return null;
+            }
             Object[] key = map.keySet().toArray();
             Arrays.sort(key);
             StringBuffer res = new StringBuffer(128);
-            for (int i = 0; i < key.length; i++)
-                if (ObjectUtil.isNotNull(map.get(key[i])))
+            for (int i = 0; i < key.length; i++) {
+                if (ObjectUtil.isNotNull(map.get(key[i]))) {
                     res.append(key[i] + "=" + map.get(key[i]) + "&");
+                }
+            }
             String rStr = res.substring(0, res.length() - 1);
             return rStr;
         } catch (Exception e) {
@@ -52,8 +55,9 @@ public class ShanFuPayNotfiy extends NotfiyChannel {
             md5.update(a.getBytes("utf-8"));
             byte[] temp;
             temp = md5.digest(c.getBytes("utf-8"));
-            for (int i = 0; i < temp.length; i++)
+            for (int i = 0; i < temp.length; i++) {
                 result += Integer.toHexString((0x000000ff & temp[i]) | 0xffffff00).substring(6);
+            }
         } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
         }
         return result;
@@ -73,7 +77,7 @@ public class ShanFuPayNotfiy extends NotfiyChannel {
     public String notify(HttpServletRequest request, HttpServletResponse res) {
         String clientIP = HttpUtil.getClientIP(request);
         log.info("【当前回调ip为：" + clientIP + "】");
-        if (!clientIP.equals("34.92.76.25")) {
+        if (!"34.92.76.25".equals(clientIP)) {
             log.info("【当前回调ip为：" + clientIP + "，固定IP登记为：" + "34.92.76.25" + "】");
             log.info("【当前回调ip不匹配】");
             return "ip errer";
@@ -93,22 +97,22 @@ public class ShanFuPayNotfiy extends NotfiyChannel {
 	    map.put("returncode", returncode);
 	    map.put("transaction_id", transaction_id);
 	    String createParam = createParam(map);
-	    log.info("【善付签名前加密串："+createParam+"】");
-		String keyValue = "hjisna4yigfbaux4c2rth0frwco8md3j" ;
-		String pay_md5sign =  md5(createParam+"&key="+keyValue).toUpperCase();
-	    String sign=request.getParameter("sign");
-	    if (sign.equals(pay_md5sign)){
-	    	  log.info("【验签成功】");
-	    }else{
-	    	log.info("【验签失败，我方系统签名未："+pay_md5sign+"，对方系统签名为："+sign+"】");
-	    	return "sign is error";
-	    }
-	    if(returncode.equals("00")) {
-	    	Result dealpayNotfiy = dealpayNotfiy(orderid, clientIP,"善付支付回调成功");
-			if(dealpayNotfiy.isSuccess()) {
-				return "OK";
-			}
-	    }
-		return "NO";
-	}
+        log.info("【善付签名前加密串：" + createParam + "】");
+        String keyValue = "hjisna4yigfbaux4c2rth0frwco8md3j";
+        String pay_md5sign = md5(createParam + "&key=" + keyValue).toUpperCase();
+        String sign = request.getParameter("sign");
+        if (sign.equals(pay_md5sign)) {
+            log.info("【验签成功】");
+        } else {
+            log.info("【验签失败，我方系统签名未：" + pay_md5sign + "，对方系统签名为：" + sign + "】");
+            return "sign is error";
+        }
+        if ("00".equals(returncode)) {
+            Result dealpayNotfiy = dealpayNotfiy(orderid, clientIP, "善付支付回调成功");
+            if (dealpayNotfiy.isSuccess()) {
+                return "OK";
+            }
+        }
+        return "NO";
+    }
 }

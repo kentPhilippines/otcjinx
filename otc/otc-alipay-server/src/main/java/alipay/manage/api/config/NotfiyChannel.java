@@ -80,7 +80,7 @@ public abstract class NotfiyChannel {
 
     public Result dealpayNotfiy(String orderId, String ip, String msg) {
         log.info("【进入支付成功回调处理类：" + orderId + "】");
-        DealOrder order = orderServiceImpl.findOrderByOrderId(orderId);
+        DealOrder order = orderServiceImpl.findOrderStatus(orderId);
         if (ObjectUtil.isNull(order)) {
             log.info("【当前回调订单不存在，当前回调订单号：" + orderId + "】");
             return Result.buildFailMessage("当前回调订单不存在");

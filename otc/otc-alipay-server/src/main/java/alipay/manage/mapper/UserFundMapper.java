@@ -3,11 +3,11 @@ package alipay.manage.mapper;
 import alipay.manage.bean.Amount;
 import alipay.manage.bean.UserFund;
 import alipay.manage.bean.UserFundExample;
+import alipay.manage.bean.UserInfo;
+import org.apache.ibatis.annotations.*;
 
 import java.math.BigDecimal;
 import java.util.List;
-
-import org.apache.ibatis.annotations.*;
 
 @Mapper
 public interface UserFundMapper {
@@ -18,17 +18,23 @@ public interface UserFundMapper {
     int insertSelective(UserFund record);
     List<UserFund> selectByExample(UserFundExample example);
     UserFund selectByPrimaryKey(Integer id);
-    int updateByExampleSelective(@Param("record") UserFund record, @Param("example") UserFundExample example);
-    int updateByExample(@Param("record") UserFund record, @Param("example") UserFundExample example);
-    int updateByPrimaryKeySelective(UserFund record);
-    int updateByPrimaryKey(UserFund record);
-    
-    
-    
-    @Select("select * from alipay_user_fund where userType = 2 and accountBalance > #{amount}  ")
-	List<UserFund> findUserByAmount(@Param("amount") BigDecimal amount);
 
-    @Select("select * from alipay_user_fund where userId=#{userId}")
+    int updateByExampleSelective(@Param("record") UserFund record, @Param("example") UserFundExample example);
+
+    int updateByExample(@Param("record") UserFund record, @Param("example") UserFundExample example);
+
+    int updateByPrimaryKeySelective(UserFund record);
+
+    int updateByPrimaryKey(UserFund record);
+
+
+    @Select("select * from alipay_user_fund where userType = 2 and accountBalance > #{amount}  ")
+    List<UserFund> findUserByAmount(@Param("amount") BigDecimal amount);
+
+    @Select("select  id, userId, userName, cashBalance, rechargeNumber, freezeBalance, accountBalance, \n" +
+            "    sumDealAmount, sumRechargeAmount, sumProfit, sumAgentProfit, sumOrderCount, todayDealAmount, \n" +
+            "    todayProfit, todayOrderCount, todayAgentProfit, userType, agent, isAgent, createTime, \n" +
+            "    version  from alipay_user_fund where userId=#{userId}")
     UserFund findUserFundByUserId(@Param("userId") String userId);
 
     @Update("update alipay_user_fund set rechargeNumber = rechargeNumber + #{deduct}, freezeBalance = freezeBalance - #{deduct}, " +
@@ -38,9 +44,18 @@ public interface UserFundMapper {
     @Insert("insert into alipay_amount (orderId, userId, amountType, accname, orderStatus, amount, actualAmount, dealDescribe) " +
             "values (#{orderId}, #{userId},#{amountType},#{accname},#{orderStatus},#{amount},#{amount},#{dealDescribe} )")
     int insetAmountEntity(Amount amount);
-	
-    @Select("select * from  alipay_user_fund WHERE    userId IN ( " + 
-    		"			select childrenName from alipay_correlation WHERE parentName IN ( " + 
-    		"			select userId from alipay_user_info WHERE userType  = 2 AND isAgent = '1' AND agent IS NULL AND accountBalance > #{amount}  ))")
+
+    @Select("select * from  alipay_user_fund WHERE    userId IN ( " +
+            "			select childrenName from alipay_correlation WHERE parentName IN ( " +
+            "			select userId from alipay_user_info WHERE userType  = 2 AND isAgent = '1' AND agent IS NULL AND accountBalance > #{amount}  ))")
     List<UserFund> findUserByAmountAgent(@Param("amount") BigDecimal amount);
+
+
+    @Select("select  userId, userName, cashBalance, rechargeNumber, freezeBalance, accountBalance from alipay_user_fund where userId=#{userId}")
+    UserFund fundUserFundAccounrBalace(@Param("userId") String userId);
+
+    @Select("select  userId, userName, accountBalance from alipay_user_fund where userId=#{userId}")
+    UserFund findBalace(String userId);
+
+    UserInfo findDealUrl(String orderAccount);
 }

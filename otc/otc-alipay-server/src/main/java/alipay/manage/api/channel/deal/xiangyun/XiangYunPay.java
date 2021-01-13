@@ -37,17 +37,20 @@ public class XiangYunPay extends PayOrderService {
 
 	public static String createParam(Map<String, Object> map) {
 		try {
-			if (map == null || map.isEmpty())
-				return null;
-			Object[] key = map.keySet().toArray();
-			Arrays.sort(key);
-			StringBuffer res = new StringBuffer(128);
-			for (int i = 0; i < key.length; i++)
-				if (ObjectUtil.isNotNull(map.get(key[i])))
-					res.append(key[i] + "=" + map.get(key[i]) + "&");
-			String rStr = res.substring(0, res.length() - 1);
-			return rStr;
-		} catch (Exception e) {
+            if (map == null || map.isEmpty()) {
+                return null;
+            }
+            Object[] key = map.keySet().toArray();
+            Arrays.sort(key);
+            StringBuffer res = new StringBuffer(128);
+            for (int i = 0; i < key.length; i++) {
+                if (ObjectUtil.isNotNull(map.get(key[i]))) {
+                    res.append(key[i] + "=" + map.get(key[i]) + "&");
+                }
+            }
+            String rStr = res.substring(0, res.length() - 1);
+            return rStr;
+        } catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -58,13 +61,14 @@ public class XiangYunPay extends PayOrderService {
 		MessageDigest md5;
 		String result = "";
 		try {
-			md5 = MessageDigest.getInstance("md5");
-			md5.update(a.getBytes("utf-8"));
-			byte[] temp;
-			temp = md5.digest(c.getBytes("utf-8"));
-			for (int i = 0; i < temp.length; i++)
-				result += Integer.toHexString((0x000000ff & temp[i]) | 0xffffff00).substring(6);
-		} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+            md5 = MessageDigest.getInstance("md5");
+            md5.update(a.getBytes("utf-8"));
+            byte[] temp;
+            temp = md5.digest(c.getBytes("utf-8"));
+            for (int i = 0; i < temp.length; i++) {
+                result += Integer.toHexString((0x000000ff & temp[i]) | 0xffffff00).substring(6);
+            }
+        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
 		}
 		return result;
 	}
@@ -137,7 +141,7 @@ public class XiangYunPay extends PayOrderService {
         Object object = parseObj.get("isSuccess");
         if (ObjectUtil.isNotNull(object)) {
             log.info("当前祥云的订单为：" + object + "");
-            if (object.equals("T")) {
+            if ("T".equals(object)) {
                 Object object2 = parseObj.get("url");
                 if (ObjectUtil.isNotNull(object2)) {
                     log.info("【支付链接为：" + object2 + "】");
@@ -160,14 +164,15 @@ public class XiangYunPay extends PayOrderService {
                     return object2.toString();
                 }
 			} else {
-				Object object2 = parseObj.get("msg");
-				String msg = "";
-				if (ObjectUtil.isNotNull(object2) && StrUtil.isNotEmpty(object2.toString()))
-					msg = object2.toString();
-				else
-					msg = "错误：未知错误";
-				orderEr(dealOrderApp, msg);
-			}
+                Object object2 = parseObj.get("msg");
+                String msg = "";
+                if (ObjectUtil.isNotNull(object2) && StrUtil.isNotEmpty(object2.toString())) {
+                    msg = object2.toString();
+                } else {
+                    msg = "错误：未知错误";
+                }
+                orderEr(dealOrderApp, msg);
+            }
 		}
 		return "";
 	}

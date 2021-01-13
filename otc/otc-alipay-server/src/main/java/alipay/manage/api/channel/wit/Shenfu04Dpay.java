@@ -52,7 +52,7 @@ public class Shenfu04Dpay extends PayOrderService {
         log.info("【进入申付代付】");
         try {
             log.info("【本地订单创建成功，开始请求远程三方代付接口】");
-            UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(wit.getUserId());
+            UserInfo userInfo = userInfoServiceImpl.findDealUrl(wit.getUserId());
             if (StrUtil.isBlank(userInfo.getDealUrl())) {
                 withdrawEr(wit, "当前商户交易url未设置", wit.getRetain2());
                 return Result.buildFailMessage("请联系运营为您的商户好设置交易url");
@@ -73,10 +73,11 @@ public class Shenfu04Dpay extends PayOrderService {
             String createDpay = createDpay(userInfo.getDealUrl().toString() +
                             PayApiConstant.Notfiy.NOTFIY_API_WAI + "/ShenFuDpay-noyfit",
                     wit, getChannelInfo(channel, wit.getWitType()));
-            if (StrUtil.isNotBlank(createDpay) && createDpay.equals(WIT_RESULT))
+            if (StrUtil.isNotBlank(createDpay) && createDpay.equals(WIT_RESULT)) {
                 return Result.buildSuccessMessage("代付成功等待处理");
-            else
+            } else {
                 return Result.buildFailMessage(createDpay);
+            }
         } catch (Exception e) {
             log.error("【错误信息打印】" + e.getMessage());
             return Result.buildFailMessage("代付失败");
@@ -122,10 +123,11 @@ public class Shenfu04Dpay extends PayOrderService {
 
             JSONObject parseObj = JSONUtil.parseObj(post);
             String object = parseObj.getStr("ret_code");
-            if ("0000".equals(object))
+            if ("0000".equals(object)) {
                 return WIT_RESULT;
-            else
+            } else {
                 withdrawEr(wit, parseObj.getStr("ret_msg"), wit.getRetain2());
+            }
             return "";
         } catch (Exception e) {
             log.error("请求申付代付异常", e);

@@ -26,7 +26,7 @@ public class LongTengNotify extends NotfiyChannel {
         log.info("【收到龙腾支付回调请求】");
         String clientIP = HttpUtil.getClientIP(req);
         log.info("【当前回调ip为：" + clientIP + "】");
-        if (!clientIP.equals("34.92.37.87")) {
+        if (!"34.92.37.87".equals(clientIP)) {
             log.info("【当前回调ip为：" + clientIP + "，固定IP登记为：" + "34.92.37.87" + "】");
             log.info("【当前回调ip不匹配】");
             return;
@@ -63,22 +63,22 @@ public class LongTengNotify extends NotfiyChannel {
 		map.put("code", code);
 		map.put("msg", msg);
 		map.put("attach", attach);
-		String createParam = LongTentUtil.createParam(map);
-		String upperCase = LongTentUtil.md5(createParam + LongTentUtil.KEY).toUpperCase();
-		if(sign.equals(upperCase)) {
-			log.info("【当前支付成功回调签名参数："+sign+"，当前我方验证签名结果："+upperCase+"】");
-			log.info("【签名成功】");
-		}else {
-			log.info("【当前支付成功回调签名参数："+sign+"，当前我方验证签名结果："+upperCase+"】");
-			log.info("【签名失败】");
-			return;
-		}
-		if(code.equals("1000")) {
-				 Result dealpayNotfiy = dealpayNotfiy(out_trade_no, clientIP, "龙腾回调订单成功");
-				 if(dealpayNotfiy.isSuccess()) {
-					 log.info("【订单回调修改成功，订单号为 ："+out_trade_no+" 】");
-					 res.getWriter().write("success");
-				 }
-		 }
-	}
+        String createParam = LongTentUtil.createParam(map);
+        String upperCase = LongTentUtil.md5(createParam + LongTentUtil.KEY).toUpperCase();
+        if (sign.equals(upperCase)) {
+            log.info("【当前支付成功回调签名参数：" + sign + "，当前我方验证签名结果：" + upperCase + "】");
+            log.info("【签名成功】");
+        } else {
+            log.info("【当前支付成功回调签名参数：" + sign + "，当前我方验证签名结果：" + upperCase + "】");
+            log.info("【签名失败】");
+            return;
+        }
+        if ("1000".equals(code)) {
+            Result dealpayNotfiy = dealpayNotfiy(out_trade_no, clientIP, "龙腾回调订单成功");
+            if (dealpayNotfiy.isSuccess()) {
+                log.info("【订单回调修改成功，订单号为 ：" + out_trade_no + " 】");
+                res.getWriter().write("success");
+            }
+        }
+    }
 }

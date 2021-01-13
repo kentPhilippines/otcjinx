@@ -1,25 +1,23 @@
 package deal.manage.util;
 
-import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.stereotype.Component;
-
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import deal.config.redis.RedisUtil;
 import deal.manage.bean.util.AddressIpBean;
 import deal.manage.bean.util.AreaIp;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.stereotype.Component;
 import otc.util.MapUtil;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 @Component
 public class IsDealIpUtil {
@@ -74,19 +72,20 @@ public class IsDealIpUtil {
 	 * @param request
 	 * @return		存在返回具体数据   不存在 返回null
 	 */
-	private AreaIp isClick(HttpServletRequest request){
+	private AreaIp isClick(HttpServletRequest request) {
 		String ipAddr = getIpAddr(request);
 		Map<Object, Object> hmget = redisUtil.hmget(ipAddr);
-		Map<String ,Object> map = new HashMap();
-		if(cn.hutool.core.map.MapUtil.isEmpty(hmget)) 
-			return null ;
+		Map<String, Object> map = new HashMap();
+		if (cn.hutool.core.map.MapUtil.isEmpty(hmget)) {
+			return null;
+		}
 		Set<Object> keySet = hmget.keySet();
-		for(Object obj : keySet) {
+		for (Object obj : keySet) {
 			Object object = hmget.get(obj);
 			map.put(obj.toString(), object);
 		}
 		AreaIp mapToBean = MapUtil.mapToBean(map, AreaIp.class);
-		return  mapToBean;
+		return mapToBean;
 	}
 	
 	
@@ -103,8 +102,9 @@ public class IsDealIpUtil {
 		AreaIp click = isClick(request);//缓存获取
 		if(ObjectUtil.isNull(click)) {
 			String IP = getIpAddr(request);
-			if(ObjectUtil.isNull(click))
-				return addIp(request  );
+			if (ObjectUtil.isNull(click)) {
+				return addIp(request);
+			}
 			addAreaIpToRedis(click);
 		}
 		return click;

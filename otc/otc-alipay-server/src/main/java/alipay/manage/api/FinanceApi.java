@@ -30,12 +30,19 @@ import java.util.Map;
 @RequestMapping("/finance")
 public class FinanceApi {
     Logger logger = LoggerFactory.getLogger(FinanceApi.class);
-    @Autowired CheckUtils checkUtils;
-    @Autowired WithdrawService withdrawServiceImpl;
-    @Autowired OrderUtil orderUtil;
-    @Autowired LogUtil logUtil;
-    @Resource private ChannelFeeMapper channelFeeDao;
-    @Autowired FactoryForStrategy factoryForStrategy;
+    @Autowired
+    CheckUtils checkUtils;
+    @Autowired
+    WithdrawService withdrawServiceImpl;
+    @Autowired
+    OrderUtil orderUtil;
+    @Autowired
+    LogUtil logUtil;
+    @Autowired
+    FactoryForStrategy factoryForStrategy;
+    @Resource
+    private ChannelFeeMapper channelFeeDao;
+
     /**
      * 财务审核商户提现记录状态
      *
@@ -55,9 +62,10 @@ public class FinanceApi {
         if (!flag) {
             return Result.buildFailMessage("必传参数为空");
         }
-        if(ObjectUtil.isNull(paramMap.get("orderStatus")))
+        if (ObjectUtil.isNull(paramMap.get("orderStatus"))) {
             return Result.buildFailMessage("订单状态未传，疑似数据安全问题");
-        switch (paramMap.get("orderStatus").toString()){
+        }
+        switch (paramMap.get("orderStatus").toString()) {
             case Common.Order.Wit.ORDER_STATUS_SU:
                 logUtil.addLog(request, "当前后台审核商户提现订单操作：" +
                                 paramMap.get("orderId") + "，：" + paramMap.get("userId")
@@ -79,16 +87,18 @@ public class FinanceApi {
                 logger.info("【接收到后台确认代付出款的方法调用，：" + paramMap.get("orderId") + " 】");
                 String orderId = paramMap.get("orderId").toString();
                 String apply = paramMap.get("approval").toString();
-                if (StrUtil.isBlank(orderId))
+                if (StrUtil.isBlank(orderId)) {
                     return Result.buildFailMessage("订单号为空");
-                if (StrUtil.isBlank(apply))
+                }
+                if (StrUtil.isBlank(apply)) {
                     return Result.buildFailMessage("操作人为空");
+                }
                 logUtil.addLog(request, "后台人员确认代付订单，当前代付订单号：" + orderId, apply);
                 Withdraw witOrder = withdrawServiceImpl.findOrderId(orderId);
                 String channnel = witOrder.getWitChannel();
                 String witType = witOrder.getWitType();
                 ChannelFee channelFee = channelFeeDao.findChannelFee(channnel, witType);
-                Result withdraw =  Result.buildFail();
+                Result withdraw = Result.buildFail();
                 try {
                     withdraw = factoryForStrategy.getStrategy(channelFee.getImpl()).withdraw(witOrder);
                 } catch (Exception e) {

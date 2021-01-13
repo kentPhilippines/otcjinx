@@ -31,14 +31,17 @@ public class XiangYunNotify extends NotfiyChannel {
 
     public static String createParam(Map<String, Object> map) {
         try {
-            if (map == null || map.isEmpty())
+            if (map == null || map.isEmpty()) {
                 return null;
+            }
             Object[] key = map.keySet().toArray();
             Arrays.sort(key);
             StringBuffer res = new StringBuffer(128);
-            for (int i = 0; i < key.length; i++)
-                if (ObjectUtil.isNotNull(map.get(key[i])))
+            for (int i = 0; i < key.length; i++) {
+                if (ObjectUtil.isNotNull(map.get(key[i]))) {
                     res.append(key[i] + "=" + map.get(key[i]) + "&");
+                }
+            }
             String rStr = res.substring(0, res.length() - 1);
             return rStr;
         } catch (Exception e) {
@@ -56,8 +59,9 @@ public class XiangYunNotify extends NotfiyChannel {
             md5.update(a.getBytes("utf-8"));
             byte[] temp;
             temp = md5.digest(c.getBytes("utf-8"));
-            for (int i = 0; i < temp.length; i++)
+            for (int i = 0; i < temp.length; i++) {
                 result += Integer.toHexString((0x000000ff & temp[i]) | 0xffffff00).substring(6);
+            }
         } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
         }
         return result;
@@ -111,7 +115,7 @@ public class XiangYunNotify extends NotfiyChannel {
             log.info("【验签失败， 对方系统签名为：" + sign + "】");
             return "sign is error";
         }
-        if (status.equals("1")) {
+        if ("1".equals(status)) {
             Result result = dealpayNotfiy(outTradeNo, clientIP, "祥云支付成功");
             if (result.isSuccess()) {
                 return "success";

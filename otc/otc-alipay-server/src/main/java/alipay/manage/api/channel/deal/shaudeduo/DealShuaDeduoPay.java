@@ -37,7 +37,7 @@ public class DealShuaDeduoPay extends PayOrderService {
     public Result deal(DealOrderApp dealOrderApp, String channel) throws Exception {
         log.info("【进入刷的多支付，当前请求产品：" + dealOrderApp.getRetain2() + "，当前请求渠道：" + channel + "】");
         String orderId = create(dealOrderApp, channel);
-        UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(dealOrderApp.getOrderAccount());
+        UserInfo userInfo = userInfoServiceImpl.findDealUrl(dealOrderApp.getOrderAccount());
         if (StrUtil.isBlank(userInfo.getDealUrl())) {
             orderEr(dealOrderApp, "当前商户交易url未设置");
             return Result.buildFailMessage("请联系运营为您的商户好设置交易url");
@@ -75,7 +75,7 @@ public class DealShuaDeduoPay extends PayOrderService {
          * "uri":"https:\/\/4536251.net\/qrcode\/noAssignableTunnel\/70b4b228-6bb8-4868-a2b4-50c278a7b31b"}
          */
         JSONObject jsonObject = JSONUtil.parseObj(result2);
-        if (jsonObject.getStr("code").equals("200")) {
+        if ("200".equals(jsonObject.getStr("code"))) {
             String uri = jsonObject.getStr("uri");
             return Result.buildSuccessResult(uri);
         } else {

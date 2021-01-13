@@ -42,10 +42,11 @@ public class ShenfuDpay extends PayOrderService {
             Result config = configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.SERVER_IP);
             log.info("【回调地址ip为：" + config.toString() + "】");
             String createDpay = createDpay(config.getResult().toString() + PayApiConstant.Notfiy.NOTFIY_API_WAI + "/ShenFuDpay-noyfit", wit);
-            if (StrUtil.isNotBlank(createDpay) && createDpay.equals(WIT_RESULT))
+            if (StrUtil.isNotBlank(createDpay) && createDpay.equals(WIT_RESULT)) {
                 return Result.buildSuccessMessage("代付成功等待处理");
-            else
+            } else {
                 return Result.buildFailMessage(createDpay);
+            }
         } catch (Exception e) {
             log.error("【错误信息打印】" + e.getMessage());
             return Result.buildFailMessage("代付失败");
@@ -102,10 +103,11 @@ public class ShenfuDpay extends PayOrderService {
 
         JSONObject parseObj = JSONUtil.parseObj(post);
         String object = parseObj.getStr("ret_code");
-        if ("0000".equals(object))
+        if ("0000".equals(object)) {
             return WIT_RESULT;
-        else
+        } else {
             withdrawEr(wit, parseObj.getStr("ret_msg"), wit.getRetain2());
+        }
         return "";
     }
 

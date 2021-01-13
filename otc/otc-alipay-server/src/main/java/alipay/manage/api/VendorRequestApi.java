@@ -30,11 +30,16 @@ import java.util.Map;
 @Component
 public class VendorRequestApi {
     Logger log = LoggerFactory.getLogger(VendorRequestApi.class);
-    @Autowired private AccountApiService accountApiServiceImpl;
-    @Autowired private UserInfoService userInfoServiceImpl;
-    @Autowired private ExceptionOrderService exceptionOrderServiceImpl;
+    @Autowired
+    private AccountApiService accountApiServiceImpl;
+    @Autowired
+    private UserInfoService userInfoServiceImpl;
+    @Autowired
+    private ExceptionOrderService exceptionOrderServiceImpl;
+
     /**
      * 商户下单支付请求接口
+     *
      * @param request
      * @return
      */
@@ -47,25 +52,27 @@ public class VendorRequestApi {
         }
         log.info("--------------【用户开始RSA解密】----------------");
         String rsaSign = request.getParameter("cipherText");//商户传过来的密文
-        log.info("【报文："+rsaSign+"】");
+        log.info("【报文：" + rsaSign + "】");
         Map<String, Object> paramMap = RSAUtils.getDecodePrivateKey(rsaSign, userInfo.getPrivateKey());
-        log.info("【商户RSA解密的参数：" + paramMap.toString()+"】 ");
+        log.info("【商户RSA解密的参数：" + paramMap.toString() + "】 ");
         //验证结果
         Result result = CheckUtils.requestVerify(request, paramMap, userInfo.getPayPasword());
-        if (result.isSuccess()){
+        if (result.isSuccess()) {
             log.info("【requestVerif】方法验证通过");
         } else {
-            ThreadUtil.execute(()->{
+            ThreadUtil.execute(() -> {
                 Object appId = paramMap.get("appId");
-                if(ObjectUtil.isNull(appId))
+                if (ObjectUtil.isNull(appId)) {
                     appId = "订单号为获取到";
+                }
                 Object amount = paramMap.get("amount");
-                if(ObjectUtil.isNull(amount))
+                if (ObjectUtil.isNull(amount)) {
                     amount = "金额未获取到";
+                }
                 exceptionOrderServiceImpl.addDealEx(
                         appId.toString(),
                         amount.toString(),
-                        result.getMessage(),HttpUtil.getClientIP(request), paramMap.get("orderId").toString());
+                        result.getMessage(), HttpUtil.getClientIP(request), paramMap.get("orderId").toString());
 
             });
             return result;
@@ -74,11 +81,11 @@ public class VendorRequestApi {
         Integer remitOrderState = userInfo.getReceiveOrderState();// 1 接单 2 暂停接单
         if (Common.Order.DEAL_OFF.equals(remitOrderState)) {
             log.info("【当前账户交易权限未开通】");
-            ThreadUtil.execute(()->{
+            ThreadUtil.execute(() -> {
                 exceptionOrderServiceImpl.addDealEx(
                         paramMap.get("appId").toString(),
                         paramMap.get("amount").toString(),
-                         "商户相应提示：当前账户交易权限未开通；处理方法：检查商户交易权限或商户状态是否开启,",
+                        "商户相应提示：当前账户交易权限未开通；处理方法：检查商户交易权限或商户状态是否开启,",
                         HttpUtil.getClientIP(request), paramMap.get("orderId").toString());
             });
             return Result.buildFailMessage("当前账户交易权限未开通");
@@ -89,12 +96,12 @@ public class VendorRequestApi {
         try {
             userRate = accountApiServiceImpl.findUserRateByUserId(userId, passCode, paramMap.get("amount").toString());
         } catch (Exception e) {
-            ThreadUtil.execute(()->{
+            ThreadUtil.execute(() -> {
                 exceptionOrderServiceImpl.addDealEx(
                         paramMap.get("appId").toString(),
                         paramMap.get("amount").toString(),
                         "商户相应提示：当前通道编码设置有误，产品类型设置重复；" +
-                                "处理方法：请反复确认当前商户传入通道编号是否和商户开启的通道编号相匹配，当前商户传入通道编码："+passCode+"," +
+                                "处理方法：请反复确认当前商户传入通道编号是否和商户开启的通道编号相匹配，当前商户传入通道编码：" + passCode + "," +
                                 "，请确认商户相同产品下是否有同时开启2个通道",
                         HttpUtil.getClientIP(request), paramMap.get("orderId").toString());
             });
@@ -103,12 +110,12 @@ public class VendorRequestApi {
         }
         if (userRate == null) {
             log.info("--------------【 商户交易费率未配置或未开通】----------------");
-            ThreadUtil.execute(()->{
+            ThreadUtil.execute(() -> {
                 exceptionOrderServiceImpl.addDealEx(
                         paramMap.get("appId").toString(),
                         paramMap.get("amount").toString(),
                         "商户相应提示：当前通道编码设置有误；" +
-                                "处理方法：请反复确认当前商户传入通道编号是否和商户开启的通道编号相匹配，当前商户传入通道编码："+passCode+"," +
+                                "处理方法：请反复确认当前商户传入通道编号是否和商户开启的通道编号相匹配，当前商户传入通道编码：" + passCode + "," +
                                 "，请检查商户通道编码是否正确",
                         HttpUtil.getClientIP(request), paramMap.get("orderId").toString());
             });
@@ -117,23 +124,23 @@ public class VendorRequestApi {
         log.info("--------------【验证是否有时间限制】----------------");
         String start = userInfo.getStartTime();
         String end = userInfo.getEndTime();
-        if(StringUtils.isNotEmpty(start) && StringUtils.isNotEmpty(end)){
+        if (StringUtils.isNotEmpty(start) && StringUtils.isNotEmpty(end)) {
             log.info("--------------【未设置时间风控】----------------");
             boolean isTime = CheckUtils.verifyTimeZone(new Date(), userInfo.getStartTime(), userInfo.getEndTime());
-            if(isTime){//在时间内
+            if (isTime) {//在时间内
                 return Result.buildFailResult("在风控时间段不允许下单");
             }
         }
         log.info("--------------【验证单笔交易金额】----------------");
-        Double orderAmount = Double.valueOf(paramMap.get("amount").toString()) ;//商户请求单笔金额
-        if(StringUtils.isNotEmpty(userInfo.getMinAmount()) && StringUtils.isNotEmpty(userInfo.getMaxAmount())){
-            if(orderAmount <= Double.parseDouble(userInfo.getMinAmount()) || orderAmount >= Double.parseDouble(userInfo.getMaxAmount())){
-                ThreadUtil.execute(()->{
+        Double orderAmount = Double.valueOf(paramMap.get("amount").toString());//商户请求单笔金额
+        if (StringUtils.isNotEmpty(userInfo.getMinAmount()) && StringUtils.isNotEmpty(userInfo.getMaxAmount())) {
+            if (orderAmount <= Double.parseDouble(userInfo.getMinAmount()) || orderAmount >= Double.parseDouble(userInfo.getMaxAmount())) {
+                ThreadUtil.execute(() -> {
                     exceptionOrderServiceImpl.addDealEx(
                             paramMap.get("appId").toString(),
                             paramMap.get("amount").toString(),
                             "商户相应提示：单笔交易金额不在区间范围内；" +
-                                    "处理方法：提示商户调整交易金额后重新发起订单，当前商户传入通道编码："+passCode,
+                                    "处理方法：提示商户调整交易金额后重新发起订单，当前商户传入通道编码：" + passCode,
                             HttpUtil.getClientIP(request), paramMap.get("orderId").toString());
                 });
                 return Result.buildFailMessage("单笔交易金额不在区间范围内");
@@ -176,28 +183,32 @@ public class VendorRequestApi {
     public Result withdrawal(HttpServletRequest request, boolean flag) {
         String userId = request.getParameter("userId");//商户号
         UserInfo userInfo = accountApiServiceImpl.findUserInfo(userId);
-        if (userInfo == null)
+        if (userInfo == null) {
             return Result.buildFailMessage("商户不存在");
+        }
         log.info("--------------【用户开始RSA解密】----------------");
         String rsaSign = request.getParameter("cipherText");//商户传过来的密文
-        log.info("【获取参数为："+rsaSign+"】");
-        log.info("【获取商户为："+userId+"】");
-        log.info("【获取商户解密秘钥为："+userInfo.getPrivateKey()+"】");
+        log.info("【获取参数为：" + rsaSign + "】");
+        log.info("【获取商户为：" + userId + "】");
+        log.info("【获取商户解密秘钥为：" + userInfo.getPrivateKey() + "】");
         Map<String, Object> paramMap = RSAUtils.getDecodePrivateKey(rsaSign, userInfo.getPrivateKey());
-        log.info("【商户RSA解密的参数：" + paramMap.toString()+"】 " );
-        if (CollUtil.isEmpty(paramMap))
+        log.info("【商户RSA解密的参数：" + paramMap.toString() + "】 ");
+        if (CollUtil.isEmpty(paramMap)) {
             return Result.buildFailMessage("RSA解密参数为空");
+        }
         Result result = CheckUtils.requestWithdrawalVerify(request, paramMap, userInfo.getPayPasword());
-        if (result.isSuccess()){
+        if (result.isSuccess()) {
             log.info("【requestVerif】方法验证通过");
-        } else{
-            ThreadUtil.execute(()->{
+        } else {
+            ThreadUtil.execute(() -> {
                 Object apporderid = paramMap.get("apporderid");
-                if(ObjectUtil.isNull(apporderid))
+                if (ObjectUtil.isNull(apporderid)) {
                     apporderid = "订单号未获取到";
+                }
                 Object amount = paramMap.get("amount");
-                if(ObjectUtil.isNull(amount))
+                if (ObjectUtil.isNull(amount)) {
                     amount = "金额未获取到";
+                }
                 exceptionOrderServiceImpl.addWitEx(
                         userId.toString(),
                         amount.toString(),
@@ -207,8 +218,8 @@ public class VendorRequestApi {
         }
 
         UserRate userRate = accountApiServiceImpl.findUserRateWitByUserId(userId);
-        if (ObjectUtil.isNull(userRate)){
-            ThreadUtil.execute(()->{
+        if (ObjectUtil.isNull(userRate)) {
+            ThreadUtil.execute(() -> {
                 exceptionOrderServiceImpl.addWitEx(
                         userId,
                         paramMap.get("amount").toString(),
@@ -248,15 +259,16 @@ public class VendorRequestApi {
         }
         if (!flag) {
             String clientIP = HttpUtil.getClientIP(request);
-            if (StrUtil.isBlank(clientIP))
+            if (StrUtil.isBlank(clientIP)) {
                 return Result.buildFailMessage("未获取到代付ip");
+            }
             log.info("【当前用户代付ip为：" + clientIP + "】");
             String witip = userInfo.getWitip();
             log.info("【获取当前允许代付ip为：" + witip + "】");
             String[] split = witip.split(",");
             List<String> asList = Arrays.asList(split);
             if (!asList.contains(clientIP)) {
-                ThreadUtil.execute(()->{
+                ThreadUtil.execute(() -> {
                     exceptionOrderServiceImpl.addWitEx(
                             userId,
                             paramMap.get("amount").toString(),
@@ -282,7 +294,7 @@ public class VendorRequestApi {
             return Result.buildFailMessage("当前银行卡超出当日可用金额");
         }
         */
-        UserFund userFund = userInfoServiceImpl.findUserFundByAccount(userId);
+        UserFund userFund = userInfoServiceImpl.fundUserFundAccounrBalace(userId);
         BigDecimal accountBalance = userFund.getAccountBalance();
         BigDecimal quota = userFund.getQuota();
         accountBalance = accountBalance.add(quota);
@@ -343,29 +355,33 @@ public class VendorRequestApi {
 
     /**
      * <p>核对订单</p>
+     *
      * @param request
      * @param
      * @return
      */
     public Result checkOrderl(HttpServletRequest request) {
-        String userId=request.getParameter("userId");
+        String userId = request.getParameter("userId");
         UserInfo userInfo = accountApiServiceImpl.findUserInfo(userId);
-        if (userInfo == null)
+        if (userInfo == null) {
             return Result.buildFailMessage("商户不存在");
+        }
         log.info("--------------【用户开始RSA解密】----------------");
         String rsaSign = request.getParameter("cipherText");//商户传过来的密文
-        log.info("【获取参数为："+rsaSign+"】");
-        log.info("【获取商户为："+userId+"】");
-        log.info("【获取商户解密秘钥为："+userInfo.getPrivateKey()+"】");
+        log.info("【获取参数为：" + rsaSign + "】");
+        log.info("【获取商户为：" + userId + "】");
+        log.info("【获取商户解密秘钥为：" + userInfo.getPrivateKey() + "】");
         Map<String, Object> paramMap = RSAUtils.getDecodePrivateKey(rsaSign, userInfo.getPrivateKey());
-        log.info("【商户RSA解密的参数：" + paramMap.toString()+"】 " );
-        if (CollUtil.isEmpty(paramMap))
+        log.info("【商户RSA解密的参数：" + paramMap.toString() + "】 ");
+        if (CollUtil.isEmpty(paramMap)) {
             return Result.buildFailMessage("RSA解密参数为空");
+        }
         Result result = CheckUtils.requestWithdrawalVerify(request, paramMap, userInfo.getPayPasword());
-        if (result.isSuccess())
+        if (result.isSuccess()) {
             log.info("【requestVerif】方法验证通过");
-        else
+        } else {
             return result;
+        }
         return Result.buildSuccessResult(paramMap);
     }
 }

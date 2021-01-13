@@ -25,7 +25,7 @@ public class JiaBaoNotify extends NotfiyChannel {
     @RequestMapping("/jiabao-source-notify")
     public String notify(HttpServletRequest req, HttpServletResponse res, @RequestBody JSONObject jsonObject) {
         String clientIP = HttpUtil.getClientIP(req);
-        if (!clientIP.equals("47.242.26.125")) {
+        if (!"47.242.26.125".equals(clientIP)) {
             log.info("【当前回调ip为：" + clientIP + "，固定IP登记为：" + "47.242.26.125" + "】");
             log.info("【当前回调ip不匹配】");
             return "ip is error";

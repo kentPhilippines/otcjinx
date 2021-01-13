@@ -67,7 +67,7 @@ public class NotifyUtil {
      */
     public void sendMsg(String orderId) {
         log.info("=======[准备向下游商户发送通知]=======");
-        DealOrder order = orderSerciceImpl.findOrderByOrderId(orderId);
+        DealOrder order = orderSerciceImpl.findOrderNotify(orderId);
         DealOrderApp orderApp = dealOrderAppDao.findOrderByOrderId(order.getAssociatedId());
         UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(orderApp.getOrderAccount());
         /**
@@ -132,8 +132,9 @@ public class NotifyUtil {
             }
         } catch (Exception e) {
             //加入定时任务推送
-            if (flag)
+            if (flag) {
                 push(url, orderId, msg);
+            }
         }
         log.info("服务器返回结果为: " + result.toString());
         String isNotify = "NO";
@@ -143,8 +144,9 @@ public class NotifyUtil {
             log.info("【下游商户返回信息为成功,成功收到回调信息】");
         } else {
             log.info("【下游商户未收到回调信息，或回调信息下游未成功返回】");
-            if (flag)
+            if (flag) {
                 push(url, orderId, msg);
+            }
         }
 
     }
@@ -153,8 +155,9 @@ public class NotifyUtil {
         //更新订单是否通知成功状态
         CronUtil.remove(orderId);//若存在定时任务则删除，若不存在则删除无效
         boolean flag = orderSerciceImpl.updataOrderisNotifyByOrderId(orderId, isNotify);
-        if (!flag)
+        if (!flag) {
             log.info("【更新是否通知状态失败！】");
+        }
     }
 
     private void push(String url, String orderId, Map<String, Object> msg) {
@@ -162,9 +165,10 @@ public class NotifyUtil {
         try {
             String schedule = CronUtil.schedule(orderId, SC5, (Task) () -> {
                 log.info("【" + orderId + "   ：   开启重新通知任务.通知url为：" + url + "】");
-                DealOrder order = orderSerciceImpl.findOrderByOrderId(orderId);
-                if ("YES".equals(order.getIsNotify()))
+                DealOrder order = orderSerciceImpl.findOrderNotify(orderId);
+                if ("YES".equals(order.getIsNotify())) {
                     CronUtil.remove(orderId);
+                }
                 send(url, orderId, msg, false);
                 log.info("【" + DatePattern.NORM_DATETIME_FORMAT.format(new Date()) + "】");
                 if (null == map.get(orderId)) {

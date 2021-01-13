@@ -41,10 +41,11 @@ public class YiFuWangYinPay extends PayOrderService {
             }
             log.info("【回调地址ip为：" + userInfo.getDealUrl() + "】");
             String url = createOrder(dealOrderApp, userInfo.getDealUrl() + PayApiConstant.Notfiy.NOTFIY_API_WAI + "/YiFu-notfiy", dealOrderApp.getOrderAmount(), orderId);
-            if (StrUtil.isBlank(url))
+            if (StrUtil.isBlank(url)) {
                 return Result.buildFailMessage("支付失败");
-            else
+            } else {
                 return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(url));
+            }
         }
         return Result.buildFailMessage("支付失败");
     }

@@ -34,7 +34,7 @@ public class JiuFuAlipayH5ToBank extends PayOrderService {
 		String create = create(dealOrderApp, channel);
 		if (StrUtil.isNotBlank(create)) {
 			log.info("【本地订单创建成功，开始请求远程三方支付】");
-			UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(dealOrderApp.getOrderAccount());
+			UserInfo userInfo = userInfoServiceImpl.findDealUrl(dealOrderApp.getOrderAccount());
 			if (StrUtil.isBlank(userInfo.getDealUrl())) {
 				orderEr(dealOrderApp, "当前商户交易url未设置");
 				return Result.buildFailMessage("请联系运营为您的商户好设置交易url");
@@ -45,8 +45,9 @@ public class JiuFuAlipayH5ToBank extends PayOrderService {
 				log.info("【请求失败】");
 				orderEr(dealOrderApp, "暂无支付渠道");
 				boolean orderEr = orderEr(dealOrderApp);
-				if (orderEr)
+				if (orderEr) {
 					return Result.buildFailMessage("支付失败");
+				}
 			} else {
 				return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(url));
 			}
@@ -80,10 +81,10 @@ public class JiuFuAlipayH5ToBank extends PayOrderService {
         Object object = parseObj.get("isSuccess");
         if (ObjectUtil.isNotNull(object)) {
             log.info("【当前玖富的订单为：" + object + "】");
-            if (object.equals("T")) {
+			if ("T".equals(object)) {
 				Object object2 = parseObj.get("url");
-				if(ObjectUtil.isNotNull(object2)) {
-					log.info("【支付链接为："+object2+"】");
+				if (ObjectUtil.isNotNull(object2)) {
+					log.info("【支付链接为：" + object2 + "】");
 					return object2.toString();
 				}
 			}

@@ -19,27 +19,26 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
 
-
 /**
  * redis:
-    port: 6379
-    host: 10.14.180.68
-    timeout : 500
-    pool :
-        max-idle : 8
-        min-idle : 0
-        max-active : 8
-        max-wait : -1
-session:
-    store-type: redis
-    timeout: 7200s
- * @author ADMIN
+ * port: 6379
+ * host: 10.14.180.68
+ * timeout : 500
+ * pool :
+ * max-idle : 8
+ * min-idle : 0
+ * max-active : 8
+ * max-wait : -1
+ * session:
+ * store-type: redis
+ * timeout: 7200s
  *
+ * @author ADMIN
  */
 @Configuration
 @EnableCaching
-public class RedisConfig  extends CachingConfigurerSupport {
-	Logger log = LoggerFactory.getLogger(RedisConfig.class);
+public class RedisConfig extends CachingConfigurerSupport {
+    Logger log = LoggerFactory.getLogger(RedisConfig.class);
     @Value("${spring.redis.host}")
     private String host;
 
@@ -54,73 +53,80 @@ public class RedisConfig  extends CachingConfigurerSupport {
 
     @Value("${spring.redis.pool.max-wait}")
     private long maxWaitMillis;
+
     @Bean
     public JedisPool redisPoolFactory() {
-    	log.debug("JedisPool注入成功！！");
-    	log.debug("redis地址：" + host + ":" + port);
+        log.debug("JedisPool注入成功！！");
+        log.debug("redis地址：" + host + ":" + port);
         JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
         jedisPoolConfig.setMaxIdle(maxIdle);
         jedisPoolConfig.setMaxWaitMillis(maxWaitMillis);
         JedisPool jedisPool = new JedisPool(jedisPoolConfig, host, port, timeout);
         return jedisPool;
     }
-    
+
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
-    			log.debug("redisTemplate注入成功！！");
-    	      RedisTemplate<String, Object> template = new RedisTemplate<String, Object>();
-    	      template.setConnectionFactory(factory);
-    	      Jackson2JsonRedisSerializer jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer(Object.class);
-    	      ObjectMapper om = new ObjectMapper();
-    	      om.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
-    	      jackson2JsonRedisSerializer.setObjectMapper(om);
-    	      StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
-    	      template.setKeySerializer(stringRedisSerializer);
-    	      template.setHashKeySerializer(stringRedisSerializer);
-    	      template.setValueSerializer(jackson2JsonRedisSerializer);
-    	      template.setHashValueSerializer(jackson2JsonRedisSerializer);
-    	      template.afterPropertiesSet();
-    	      return template;
-    	  }
-	@Bean
-	public KeyGenerator keyGenerator() {
-		return (target, method, params) -> {
-			StringBuilder sb = new StringBuilder();
-			sb.append(target.getClass().getName());
-			sb.append(":");
-			sb.append(method.getName());
-			for (Object obj : params) 
-				sb.append(":" + String.valueOf(obj));
-			String rsToUse = String.valueOf(sb);
-		 	log.info("自动生成Redis Key -> [{}]", rsToUse);
-			return rsToUse;
-		};
-	}
+        log.debug("redisTemplate注入成功！！");
+        RedisTemplate<String, Object> template = new RedisTemplate<String, Object>();
+        template.setConnectionFactory(factory);
+        Jackson2JsonRedisSerializer jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer(Object.class);
+        ObjectMapper om = new ObjectMapper();
+        om.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
+        jackson2JsonRedisSerializer.setObjectMapper(om);
+        StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
+        template.setKeySerializer(stringRedisSerializer);
+        template.setHashKeySerializer(stringRedisSerializer);
+        template.setValueSerializer(jackson2JsonRedisSerializer);
+        template.setHashValueSerializer(jackson2JsonRedisSerializer);
+        template.afterPropertiesSet();
+        return template;
+    }
+
+    @Bean
+    @Override
+    public KeyGenerator keyGenerator() {
+        return (target, method, params) -> {
+            StringBuilder sb = new StringBuilder();
+            sb.append(target.getClass().getName());
+            sb.append(":");
+            sb.append(method.getName());
+            for (Object obj : params) {
+                sb.append(":" + String.valueOf(obj));
+            }
+            String rsToUse = String.valueOf(sb);
+            log.info("自动生成Redis Key -> [{}]", rsToUse);
+            return rsToUse;
+        };
+    }
 
 
-	@Override
-	@Bean
-	public CacheErrorHandler errorHandler() {
-		// 异常处理，当Redis发生异常时，打印日志，但是程序正常走
-		log.info("初始化 -> [{}]", "Redis CacheErrorHandler");
-		CacheErrorHandler cacheErrorHandler = new CacheErrorHandler() {
-			@Override
-			public void handleCacheGetError(RuntimeException e, Cache cache, Object key) {
-				log.error("Redis occur handleCacheGetError：key -> [{}]", key, e);
-			}
-			@Override
-			public void handleCachePutError(RuntimeException e, Cache cache, Object key, Object value) {
-				log.error("Redis occur handleCachePutError：key -> [{}]；value -> [{}]", key, value, e);
-			}
-			@Override
-			public void handleCacheEvictError(RuntimeException e, Cache cache, Object key) {
-				log.error("Redis occur handleCacheEvictError：key -> [{}]", key, e);
-			}
-			@Override
-			public void handleCacheClearError(RuntimeException e, Cache cache) {
-				log.error("Redis occur handleCacheClearError：", e);
-			}
-		};
-		return cacheErrorHandler;
-	}
+    @Override
+    @Bean
+    public CacheErrorHandler errorHandler() {
+        // 异常处理，当Redis发生异常时，打印日志，但是程序正常走
+        log.info("初始化 -> [{}]", "Redis CacheErrorHandler");
+        CacheErrorHandler cacheErrorHandler = new CacheErrorHandler() {
+            @Override
+            public void handleCacheGetError(RuntimeException e, Cache cache, Object key) {
+                log.error("Redis occur handleCacheGetError：key -> [{}]", key, e);
+            }
+
+            @Override
+            public void handleCachePutError(RuntimeException e, Cache cache, Object key, Object value) {
+                log.error("Redis occur handleCachePutError：key -> [{}]；value -> [{}]", key, value, e);
+            }
+
+            @Override
+            public void handleCacheEvictError(RuntimeException e, Cache cache, Object key) {
+                log.error("Redis occur handleCacheEvictError：key -> [{}]", key, e);
+            }
+
+            @Override
+            public void handleCacheClearError(RuntimeException e, Cache cache) {
+                log.error("Redis occur handleCacheClearError：", e);
+            }
+        };
+        return cacheErrorHandler;
+    }
 }

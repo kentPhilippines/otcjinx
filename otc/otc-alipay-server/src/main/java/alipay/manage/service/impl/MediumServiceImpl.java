@@ -32,11 +32,13 @@ public class MediumServiceImpl implements MediumService {
     public boolean addMedium(Medium medium) {
         MediumExample example =  new MediumExample();
         MediumExample.Criteria criteria = example.createCriteria();
-        if(StrUtil.isNotBlank(medium.getMediumNumber()))
+        if (StrUtil.isNotBlank(medium.getMediumNumber())) {
             criteria.andMediumNumberEqualTo(medium.getMediumNumber());
+        }
         criteria.andIsDealEqualTo(Common.Medium.QR_IS_DEAL_ON);
-        if(CollUtil.isNotEmpty(mediumDao.selectByExample(example)))
+        if (CollUtil.isNotEmpty(mediumDao.selectByExample(example))) {
             return false;
+        }
         String medium2 = Number.getMedum();
         medium.setMediumId(medium2);
         medium.setIsDeal(Common.Medium.QR_IS_DEAL_ON);
@@ -47,30 +49,37 @@ public class MediumServiceImpl implements MediumService {
         Medium medium1 = mediumDao.findMediumBy(medium2);
         UserInfo user = userInfoMapper.findUserByUserId(medium1.getQrcodeId());
         boolean deleteAccountMedium = correlationService.addAccountMedium(user.getUserId(),user.getUserId(), medium1.getId());
-        if(deleteAccountMedium)
+        if (deleteAccountMedium) {
             log.info("【账户，账户代理关系，账户媒介关系更新完毕】");
-        else
+        } else {
             log.info("【账户，账户代理关系，账户媒介关系更新【【失败】】】");
+        }
         return insertSelective > 0 && insertSelective < 2;
     }
 
     @Override
     public List<Medium> findMedium(Medium medium) {
-    	System.out.println("medium====> " + medium.getStatus());
-        MediumExample example =  new MediumExample();
+        System.out.println("medium====> " + medium.getStatus());
+        MediumExample example = new MediumExample();
         MediumExample.Criteria criteria = example.createCriteria();
-        if(StrUtil.isNotBlank(medium.getMediumNumber()))
+        if (StrUtil.isNotBlank(medium.getMediumNumber())) {
             criteria.andMediumNumberEqualTo(medium.getMediumNumber());
-        if(StrUtil.isNotBlank(medium.getMediumId()))
+        }
+        if (StrUtil.isNotBlank(medium.getMediumId())) {
             criteria.andMediumIdEqualTo(medium.getMediumId());
-        if(StrUtil.isNotBlank(medium.getMediumHolder()))
+        }
+        if (StrUtil.isNotBlank(medium.getMediumHolder())) {
             criteria.andMediumHolderEqualTo(medium.getMediumHolder());
-        if(StrUtil.isNotBlank(medium.getMediumPhone()))
+        }
+        if (StrUtil.isNotBlank(medium.getMediumPhone())) {
             criteria.andMediumPhoneEqualTo(medium.getMediumPhone());
-        if(StrUtil.isNotBlank(medium.getQrcodeId()))
+        }
+        if (StrUtil.isNotBlank(medium.getQrcodeId())) {
             criteria.andQrcodeIdEqualTo(medium.getQrcodeId());
-        if(StrUtil.isNotBlank(String.valueOf(medium.getStatus())))
-        	criteria.andStatusEqualTo(medium.getStatus());
+        }
+        if (StrUtil.isNotBlank(String.valueOf(medium.getStatus()))) {
+            criteria.andStatusEqualTo(medium.getStatus());
+        }
         criteria.andIsDealEqualTo(Common.Medium.QR_IS_DEAL_ON);
         List<Medium> selectByExample = mediumDao.selectByExample(example);
         return selectByExample;

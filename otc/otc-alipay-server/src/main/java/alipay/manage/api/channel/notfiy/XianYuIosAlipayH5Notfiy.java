@@ -37,22 +37,22 @@ public class XianYuIosAlipayH5Notfiy extends NotfiyChannel {
             HttpServletRequest request,
             HttpServletResponse response
     ) throws Exception {
-		param(request);
-		String s = param2(request);
-		log.info("进入 穿山甲 回调处理");
-		String clientIP = HttpUtil.getClientIP(request);
-		log.info("【当前回调ip为：" + clientIP + "】");
-		if (!clientIP.equals("185.207.152.11")) {
-			log.info("【当前回调ip为：" + clientIP + "，固定IP登记为：" + "185.207.152.11" + "】");
-			log.info("【当前回调ip不匹配】");
-			response.getWriter().write("ip错误");
-			return;
-		}
+        param(request);
+        String s = param2(request);
+        log.info("进入 穿山甲 回调处理");
+        String clientIP = HttpUtil.getClientIP(request);
+        log.info("【当前回调ip为：" + clientIP + "】");
+        if (!"185.207.152.11".equals(clientIP)) {
+            log.info("【当前回调ip为：" + clientIP + "，固定IP登记为：" + "185.207.152.11" + "】");
+            log.info("【当前回调ip不匹配】");
+            response.getWriter().write("ip错误");
+            return;
+        }
 	/*	List<DealOrder> findXianYuOrder = dealOrderDao.findXianYuOrder2();
 		for(DealOrder order : findXianYuOrder) {
 			ThreadUtil.execute(()->{*/
-		if (StrUtil.isNotBlank(s)) {
-			response.getWriter().write("success");
+        if (StrUtil.isNotBlank(s)) {
+            response.getWriter().write("success");
 			log.info("【进入 穿山甲 订单查询处理】 ");
             log.info("【当前 穿山甲 订单号：" + s + "】 ");
             String fxddh = s;//咸鱼订单号
@@ -67,7 +67,7 @@ public class XianYuIosAlipayH5Notfiy extends NotfiyChannel {
             JSONObject parseObj = JSONUtil.parseObj(post);
             XianYu bean = JSONUtil.toBean(parseObj, XianYu.class);
             log.info("【当前返回数据为：】" + bean.toString());
-            if (bean.getFxstatus().equals("1")) {
+            if ("1".equals(bean.getFxstatus())) {
                 String enterOrder = enterOrder(s, clientIP, "收到穿山甲回调成功");
 					/*if(StrUtil.isNotBlank(enterOrder)) {
 						try {

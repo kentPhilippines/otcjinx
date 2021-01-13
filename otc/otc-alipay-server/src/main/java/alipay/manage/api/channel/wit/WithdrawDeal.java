@@ -16,9 +16,10 @@ public class WithdrawDeal extends PayOrderService{
 	@Autowired DealpayServiceClien dealpayServiceClienImpl;
 	@Override
 	public Result withdraw(Withdraw wit) {
-			Result result = dealpayServiceClienImpl.wit(wit);
-			if(result.isSuccess())
-				return result;
-			return Result.buildFailMessage("代付失败，联系运营人员手动失败") ;
-	}
+        Result result = dealpayServiceClienImpl.wit(wit);
+        if (result.isSuccess()) {
+            return result;
+        }
+        return Result.buildFailMessage("代付失败，联系运营人员手动失败");
+    }
 }

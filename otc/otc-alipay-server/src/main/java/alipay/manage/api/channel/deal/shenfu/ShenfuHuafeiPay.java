@@ -40,7 +40,7 @@ public class ShenfuHuafeiPay extends PayOrderService {
         log.info("【进入申付话费支付，当前请求产品：" + dealOrderApp.getRetain1() +
                 "，当前请求渠道：" + channel + "】");
         String orderId = create(dealOrderApp, channel);
-        UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(dealOrderApp.getOrderAccount());
+        UserInfo userInfo = userInfoServiceImpl.findDealUrl(dealOrderApp.getOrderAccount());
         if (StrUtil.isBlank(userInfo.getDealUrl())) {
             orderEr(dealOrderApp, "当前商户交易url未设置");
             return Result.buildFailMessage("请联系运营为您的商户好设置交易url");
@@ -107,7 +107,7 @@ public class ShenfuHuafeiPay extends PayOrderService {
         log.info("【绅付话费返回数据：" + post + "】");
         JSONObject jsonObject = JSONUtil.parseObj(post);
         String rspcode = jsonObject.getStr("rspcode");
-        if (rspcode.equals("A0")) {
+        if ("A0".equals(rspcode)) {
             String payurl = jsonObject.getStr("data");
             return Result.buildSuccessResult(payurl);
         } else {

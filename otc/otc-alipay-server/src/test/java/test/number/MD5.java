@@ -1,16 +1,12 @@
 package test.number;
 
-import cn.hutool.core.util.IdUtil;
-import otc.util.RSAUtils;
-
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
 
 public class MD5 {
 	public static void main(String[] args) {
-		String key = md5(IdUtil.objectId().toUpperCase() + IdUtil.objectId().toUpperCase()).toUpperCase();
+	/*	String key = md5(IdUtil.objectId().toUpperCase() + IdUtil.objectId().toUpperCase()).toUpperCase();
 
 		List<String> strings = RSAUtils.genKeyPair();
 		String s = strings.get(0);
@@ -24,7 +20,7 @@ public class MD5 {
 		);
 		System.out.println(
 				a
-		);
+		);*/
 
 
 	}

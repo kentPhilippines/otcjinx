@@ -29,8 +29,9 @@ public class JiaobaoUtil {
     public static String getSign(Map<String, Object> map, String merchantKey) {
         StringBuffer signStr = new StringBuffer();
         for (Map.Entry<String, Object> m : map.entrySet()) {
-            if (m.getValue() != null)
+            if (m.getValue() != null) {
                 signStr.append(m.getValue());
+            }
         }
 //		signStr.append(merchantKey);
         return signStr.toString();

@@ -38,19 +38,29 @@ public class QueueQrcodeUtil {
         }
         return redisUtil.zRange(REDISKEY_QUEUE, 0, -1);
     }
-    
+
     public boolean addNode(Object alipayAccount) {
-    	return addNode(alipayAccount,null);
+        return addNode(alipayAccount, null);
     }
+
+    private static boolean checkNotNull(Object v) {
+        if (v == null || "" == v) {
+            return false;
+        }
+        return true;
+    }
+
     /**
      * <p>支付宝入列</p>
-     * @param alipayAccount				支付宝账户号
-     * @param qr						二维码具体参数
+     *
+     * @param alipayAccount 支付宝账户号
+     * @param qr            二维码具体参数
      * @return
      */
     public boolean addNode(Object alipayAccount, FileList qr) {
-        if (!checkNotNull(alipayAccount))
+        if (!checkNotNull(alipayAccount)) {
             return false;
+        }
         LinkedHashSet<TypedTuple<Object>> zRangeWithScores = redisUtil.zRangeWithScores(REDISKEY_QUEUE, 0, -1);
         //linkedhashset 保证set集合查询最快
         if (CollUtil.isEmpty(zRangeWithScores)) {
@@ -79,11 +89,5 @@ public class QueueQrcodeUtil {
             }
         }
         return redisUtil.zAdd(REDISKEY_QUEUE, alipayAccount.toString(), score);
-    }
-    
-    private static boolean checkNotNull(Object v) {
-        if (v == null || "" == v)
-            return false;
-        return true;
     }
 }

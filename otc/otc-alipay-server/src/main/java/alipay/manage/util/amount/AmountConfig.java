@@ -49,8 +49,9 @@ public class AmountConfig extends Util {
                     });
                 }
                 UserFund userFund = userInfoServiceImpl.findUserFundByAccount(userFund1.getUserId());
-                if (!amountPrivate.clickUserFund(userFund).isSuccess())
+                if (!amountPrivate.clickUserFund(userFund).isSuccess()) {
                     return Result.buildFailMessage("【资金账户存在问题】");
+                }
                 if (ADD_AMOUNT_RECHARGE.equals(addType)) {//资金充值【加充值点数】
                     Result addAmountRecharge = amountPrivate.addAmountRecharge(userFund, balance);
                     if (addAmountRecharge.isSuccess()) {
@@ -137,8 +138,9 @@ public class AmountConfig extends Util {
                     });
                 }
                 userFund = userInfoServiceImpl.findUserFundByAccount(userFund.getUserId());
-                if (!amountPrivate.clickUserFund(userFund).isSuccess())
+                if (!amountPrivate.clickUserFund(userFund).isSuccess()) {
                     return Result.buildFailMessage("【资金账户存在问题】");
+                }
                 if (DELETE_DEAL.equals(addType)) {//交易减点数
                     Result deductRecharge = amountPrivate.deductRecharge(userFund, balance);
                     if (deductRecharge.isSuccess()) {
@@ -183,10 +185,11 @@ public class AmountConfig extends Util {
                     log.info("【当前账户余额扣除失败，请查询当前时间范围内的异常情况，当前账户：" + userFund.getUserId() + "，金额：" +
                             balance + "，方法：addAmountBalance，类型：" + addType + "】");
                     log.info("【账户金额冻结失败，请查询当前时间范围内的异常情况，并修改当前账户交易和资金状态为 不可用】");
-                    if (userInfoServiceImpl.updataStatusEr(userFund.getUserId()))
+                    if (userInfoServiceImpl.updataStatusEr(userFund.getUserId())) {
                         log.info("【账户已修改为不可使用，当前账号为：" + userFund.getUserId() + "】");
-                    else
+                    } else {
                         throw new UserException("账户修改异常", null);
+                    }
                     log.info("【当前账户余额扣除失败，请联系技术人员查询情况，当前账户：" + userFund.getUserId() + "】");
                     return Result.buildFailMessage("【当前账户余额扣除失败，请联系技术人员查看当前服务异常】");
                 }

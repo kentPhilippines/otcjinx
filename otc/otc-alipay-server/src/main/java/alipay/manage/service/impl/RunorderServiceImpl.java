@@ -1,16 +1,18 @@
 package alipay.manage.service.impl;
 
-import javax.annotation.Resource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.PlatformTransactionManager;
 import alipay.manage.bean.RunOrder;
 import alipay.manage.mapper.RunOrderMapper;
 import alipay.manage.service.RunOrderService;
+import org.springframework.stereotype.Component;
 import otc.util.number.Number;
+
+import javax.annotation.Resource;
+
 @Component
-public class RunorderServiceImpl implements RunOrderService{
-	@Autowired RunOrderMapper runOrderDao;
+public class RunorderServiceImpl implements RunOrderService {
+	@Resource
+	RunOrderMapper runOrderDao;
+
 	@Override
 	public boolean addOrder(RunOrder run) {
 		run.setOrderId(Number.getRunOrderId());

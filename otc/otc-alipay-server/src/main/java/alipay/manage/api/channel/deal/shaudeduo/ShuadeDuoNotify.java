@@ -28,7 +28,7 @@ public class ShuadeDuoNotify extends NotfiyChannel {
     @PostMapping("/shuadeduo-notify")
     public String notify(HttpServletRequest req, HttpServletResponse res, @RequestBody String json) throws IOException {
         String clientIP = HttpUtil.getClientIP(req);
-        if (!clientIP.equals("13.114.179.98")) {
+        if (!"13.114.179.98".equals(clientIP)) {
             log.info("【当前回调ip为：" + clientIP + "，固定IP登记为：" + "13.114.179.98" + "】");
             log.info("【当前回调ip不匹配】");
             return "ip is error";
@@ -52,10 +52,11 @@ public class ShuadeDuoNotify extends NotfiyChannel {
 
         JSONObject result = JSONUtil.parseObj(result2);
         String status1 = result.getStr("status");
-        if (status.equals(status1) && status.equals("success")) {
+        if (status.equals(status1) && "success".equals(status)) {
             Result result1 = dealpayNotfiy(trade_no, "刷的多正常回调", clientIP);
-            if (result1.isSuccess())
+            if (result1.isSuccess()) {
                 return "success";
+            }
         }
         return "";
     }

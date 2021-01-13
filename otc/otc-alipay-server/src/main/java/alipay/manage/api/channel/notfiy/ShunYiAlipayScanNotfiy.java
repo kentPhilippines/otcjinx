@@ -69,8 +69,9 @@ public class ShunYiAlipayScanNotfiy extends NotfiyChannel {
         Set<String> keySet = parseObj.keySet();
         log.info("【收到顺易支付成功请求，当前请求参数为：" + parseObj + "】");
         Map<String, Object> decodeParamMap = new ConcurrentHashMap();
-        for (String key : keySet)
+        for (String key : keySet) {
             decodeParamMap.put(key, parseObj.getObj(key));
+        }
         /**
          * 		oid_partner	String(18)		√	参数名称：商家号 商户签约时，唯一身份标识。例如201411171645530813。
          sign_type	String(10)		√	参数名称：签名方式 1.取值为：MD5

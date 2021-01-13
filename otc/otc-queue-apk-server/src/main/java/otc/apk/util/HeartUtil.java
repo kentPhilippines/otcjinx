@@ -1,20 +1,19 @@
 package otc.apk.util;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
+import cn.hutool.log.Log;
+import cn.hutool.log.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.ZSetOperations.TypedTuple;
 import org.springframework.stereotype.Component;
-
-import cn.hutool.log.Log;
-import cn.hutool.log.LogFactory;
 import otc.apk.feign.AlipayServiceClien;
 import otc.apk.redis.RedisUtil;
 import otc.bean.alipay.Medium;
 import otc.common.RedisConstant;
 import otc.result.Result;
 import otc.util.RSAUtils;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
 @Component
 public class HeartUtil {
 	@Autowired RedisUtil redisUtil;
@@ -50,8 +49,9 @@ public class HeartUtil {
 				 boolean hasKey = redisUtil.hasKey(md52);
 				 if(!hasKey) {//不在的时候 讲该媒介踢出队列
 					 Result offMediumQueue = AlipayServiceClienImpl.offMediumQueue(value.toString());
-					 if(offMediumQueue.isSuccess())
-						 log.info("【已将收款媒介："+value.toString()+"，成功踢出队列】");
+					 if (offMediumQueue.isSuccess()) {
+						 log.info("【已将收款媒介：" + value.toString() + "，成功踢出队列】");
+					 }
 				 }
 			 }
 		}

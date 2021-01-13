@@ -1,24 +1,18 @@
 package alipay.manage.util;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import alipay.config.redis.RedisUtil;
 import alipay.manage.api.feign.QueueServiceClien;
 import alipay.manage.service.MediumService;
-import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import otc.bean.alipay.Medium;
 import otc.common.RedisConstant;
 import otc.result.Result;
+
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 /**<p>远程队列操作</p>
  * @author hx070
  *
@@ -44,12 +38,14 @@ public class QueueUtil {
 				log.info("【当前操作的媒介id为："+mediumNo+"】");
 				addNode = queueServiceClienImpl.addNode(mediumId);	// addNode - queue
 				if(addNode.isSuccess()) {
-					if(redisUtil.hasKey(MEDIUM_QUEUE+mediumNo)) 
+					if (redisUtil.hasKey(MEDIUM_QUEUE + mediumNo)) {
 						return Result.buildFailMessage("本地标记已存在");
-					redisUtil.set(MEDIUM_QUEUE+mediumNo, mediumNo);
+					}
+					redisUtil.set(MEDIUM_QUEUE + mediumNo, mediumNo);
 					boolean flag = mediumServiceImpl.updataMediumStatusSu(medium.getId().toString());// open Medium
-					if(!flag)
+					if (!flag) {
 						return Result.buildFail();
+					}
 				}
 			return addNode;
 	}
@@ -65,11 +61,12 @@ public class QueueUtil {
 			String mediumNo = mediumId.getMediumId();
 			deleteNode = queueServiceClienImpl.deleteNode(mediumId);   // delete medium  -  queue
 			if(deleteNode.isSuccess()) {
-				log.info("【当前操作的媒介id为："+mediumNo+"】");
-				redisUtil.del(MEDIUM_QUEUE+mediumNo);
+				log.info("【当前操作的媒介id为：" + mediumNo + "】");
+				redisUtil.del(MEDIUM_QUEUE + mediumNo);
 				boolean flag = mediumServiceImpl.updataMediumStatusEr(medium.getId().toString());   // off medium
-				if(!flag)
+				if (!flag) {
 					return Result.buildFail();
+				}
 			}
 		return deleteNode;
 	}

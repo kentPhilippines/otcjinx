@@ -1,8 +1,6 @@
 package deal.manage.api;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.date.DateField;
-import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
@@ -13,28 +11,17 @@ import deal.manage.bean.UserRate;
 import deal.manage.service.BankListService;
 import deal.manage.service.UserInfoService;
 import deal.manage.util.CheckUtils;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import otc.api.alipay.Common;
-import otc.bean.config.ConfigFile;
-import otc.common.SystemConstants;
-import otc.exception.BusinessException;
 import otc.result.Result;
 import otc.util.RSAUtils;
 import otc.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
-
 import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -72,10 +59,11 @@ public class VendorRequestApi {
         log.info("【商户RSA解密的参数：" + paramMap.toString()+"】 " );
         //验证结果
         Result result = checkUtils.requestVerify(request, paramMap,userInfo.getPayPasword());
-        if (result.isSuccess())
+        if (result.isSuccess()) {
             log.info("【requestVerif】方法验证通过");
-        else
+        } else {
             return result;
+        }
         //验证商户是否配置费率
         Integer remitOrderState = userInfo.getReceiveOrderState();// 1 接单 2 暂停接单
         if (Common.Order.DEAL_OFF.equals(remitOrderState)) {
@@ -125,22 +113,26 @@ public class VendorRequestApi {
     public Result withdrawal(HttpServletRequest request, boolean flag) {
         String userId = request.getParameter("userId");//商户号
         UserInfo userInfo = accountApiServiceImpl.findUserInfo(userId);
-        if (userInfo == null)
+        if (userInfo == null) {
             return Result.buildFailMessage("商户不存在");
+        }
         log.info("--------------【用户开始RSA解密】----------------");
         String rsaSign = request.getParameter("cipherText");//商户传过来的密文
         Map<String, Object> paramMap = RSAUtils.getDecodePrivateKey(rsaSign, userInfo.getPrivateKey());
         log.info("【商户RSA解密的参数：" + paramMap.toString()+"】 " );
-        if (CollUtil.isEmpty(paramMap))
+        if (CollUtil.isEmpty(paramMap)) {
             return Result.buildFailMessage("RSA解密参数为空");
+        }
         Result result = checkUtils.requestWithdrawalVerify(request, paramMap,userInfo.getPayPasword());
-        if (result.isSuccess())
+        if (result.isSuccess()) {
             log.info("【requestVerif】方法验证通过");
-        else
+        } else {
             return result;
+        }
         UserRate userRate = accountApiServiceImpl.findUserRateWitByUserId(userId);
-        if (ObjectUtil.isNull(userRate))
+        if (ObjectUtil.isNull(userRate)) {
             return Result.buildFailMessage("代付费率为开通或状态未开启");
+        }
         Integer remitOrderState = userInfo.getRemitOrderState();// 1 接单 2 暂停接单
         if (Common.Order.DAPY_OFF.equals(remitOrderState)) {
             log.info("【当前账户代付权限未开通】");
@@ -148,17 +140,20 @@ public class VendorRequestApi {
         }
         if (!flag) {
             String clientIP = HttpUtil.getClientIP(request);
-            if (StrUtil.isBlank(clientIP))
+            if (StrUtil.isBlank(clientIP)) {
                 return Result.buildFailMessage("未获取到代付ip");
+            }
             log.info("【当前用户代付ip为：" + clientIP + "】");
             String witip = userInfo.getWitip();
             log.info("【获取当前允许代付ip为：" + witip + "】");
             String[] split = witip.split(",");
             List<String> asList = Arrays.asList(split);
-            if (!asList.contains(clientIP))
+            if (!asList.contains(clientIP)) {
                 return Result.buildFailMessage("请绑定正确的代付ip");
-        } else
+            }
+        } else {
             log.info("【商户从后台提现不验证代付ip】");
+        }
         String bankNo = paramMap.get("acctno").toString();
         String amount = paramMap.get("amount").toString();
         BankList bank = bankListServiceImpl.findBankByNo(bankNo);

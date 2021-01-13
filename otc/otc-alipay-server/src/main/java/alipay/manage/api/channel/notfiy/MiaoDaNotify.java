@@ -99,8 +99,9 @@ public class MiaoDaNotify extends NotfiyChannel {
         }
         if("2".equals(status)){
             Result dealpayNotfiy = dealpayNotfiy(order_sn, clientIP,"秒达支付回调");
-            if(dealpayNotfiy.isSuccess())
+            if (dealpayNotfiy.isSuccess()) {
                 return "success";
+            }
         }
         return "";
     }

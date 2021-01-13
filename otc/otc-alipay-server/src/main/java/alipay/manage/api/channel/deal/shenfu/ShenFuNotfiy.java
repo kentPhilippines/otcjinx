@@ -70,8 +70,9 @@ public class ShenFuNotfiy extends NotfiyChannel {
         Set<String> keySet = parseObj.keySet();
         log.info("【收到绅付支付成功请求，当前请求参数为：" + parseObj + "】");
         Map<String, Object> decodeParamMap = new ConcurrentHashMap();
-        for (String key : keySet)
+        for (String key : keySet) {
             decodeParamMap.put(key, parseObj.getObj(key));
+        }
         String clientIP = HttpUtil.getClientIP(req);
         log.info("【当前回调ip为：" + clientIP + "】");
         Map map = PayUtil.ipMap;

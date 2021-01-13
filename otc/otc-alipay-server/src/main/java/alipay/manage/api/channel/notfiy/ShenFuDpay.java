@@ -72,17 +72,18 @@ public class ShenFuDpay extends NotfiyChannel {
         log.info("【绅付代付签名前参数：" + createParam + "】");
         String md5 = PayUtil.md5(createParam + PayUtil.KEY01);
         if (sign.equals(md5)) {
-            if (result_pay.equals("SUCCESS")) {
+            if ("SUCCESS".equals(result_pay)) {
                 Result result = witNotfy(no_order, clientIP);
                 if (result.isSuccess()) {
                     return "success";
                 }
-            } else if (result_pay.equals("FAILURE")) {
+            } else if ("FAILURE".equals(result_pay)) {
                 witNotfyEr(no_order, clientIP, "代付失败");
                 return "success";
             }
-        } else
+        } else {
             return "error";
+        }
         return "end errer";
     }
 }

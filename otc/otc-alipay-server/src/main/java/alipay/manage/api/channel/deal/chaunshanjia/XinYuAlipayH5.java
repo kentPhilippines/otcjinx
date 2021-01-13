@@ -30,40 +30,59 @@ import java.util.Map;
 
 @Component("XianYuH5")
 public class XinYuAlipayH5 extends PayOrderService {
-	private static final Log log = LogFactory.get();
-	@Autowired
-	private UserInfoService userInfoServiceImpl;
-	@Autowired
-	private OrderService orderServiceImpl;
+    private static final Log log = LogFactory.get();
+    @Autowired
+    private UserInfoService userInfoServiceImpl;
+    @Autowired
+    private OrderService orderServiceImpl;
 
-	@Override
-	public Result deal(DealOrderApp dealOrderApp, String payType) {
-		String channelId = "XianYuZhifubao";
-		log.info("【进入咸鱼支付宝H5】");
-		String create = create(dealOrderApp, channelId);
-		if (StrUtil.isNotBlank(create)) {
-			log.info("【本地订单创建成功，开始请求远程三方支付】");
-			UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(dealOrderApp.getOrderAccount());
-			if (StrUtil.isBlank(userInfo.getDealUrl())) {
+    public static String md5(String a) {
+        String c = "";
+        MessageDigest md5;
+        String result = "";
+        try {
+            md5 = MessageDigest.getInstance("md5");
+            md5.update(a.getBytes("utf-8"));
+            byte[] temp;
+            temp = md5.digest(c.getBytes("utf-8"));
+            for (int i = 0; i < temp.length; i++) {
+                result += Integer.toHexString((0x000000ff & temp[i]) | 0xffffff00).substring(6);
+            }
+        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+        }
+        return result;
+    }
+
+    @Override
+    public Result deal(DealOrderApp dealOrderApp, String payType) {
+        String channelId = "XianYuZhifubao";
+        log.info("【进入咸鱼支付宝H5】");
+        String create = create(dealOrderApp, channelId);
+        if (StrUtil.isNotBlank(create)) {
+            log.info("【本地订单创建成功，开始请求远程三方支付】");
+            UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(dealOrderApp.getOrderAccount());
+            if (StrUtil.isBlank(userInfo.getDealUrl())) {
 				orderEr(dealOrderApp, "当前商户交易url未设置");
 				return Result.buildFailMessage("请联系运营为您的商户好设置交易url");
 			}
 			XianYu xianyu = createOrder(userInfo.getDealUrl() + PayApiConstant.Notfiy.NOTFIY_API_WAI + "/xianyu-notfiy", dealOrderApp.getOrderAmount(), create);
 			if (ObjectUtil.isNull(xianyu)) {
-				boolean orderEr = orderEr(dealOrderApp);
-				if (orderEr)
-					return Result.buildFailMessage("支付失败");
-			} else {
-				if (xianyu.getStatus().equals("1")) {
-					return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(xianyu.getPayurl()));
-				} else {
-					orderEr(dealOrderApp);
-					return Result.buildFailMessage(xianyu.getPayurl());
-				}
-			}
+                boolean orderEr = orderEr(dealOrderApp);
+                if (orderEr) {
+                    return Result.buildFailMessage("支付失败");
+                }
+            } else {
+                if ("1".equals(xianyu.getStatus())) {
+                    return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(xianyu.getPayurl()));
+                } else {
+                    orderEr(dealOrderApp);
+                    return Result.buildFailMessage(xianyu.getPayurl());
+                }
+            }
 		}
 		return Result.buildFailMessage("支付失败");
 	}
+
 	private XianYu createOrder(String notfiy, BigDecimal orderAmount, String orderId) {
         DealOrder order = orderServiceImpl.findOrderByOrderId(orderId);
         Snowflake snowflake = IdUtil.createSnowflake(1, 1);
@@ -101,7 +120,7 @@ public class XinYuAlipayH5 extends PayOrderService {
         log.info("【咸鱼H5返回：" + parseObj.toString() + "】");
         Object object = parseObj.get("status");
 	    XianYu bean = new XianYu();
-        if (object.toString().equals("1")) {
+        if ("1".equals(object.toString())) {
             bean = JSONUtil.toBean(parseObj, XianYu.class);
 
 
@@ -112,21 +131,6 @@ public class XinYuAlipayH5 extends PayOrderService {
 	    //{"status":1,"payurl":"trade_no=2020051404200399991055074076&biz_sub_type=peerpay_trade&presessionid=&app=tb&channel=&type2=gulupay&bizcontext={\"biz_type\":\"share_pp_pay\",\"type\":\"qogirpay\"}"}
 		return bean;
 	}
-	 public static String md5(String a) {
-	    	String c = "";
-	    	MessageDigest md5;
-		   	String result="";
-			try {
-				md5 = MessageDigest.getInstance("md5");
-				md5.update(a.getBytes("utf-8"));
-				byte[] temp;
-				temp=md5.digest(c.getBytes("utf-8"));
-				for (int i=0; i<temp.length; i++)
-					result+=Integer.toHexString((0x000000ff & temp[i]) | 0xffffff00).substring(6);
-			} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
-			}
-			return result;
-	    }
 }
 class XianYu{
 	private String status;

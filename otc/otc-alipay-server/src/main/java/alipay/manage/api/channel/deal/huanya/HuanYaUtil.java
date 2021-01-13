@@ -13,14 +13,17 @@ public class HuanYaUtil {
     public static final String NOTIFY = "/huanya-source-notify";
     public static String createParam(Map<String, Object> map) {
         try {
-            if (map == null || map.isEmpty())
+            if (map == null || map.isEmpty()) {
                 return null;
+            }
             Object[] key = map.keySet().toArray();
             Arrays.sort(key);
             StringBuffer res = new StringBuffer(128);
-            for (int i = 0; i < key.length; i++)
-                if (ObjectUtil.isNotNull(map.get(key[i])))
+            for (int i = 0; i < key.length; i++) {
+                if (ObjectUtil.isNotNull(map.get(key[i]))) {
                     res.append(key[i] + "=" + map.get(key[i]) + "&");
+                }
+            }
             String rStr = res.substring(0, res.length() - 1);
             return rStr;
         } catch (Exception e) {
@@ -46,14 +49,17 @@ public class HuanYaUtil {
     }
     public static String createParam(HashMap<String, String> decodeParamMap) {
         try {
-            if (decodeParamMap == null || decodeParamMap.isEmpty())
+            if (decodeParamMap == null || decodeParamMap.isEmpty()) {
                 return null;
+            }
             Object[] key = decodeParamMap.keySet().toArray();
             Arrays.sort(key);
             StringBuffer res = new StringBuffer(128);
-            for (int i = 0; i < key.length; i++)
-                if (ObjectUtil.isNotNull(decodeParamMap.get(key[i])))
+            for (int i = 0; i < key.length; i++) {
+                if (ObjectUtil.isNotNull(decodeParamMap.get(key[i]))) {
                     res.append(key[i] + "=" + decodeParamMap.get(key[i]) + "&");
+                }
+            }
             String rStr = res.substring(0, res.length() - 1);
             return rStr;
         } catch (Exception e) {

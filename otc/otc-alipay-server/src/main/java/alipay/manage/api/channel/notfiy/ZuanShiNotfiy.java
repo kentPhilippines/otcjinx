@@ -30,8 +30,9 @@ public class ZuanShiNotfiy extends NotfiyChannel {
         String clientIP = HttpUtil.getClientIP(req);
         String[] ipList = {"34.84.21.215", "34.85.98.150"};
         List<String> asList = Arrays.asList(ipList);
-        if (!asList.contains(clientIP))
-            return new zuanshi("1111", 1);
+		if (!asList.contains(clientIP)) {
+			return new zuanshi("1111", 1);
+		}
         /**
          * 	payout_id			是	String	系统订单号
          payout_cl_id		是	String	商户订单号
@@ -69,14 +70,15 @@ public class ZuanShiNotfiy extends NotfiyChannel {
 		} catch (Exception e) {
 			return new zuanshi("1111", 1);
 		}
-        if (sign.equals(generatedSign) && status.equals("3") && platform_id .equals( Config.PLATFORM_ID)){//我方给下游回调  这里要写一个回调的抽象类  全部继承然后同意记录
-            //判断签名是否正确
-        	Result witNotfy = witNotfy(payout_cl_id,clientIP);
-        	if(witNotfy.isSuccess())
-        		log.info("【代付通知成功】");
-            //TODO 任意事情
-            return new zuanshi("0000", 3);//订单没有任何问题 返回SUCCESS
-        }
+		if (sign.equals(generatedSign) && "3".equals(status) && platform_id.equals(Config.PLATFORM_ID)) {//我方给下游回调  这里要写一个回调的抽象类  全部继承然后同意记录
+			//判断签名是否正确
+			Result witNotfy = witNotfy(payout_cl_id, clientIP);
+			if (witNotfy.isSuccess()) {
+				log.info("【代付通知成功】");
+			}
+			//TODO 任意事情
+			return new zuanshi("0000", 3);//订单没有任何问题 返回SUCCESS
+		}
     	return new zuanshi("1111", 1);
     }
 }

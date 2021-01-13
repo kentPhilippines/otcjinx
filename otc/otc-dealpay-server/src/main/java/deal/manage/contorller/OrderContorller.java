@@ -1,14 +1,21 @@
 package deal.manage.contorller;
-import java.io.UnsupportedEncodingException;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
-import javax.servlet.http.HttpServletRequest;
-
+import cn.hutool.core.thread.ThreadUtil;
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpUtil;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import deal.config.annotion.LogMonitor;
+import deal.config.annotion.Submit;
+import deal.manage.bean.DealOrder;
+import deal.manage.bean.Runorder;
+import deal.manage.bean.UserInfo;
+import deal.manage.bean.Withdraw;
+import deal.manage.bean.util.AreaIp;
+import deal.manage.bean.util.PageResult;
+import deal.manage.service.*;
+import deal.manage.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,42 +26,21 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
-
-import cn.hutool.core.date.DateField;
-import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.thread.ThreadUtil;
-import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.http.HttpUtil;
-import deal.config.annotion.LogMonitor;
-import deal.config.annotion.Submit;
-import deal.manage.bean.DealOrder;
-import deal.manage.bean.Runorder;
-import deal.manage.bean.UserInfo;
-import deal.manage.bean.Withdraw;
-import deal.manage.bean.util.AreaIp;
-import deal.manage.bean.util.PageResult;
-import deal.manage.service.OrderService;
-import deal.manage.service.RechargeService;
-import deal.manage.service.RunOrderService;
-import deal.manage.service.UserInfoService;
-import deal.manage.service.WithdrawService;
-import deal.manage.util.DateTools;
-import deal.manage.util.EnterOrderUtil;
-import deal.manage.util.IsDealIpUtil;
-import deal.manage.util.LogUtil;
-import deal.manage.util.OrderUtil;
-import deal.manage.util.SessionUtil;
 import otc.bean.dealpay.Recharge;
 import otc.result.Result;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 /**
  * <p>订单</p>
- * @author K
  *
+ * @author K
  */
 @Controller
 @RequestMapping("/order")
@@ -100,20 +86,23 @@ public class OrderContorller {
 	@ResponseBody
 	public Result findMyWaitConfirmOrder(HttpServletRequest request,String pageNum,String pageSize,String orderType, String dateTime) {
 		UserInfo user = sessionUtil.getUser(request);
-		if(ObjectUtil.isNull(user)) 
+		if (ObjectUtil.isNull(user)) {
 			return Result.buildFailMessage("当前用户未登录");
+		}
 		Date date = null;
-		DealOrder dealOrder=new DealOrder();
-		if(StrUtil.isNotBlank(orderType))
+		DealOrder dealOrder = new DealOrder();
+		if (StrUtil.isNotBlank(orderType)) {
 			dealOrder.setProductType(orderType);
-		if(StringUtils.isEmpty(dateTime))
-			date = DateTools.parseStrToDate(DateTools.parseDateToStr(new Date(),DateTools.DATE_FORMAT_YYYY_MM_DD),DateTools.DATE_FORMAT_YYYY_MM_DD);
-		else
-			date = DateTools.parseStrToDate(dateTime,DateTools.DATE_FORMAT_YYYY_MM_DD);
+		}
+		if (StringUtils.isEmpty(dateTime)) {
+			date = DateTools.parseStrToDate(DateTools.parseDateToStr(new Date(), DateTools.DATE_FORMAT_YYYY_MM_DD), DateTools.DATE_FORMAT_YYYY_MM_DD);
+		} else {
+			date = DateTools.parseStrToDate(dateTime, DateTools.DATE_FORMAT_YYYY_MM_DD);
+		}
 		PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
 		//按时间段查询
-		List<DealOrder> listOrder = orderServiceImpl.findOrderByUser(user.getUserId(),dealOrder.getProductType(),DateTools.formatDateTime(DateTools.getDayBeginTime(date)),DateTools.formatDateTime(DateTools.getDayEndTime(new Date())));
-		
+		List<DealOrder> listOrder = orderServiceImpl.findOrderByUser(user.getUserId(), dealOrder.getProductType(), DateTools.formatDateTime(DateTools.getDayBeginTime(date)), DateTools.formatDateTime(DateTools.getDayEndTime(new Date())));
+
 		PageInfo<DealOrder> pageInfo = new PageInfo<DealOrder>(listOrder);
 		PageResult<DealOrder> pageR = new PageResult<DealOrder>();
 		pageR.setContent(pageInfo.getList());
@@ -147,9 +136,10 @@ public class OrderContorller {
 		lock.lock();
 		try {
 			enterOrderSu = enterOrderUtil.EnterOrderSu(orderId, user.getUserId(), HttpUtil.getClientIP(request));
-			log.info("【订单置为成功返回结果："+enterOrderSu.toString()+"】");
-			if(enterOrderSu.isSuccess()) 
-			return enterOrderSu;
+			log.info("【订单置为成功返回结果：" + enterOrderSu.toString() + "】");
+			if (enterOrderSu.isSuccess()) {
+				return enterOrderSu;
+			}
 		} finally {
 			lock.unlock();
 		}  
@@ -171,14 +161,16 @@ public class OrderContorller {
 	public Result findMyReceiveOrderRecordByPage(HttpServletRequest request,String receiveOrderTime,String pageNum,String pageSize,String gatheringChannelCode) {
 		UserInfo user = sessionUtil.getUser(request);
 		DealOrder order = new DealOrder();
-		if(ObjectUtil.isNull(user)) {
+		if (ObjectUtil.isNull(user)) {
 			return Result.buildFailMessage("当前用户未登录");
 		}
 		order.setOrderQrUser(user.getUserId());
-		if(StrUtil.isNotBlank(receiveOrderTime)) 
+		if (StrUtil.isNotBlank(receiveOrderTime)) {
 			order.setTime(receiveOrderTime);
-		if(StrUtil.isNotBlank(gatheringChannelCode))
+		}
+		if (StrUtil.isNotBlank(gatheringChannelCode)) {
 			order.setOrderType(gatheringChannelCode);
+		}
 		PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
 		List<DealOrder> orderList = orderServiceImpl.findOrderByPage(order);
 		PageInfo<DealOrder> pageInfo = new PageInfo<DealOrder>(orderList);
@@ -236,14 +228,16 @@ public class OrderContorller {
 			String pageNum,String pageSize,String accountChangeTypeCode) {
 		UserInfo user = sessionUtil.getUser(request);
 		Runorder order = new Runorder();
-		if(ObjectUtil.isNull(user)) {
+		if (ObjectUtil.isNull(user)) {
 			return Result.buildFailMessage("当前用户未登录");
 		}
 		order.setOrderAccount(user.getUserId());
-		if(StrUtil.isNotBlank(startTime)) 
+		if (StrUtil.isNotBlank(startTime)) {
 			order.setTime(startTime);
-		if(StrUtil.isNotBlank(accountChangeTypeCode))
+		}
+		if (StrUtil.isNotBlank(accountChangeTypeCode)) {
 			order.setRunType(accountChangeTypeCode);
+		}
 		PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
 		List<Runorder> orderList = runOrderServiceImpl.findOrderRunByPage(order);
 		PageInfo<Runorder> pageInfo = new PageInfo<Runorder>(orderList);
@@ -286,24 +280,27 @@ public class OrderContorller {
 			String userName
 			) {
 		UserInfo user = sessionUtil.getUser(request);
-		if(ObjectUtil.isNull(user)) 
+		if (ObjectUtil.isNull(user)) {
 			return Result.buildFailMessage("当前用户未登录");
-		List<String> userList =  accountServiceImpl.findSunAccountByUserId(user.getUserId());	
-		if(StrUtil.isNotBlank(userName)) {
-			if(!userList.contains(userName)) {
+		}
+		List<String> userList = accountServiceImpl.findSunAccountByUserId(user.getUserId());
+		if (StrUtil.isNotBlank(userName)) {
+			if (!userList.contains(userName)) {
 				return Result.buildFailMessage("输入账户号有误！");
 			}
 			userList.clear();
 			userList.add(userName);
-		} 
+		}
 		userList.add(user.getUserId());
-		System.out.println("子账户"+userList.toString());
+		System.out.println("子账户" + userList.toString());
 		Runorder orderRun = new Runorder();
 		orderRun.setOrderAccountList(userList);
-		if(StrUtil.isNotBlank(startTime))
+		if (StrUtil.isNotBlank(startTime)) {
 			orderRun.setTime(startTime);
-		if(StrUtil.isNotBlank(runOrderType))
+		}
+		if (StrUtil.isNotBlank(runOrderType)) {
 			orderRun.setRunType(runOrderType);
+		}
 		PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
 		List<Runorder> orderList = runOrderServiceImpl.findOrderRunByPage(orderRun);
 		PageInfo<Runorder> pageInfo = new PageInfo<Runorder>(orderList);
@@ -328,25 +325,30 @@ public class OrderContorller {
 			String orderState
 			) {
 		UserInfo user = sessionUtil.getUser(request);
-		if(ObjectUtil.isNull(user)) 
+		if (ObjectUtil.isNull(user)) {
 			return Result.buildFailMessage("当前用户未登录");
-		List<String> userList =  accountServiceImpl.findSunAccountByUserId(user.getUserId());	
-		if(StrUtil.isNotBlank(userName)) {
-			if(!userList.contains(userName)) 
+		}
+		List<String> userList = accountServiceImpl.findSunAccountByUserId(user.getUserId());
+		if (StrUtil.isNotBlank(userName)) {
+			if (!userList.contains(userName)) {
 				return Result.buildFailMessage("输入账户号有误！");
+			}
 			userList.clear();
 			userList.add(userName);
-		} 
+		}
 		userList.add(user.getUserId());
-		System.out.println("子账户："+userList.toString());
+		System.out.println("子账户：" + userList.toString());
 		DealOrder order = new DealOrder();
-		if(StrUtil.isNotBlank(startTime)) 
+		if (StrUtil.isNotBlank(startTime)) {
 			order.setTime(startTime);
-		if(StrUtil.isNotBlank(gatheringChannelCode))
+		}
+		if (StrUtil.isNotBlank(gatheringChannelCode)) {
 			order.setOrderType(gatheringChannelCode);
-		if(StrUtil.isNotBlank(orderState))
-			order.setOrderStatus( orderState);
-		order.setOrderQrUserList(userList); 
+		}
+		if (StrUtil.isNotBlank(orderState)) {
+			order.setOrderStatus(orderState);
+		}
+		order.setOrderQrUserList(userList);
 		PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
 		List<DealOrder> orderList = orderServiceImpl.findOrderByPage(order);
 		PageInfo<DealOrder> pageInfo = new PageInfo<DealOrder>(orderList);
@@ -375,15 +377,18 @@ public class OrderContorller {
 			String orderType
 			) {
 		UserInfo user = sessionUtil.getUser(request);
-		if(ObjectUtil.isNull(user)) 
+		if (ObjectUtil.isNull(user)) {
 			return Result.buildFailMessage("当前用户未登录");
-		if(StrUtil.isBlank(orderType))
+		}
+		if (StrUtil.isBlank(orderType)) {
 			orderType = "1";
-		if(orderType.equals("1")) {//充值
+		}
+		if ("1".equals(orderType)) {//充值
 			Recharge bean = new Recharge();
 			bean.setUserId(user.getUserId());
-			if(StrUtil.isNotBlank(startTime))
+			if (StrUtil.isNotBlank(startTime)) {
 				bean.setTime(startTime);
+			}
 			PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
 			List<Recharge> witList = rechargeServiceImpl.findRechargeOrder(bean);
 			PageInfo<Recharge> pageInfo = new PageInfo<Recharge>(witList);
@@ -396,8 +401,9 @@ public class OrderContorller {
 		}else {//提现
 			Withdraw bean = new Withdraw();
 			bean.setUserId(user.getUserId());
-			if(StrUtil.isNotBlank(startTime))
+			if (StrUtil.isNotBlank(startTime)) {
 				bean.setTime(startTime);
+			}
 			PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
 			List<Withdraw> witList = withdrawServiceImpl.findWithdrawOrder(bean);
 			PageInfo<Withdraw> pageInfo = new PageInfo<Withdraw>(witList);

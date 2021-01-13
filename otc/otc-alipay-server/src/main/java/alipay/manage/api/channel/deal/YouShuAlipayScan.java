@@ -25,45 +25,64 @@ import java.util.Map;
 
 @Component("YouSuAlipayScan")
 public class YouShuAlipayScan extends PayOrderService {
-	private static final Log log = LogFactory.get();
-	@Autowired
-	private UserInfoService userInfoServiceImpl;
+    private static final Log log = LogFactory.get();
+    @Autowired
+    private UserInfoService userInfoServiceImpl;
 
-	@Override
-	public Result deal(DealOrderApp dealOrderApp, String payType) {
-		log.info("【进入优树支付宝个码支付】");
-		String channelId = "YOUSHUALIPAYSCAN";//配置的渠道账号
-		String create = create(dealOrderApp, channelId);
-		if (StrUtil.isNotBlank(create)) {
-			log.info("【本地订单创建成功，开始请求远程三方支付】");
-			UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(dealOrderApp.getOrderAccount());
-			if (StrUtil.isBlank(userInfo.getDealUrl())) {
+    public static String md5(String a) {
+        String c = "";
+        MessageDigest md5;
+        String result = "";
+        try {
+            md5 = MessageDigest.getInstance("md5");
+            md5.update(a.getBytes("utf-8"));
+            byte[] temp;
+            temp = md5.digest(c.getBytes("utf-8"));
+            for (int i = 0; i < temp.length; i++) {
+                result += Integer.toHexString((0x000000ff & temp[i]) | 0xffffff00).substring(6);
+            }
+        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+        }
+        return result;
+    }
+
+    @Override
+    public Result deal(DealOrderApp dealOrderApp, String payType) {
+        log.info("【进入优树支付宝个码支付】");
+        String channelId = "YOUSHUALIPAYSCAN";//配置的渠道账号
+        String create = create(dealOrderApp, channelId);
+        if (StrUtil.isNotBlank(create)) {
+            log.info("【本地订单创建成功，开始请求远程三方支付】");
+            UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(dealOrderApp.getOrderAccount());
+            if (StrUtil.isBlank(userInfo.getDealUrl())) {
 				orderEr(dealOrderApp, "当前商户交易url未设置");
 				return Result.buildFailMessage("请联系运营为您的商户号设置交易url");
 			}
 			log.info("【回调地址ip为：" + userInfo.getDealUrl() + "】");
 			bean createOrder = createOrder(userInfo.getDealUrl() + PayApiConstant.Notfiy.NOTFIY_API_WAI + "/youshu-notfiy", dealOrderApp.getOrderAmount(), create);
 			if (ObjectUtil.isNull(createOrder)) {
-				boolean orderEr = orderEr(dealOrderApp);
-				if (orderEr)
-					return Result.buildFailMessage("支付失败");
-			} else {
-				return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(createOrder.getPay_url()));
-			}
-		}
-		return  Result.buildFailMessage("支付错误");
-	}
-	bean    createOrder(String notfiy, BigDecimal amount, String orderId){ 
-		log.info("【进入优树支付宝扫码  】" );
-		String apiurl = "http://www.6278pk.com/api/orders/index.html"; // API下单地址
-		String key = "zfZ2BTd6PHKvwCxU"; // 商户密钥
-		String bankco = "alipay";
-		Map<String, Object> parameterMap = new HashMap<String, Object>();
-		parameterMap.put("mch_id", "3362"); // 商户号
-		parameterMap.put("type", bankco ); // 支付类型
-		parameterMap.put("price",  amount.toString() ); // 金额
-		parameterMap.put("out_order_id", orderId); // 商户号
-		parameterMap.put("notifyurl", notfiy); // 异步通知地址
+                boolean orderEr = orderEr(dealOrderApp);
+                if (orderEr) {
+                    return Result.buildFailMessage("支付失败");
+                }
+            } else {
+                return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(createOrder.getPay_url()));
+            }
+        }
+        return Result.buildFailMessage("支付错误");
+    }
+
+    bean createOrder(String notfiy, BigDecimal amount, String orderId) {
+        log.info("【进入优树支付宝扫码  】");
+        String apiurl = "http://www.6278pk.com/api/orders/index.html"; // API下单地址
+        String key = "zfZ2BTd6PHKvwCxU"; // 商户密钥
+        String bankco = "alipay";
+        Map<String, Object> parameterMap = new HashMap<String, Object>();
+        parameterMap.put("mch_id", "3362"); // 商户号
+        parameterMap.put("type", bankco); // 支付类型
+        parameterMap.put("price", amount.toString()); // 金额
+        parameterMap.put("out_order_id", orderId); // 商户号
+        parameterMap.put("notifyurl", notfiy); // 异步通知地址
 		parameterMap.put("returnurl","www.baidu.com"); // 同步通知地址
 		parameterMap.put("extend", "312|xxx"); // 附加数据
 		String stringSignTemp = "extend="+parameterMap.get("extend")+"&mch_id="+parameterMap.get("mch_id")+"&notifyurl="+parameterMap.get("notifyurl")+"&out_order_id="+parameterMap.get("out_order_id")+"&price="+parameterMap.get("price")+"&returnurl="+parameterMap.get("returnurl")+"&type="+parameterMap.get("type")+"&key="+key;
@@ -75,28 +94,13 @@ public class YouShuAlipayScan extends PayOrderService {
 		YouShuBean bean = JSONUtil.toBean(jsonString, YouShuBean.class);
 		log.info(jsonString);
 		if(ObjectUtil.isNotNull(bean)) {
-			alipay.manage.api.channel.deal.bean bean2 = JSONUtil.toBean(bean.getData(), bean.class);
-			if(bean.getCode().equals("1") ) {
-				return bean2;
-			}
-		}
+            alipay.manage.api.channel.deal.bean bean2 = JSONUtil.toBean(bean.getData(), bean.class);
+            if ("1".equals(bean.getCode())) {
+                return bean2;
+            }
+        }
 		return null;
 		}
-	 public static String md5(String a) {
-	    	String c = "";
-	    	MessageDigest md5;
-		   	String result="";
-			try {
-				md5 = MessageDigest.getInstance("md5");
-				md5.update(a.getBytes("utf-8"));
-				byte[] temp;
-				temp=md5.digest(c.getBytes("utf-8"));
-				for (int i=0; i<temp.length; i++)
-					result+=Integer.toHexString((0x000000ff & temp[i]) | 0xffffff00).substring(6);
-			} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
-			}
-			return result;
-	    }
 
 }
 class YouShuBean{

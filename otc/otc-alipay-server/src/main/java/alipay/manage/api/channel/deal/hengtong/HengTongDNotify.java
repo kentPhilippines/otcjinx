@@ -24,7 +24,7 @@ public class HengTongDNotify extends NotfiyChannel {
     @PostMapping(HengtongUtil.D_NOTIFY)
     public String notify(HttpServletRequest req, HttpServletResponse res) {
         String clientIP = HttpUtil.getClientIP(req);
-        if (!clientIP.equals("18.163.76.215")) {
+        if (!"18.163.76.215".equals(clientIP)) {
             log.info("【当前回调ip为：" + clientIP + "，固定IP登记为：" + "18.163.76.215" + "】");
             log.info("【当前回调ip不匹配】");
             return "ip is error";
@@ -68,7 +68,7 @@ public class HengTongDNotify extends NotfiyChannel {
             return "sign is error";
         }
 
-        if (success.equals("true")) {
+        if ("true".equals(success)) {
             Result result = witNotfy(paymentReference, clientIP);
             if (result.isSuccess()) {
                 return "success";

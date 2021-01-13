@@ -17,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import otc.api.alipay.Common;
 import otc.bean.alipay.FileList;
 import otc.bean.config.ConfigFile;
@@ -69,36 +68,41 @@ public class QrUtil {
 		 */
 		// 根据金额获取符合条件的用户
 		List<String> queue = queueServiceClienFeignImpl.getQueue(code);
-		ThreadUtil.execute(()->{
-			for(String cod : queue)
-				log.info("【获取支付宝："+cod+"】");
+		ThreadUtil.execute(() -> {
+			for (String cod : queue) {
+				log.info("【获取支付宝：" + cod + "】");
+			}
 		});
-		List<UserFund> userList = userInfoServiceImpl.findUserByAmount(amount,flag);
+		List<UserFund> userList = userInfoServiceImpl.findUserByAmount(amount, flag);
 		List<FileList> qcList = fileListServiceImpl.findQrByAmount(amount);
-		log.info("【二维码个数："+qcList.size()+"】");
-		if (CollUtil.isEmpty(userList) || CollUtil.isEmpty(qcList))
+		log.info("【二维码个数：" + qcList.size() + "】");
+		if (CollUtil.isEmpty(userList) || CollUtil.isEmpty(qcList)) {
 			return null;
-		ConcurrentHashMap<String, FileList> qrCollect = qcList.stream().collect(Collectors .toConcurrentMap(FileList::getMediumNumber, Function.identity(), (o1, o2) -> o1, ConcurrentHashMap::new));
+		}
+		ConcurrentHashMap<String, FileList> qrCollect = qcList.stream().collect(Collectors.toConcurrentMap(FileList::getMediumNumber, Function.identity(), (o1, o2) -> o1, ConcurrentHashMap::new));
 		ConcurrentHashMap<String, UserFund> usercollect = userList.stream().collect(Collectors.toConcurrentMap(UserFund::getUserId, Function.identity(), (o1, o2) -> o1, ConcurrentHashMap::new));
 		for (Object obj : queue) {
 			String alipayAccount = obj.toString();
-			if (StrUtil.isBlank(alipayAccount))
+			if (StrUtil.isBlank(alipayAccount)) {
 				continue;
+			}
 			FileList qr = qrCollect.get(alipayAccount);// 所属
-			if (ObjectUtil.isNull(qr))
+			if (ObjectUtil.isNull(qr)) {
 				continue;
-			log.info("【二维码数据："+qr.toString()+"】");
+			}
+			log.info("【二维码数据：" + qr.toString() + "】");
 			UserFund qrcodeUser = usercollect.get(qr.getFileholder());// 所属
-			if (ObjectUtil.isNull(qrcodeUser))
+			if (ObjectUtil.isNull(qrcodeUser)) {
 				continue;
-			log.info("【账户数据："+qrcodeUser.toString()+"】");
-			riskUtil.updataUserAmountRedis(qrcodeUser,flag);
+			}
+			log.info("【账户数据：" + qrcodeUser.toString() + "】");
+			riskUtil.updataUserAmountRedis(qrcodeUser, flag);
 			Object object2 = redisUtil.get(qr.getPhone() + amount.toString());
-		//	Object object = redisUtil.get(qr.getPhone());
-			boolean clickAmount = riskUtil.isClickAmount(qr, amount, usercollect,flag);
+			//	Object object = redisUtil.get(qr.getPhone());
+			boolean clickAmount = riskUtil.isClickAmount(qr, amount, usercollect, flag);
 			if (ObjectUtil.isNull(object2) && clickAmount) {
-				redisUtil.set(qr.getPhone() + amount.toString(), orderNo,Integer.valueOf( configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.QR_OUT_TIME).getResult().toString()) ); // 核心回调数据
-			//	redisUtil.set(qr.getPhone(), qr.getPhone() + amount.toString(), Integer.valueOf( configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.QR_OUT_TIME).getResult().toString() ));
+				redisUtil.set(qr.getPhone() + amount.toString(), orderNo, Integer.valueOf(configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.QR_OUT_TIME).getResult().toString())); // 核心回调数据
+				//	redisUtil.set(qr.getPhone(), qr.getPhone() + amount.toString(), Integer.valueOf( configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.QR_OUT_TIME).getResult().toString() ));
 				redisUtil.hset(qr.getFileholder(), qr.getFileholder() + DateUtil.format(new Date(), Common.Order.DATE_TYPE),
 						amount.toString());
 				redisUtil.hset(qr.getFileId(), qr.getFileId() + orderNo, orderNo, Integer.valueOf( configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.QR_IS_CLICK).getResult().toString()));
@@ -120,10 +124,11 @@ public class QrUtil {
 	 * @return
 	 */
 	public String findOrderBy(BigDecimal amount, String phone) {
-		log.info("【当前寻找回调参数为：amount = "+amount+"，phone = "+phone+"】");
+		log.info("【当前寻找回调参数为：amount = " + amount + "，phone = " + phone + "】");
 		Object object = redisUtil.get(phone + amount.toString());
-		if (ObjectUtil.isNull(object))
+		if (ObjectUtil.isNull(object)) {
 			return null;
+		}
 		redisUtil.deleteKey(phone + amount.toString());
 		/**
 		 * <p>
@@ -157,8 +162,9 @@ public class QrUtil {
 				Date parse = formatter.parse(subSuf);
 				Object object = hmget.get(obj.toString());// 当前金额
 				if (!DateUtil.isExpired(parse, DateField.SECOND,
-						Integer.valueOf( configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.FREEZE_PLAIN_VIRTUAL).getResult().toString()), new Date()))
+						Integer.valueOf(configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.FREEZE_PLAIN_VIRTUAL).getResult().toString()), new Date())) {
 					redisUtil.hdel(userId, obj.toString());
+				}
 			}
 			Map<Object, Object> hmget2 = redisUtil.hmget(userId);
 			Set<Object> keySet2 = hmget2.keySet();

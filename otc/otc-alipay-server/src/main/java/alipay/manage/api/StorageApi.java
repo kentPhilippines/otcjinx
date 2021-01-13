@@ -59,10 +59,11 @@ public class StorageApi {
 	Resource file = fileServiceClienFeignImpl.loadAsResource(id);
 	log.info("【查看图片id："+id+"】");
 	if (file == null) {
-		file = fileServiceClienFeignImpl.loadAsResource(id);
-		if(file == null) 
-			return ResponseEntity.notFound().build();
-	}
+        file = fileServiceClienFeignImpl.loadAsResource(id);
+        if (file == null) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 	return ResponseEntity.ok().contentType(mediaType).body(file);
 	}
 	/**
@@ -77,10 +78,11 @@ public class StorageApi {
 		Resource file = fileServiceClienFeignImpl.loadAsResource(id);
 		log.info("【查看图片id："+id+"】");
 		if (file == null) {
-			file = fileServiceClienFeignImpl.loadAsResource(id);
-			if(file == null) 
-				return ResponseEntity.notFound().build();
-		}
+            file = fileServiceClienFeignImpl.loadAsResource(id);
+            if (file == null) {
+                return ResponseEntity.notFound().build();
+            }
+        }
 		return ResponseEntity.ok().contentType(mediaType).body(file);
 		}
     

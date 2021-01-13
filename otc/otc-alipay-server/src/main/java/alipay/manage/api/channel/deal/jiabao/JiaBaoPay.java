@@ -79,7 +79,7 @@ public class JiaBaoPay extends PayOrderService {
         String result = JiaobaoUtil.sendHttpRequest(url, merJson.toString());
         log.info("返回结果：{}", result);
         JSONObject resJSON = JSONUtil.parseObj(result);
-        if (resJSON.getStr("status").equalsIgnoreCase("FAIL")) {
+        if ("FAIL".equalsIgnoreCase(resJSON.getStr("status"))) {
             return Result.buildFailMessage(resJSON.getStr("msg"));
         }
         JSONObject data = JSONUtil.parseObj(resJSON.getStr("data"));

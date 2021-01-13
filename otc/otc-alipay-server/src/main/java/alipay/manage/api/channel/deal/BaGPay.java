@@ -42,10 +42,11 @@ public class BaGPay extends PayOrderService {
             log.info("【回调地址ip为：" + userInfo.getDealUrl() + "】");
             String url = createOrder(dealOrderApp, userInfo.getDealUrl() +
                     PayApiConstant.Notfiy.NOTFIY_API_WAI + "/baG-notfiy", dealOrderApp.getOrderAmount(), create);
-            if (StrUtil.isBlank(url))
+            if (StrUtil.isBlank(url)) {
                 return Result.buildFailMessage("支付错误");
-            else
+            } else {
                 return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(url));
+            }
         }
         return  Result.buildFailMessage("支付错误");
     }
@@ -63,10 +64,11 @@ public class BaGPay extends PayOrderService {
         paramsMap.put("method", paytype);
         paramsMap.put("notify_url",  notify );
         String back = "";
-        if(StrUtil.isBlank(dealOrderApp.getBack()))
+        if (StrUtil.isBlank(dealOrderApp.getBack())) {
             back = notify;
-        else
+        } else {
             back = dealOrderApp.getBack();
+        }
         paramsMap.put("return_url",  back );
         paramsMap.put("version", "2.0");
         String param = MapUtil.createParam(paramsMap);

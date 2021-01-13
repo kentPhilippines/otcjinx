@@ -1,24 +1,5 @@
 package alipay.manage.contorller;
 
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
-import alipay.manage.util.UserUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
-
 import alipay.config.redis.RedisUtil;
 import alipay.manage.bean.InviteCode;
 import alipay.manage.bean.UserFund;
@@ -28,20 +9,41 @@ import alipay.manage.bean.util.UserCountBean;
 import alipay.manage.service.InviteCodeService;
 import alipay.manage.service.UserInfoService;
 import alipay.manage.util.SessionUtil;
+import alipay.manage.util.UserUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 import otc.api.alipay.Common;
 import otc.result.Result;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @Controller
 public class AccountContorller {
     Logger log = LoggerFactory.getLogger(AccountContorller.class);
-    @Autowired SessionUtil sessionUtil;
-    @Autowired InviteCodeService inviteCodeServiceImpl;
-    @Autowired UserInfoService accountServiceImpl;
-    @Autowired RedisUtil redisUtil;
-    @Autowired UserUtil userUtil;
+    @Autowired
+    SessionUtil sessionUtil;
+    @Autowired
+    InviteCodeService inviteCodeServiceImpl;
+    @Autowired
+    UserInfoService accountServiceImpl;
+    @Autowired
+    RedisUtil redisUtil;
+    @Autowired
+    UserUtil userUtil;
+
     /**
      * <p>代理商开户</p>
      * 手机端专用
@@ -95,8 +97,9 @@ public class AccountContorller {
         String createinviteCode = createinviteCode();
         bean.setInviteCode(createinviteCode);
         boolean flag = inviteCodeServiceImpl.addinviteCode(bean);
-        if (flag)
+        if (flag) {
             return Result.buildSuccessResult("操作成功", "网站域名" + createinviteCode);
+        }
         return Result.buildFail();
     }
     /**
@@ -107,8 +110,9 @@ public class AccountContorller {
     String createinviteCode() {
         String randomString = RandomUtil.randomString(10);
         boolean flag = inviteCodeServiceImpl.findinviteCode(randomString);
-        if (!flag)
+        if (!flag) {
             return randomString;
+        }
         return createinviteCode();
     }
     /**
@@ -124,15 +128,16 @@ public class AccountContorller {
             String pageNum,
             String userName,
             HttpServletRequest request) {
-    	UserInfo user2 = sessionUtil.getUser(request);
+        UserInfo user2 = sessionUtil.getUser(request);
         if (ObjectUtil.isNull(user2)) {
-        	log.info("当前用户未登陆");
-        	return Result.buildFailMessage("当前用户未登陆");
+            log.info("当前用户未登陆");
+            return Result.buildFailMessage("当前用户未登陆");
         }
         UserInfo user = new UserInfo();
         log.info(userName);
-        if (StrUtil.isNotBlank(userName))
-            user.setUserId(userName); 
+        if (StrUtil.isNotBlank(userName)) {
+            user.setUserId(userName);
+        }
         PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
         List<UserInfo> userList = accountServiceImpl.findSunAccount(user);
         PageInfo<UserInfo> pageInfo = new PageInfo<UserInfo>(userList);
@@ -151,21 +156,23 @@ public class AccountContorller {
     @GetMapping("/findAgentCount")
     @ResponseBody
     public Result findAgentCount(HttpServletRequest request) {
-    	UserInfo user2 = sessionUtil.getUser(request);
+        UserInfo user2 = sessionUtil.getUser(request);
         if (ObjectUtil.isNull(user2)) {
-        	log.info("当前用户未登陆");
-        	return Result.buildFailMessage("当前用户未登陆");
+            log.info("当前用户未登陆");
+            return Result.buildFailMessage("当前用户未登陆");
         }
         List<UserInfo> sumUserList = accountServiceImpl.findSumAgentUserByAccount(user2.getUserId());
         UserFund findUserById = accountServiceImpl.findUserFundByAccount(user2.getUserId());
 
         Integer userCount = 0;
         Integer userAgentCount = 0;
-        for (UserInfo user : sumUserList)
-            if (Common.User.USER_IS_AGENT.toString().equals(user.getIsAgent()))
+        for (UserInfo user : sumUserList) {
+            if (Common.User.USER_IS_AGENT.toString().equals(user.getIsAgent())) {
                 userAgentCount++;
-            else
+            } else {
                 userCount++;
+            }
+        }
         UserCountBean findMoreCount = findMoreCount(user2.getUserId());
         findMoreCount.setMoreDealProfit(findUserById.getTodayAgentProfit().toString());
         findMoreCount.setAgent(userAgentCount.toString());

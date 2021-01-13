@@ -1,27 +1,14 @@
 package otc.apk.util;
 
-import java.sql.Timestamp;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.ZSetOperations.TypedTuple;
-import org.springframework.stereotype.Component;
-
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateBetween;
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.ZSetOperations.TypedTuple;
+import org.springframework.stereotype.Component;
 import otc.api.alipay.Common;
 import otc.apk.feign.AlipayServiceClien;
 import otc.apk.feign.ConfigServiceClient;
@@ -32,23 +19,39 @@ import otc.bean.config.ConfigFile;
 import otc.common.RedisConstant;
 import otc.result.Result;
 import otc.util.RSAUtils;
+
+import java.sql.Timestamp;
+import java.util.*;
+import java.util.stream.Collectors;
+
 @Component
 public class Queue {
-	private static final Log log = LogFactory.get();
-    @Autowired AlipayServiceClien alipayServiceClienFeignImpl;
-    @Autowired ConfigServiceClient configServiceClientFeignImpl;
-    @Autowired RedisUtil redisUtil;
-	private static final String DATA_QUEUE_HASH = RedisConstant.Queue.MEDIUM_HASH;
+    private static final Log log = LogFactory.get();
+    @Autowired
+    AlipayServiceClien alipayServiceClienFeignImpl;
+    @Autowired
+    ConfigServiceClient configServiceClientFeignImpl;
+    @Autowired
+    RedisUtil redisUtil;
+    private static final String DATA_QUEUE_HASH = RedisConstant.Queue.MEDIUM_HASH;
     private static final String REDISKEY_QUEUE = RedisConstant.Queue.QUEUE_REDIS;
+
+    private static boolean checkNotNull(Object v) {
+        if (v == null || "" == v) {
+            return false;
+        }
+        return true;
+    }
+
     public Set<Object> getList(String[] codes) {
-    	if( codes.length == 0) {
-    		if (!redisUtil.hasKey(REDISKEY_QUEUE)) {
-    			List<Medium> findIsDealMedium = alipayServiceClienFeignImpl.findIsDealMedium(Common.Medium.MEDIUM_ALIPAY);
-    			log.info("findIsDealMedium 获取的值是：" +findIsDealMedium);
-    			for (Medium medium : findIsDealMedium) {
-    				boolean addNode = addNode(medium.getMediumNumber(),"");
-    	        	if(addNode) {
-    	    			String md5 = RSAUtils.md5(DATA_QUEUE_HASH+medium.getMediumNumber() );
+        if (codes.length == 0) {
+            if (!redisUtil.hasKey(REDISKEY_QUEUE)) {
+                List<Medium> findIsDealMedium = alipayServiceClienFeignImpl.findIsDealMedium(Common.Medium.MEDIUM_ALIPAY);
+                log.info("findIsDealMedium 获取的值是：" + findIsDealMedium);
+                for (Medium medium : findIsDealMedium) {
+                    boolean addNode = addNode(medium.getMediumNumber(), "");
+                    if (addNode) {
+                        String md5 = RSAUtils.md5(DATA_QUEUE_HASH + medium.getMediumNumber());
     	    			redisUtil.hset(DATA_QUEUE_HASH, md5, medium, 259200);//本地收款媒介缓存数据会缓存三天
     	    		}
 
@@ -72,36 +75,34 @@ public class Queue {
     	}
     	Set<Object> zRange = null;
     	for(String code : codes) {
-    		Set<Object> zRange2 = redisUtil.zRange(REDISKEY_QUEUE+code, 0, -1);
-    		if(CollUtil.isEmpty(zRange))
-    			zRange = zRange2;
-    		else 
-    			for(Object obj : zRange2)
-    				zRange.add(obj);
-		}
+            Set<Object> zRange2 = redisUtil.zRange(REDISKEY_QUEUE + code, 0, -1);
+            if (CollUtil.isEmpty(zRange)) {
+                zRange = zRange2;
+            } else {
+                for (Object obj : zRange2) {
+                    zRange.add(obj);
+                }
+            }
+        }
         return zRange;
     }
+
+    public boolean addNode(Object alipayAccount, String code) {
+        return addNode(alipayAccount, null, code);
+    }
+
     /**
      * <p>出列</p>
      *
      * @return K
      */
     public Object pop() {
-        if (!redisUtil.hasKey(REDISKEY_QUEUE))
+        if (!redisUtil.hasKey(REDISKEY_QUEUE)) {
             return null;
+        }
         Set<Object> zRange = redisUtil.zRange(REDISKEY_QUEUE, 0, 1);
         redisUtil.zRemoveRange(REDISKEY_QUEUE, 0, 1);
         return CollUtil.getFirst(zRange);
-    }
-    public boolean addNode(Object alipayAccount,String code) {
-        return addNode(alipayAccount,null,code);
-    }
-
-
-    private static boolean checkNotNull(Object v) {
-        if (v == null || "" == v)
-            return false;
-        return true;
     }
     /**
      * <p>删除队列元素</p>
@@ -112,6 +113,7 @@ public class Queue {
     public boolean deleteNode(Object alipayAccount, String code) {
         return redisUtil.zRemove(REDISKEY_QUEUE+code, alipayAccount) > 0;
     }
+
     /**
      * <p>更新队列</p>
      * @param alipayAccount
@@ -119,15 +121,19 @@ public class Queue {
      * @return
      */
     public boolean updataNode(Object alipayAccount, FileList qr,String code) {
-        if (deleteNode(alipayAccount,code))
-            if (addNode(alipayAccount,qr,code))
+        if (deleteNode(alipayAccount, code)) {
+            if (addNode(alipayAccount, qr, code)) {
                 return true;
+            }
+        }
         return false;
     }
     public boolean updataNode(Object alipayAccount,String code) {
-        if (deleteNode(alipayAccount,code))
-            if (addNode(alipayAccount,code))
+        if (deleteNode(alipayAccount, code)) {
+            if (addNode(alipayAccount, code)) {
                 return true;
+            }
+        }
         return false;
     }
     public boolean addNodeRightToLeft(Object alipayAccount) {
@@ -139,11 +145,13 @@ public class Queue {
      * @return
      */
     public boolean addNodeRightToLeft(Object alipayAccount, Object index) {
-        if (!checkNotNull(alipayAccount))
+        if (!checkNotNull(alipayAccount)) {
             return false;
+        }
         LinkedHashSet<TypedTuple<Object>> zRangeWithScores = redisUtil.zRangeWithScores(REDISKEY_QUEUE, 0, -1);
-        if (CollUtil.isEmpty(zRangeWithScores))
+        if (CollUtil.isEmpty(zRangeWithScores)) {
             redisUtil.zAdd(REDISKEY_QUEUE, alipayAccount.toString(), 10);
+        }
         Double score = 0.00;
         if (checkNotNull(index)) {
             Object[] str = zRangeWithScores.toArray();
@@ -157,8 +165,9 @@ public class Queue {
             Double score2 = typedTuple.getScore();
             score = score2 - 0.1;//预留10个操作空间
         }
-        if (score == 0.00)
+        if (score == 0.00) {
             return false;
+        }
         return redisUtil.zAdd(REDISKEY_QUEUE, alipayAccount.toString(), score);
     }
     /**
@@ -170,27 +179,30 @@ public class Queue {
      */
     public boolean addNode(Object alipayAccount, FileList qr,String code) {
     	log.info("【当前元素入列操作，元素标签："+alipayAccount+ "，添加元素code："+code+"】");
-        if (!checkNotNull(alipayAccount))
+        if (!checkNotNull(alipayAccount)) {
             return false;
-        LinkedHashSet<TypedTuple<Object>> zRangeWithScores = redisUtil.zRangeWithScores(REDISKEY_QUEUE+code, 0, -1);//linkedhashset 保证set集合查询最快
+        }
+        LinkedHashSet<TypedTuple<Object>> zRangeWithScores = redisUtil.zRangeWithScores(REDISKEY_QUEUE + code, 0, -1);//linkedhashset 保证set集合查询最快
         if (CollUtil.isEmpty(zRangeWithScores)) {
-        	Boolean zAdd = redisUtil.zAdd(REDISKEY_QUEUE+code, alipayAccount.toString(), 10);
-        	return zAdd;
+            Boolean zAdd = redisUtil.zAdd(REDISKEY_QUEUE + code, alipayAccount.toString(), 10);
+            return zAdd;
         }
         Optional<TypedTuple<Object>> reduce = zRangeWithScores.stream().reduce((first, second) -> second);
         TypedTuple<Object> typedTuple = null;
-        if (reduce.isPresent())
+        if (reduce.isPresent()) {
             typedTuple = reduce.get();
-        if (ObjectUtil.isNull(typedTuple))
+        }
+        if (ObjectUtil.isNull(typedTuple)) {
             return false;
+        }
         Double score = typedTuple.getScore() + 10;//预留10个操作空间
-        if(ObjectUtil.isNotNull(qr)) {
+        if (ObjectUtil.isNotNull(qr)) {
             Timestamp createTime = (Timestamp) qr.getCreateTime();//创建时间   多少天之前 .
-            Result dayCount = configServiceClientFeignImpl.getConfig(ConfigFile.ALIPAY,ConfigFile.Alipay.NEW_QRCODE_PRIORITY);
+            Result dayCount = configServiceClientFeignImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.NEW_QRCODE_PRIORITY);
             Integer day = Integer.valueOf(dayCount.getResult().toString());//天数
             DateBetween create = DateBetween.create(createTime, new Date(), true);
             long between = create.between(DateUnit.DAY);
-            if(between <= day) {// 置为队列中间
+            if (between <= day) {// 置为队列中间
                 List<TypedTuple<Object>> collect = zRangeWithScores.stream().collect(Collectors.toList());
                 TypedTuple<Object> typedTuple2 = collect.get(zRangeWithScores.size()/2);
                 score = typedTuple2.getScore();

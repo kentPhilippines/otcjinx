@@ -47,15 +47,16 @@ public class XianYuIosAlipayH5 extends PayOrderService {
                     PayApiConstant.Notfiy.NOTFIY_API_WAI + "/chuanshanjia-notfiy", dealOrderApp.getOrderAmount(), create);
             if (ObjectUtil.isNull(xianyu)) {
                 boolean orderEr = orderEr(dealOrderApp);
-                if (orderEr)
+                if (orderEr) {
                     return Result.buildFailMessage("支付失败");
+                }
             } else {
-                if (xianyu.getStatus().equals("1")) {
+                if ("1".equals(xianyu.getStatus())) {
                     return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(xianyu.getPayurl()));
                 } else {
                     orderEr(dealOrderApp);
                     return Result.buildFailMessage(xianyu.getPayurl());
-				}
+                }
 			}
 		}
 		return Result.buildFailMessage("支付失败");
@@ -93,15 +94,15 @@ public class XianYuIosAlipayH5 extends PayOrderService {
         JSONObject parseObj = JSONUtil.parseObj(result);
         log.info("【咸鱼H5返回：" + parseObj.toString() + "】");
         Object object = parseObj.get("status");
-	    XianYu bean = new XianYu();
-	    if(object.toString().equals("1")) {
-	    	 bean = JSONUtil.toBean(parseObj, XianYu.class);
-	    }else {
-	    	bean.setPayurl(parseObj.get("error").toString());
-	    	bean.setStatus("0");
-	    }
-	    //{"status":1,"payurl":"trade_no=2020051404200399991055074076&biz_sub_type=peerpay_trade&presessionid=&app=tb&channel=&type2=gulupay&bizcontext={\"biz_type\":\"share_pp_pay\",\"type\":\"qogirpay\"}"}
-		return bean;
-	}
+        XianYu bean = new XianYu();
+        if ("1".equals(object.toString())) {
+            bean = JSONUtil.toBean(parseObj, XianYu.class);
+        } else {
+            bean.setPayurl(parseObj.get("error").toString());
+            bean.setStatus("0");
+        }
+        //{"status":1,"payurl":"trade_no=2020051404200399991055074076&biz_sub_type=peerpay_trade&presessionid=&app=tb&channel=&type2=gulupay&bizcontext={\"biz_type\":\"share_pp_pay\",\"type\":\"qogirpay\"}"}
+        return bean;
+    }
 
 }

@@ -40,8 +40,9 @@ public class ShenLaiFuDeal extends PayOrderService {
             String url = createOrder(userInfo.getDealUrl() + PayApiConstant.Notfiy.NOTFIY_API_WAI + "/shenlaifu-notfiy", dealOrderApp.getOrderAmount(), orderId);
             if (StrUtil.isBlank(url)) {
                 boolean orderEr = orderEr(dealOrderApp);
-                if (orderEr)
+                if (orderEr) {
                     return Result.buildFailMessage("支付失败");
+                }
             } else {
                 return Result.buildSuccessResultCode("支付处理中", url, 1);
             }

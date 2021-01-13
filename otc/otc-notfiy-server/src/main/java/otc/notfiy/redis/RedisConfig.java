@@ -1,6 +1,6 @@
 package otc.notfiy.redis;
-import java.time.Duration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,7 +15,6 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 @Configuration
@@ -71,10 +70,11 @@ public class RedisConfig  extends CachingConfigurerSupport {
 			sb.append(target.getClass().getName());
 			sb.append(":");
 			sb.append(method.getName());
-			for (Object obj : params) 
+			for (Object obj : params) {
 				sb.append(":" + String.valueOf(obj));
+			}
 			String rsToUse = String.valueOf(sb);
-		 	log.info("自动生成Redis Key -> [{}]", rsToUse);
+			log.info("自动生成Redis Key -> [{}]", rsToUse);
 			return rsToUse;
 		};
 	}

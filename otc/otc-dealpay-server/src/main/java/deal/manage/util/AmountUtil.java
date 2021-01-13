@@ -1,13 +1,4 @@
 package deal.manage.util;
-import java.math.BigDecimal;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.StrUtil;
@@ -18,9 +9,15 @@ import deal.manage.service.OrderService;
 import deal.manage.service.RunOrderService;
 import deal.manage.service.UserFundService;
 import deal.manage.service.UserInfoService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import otc.api.alipay.Common;
 import otc.exception.user.UserException;
 import otc.result.Result;
+
+import java.math.BigDecimal;
 /**
  * <p>资金处理方法</p>
  * @author K
@@ -128,39 +125,45 @@ public class AmountUtil {
 	 */
 	public Result addAmountBalance(UserFund userFund1 , BigDecimal balance , String addType  , BigDecimal dealAmount,boolean flag) {
 		UserFund userFund = userInfoServiceImpl.findUserFundByAccount(userFund1.getUserId());
-			if(!clickUserFund(userFund).isSuccess())
-				return Result.buildFailMessage("【资金账户存在问题】");
-			if(ADD_AMOUNT_RECHARGE.equals(addType)) {//资金充值【加充值点数】
-				Result addAmountRecharge = addAmountRecharge(userFund,  balance);
-				if(addAmountRecharge.isSuccess()) 
-					return addAmountRecharge;
-				log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
-				return 	Result.buildFailMessage("【账户余额添加失败，请联系技术人员查看当前服务异常】");
-			}else if(ADD_AMOUNT_PROFIT.equals(addType)) {//代理利润分成
-				Result profit = addAmountAgentProfit(userFund,balance);
-				if(profit.isSuccess()) 
-					return profit;
-				log.info("【账户代理商分润增加失败，请查询当前时间范围内的异常情况】");
-				return 	Result.buildFailMessage("【账户代理商分润增加失败，请查询当前时间范围内的异常情况，请联系技术人员查询情况】");
-			}else if (ADD_AMOUNT.equals(addType)) {//手动加钱
-				Result addAmountRecharge = addAmountRecharge(userFund,  balance);
-				if(addAmountRecharge.isSuccess()) 
-					return addAmountRecharge;
-				log.info("【手动加钱失败，请联系技术人员处理");
-				return 	Result.buildFailMessage("【手动加钱失败，请联系技术人员处理】");
-			}else if(ADD_AMOUNT_DEAL.equals(addType)) {//交易利润分成 ,统计交易笔数
-				Result addAmountDeal = addAmountDeal(userFund,  balance,dealAmount,flag);
-				if(addAmountDeal.isSuccess()) 
-					return addAmountDeal;
-				log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
-				return 	Result.buildFailMessage("【当前账户分润分润增加和利润统计失败，请联系技术人员查询情况】");
-			}else if(ADD_AMOUNT_DEAL_APP.equals(addType)) {
-				Result addAmountDeal = addAmountDealApp(userFund,  balance);
-				if(addAmountDeal.isSuccess()) 
-					return addAmountDeal;
-				log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
-				return 	Result.buildFailMessage("【当前账户更新失败，请联系技术人员查询情况】");
+		if (!clickUserFund(userFund).isSuccess()) {
+			return Result.buildFailMessage("【资金账户存在问题】");
+		}
+		if (ADD_AMOUNT_RECHARGE.equals(addType)) {//资金充值【加充值点数】
+			Result addAmountRecharge = addAmountRecharge(userFund, balance);
+			if (addAmountRecharge.isSuccess()) {
+				return addAmountRecharge;
 			}
+			log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
+			return Result.buildFailMessage("【账户余额添加失败，请联系技术人员查看当前服务异常】");
+		} else if (ADD_AMOUNT_PROFIT.equals(addType)) {//代理利润分成
+			Result profit = addAmountAgentProfit(userFund, balance);
+			if (profit.isSuccess()) {
+				return profit;
+			}
+			log.info("【账户代理商分润增加失败，请查询当前时间范围内的异常情况】");
+			return Result.buildFailMessage("【账户代理商分润增加失败，请查询当前时间范围内的异常情况，请联系技术人员查询情况】");
+		}else if (ADD_AMOUNT.equals(addType)) {//手动加钱
+			Result addAmountRecharge = addAmountRecharge(userFund, balance);
+			if (addAmountRecharge.isSuccess()) {
+				return addAmountRecharge;
+			}
+			log.info("【手动加钱失败，请联系技术人员处理");
+			return Result.buildFailMessage("【手动加钱失败，请联系技术人员处理】");
+		}else if(ADD_AMOUNT_DEAL.equals(addType)) {//交易利润分成 ,统计交易笔数
+			Result addAmountDeal = addAmountDeal(userFund, balance, dealAmount, flag);
+			if (addAmountDeal.isSuccess()) {
+				return addAmountDeal;
+			}
+			log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
+			return Result.buildFailMessage("【当前账户分润分润增加和利润统计失败，请联系技术人员查询情况】");
+		}else if(ADD_AMOUNT_DEAL_APP.equals(addType)) {
+			Result addAmountDeal = addAmountDealApp(userFund, balance);
+			if (addAmountDeal.isSuccess()) {
+				return addAmountDeal;
+			}
+			log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
+			return Result.buildFailMessage("【当前账户更新失败，请联系技术人员查询情况】");
+		}
 			return Result.buildFailMessage("传参异常");
 	}
 	public Result addAmountDealApp(UserFund userFund, BigDecimal balance) {
@@ -178,9 +181,9 @@ public class AmountUtil {
 	//	BigDecimal sumAgentProfit = userFund.getSumAgentProfit();//当前代理商分润  【当前订单为自己接单，不需要该字段】
 	//	BigDecimal sumProfit = userFund.getSumProfit();//当前当前总的利润
 	//	BigDecimal todayAgentProfit = userFund.getTodayAgentProfit();//今日代理分润  【当前订单为自己接单，无需统计该字段】
-	//	BigDecimal todayProfit = userFund.getTodayProfit();//今日总利润  =  今日代理分润 + 今日接单分润
-		log.info("【金额修改后账户情况：当前账户总比较金额："+accountBalance+"，当前账户充值点数："+rechargeNumber+"，当前账户利润金额："+cashBalance+"，当前账户冻结金额："+freezeBalance+"，当前账户："+userFund.getUserId()+"】");
-	//以上为当前账户情况	
+		//	BigDecimal todayProfit = userFund.getTodayProfit();//今日总利润  =  今日代理分润 + 今日接单分润
+		log.info("【金额修改后账户情况：当前账户总比较金额：" + accountBalance + "，当前账户充值点数：" + rechargeNumber + "，当前账户利润金额：" + cashBalance + "，当前账户冻结金额：" + freezeBalance + "，当前账户：" + userFund.getUserId() + "】");
+		//以上为当前账户情况
 		rechargeNumber = rechargeNumber.add(balance);
 		accountBalance = rechargeNumber.add(cashBalance).subtract(freezeBalance);
 		userFund.setAccountBalance(accountBalance);
@@ -188,15 +191,16 @@ public class AmountUtil {
 		userFund.setFreezeBalance(freezeBalance);
 		userFund.setRechargeNumber(rechargeNumber);
 		Boolean updataAmount = userInfoServiceImpl.updataAmount(userFund);
-		if(updataAmount) 
-			log.info("【金额修改后账户情况：当前账户总比较金额："+accountBalance+"，当前账户充值点数："+rechargeNumber+"，当前账户利润金额："+cashBalance+"，当前账户冻结金额："+freezeBalance+"，当前账户："+userFund.getUserId()+"】");
-		else {
+		if (updataAmount) {
+			log.info("【金额修改后账户情况：当前账户总比较金额：" + accountBalance + "，当前账户充值点数：" + rechargeNumber + "，当前账户利润金额：" + cashBalance + "，当前账户冻结金额：" + freezeBalance + "，当前账户：" + userFund.getUserId() + "】");
+		} else {
 			log.info("【账户修改失败】");
 			Boolean updataStatusEr = userInfoServiceImpl.updataStatusEr(userFund.getUserId());
-			if(updataStatusEr)
-				log.info("【账户已修改为不可使用，当前账号为："+userFund.getUserId()+"】");
-			else
+			if (updataStatusEr) {
+				log.info("【账户已修改为不可使用，当前账号为：" + userFund.getUserId() + "】");
+			} else {
 				throw new UserException("账户修改异常", null);
+			}
 			return Result.buildFail();
 		}
 		return Result.buildSuccessResult();
@@ -210,50 +214,59 @@ public class AmountUtil {
 	 */
 	public Result deleteAmountBalance(UserFund userFund , BigDecimal balance , String addType ) {
 		userFund = userInfoServiceImpl.findUserFundByAccount(userFund.getUserId());
-		if(!clickUserFund(userFund).isSuccess())
+		if (!clickUserFund(userFund).isSuccess()) {
 			return Result.buildFailMessage("【资金账户存在问题】");
-		if(DELETE_DEAL.equals(addType)) {//交易减点数
+		}
+		if (DELETE_DEAL.equals(addType)) {//交易减点数
 			Result deductRecharge = deductRecharge(userFund, balance);
-			if(deductRecharge.isSuccess()) 
+			if (deductRecharge.isSuccess()) {
 				return deductRecharge;
+			}
 			log.info("【账户金额扣除失败，请查询当前时间范围内的异常情况，并修改当前账户交易和资金状态为 不可用】");
-			if(userInfoServiceImpl.updataStatusEr(userFund.getUserId()))
-				log.info("【账户已修改为不可使用，当前账号为："+userFund.getUserId()+"】");
-			else
+			if (userInfoServiceImpl.updataStatusEr(userFund.getUserId())) {
+				log.info("【账户已修改为不可使用，当前账号为：" + userFund.getUserId() + "】");
+			} else {
 				throw new UserException("账户修改异常", null);
-			return 	Result.buildFailMessage("【当前账户余额扣除失败，请联系技术人员查询情况】");
-			
+			}
+			return Result.buildFailMessage("【当前账户余额扣除失败，请联系技术人员查询情况】");
+
 		}else if(DELETE_AMOUNT.equals(addType)) {//人工减钱
 			Result deductBalance = deductBalance(userFund, balance);
-			if(deductBalance.isSuccess()) 
+			if (deductBalance.isSuccess()) {
 				return deductBalance;
+			}
 			log.info("【账户金额扣除失败，请查询当前时间范围内的异常情况，并修改当前账户交易和资金状态为 不可用】");
-			if(userInfoServiceImpl.updataStatusEr(userFund.getUserId()))
-				log.info("【账户已修改为不可使用，当前账号为："+userFund.getUserId()+"】");
-			else
+			if (userInfoServiceImpl.updataStatusEr(userFund.getUserId())) {
+				log.info("【账户已修改为不可使用，当前账号为：" + userFund.getUserId() + "】");
+			} else {
 				throw new UserException("账户修改异常", null);
-			return 	Result.buildFailMessage("【当前账户余额扣除失败，请联系技术人员查询情况】");
+			}
+			return Result.buildFailMessage("【当前账户余额扣除失败，请联系技术人员查询情况】");
 		}else if(DELETE_WITHDRAW.equals(addType)) {
 			Result withdrawBalance = withdrawBalance(userFund, balance);
-			if(withdrawBalance.isSuccess()) 
+			if (withdrawBalance.isSuccess()) {
 				return withdrawBalance;
+			}
 			log.info("【账户金额扣除失败，请查询当前时间范围内的异常情况，并修改当前账户交易和资金状态为 不可用】");
-			if(userInfoServiceImpl.updataStatusEr(userFund.getUserId()))
-				log.info("【账户已修改为不可使用，当前账号为："+userFund.getUserId()+"】");
-			else
+			if (userInfoServiceImpl.updataStatusEr(userFund.getUserId())) {
+				log.info("【账户已修改为不可使用，当前账号为：" + userFund.getUserId() + "】");
+			} else {
 				throw new UserException("账户修改异常", null);
-			return 	Result.buildFailMessage("【当前账户余额扣除失败，请联系技术人员查询情况】");
+			}
+			return Result.buildFailMessage("【当前账户余额扣除失败，请联系技术人员查询情况】");
 		}else if (DELETE_FREEZE.equals(addType)) {
 			Result freezeBalance = freezeBalance(userFund, balance);
-			if(freezeBalance.isSuccess()) 
+			if (freezeBalance.isSuccess()) {
 				return freezeBalance;
+			}
 			log.info("【账户金额冻结失败，请查询当前时间范围内的异常情况，并修改当前账户交易和资金状态为 不可用】");
-			if(userInfoServiceImpl.updataStatusEr(userFund.getUserId()))
-				log.info("【账户已修改为不可使用，当前账号为："+userFund.getUserId()+"】");
-			else
+			if (userInfoServiceImpl.updataStatusEr(userFund.getUserId())) {
+				log.info("【账户已修改为不可使用，当前账号为：" + userFund.getUserId() + "】");
+			} else {
 				throw new UserException("账户修改异常", null);
-			return 	Result.buildFailMessage("【当前账户余额冻结失败，请联系技术人员查询情况】");
-			
+			}
+			return Result.buildFailMessage("【当前账户余额冻结失败，请联系技术人员查询情况】");
+
 		}
 		return Result.buildFailMessage("传参异常");
 	}
@@ -276,12 +289,13 @@ public class AmountUtil {
 		userFund.setCashBalance(cashBalance);
 		userFund.setRechargeNumber(rechargeNumber);
 		Boolean updataAmount = userInfoServiceImpl.updataAmount(userFund);
-		if(updataAmount) {
-			log.info("【当前冻结资金执行成功，操作的金额为："+amount+"】");
-			log.info("【冻结资金后的账户金额为：账户总余额："+accountBalance+"，当前利润账户【现金账户】："+cashBalance+"，当前冻结账户："+freezeBalance+"当前操作金额为："+amount+"】");
+		if (updataAmount) {
+			log.info("【当前冻结资金执行成功，操作的金额为：" + amount + "】");
+			log.info("【冻结资金后的账户金额为：账户总余额：" + accountBalance + "，当前利润账户【现金账户】：" + cashBalance + "，当前冻结账户：" + freezeBalance + "当前操作金额为：" + amount + "】");
 			return Result.buildSuccessMessage("当前金额取款方法执行成功");
-		} else 
+		} else {
 			return Result.buildFailMessage("取款扣除金额方法执行失败");
+		}
 	}
 	/**
 	 * <p>取款</p>
@@ -304,12 +318,13 @@ public class AmountUtil {
 		userFund.setFreezeBalance(freezeBalance);
 		userFund.setRechargeNumber(rechargeNumber);
 		Boolean updataAmount = userInfoServiceImpl.updataAmount(userFund);
-		if(updataAmount) {
-			log.info("【当前金额扣除执行成功，操作的金额为："+amount+"】");
-			log.info("【金额修改后账户情况：当前账户总比较金额："+accountBalance+"，当前账户充值点数："+rechargeNumber+"，当前账户利润金额："+cashBalance+"，当前账户冻结金额："+freezeBalance+"，当前账户："+userFund.getUserId()+"】");
+		if (updataAmount) {
+			log.info("【当前金额扣除执行成功，操作的金额为：" + amount + "】");
+			log.info("【金额修改后账户情况：当前账户总比较金额：" + accountBalance + "，当前账户充值点数：" + rechargeNumber + "，当前账户利润金额：" + cashBalance + "，当前账户冻结金额：" + freezeBalance + "，当前账户：" + userFund.getUserId() + "】");
 			return Result.buildSuccessMessage("当前金额取款方法执行成功");
-		} else 
+		} else {
 			return Result.buildFailMessage("取款扣除金额方法执行失败");
+		}
 	}
 	/**
 	 * <p>扣款【或者扣点数】</p>
@@ -334,12 +349,13 @@ public class AmountUtil {
 		userFund.setFreezeBalance(freezeBalance);
 		userFund.setRechargeNumber(rechargeNumber);
 		Boolean updataAmount = userInfoServiceImpl.updataAmount(userFund);
-		if(updataAmount) {
-			log.info("【当前金额扣除执行成功，操作的金额为："+amount+"】");
-			log.info("【金额修改后账户情况：当前账户总比较金额："+accountBalance+"，当前账户充值点数："+rechargeNumber+"，当前账户利润金额："+cashBalance+"，当前账户冻结金额："+freezeBalance+"，当前账户："+userFund.getUserId()+"】");
+		if (updataAmount) {
+			log.info("【当前金额扣除执行成功，操作的金额为：" + amount + "】");
+			log.info("【金额修改后账户情况：当前账户总比较金额：" + accountBalance + "，当前账户充值点数：" + rechargeNumber + "，当前账户利润金额：" + cashBalance + "，当前账户冻结金额：" + freezeBalance + "，当前账户：" + userFund.getUserId() + "】");
 			return Result.buildSuccessMessage("充值点数扣除方法执行成功");
-		} else 
+		} else {
 			return Result.buildFailMessage("金额扣除方法执行失败");
+		}
 	}
 	/**
 	 * <p>交易减充值点数</p>
@@ -363,12 +379,13 @@ public class AmountUtil {
 		userFund.setFreezeBalance(freezeBalance);
 		userFund.setRechargeNumber(rechargeNumber);
 		Boolean updataAmount = userInfoServiceImpl.updataAmount(userFund);
-		if(updataAmount) {
-			log.info("【当前金额扣除执行成功，操作的金额为："+amount+"】");
-			log.info("【金额修改后账户情况：当前账户总比较金额："+accountBalance+"，当前账户充值点数："+rechargeNumber+"，当前账户利润金额："+cashBalance+"，当前账户冻结金额："+freezeBalance+"，当前账户："+userFund.getUserId()+"】");
+		if (updataAmount) {
+			log.info("【当前金额扣除执行成功，操作的金额为：" + amount + "】");
+			log.info("【金额修改后账户情况：当前账户总比较金额：" + accountBalance + "，当前账户充值点数：" + rechargeNumber + "，当前账户利润金额：" + cashBalance + "，当前账户冻结金额：" + freezeBalance + "，当前账户：" + userFund.getUserId() + "】");
 			return Result.buildSuccessMessage("充值点数扣除方法执行成功");
-		} else 
+		} else {
 			return Result.buildFailMessage("金额扣除方法执行失败");
+		}
 	}
 	/**
 	 * <p>当前账户交易利润加钱</p>
@@ -435,23 +452,24 @@ public class AmountUtil {
 		userFund.setSumOrderCountC(sumOrderCountC);
 		userFund.setSumOrderCountR(sumOrderCountR);
 		userFund.setSumProfit(sumProfit);
-		
-		
+
+
 		//金额账户
 		userFund.setAccountBalance(accountBalance);
 		userFund.setCashBalance(cashBalance);
 		userFund.setFreezeBalance(freezeBalance);
 		userFund.setRechargeNumber(rechargeNumber);
 		Boolean updataAmount = userInfoServiceImpl.updataAmount(userFund);
-		if(updataAmount) 
-			log.info("【金额修改后账户情况：当前账户总比较金额："+accountBalance+"，当前账户充值点数："+rechargeNumber+"，当前账户利润金额："+cashBalance+"，当前账户冻结金额："+freezeBalance+"，当前账户："+userFund.getUserId()+"】");
-		else {
+		if (updataAmount) {
+			log.info("【金额修改后账户情况：当前账户总比较金额：" + accountBalance + "，当前账户充值点数：" + rechargeNumber + "，当前账户利润金额：" + cashBalance + "，当前账户冻结金额：" + freezeBalance + "，当前账户：" + userFund.getUserId() + "】");
+		} else {
 			log.info("【账户修改失败】");
-			ThreadUtil.execute( ()->{
+			ThreadUtil.execute(() -> {
 				//TODO 新建线程提交，该线程不受主线程事务控制
 				Boolean updataStatusEr = userInfoServiceImpl.updataStatusEr(userFund.getUserId());
-				if(updataStatusEr)
-				log.info("【账户已修改为不可使用，当前账号为："+userFund.getUserId()+"】");
+				if (updataStatusEr) {
+					log.info("【账户已修改为不可使用，当前账号为：" + userFund.getUserId() + "】");
+				}
 			});
 			throw new UserException("账户修改异常", null);
 		}
@@ -488,15 +506,16 @@ public class AmountUtil {
 		userFund.setSumAgentProfit(sumAgentProfit);
 		userFund.setSumProfit(sumProfit);
 		Boolean updataAmount = userInfoServiceImpl.updataAmount(userFund);
-		if(updataAmount) 
-			log.info("【金额修改后账户情况：当前账户总比较金额："+accountBalance+"，当前账户充值点数："+rechargeNumber+"，当前账户利润金额："+cashBalance+"，当前账户冻结金额："+freezeBalance+"，当前账户："+userFund.getUserId()+"】");
-		else {
+		if (updataAmount) {
+			log.info("【金额修改后账户情况：当前账户总比较金额：" + accountBalance + "，当前账户充值点数：" + rechargeNumber + "，当前账户利润金额：" + cashBalance + "，当前账户冻结金额：" + freezeBalance + "，当前账户：" + userFund.getUserId() + "】");
+		} else {
 			log.info("【账户修改失败】");
-			ThreadUtil.execute( ()->{
+			ThreadUtil.execute(() -> {
 				//TODO 新建线程提交，该线程不受主线程事务控制
 				Boolean updataStatusEr = userInfoServiceImpl.updataStatusEr(userFund.getUserId());
-				if(updataStatusEr)
-				log.info("【账户已修改为不可使用，当前账号为："+userFund.getUserId()+"】");
+				if (updataStatusEr) {
+					log.info("【账户已修改为不可使用，当前账号为：" + userFund.getUserId() + "】");
+				}
 			});
 			throw new UserException("账户修改异常", null);
 		}
@@ -574,23 +593,28 @@ public class AmountUtil {
 	 * @return
 	 */
 	public Result orderAmountR(String orderId,String ip , boolean flag) {
-		if(StrUtil.isBlank(orderId))
+		if (StrUtil.isBlank(orderId)) {
 			return Result.buildFailMessage("订单号为空");
+		}
 		DealOrder order = orderServiceImpl.findOrderByOrderId(orderId);
-		if(!Common.Order.DealOrder.ORDER_STATUS_SU.equals(order.getOrderStatus()))
+		if (!Common.Order.DealOrder.ORDER_STATUS_SU.equals(order.getOrderStatus())) {
 			return Result.buildFailMessage("订单号状态错误");
-		UserFund userFund = new 	UserFund();
+		}
+		UserFund userFund = new UserFund();
 		userFund.setUserId(order.getOrderQrUser());
 		Result deal = deleteDeal(userFund, order.getDealAmount());
-		if(!deal.isSuccess())
+		if (!deal.isSuccess()) {
 			return Result.buildFailMessage("订单结算失败");
+		}
 		Result result = amountRunUtil.deleteRechangerNumber(order, ip, flag);
-		Result addDeal = addDeal(userFund, order.getDealFee(),  order.getDealAmount(),true);
-		if(!addDeal.isSuccess())
+		Result addDeal = addDeal(userFund, order.getDealFee(), order.getDealAmount(), true);
+		if (!addDeal.isSuccess()) {
 			return Result.buildFailMessage("订单结算失败");
+		}
 		Result result2 = amountRunUtil.addDealAmount(order, ip, flag);
-		if(result2.isSuccess()&&result.isSuccess()&&addDeal.isSuccess()&&deal.isSuccess())
+		if (result2.isSuccess() && result.isSuccess() && addDeal.isSuccess() && deal.isSuccess()) {
 			return Result.buildSuccessMessage("订单结算成功");
+		}
 		return Result.buildFailMessage("订单结算失败");
 	}
 	/**
@@ -601,23 +625,28 @@ public class AmountUtil {
 	 * @return
 	 */
 	public Result orderAmountC(String orderId , String ip , boolean flag) {
-		if(StrUtil.isBlank(orderId))
+		if (StrUtil.isBlank(orderId)) {
 			return Result.buildFailMessage("订单号为空");
+		}
 		DealOrder order = orderServiceImpl.findOrderByOrderId(orderId);
-		if(!Common.Order.DealOrder.ORDER_STATUS_SU.equals(order.getOrderStatus()))
+		if (!Common.Order.DealOrder.ORDER_STATUS_SU.equals(order.getOrderStatus())) {
 			return Result.buildFailMessage("订单号状态错误");
-		UserFund userFund = new 	UserFund();
+		}
+		UserFund userFund = new UserFund();
 		userFund.setUserId(order.getOrderQrUser());
 		Result addAmounRecharge = addAmounRecharge(userFund, order.getDealAmount());
-		if(!addAmounRecharge.isSuccess())
+		if (!addAmounRecharge.isSuccess()) {
 			return Result.buildFailMessage("订单结算错误");
+		}
 		Result addCardDealC = amountRunUtil.addCardDealC(order, ip, flag);
-		Result addAmountDeal = addDeal(userFund, order.getDealFee(), order.getDealAmount(),false);
-		if(!addAmountDeal.isSuccess())
+		Result addAmountDeal = addDeal(userFund, order.getDealFee(), order.getDealAmount(), false);
+		if (!addAmountDeal.isSuccess()) {
 			return Result.buildFailMessage("订单结算错误");
+		}
 		Result addCardDealFeeC = amountRunUtil.addCardDealFeeC(order, ip, flag);
-		if(addCardDealC.isSuccess()&& addCardDealFeeC.isSuccess())
+		if (addCardDealC.isSuccess() && addCardDealFeeC.isSuccess()) {
 			return Result.buildSuccessMessage("订单结算成功");
+		}
 		return Result.buildFailMessage("订单结算失败");
 	}
 }

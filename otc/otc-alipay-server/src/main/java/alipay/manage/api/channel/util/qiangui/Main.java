@@ -1,17 +1,15 @@
 package alipay.manage.api.channel.util.qiangui;
 
 
-import java.io.IOException;
-import java.util.HashMap;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.web.bind.annotation.RequestMapping;
-
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.HashMap;
 
 public class Main {
     public void crtOrder(String appId,String orderNo,Double orderAmt,String orderType,String accNo,String accName,String bankAccNo,String bankAccName,String bankName,String notifyURL,String key){
@@ -48,17 +46,17 @@ public class Main {
             //为确认返回未被劫持 如回调进行验签
             JSONObject resultJson=JSONUtil.parseObj(result);//转化为JSON对象
             String code=resultJson.getStr("code");//获取返回code  0000为成功 其他为失败
-            if (code.equals("0000")){
-                JSONObject dataJson=JSONUtil.parseObj(resultJson.getStr("data"));//获取返回data数据转化为JSON对象
-                String corderNo=dataJson.getStr("orderNo");
-                String cappOrderNo=dataJson.getStr("appOrderNo");
-                String corderAmt=dataJson.getStr("orderAmt");
-                String corderTime=dataJson.getStr("orderTime");
-                String corderStatus=dataJson.getStr("orderStatus");
-                String csign=dataJson.getStr("sign");
+            if ("0000".equals(code)) {
+                JSONObject dataJson = JSONUtil.parseObj(resultJson.getStr("data"));//获取返回data数据转化为JSON对象
+                String corderNo = dataJson.getStr("orderNo");
+                String cappOrderNo = dataJson.getStr("appOrderNo");
+                String corderAmt = dataJson.getStr("orderAmt");
+                String corderTime = dataJson.getStr("orderTime");
+                String corderStatus = dataJson.getStr("orderStatus");
+                String csign = dataJson.getStr("sign");
                 HashMap cmap = new HashMap<>();
-                cmap.put("orderNo",corderNo);
-                cmap.put("appOrderNo",cappOrderNo);
+                cmap.put("orderNo", corderNo);
+                cmap.put("appOrderNo", cappOrderNo);
                 cmap.put("orderAmt",corderAmt);
                 cmap.put("orderTime",corderTime);
                 cmap.put("orderStatus",corderStatus);

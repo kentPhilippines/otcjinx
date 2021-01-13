@@ -83,7 +83,7 @@ public class Hengtong extends PayOrderService {
         //{"whether":"NO","code":65568,"message":"sign不存在","data":null,"success":false}
         JSONObject jsonObject = JSONUtil.parseObj(post);
         String whether = jsonObject.getStr("whether");
-        if (StrUtil.isNotEmpty(whether) && whether.equals("YES")) {
+        if (StrUtil.isNotEmpty(whether) && "YES".equals(whether)) {
             String data = jsonObject.getStr("data");
             JSONObject jsonObject1 = JSONUtil.parseObj(data);
             String url = jsonObject1.getStr("redirect");

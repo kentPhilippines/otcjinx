@@ -1,24 +1,22 @@
 package alipay.manage.util;
 
-import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.stereotype.Component;
-
 import alipay.config.redis.RedisUtil;
 import alipay.manage.bean.util.AddressIpBean;
 import alipay.manage.bean.util.AreaIp;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.stereotype.Component;
 import otc.util.MapUtil;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 @Component
 public class IsDealIpUtil {
@@ -58,55 +56,73 @@ public class IsDealIpUtil {
 		ip.setRegion(StrUtil.isBlank(addresses.getRegion())?"":addresses.getRegion());
 		ip.setRegionId(StrUtil.isBlank(addresses.getRegion_id())?"":addresses.getRegion_id());
 		ip.setIsp(StrUtil.isBlank(addresses.getIsp())?"":addresses.getIsp());
-		ip.setIspId(StrUtil.isBlank(addresses.getIsp_id())?"":addresses.getIsp_id());
-		ip.setCounty(StrUtil.isBlank(addresses.getCounty())?"":addresses.getCounty());
-		ip.setCountyId(StrUtil.isBlank(addresses.getCounty_id())?"":addresses.getCounty_id());
-	//	boolean flag = areaIpServiceImpl.addIp(ip);
-	//	if(flag) {
-			addAreaIpToRedis(ip);
-			return ip;
-	//	}
-	//	return null;
+		ip.setIspId(StrUtil.isBlank(addresses.getIsp_id()) ? "" : addresses.getIsp_id());
+		ip.setCounty(StrUtil.isBlank(addresses.getCounty()) ? "" : addresses.getCounty());
+		ip.setCountyId(StrUtil.isBlank(addresses.getCounty_id()) ? "" : addresses.getCounty_id());
+		//	boolean flag = areaIpServiceImpl.addIp(ip);
+		//	if(flag) {
+		addAreaIpToRedis(ip);
+		return ip;
+		//	}
+		//	return null;
 	}
+
+	/**
+	 * <p>获取用户真实ip</p>
+	 *
+	 * @param request
+	 * @return
+	 */
+	public static String getIpAddr(HttpServletRequest request) {
+		String ip = request.getHeader("x-forwarded-for");
+		if (ip != null && ip.length() != 0 && !"unknown".equalsIgnoreCase(ip))
+		// 多次反向代理后会有多个ip值，第一个ip才是真实ip
+		{
+			if (ip.indexOf(",") != -1) {
+				ip = ip.split(",")[0];
+			}
+		}
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+			ip = request.getHeader("Proxy-Client-IP");
+		}
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+			ip = request.getHeader("WL-Proxy-Client-IP");
+		}
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+			ip = request.getHeader("HTTP_CLIENT_IP");
+		}
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+			ip = request.getHeader("HTTP_X_FORWARDED_FOR");
+		}
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+			ip = request.getHeader("X-Real-IP");
+		}
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+			ip = request.getRemoteAddr();
+		}
+		return ip;
+	}
+
 	/**
 	 * <p>,验证ip是否在记录中存在</p>
+	 *
 	 * @param request
-	 * @return		存在返回具体数据   不存在 返回null
+	 * @return 存在返回具体数据 不存在 返回null
 	 */
-	private AreaIp isClick(HttpServletRequest request){
+	private AreaIp isClick(HttpServletRequest request) {
 		String ipAddr = getIpAddr(request);
 		Map<Object, Object> hmget = redisUtil.hmget(ipAddr);
-		Map<String ,Object> map = new HashMap();
-		if(cn.hutool.core.map.MapUtil.isEmpty(hmget)) 
-			return null ;
+		Map<String, Object> map = new HashMap();
+		if (cn.hutool.core.map.MapUtil.isEmpty(hmget)) {
+			return null;
+		}
 		Set<Object> keySet = hmget.keySet();
-		for(Object obj : keySet) {
+		for (Object obj : keySet) {
 			Object object = hmget.get(obj);
 			map.put(obj.toString(), object);
 		}
 		AreaIp mapToBean = MapUtil.mapToBean(map, AreaIp.class);
-		return  mapToBean;
-	}
-	
-	
-	
-	/**
-	 * <p>获取ip具体信息</p>
-	 * @param request		请求
-	 * @param ipType		ip类型
-	 * @return
-	 * @throws NumberFormatException
-	 * @throws UnsupportedEncodingException
-	 */
-	public AreaIp getAreaIp(HttpServletRequest request ) throws NumberFormatException, UnsupportedEncodingException {
-		AreaIp click = isClick(request);//缓存获取
-		if(ObjectUtil.isNull(click)) {
-			String IP = getIpAddr(request);
-			if(ObjectUtil.isNull(click))
-				return addIp(request  );
-			addAreaIpToRedis(click);
-		}
-		return click;
+		return mapToBean;
 	}
 	/**
 	 * <p>增加ip到缓存</p>
@@ -118,40 +134,36 @@ public class IsDealIpUtil {
 			redisUtil.hset(ip.getIp(),"area",ip.getArea());
 			redisUtil.hset(ip.getIp(),"region",ip.getRegion());
 			redisUtil.hset(ip.getIp(),"city",ip.getCity());
-			redisUtil.hset(ip.getIp(),"county",ip.getCounty());
-			redisUtil.hset(ip.getIp(),"isp",ip.getIsp());
-			redisUtil.hset(ip.getIp(),"countryId",ip.getCountryId());
-			redisUtil.hset(ip.getIp(),"areaId",ip.getAreaId());
-			redisUtil.hset(ip.getIp(),"regionId",ip.getRegionId());
-			redisUtil.hset(ip.getIp(),"cityId",ip.getCityId());
-			redisUtil.hset(ip.getIp(),"countyId",ip.getCountyId());
-			redisUtil.hset(ip.getIp(),"ispId",ip.getIspId());
-			redisUtil.hset(ip.getIp(),"ipType",ip.getIpType());
-			redisUtil.hset(ip.getIp(),"ipFreeze",ip.getIpFreeze());
+			redisUtil.hset(ip.getIp(), "county", ip.getCounty());
+		 redisUtil.hset(ip.getIp(), "isp", ip.getIsp());
+		 redisUtil.hset(ip.getIp(), "countryId", ip.getCountryId());
+		 redisUtil.hset(ip.getIp(), "areaId", ip.getAreaId());
+		 redisUtil.hset(ip.getIp(), "regionId", ip.getRegionId());
+		 redisUtil.hset(ip.getIp(), "cityId", ip.getCityId());
+		 redisUtil.hset(ip.getIp(), "countyId", ip.getCountyId());
+		 redisUtil.hset(ip.getIp(), "ispId", ip.getIspId());
+		 redisUtil.hset(ip.getIp(), "ipType", ip.getIpType());
+		 redisUtil.hset(ip.getIp(), "ipFreeze", ip.getIpFreeze());
 	 }
-	 /**
-		 * <p>获取用户真实ip</p>
-		 * @param request
-		 * @return
-		 */
-		public  static  String getIpAddr(HttpServletRequest request) {
-	        String ip = request.getHeader("x-forwarded-for"); 
-	        if (ip != null && ip.length() != 0 && !"unknown".equalsIgnoreCase(ip)) 
-	            // 多次反向代理后会有多个ip值，第一个ip才是真实ip
-	            if( ip.indexOf(",")!=-1 )
-	                ip = ip.split(",")[0];
-	        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip))   
-	            ip = request.getHeader("Proxy-Client-IP");  
-	        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip))  
-	            ip = request.getHeader("WL-Proxy-Client-IP");  
-	        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip))   
-	            ip = request.getHeader("HTTP_CLIENT_IP");  
-	        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip))   
-	            ip = request.getHeader("HTTP_X_FORWARDED_FOR");  
-	        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) 
-	            ip = request.getHeader("X-Real-IP");  
-	        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) 
-	            ip = request.getRemoteAddr();  
-	        return ip;  
-	    }
+
+	/**
+	 * <p>获取ip具体信息</p>
+	 *
+	 * @param request 请求
+	 * @param ipType  ip类型
+	 * @return
+	 * @throws NumberFormatException
+	 * @throws UnsupportedEncodingException
+	 */
+	public AreaIp getAreaIp(HttpServletRequest request) throws NumberFormatException, UnsupportedEncodingException {
+		AreaIp click = isClick(request);//缓存获取
+		if (ObjectUtil.isNull(click)) {
+			String IP = getIpAddr(request);
+			if (ObjectUtil.isNull(click)) {
+				return addIp(request);
+			}
+			addAreaIpToRedis(click);
+		}
+		return click;
+	}
 }

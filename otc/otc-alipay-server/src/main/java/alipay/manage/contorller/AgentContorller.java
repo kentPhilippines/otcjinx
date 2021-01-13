@@ -1,27 +1,5 @@
 package alipay.manage.contorller;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.NotNull;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
-
 import alipay.config.exception.OtherErrors;
 import alipay.manage.api.AccountApiService;
 import alipay.manage.bean.InviteCode;
@@ -30,29 +8,43 @@ import alipay.manage.bean.UserInfo;
 import alipay.manage.bean.UserRate;
 import alipay.manage.bean.util.PageResult;
 import alipay.manage.bean.util.UserCountBean;
-import alipay.manage.service.CorrelationService;
-import alipay.manage.service.InviteCodeService;
-import alipay.manage.service.UserFundService;
-import alipay.manage.service.UserInfoService;
-import alipay.manage.service.UserRateService;
+import alipay.manage.service.*;
 import alipay.manage.util.SessionUtil;
 import alipay.manage.util.SettingFile;
 import alipay.manage.util.UserUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
 import otc.api.alipay.Common;
 import otc.result.Result;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 @Controller
 @RequestMapping("/agent")
 public class AgentContorller {
-	    Logger log = LoggerFactory.getLogger(AgentContorller.class);
-	    @Autowired SessionUtil sessionUtil;
-	    @Autowired InviteCodeService inviteCodeServiceImpl;
-	    @Autowired UserInfoService userInfoService;
-	    @Autowired UserFundService userFundService;
-	    @Autowired UserRateService userRateService;
+	Logger log = LoggerFactory.getLogger(AgentContorller.class);
+	@Autowired
+	SessionUtil sessionUtil;
+	@Autowired
+	InviteCodeService inviteCodeServiceImpl;
+	@Autowired
+	UserInfoService userInfoService;
+	@Autowired
+	UserFundService userFundService;
+	@Autowired
+	UserRateService userRateService;
 	    @Autowired CorrelationService correlationServiceImpl;
 		@Autowired AccountApiService accountApiService;
 	    @Autowired UserUtil userUtil;
@@ -64,16 +56,17 @@ public class AgentContorller {
 	    @RequestMapping(value = "/agentOpenAnAccount",method = RequestMethod.POST)
 	    @ResponseBody
 	   public Result agentOpenAnAccount(@RequestBody UserInfo user, HttpServletRequest request) {
-	    	UserInfo user2 = sessionUtil.getUser(request);
-	    	if(ObjectUtil.isNull(user))
-	    		return Result.buildFailMessage("当前用户未登录");
-	    	user.setAgent(user2.getUserId());
-	    	user.setUserType(Integer.valueOf(Common.User.USER_TYPE_QR));
+			UserInfo user2 = sessionUtil.getUser(request);
+			if (ObjectUtil.isNull(user)) {
+				return Result.buildFailMessage("当前用户未登录");
+			}
+			user.setAgent(user2.getUserId());
+			user.setUserType(Integer.valueOf(Common.User.USER_TYPE_QR));
 			user.setIsAgent(Common.User.USER_IS_MEMBER);
 			UserRate rateR = userRateService.findUserRateR(user2.getUserId());
-			user.setFee(rateR.getFee()+"");
+			user.setFee(rateR.getFee() + "");
 			Result addAccount = accountApiService.addAccount(user);
-			if(addAccount.isSuccess()) {
+			if (addAccount.isSuccess()) {
 				UserRate rate = new UserRate();
 				rate.setUserId(user.getUserId());
 				rate.setFee(new BigDecimal(user.getFee()));
@@ -81,8 +74,9 @@ public class AgentContorller {
 				rate.setUserType(Integer.valueOf(Common.User.USER_TYPE_QR));
 				rate.setPayTypr(Common.User.ALIPAY_PRODUCTID);
 				boolean add = userRateService.add(rate);
-				if(add) 
+				if (add) {
 					return Result.buildSuccessMessage("开户成功");
+				}
 			}
 			 return Result.buildFailMessage("开户失败");
 			}
@@ -124,24 +118,27 @@ public class AgentContorller {
 	            @RequestBody InviteCode bean,
 	            HttpServletRequest request
 	    ) {
-	    	UserInfo user = sessionUtil.getUser(request);
-	    	if(ObjectUtil.isNull(user))
-	    		return Result.buildFailMessage("当前用户未登录");
-	    	if(StrUtil.isBlank(bean.getUserType()))
-	    		return Result.buildFailMessage("参数为空");
-	    	bean.setBelongUser(user.getUserId());
-	    	bean.setCount(0);
-	    	log.info("【生成邀请码的方法，将邀请吗返回给前端】");
-	    	String createinviteCode = createinviteCode();
-	    	bean.setInviteCode(createinviteCode);
-	    	bean.setCreateTime(new Date());
-	    	bean.setSubmitTime(new Date());
-	    	bean.setIsDeal(Common.isOk);
-	        boolean flag = inviteCodeServiceImpl.addinviteCode(bean);
-	        if (flag)
-	        	return Result.buildSuccessResult("操作成功","127.0.0.1:9010/register?inviteCode="+createinviteCode);
-	        return Result.buildFail();
-	    }
+			UserInfo user = sessionUtil.getUser(request);
+			if (ObjectUtil.isNull(user)) {
+				return Result.buildFailMessage("当前用户未登录");
+			}
+			if (StrUtil.isBlank(bean.getUserType())) {
+				return Result.buildFailMessage("参数为空");
+			}
+			bean.setBelongUser(user.getUserId());
+			bean.setCount(0);
+			log.info("【生成邀请码的方法，将邀请吗返回给前端】");
+			String createinviteCode = createinviteCode();
+			bean.setInviteCode(createinviteCode);
+			bean.setCreateTime(new Date());
+			bean.setSubmitTime(new Date());
+			bean.setIsDeal(Common.isOk);
+			boolean flag = inviteCodeServiceImpl.addinviteCode(bean);
+			if (flag) {
+				return Result.buildSuccessResult("操作成功", "127.0.0.1:9010/register?inviteCode=" + createinviteCode);
+			}
+			return Result.buildFail();
+		}
 	    
 	    
 	    
@@ -150,12 +147,13 @@ public class AgentContorller {
 	     * @return
 	     */
 	    String createinviteCode() {
-	        String randomString = RandomUtil.randomString(10);
-	        boolean flag = inviteCodeServiceImpl.findinviteCode(randomString);
-	        if (!flag)
-	            return randomString;
-	        return createinviteCode();
-	    }
+			String randomString = RandomUtil.randomString(10);
+			boolean flag = inviteCodeServiceImpl.findinviteCode(randomString);
+			if (!flag) {
+				return randomString;
+			}
+			return createinviteCode();
+		}
 	    /**
 	     * <p>查询自己的子账户</p>
 	     * 	手机端专用
@@ -167,22 +165,24 @@ public class AgentContorller {
 	    		                                              @RequestParam(required = false)String pageNum,
 	    		                                              @RequestParam(required = false)String userName,
 	    		                                              HttpServletRequest request) {
-	    	UserInfo user2 = sessionUtil.getUser(request);
-	        if (StrUtil.isBlank(user2.getUserId()))
-	            return Result.buildFail();
-	        UserInfo user = new UserInfo();
-	        if (StrUtil.isNotBlank(userName))
-	            user.setUserId(userName);
-	        user.setAgent(user2.getUserId());
-	        PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
-	        List<UserInfo> userList = userInfoService.findSunAccount(user);
-	        UserRate userRate=null;
-	        UserFund userfund=null;
-	        for (UserInfo qrUser : userList) {
-	            findOnline(qrUser);
-	            userRate=userRateService.findUserRateR(qrUser.getUserId());
-	            qrUser.setFee(userRate.getFee()+"");
-	            userfund=userFundService.findUserInfoByUserId(qrUser.getUserId());
+			UserInfo user2 = sessionUtil.getUser(request);
+			if (StrUtil.isBlank(user2.getUserId())) {
+				return Result.buildFail();
+			}
+			UserInfo user = new UserInfo();
+			if (StrUtil.isNotBlank(userName)) {
+				user.setUserId(userName);
+			}
+			user.setAgent(user2.getUserId());
+			PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
+			List<UserInfo> userList = userInfoService.findSunAccount(user);
+			UserRate userRate = null;
+			UserFund userfund = null;
+			for (UserInfo qrUser : userList) {
+				findOnline(qrUser);
+				userRate = userRateService.findUserRateR(qrUser.getUserId());
+				qrUser.setFee(userRate.getFee() + "");
+				userfund = userFundService.findUserInfoByUserId(qrUser.getUserId());
 	            qrUser.setRechargeNumber(userfund.getRechargeNumber());
 	            qrUser.setCashBalance(userfund.getCashBalance());
 	            }
@@ -198,14 +198,15 @@ public class AgentContorller {
 	    @GetMapping("/findAgentCount")
 	    @ResponseBody
 	    public Result findAgentCount(HttpServletRequest request) {
-	    	UserInfo user2 = sessionUtil.getUser(request);
-			if (ObjectUtil.isNull(user2))
+			UserInfo user2 = sessionUtil.getUser(request);
+			if (ObjectUtil.isNull(user2)) {
 				throw new OtherErrors("当前用户未登录");
-	        UserFund findUserByAccount = userInfoService.findUserFundByAccount(user2.getUserId());
-	        UserCountBean findMoreCount = findMyDate(findUserByAccount.getId());
-	        findMoreCount.setMoreDealProfit(findUserByAccount.getTodayAgentProfit().toString());
-	        return Result.buildSuccessResult(findMoreCount);
-	    }
+			}
+			UserFund findUserByAccount = userInfoService.findUserFundByAccount(user2.getUserId());
+			UserCountBean findMoreCount = findMyDate(findUserByAccount.getId());
+			findMoreCount.setMoreDealProfit(findUserByAccount.getTodayAgentProfit().toString());
+			return Result.buildSuccessResult(findMoreCount);
+		}
 	    /**
 	     * <p>根据我的账户id，查询我的个人数据情况</p>
 	     * @param id

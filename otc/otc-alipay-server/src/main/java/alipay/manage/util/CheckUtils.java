@@ -2,7 +2,6 @@ package alipay.manage.util;
 
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
-import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -19,6 +18,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 @Component
@@ -27,17 +27,20 @@ public class CheckUtils {
 
 
     public static Result requestVerify(HttpServletRequest request, Map<String, Object> paramMap, String key) {
-        if (!checkParam(paramMap))
+        if (!checkParam(paramMap)) {
             return Result.buildFailMessage("必传参数为空");
+        }
         log.info("【访问URL：" + request.getRequestURL() + "】");
         log.info("【请求参数字符编码: " + request.getCharacterEncoding() + "】");
         boolean flag = verifyUrl(request);
-        if (!flag)
+        if (!flag) {
             return Result.buildFailMessage("字符编码错误");
+        }
         log.info("--------------【用户开始MD5验签】----------------");
         boolean vSign = verifySign(paramMap, key);
-        if (!vSign)
+        if (!vSign) {
             return Result.buildFailMessage("签名验证失败");
+        }
         return Result.buildSuccess();
     }
 
@@ -60,8 +63,9 @@ public class CheckUtils {
                 || StrUtil.isEmpty(ordertime)
                 || StrUtil.isEmpty(orderId)
                 || StrUtil.isEmpty(appid)
-        )
+        ) {
             return false;
+        }
         return true;
     }
 
@@ -99,32 +103,37 @@ public class CheckUtils {
         String passCode = (String) map.get("passCode");
         String applyDate = (String) map.get("applyDate");
         String rsaSign = (String) map.get("sign");
-        if (StringUtils.isEmpty(appId))
+        if (StringUtils.isEmpty(appId)) {
             return false;
+        }
         if (StringUtils.isEmpty(orderId)
                 || StringUtils.isEmpty(notifyUrl)
                 || StringUtils.isEmpty(amount)
                 || StringUtils.isEmpty(passCode)
                 || StringUtils.isEmpty(applyDate)
                 || StringUtils.isEmpty(rsaSign)
-        )
+        ) {
             return false;
+        }
         return true;
     }
 
 
     public static Result requestWithdrawalVerify(HttpServletRequest request, Map<String, Object> paramMap, String key) {
-        if (!witcheckParam(paramMap))
+        if (!witcheckParam(paramMap)) {
             return Result.buildFailMessage("必传参数为空");
+        }
         log.info("【访问URL：" + request.getRequestURL() + "】");
         log.info("【请求参数字符编码: " + request.getCharacterEncoding() + "】");
         boolean flag = verifyUrl(request);
-        if (!flag)
+        if (!flag) {
             return Result.buildFailMessage("字符编码错误");
+        }
         log.info("--------------【用户开始MD5验签】----------------");
         boolean vSign = verifySign(paramMap, key);
-        if (!vSign)
+        if (!vSign) {
             return Result.buildFailMessage("签名验证失败");
+        }
         return Result.buildSuccess();
     }
 
@@ -214,7 +223,7 @@ public class CheckUtils {
     public Map<String,Object> paramToMap(String paramStr){
         //将字符串参数转成数据组
         String[] params = paramStr.split("&");
-        Map<String, Object> resMap = Maps.newHashMap();
+        Map<String, Object> resMap = new HashMap<>();
         for (int i = 0; i < params.length; i++) {
             String[] param = params[i].split("=");
             if (param.length >= 2) {

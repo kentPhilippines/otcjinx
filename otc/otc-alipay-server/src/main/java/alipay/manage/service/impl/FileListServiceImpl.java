@@ -11,8 +11,6 @@ import cn.hutool.core.util.StrUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import otc.api.alipay.Common;
 import otc.bean.alipay.FileList;
@@ -40,16 +38,22 @@ public class FileListServiceImpl implements FileListService {
     public List<FileList> findQrPage(FileList qr) {
         FileListExample example = new FileListExample();
         FileListExample.Criteria createCriteria = example.createCriteria();
-        if(qr.getId() != null)
+        if (qr.getId() != null) {
             createCriteria.andIdEqualTo(qr.getId());
-        if(StrUtil.isNotBlank(qr.getCode()))
+        }
+        if (StrUtil.isNotBlank(qr.getCode())) {
             createCriteria.andCodeEqualTo(qr.getCode());
-        if(qr.getStatus() != null )
+        }
+        if (qr.getStatus() != null) {
             createCriteria.andStatusEqualTo(qr.getStatus());
-        if(StrUtil.isNotBlank(qr.getFileholder()));
+        }
+        if (StrUtil.isNotBlank(qr.getFileholder())) {
+            ;
+        }
         createCriteria.andCodeEqualTo(qr.getFileholder());
-        if(StrUtil.isNotBlank(qr.getFileId()))
+        if (StrUtil.isNotBlank(qr.getFileId())) {
             createCriteria.andCodeEqualTo(qr.getFileId());
+        }
         createCriteria.andIsDealEqualTo(Common.isOk);
         List<FileList> selectByExample = fileListMapper.selectByExample(example);
         return selectByExample;
@@ -178,22 +182,25 @@ public class FileListServiceImpl implements FileListService {
     @Override
     public Result addQrByMedium(String qrcodeId, String mediumId, String amount, String userId, String flag) {
         Medium medium = mediumServiceImpl.findMediumById(mediumId);
-        if(ObjectUtil.isNull(medium))
+        if (ObjectUtil.isNull(medium)) {
             return Result.buildFailResult("无此收款媒介");
+        }
         FileList qrcode = new FileList();
         qrcode.setConcealId(mediumId);
         qrcode.setCode(medium.getCode()+"_qr");
         qrcode.setFileholder(qrcodeId);
-        if("false".equals(flag))
+        if ("false".equals(flag)) {
             qrcode.setFixationAmount(new BigDecimal(9999.0000));
-        else
-            qrcode.setFixationAmount(new BigDecimal(StrUtil.isBlank(amount)?"0":amount));
+        } else {
+            qrcode.setFixationAmount(new BigDecimal(StrUtil.isBlank(amount) ? "0" : amount));
+        }
         qrcode.setIsFixation(StrUtil.isBlank(amount)?"1":"2");
         qrcode.setFileholder(userId);
         qrcode.setIsDeal("2"); //二维码可用
         int insertSelective = fileListMapper.insertSelective(qrcode);
-        if(insertSelective > 0 && insertSelective < 2)
+        if (insertSelective > 0 && insertSelective < 2) {
             return Result.buildSuccessResult();
+        }
         return Result.buildFail();
     }
     @Override
@@ -217,8 +224,9 @@ public class FileListServiceImpl implements FileListService {
     @Override
     public Boolean deleteQrByMediumId(String mediumId) {
         FileList qr = fileListMapper.findConcealId(mediumId);
-        if(ObjectUtil.isNull(qr))
+        if (ObjectUtil.isNull(qr)) {
             return true;
+        }
         FileListExample example = new FileListExample();
         FileListExample.Criteria criteria = example.createCriteria();
         criteria.andConcealIdEqualTo(mediumId);

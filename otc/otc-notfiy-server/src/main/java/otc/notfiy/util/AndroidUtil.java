@@ -1,37 +1,26 @@
 package otc.notfiy.util;
-import java.io.IOException;
-import java.io.StringReader;
-import java.math.BigDecimal;
-import java.net.URLDecoder;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import otc.api.alipay.Common;
 import otc.notfiy.bean.Mms;
 import otc.notfiy.feign.AlipayServiceClien;
 import otc.notfiy.service.MmsService;
 import otc.result.Result;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.URLDecoder;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 @Component
 public class AndroidUtil {
 	final SimpleDateFormat d = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -71,43 +60,44 @@ public class AndroidUtil {
 		msg.setMoney("000000");
 		msg.setTitle("过滤信息");
 		msg.setTime(df.format(new Date()));
-		msg.setRetain2("N");	
+		msg.setRetain2("N");
 		mmsServiceImpl.addMms(msg);
-		return ;
+		return;
 	}
-	if(type.equals("alipay")) {
-		log.info("接收到支付宝监听消息："+money);
-		money = money.replace("元", "");
-		money = money.replace("块", "");
-		money = money.replace("圆", "");
-	boolean flag = false;
-	Mms msg = new Mms();
-	String number = AmountUtil.getNumber(money);
-	msg.setContent("支付宝到账："+number +" ，元。");
-	msg.setDeviceid(deviceid);
-	msg.setEncrypt("0");
-	msg.setType(type);
-	msg.setMoney("000000");
-	msg.setTitle("回调通知");
-	DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	msg.setTime(df.format(new Date()));
-	msg.setRetain2("N");	
-	msg.setRetain4(content);
-	boolean addMms = mmsServiceImpl.addMms(msg);
-	if(addMms) 
-		log.info("【短信回调数据记录成功】");	
-	else
-		log.info("【短信回调数据记录失败】");	
-	HashMap<String, Object> paramMap = new HashMap<>();
-	paramMap.put(Common.Notfiy.ORDER_AMOUNT, number);
-	paramMap.put(Common.Notfiy.ORDER_PHONE, deviceid);
-	paramMap.put(Common.Notfiy.ORDER_ENTER_IP, HttpUtil.getClientIP(request));
-	Result enterOrder = alipayServiceClienImpl.enterOrder(paramMap);
-	if(enterOrder.isSuccess()) {
-		msg.setRetain2("Y");
-		msg.setRetain1(enterOrder.getResult().toString());
-		msg.setResult(enterOrder.getMessage());
-		flag = mmsServiceImpl.updataMms(msg);
+		if ("alipay".equals(type)) {
+			log.info("接收到支付宝监听消息：" + money);
+			money = money.replace("元", "");
+			money = money.replace("块", "");
+			money = money.replace("圆", "");
+			boolean flag = false;
+			Mms msg = new Mms();
+			String number = AmountUtil.getNumber(money);
+			msg.setContent("支付宝到账：" + number + " ，元。");
+			msg.setDeviceid(deviceid);
+			msg.setEncrypt("0");
+			msg.setType(type);
+			msg.setMoney("000000");
+			msg.setTitle("回调通知");
+			DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			msg.setTime(df.format(new Date()));
+			msg.setRetain2("N");
+			msg.setRetain4(content);
+			boolean addMms = mmsServiceImpl.addMms(msg);
+			if (addMms) {
+				log.info("【短信回调数据记录成功】");
+			} else {
+				log.info("【短信回调数据记录失败】");
+			}
+			HashMap<String, Object> paramMap = new HashMap<>();
+			paramMap.put(Common.Notfiy.ORDER_AMOUNT, number);
+			paramMap.put(Common.Notfiy.ORDER_PHONE, deviceid);
+			paramMap.put(Common.Notfiy.ORDER_ENTER_IP, HttpUtil.getClientIP(request));
+			Result enterOrder = alipayServiceClienImpl.enterOrder(paramMap);
+			if (enterOrder.isSuccess()) {
+				msg.setRetain2("Y");
+				msg.setRetain1(enterOrder.getResult().toString());
+				msg.setResult(enterOrder.getMessage());
+				flag = mmsServiceImpl.updataMms(msg);
 	}else {
 		msg.setResult(enterOrder.getMessage());
 		flag = mmsServiceImpl.updataMms(msg);
@@ -134,27 +124,28 @@ public class AndroidUtil {
 		 * <p>如果是宝转卡手机短信通知则需要对短信内容进行解析</p>
 		 */
 		if(StrUtil.isNotBlank(content)) {
-		if(type.equals("alipay")) {
-			if(StrUtil.isBlank(money)) {
-				money = AmountUtil.extractMoney(content);
-		}
-		Mms msg = new Mms();
-		msg.setContent(content);
-		msg.setDeviceid(deviceid);
-		msg.setEncrypt(encrypt);
-		msg.setType(type);
-		msg.setMoney(money);
-		msg.setTitle(title);
-		msg.setTime(time);
-		msg.setRetain2("N");
-		boolean flag  = mmsServiceImpl.addMms(msg);
-		if(flag) 
-			log.info("【短信回调数据记录成功】");	
-		else
-			log.info("【短信回调数据记录失败】");	
-		HashMap<String, Object> paramMap = new HashMap<>();
-		paramMap.put("amount", money);
-		paramMap.put("bankPhone", deviceid);
+			if ("alipay".equals(type)) {
+				if (StrUtil.isBlank(money)) {
+					money = AmountUtil.extractMoney(content);
+				}
+				Mms msg = new Mms();
+				msg.setContent(content);
+				msg.setDeviceid(deviceid);
+				msg.setEncrypt(encrypt);
+				msg.setType(type);
+				msg.setMoney(money);
+				msg.setTitle(title);
+				msg.setTime(time);
+				msg.setRetain2("N");
+				boolean flag = mmsServiceImpl.addMms(msg);
+				if (flag) {
+					log.info("【短信回调数据记录成功】");
+				} else {
+					log.info("【短信回调数据记录失败】");
+				}
+				HashMap<String, Object> paramMap = new HashMap<>();
+				paramMap.put("amount", money);
+				paramMap.put("bankPhone", deviceid);
 			/*
 			log.info("【正在向后台发起请求，请求参数为："+paramMap.toString()+"，请求URL为："+config.getGatewayUrl()+"】");
 			log.info("【主服务器响应结果为："+bean.toString()+"】");

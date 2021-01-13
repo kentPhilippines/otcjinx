@@ -31,25 +31,27 @@ public class CutUtil {
 	private static final String FORMAT_NAME = "jpeg";
 
 	public void cut() {
-		log.info("开始裁剪图片");
-		Result config = configServiceClientFeignImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.LOCAL_STORAGE_PATH);
-		String localStoragePath = config.getResult().toString();
-		List<FileList> qrList = alipayServiceClienImpl.findFileNotCut();//查询未剪裁的二维码图片
-		List<String> codeList = new ArrayList<String>();
-		for(FileList code : qrList)
-			codeList.add(code.getFileId());
-		if(qrList.size()==0 ) 
-			return ;  
-		for( int i = 0 ; i<30&& i< codeList.size() ; i++  ) {
-				String imgName = codeList.get(i);
-				Path file = Paths.get(localStoragePath).resolve(imgName);
-				File file2 = file.toFile();
-				log.info("上传文件长度："+file2.length()); 
-				if(!file2.exists() || 0 == file2.length() ) {
-					alipayServiceClienImpl.updateFileNotDeal(imgName);//删除不合格二维码
-					log.info("图片裁剪标记成功，标记图片的大小为0");
-					 continue;
-				}
+        log.info("开始裁剪图片");
+        Result config = configServiceClientFeignImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.LOCAL_STORAGE_PATH);
+        String localStoragePath = config.getResult().toString();
+        List<FileList> qrList = alipayServiceClienImpl.findFileNotCut();//查询未剪裁的二维码图片
+        List<String> codeList = new ArrayList<String>();
+        for (FileList code : qrList) {
+            codeList.add(code.getFileId());
+        }
+        if (qrList.size() == 0) {
+            return;
+        }
+        for (int i = 0; i < 30 && i < codeList.size(); i++) {
+            String imgName = codeList.get(i);
+            Path file = Paths.get(localStoragePath).resolve(imgName);
+            File file2 = file.toFile();
+            log.info("上传文件长度：" + file2.length());
+            if (!file2.exists() || 0 == file2.length()) {
+                alipayServiceClienImpl.updateFileNotDeal(imgName);//删除不合格二维码
+                log.info("图片裁剪标记成功，标记图片的大小为0");
+                continue;
+            }
 				File f = new File(configServiceClientFeignImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.LOCAL_STORAGE_PATH_BAK).getResult().toString()+imgName);
 				if(!f.exists()){
 					f.getParentFile().mkdir(); 

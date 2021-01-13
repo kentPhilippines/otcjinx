@@ -30,7 +30,7 @@ public class DealPay extends PayOrderService {
     public Result deal(DealOrderApp dealOrderApp, String channel) throws Exception {
         log.info("【进入家宝支付，当前请求产品：" + dealOrderApp.getRetain1() + "，当前请求渠道：" + channel + "】");
         String orderId = create(dealOrderApp, channel);
-        UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(dealOrderApp.getOrderAccount());
+        UserInfo userInfo = userInfoServiceImpl.findDealUrl(dealOrderApp.getOrderAccount());
         if (StrUtil.isBlank(userInfo.getDealUrl())) {
             orderEr(dealOrderApp, "当前商户交易url未设置");
             return Result.buildFailMessage("请联系运营为您的商户好设置交易url");
@@ -104,7 +104,7 @@ public class DealPay extends PayOrderService {
         log.info("【环亚响应参数：" + post + "】");
         JSONObject jsonObject = JSONUtil.parseObj(post);
         String code = jsonObject.getStr("retCode");
-        if (code.equals("SUCCESS")) {
+        if ("SUCCESS".equals(code)) {
             String payParams = jsonObject.getStr("payParams");
             JSONObject pay = JSONUtil.parseObj(payParams);
             String payUrl = pay.getStr("payUrl");

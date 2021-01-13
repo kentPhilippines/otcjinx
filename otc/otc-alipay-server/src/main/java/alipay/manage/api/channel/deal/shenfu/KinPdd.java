@@ -41,8 +41,9 @@ public class KinPdd extends PayOrderService {
             PddBean createOrder = createOrder(config.getResult() + PayApiConstant.Notfiy.NOTFIY_API_WAI + "/kinPdd-notfiy", dealOrderApp.getOrderAmount(), create);
             if (ObjectUtil.isNull(createOrder)) {
                 boolean orderEr = orderEr(dealOrderApp);
-                if (orderEr)
+                if (orderEr) {
                     return Result.buildFailMessage("支付失败");
+                }
             } else {
                 return Result.buildSuccessResultCode("支付处理中", createOrder.getRedirect_url(), 1);
 			}
@@ -85,10 +86,10 @@ public class KinPdd extends PayOrderService {
 	log.info(post);
 	PddBean bean = JSONUtil.toBean(post, PddBean.class);
 	if(ObjectUtil.isNotNull(bean)) {
-		if(bean.getRet_code().equals("0000")) {
-			return bean;
-		}
-	}
+        if ("0000".equals(bean.getRet_code())) {
+            return bean;
+        }
+    }
 	return null;
 	}
 

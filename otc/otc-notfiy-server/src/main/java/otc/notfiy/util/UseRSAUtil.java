@@ -1,21 +1,15 @@
 package otc.notfiy.util;
 
+import javax.crypto.Cipher;
 import java.io.ByteArrayOutputStream;
 import java.net.URLEncoder;
-import java.security.Key;
-import java.security.KeyFactory;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
+import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.crypto.Cipher;
 
 public class UseRSAUtil {
 	 /** *//** 
@@ -281,17 +275,18 @@ public class UseRSAUtil {
     }
     public static String createData(Map<String, String> map) {
 		try {
-			if (map == null || map.isEmpty()) 
-				return null;
-			//对参数名按照ASCII升序排序
-			Object[] key = map.keySet().toArray();
-			Arrays.sort(key);
-			//生成加密原串  
-			StringBuffer res = new StringBuffer(128);
-			for (int i = 0; i < key.length; i++) {
+            if (map == null || map.isEmpty()) {
+                return null;
+            }
+            //对参数名按照ASCII升序排序
+            Object[] key = map.keySet().toArray();
+            Arrays.sort(key);
+            //生成加密原串
+            StringBuffer res = new StringBuffer(128);
+            for (int i = 0; i < key.length; i++) {
 //				res.append(key[i] + "=" + map.get(key[i]) + "&");
-				res.append(key[i] + "=" + URLEncoder.encode(map.get(key[i]).toString(), "UTF-8") + "&");
-			}
+                res.append(key[i] + "=" + URLEncoder.encode(map.get(key[i]).toString(), "UTF-8") + "&");
+            }
 
 			String rStr = res.substring(0, res.length() - 1);
 			//System.out.println("请求接口加密原串 = " + rStr);

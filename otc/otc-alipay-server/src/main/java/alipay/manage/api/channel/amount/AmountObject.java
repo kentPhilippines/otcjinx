@@ -44,10 +44,11 @@ public abstract class AmountObject implements AmountChannel {
 		 * @return
 		 */
 		Result updateRechargeEr(Recharge rechaege){
-			log.info("【充值失败，可能原因，暂无充值渠道】");
-			int a = rechargeDao.updateOrderStatus(rechaege.getOrderId(),Common.Order.Recharge.ORDER_STATUS_ER);
-			if(a > 0  && a < 2)
-				return Result.buildFailMessage("充值失败，可能原因，暂无充值渠道");
-			return Result.buildFail();
-		}
+            log.info("【充值失败，可能原因，暂无充值渠道】");
+            int a = rechargeDao.updateOrderStatus(rechaege.getOrderId(), Common.Order.Recharge.ORDER_STATUS_ER);
+            if (a > 0 && a < 2) {
+                return Result.buildFailMessage("充值失败，可能原因，暂无充值渠道");
+            }
+            return Result.buildFail();
+        }
 }
