@@ -119,6 +119,7 @@ public class Shenfu03Dpay extends PayOrderService {
             log.info("【回调地址ip为：" + config.toString() + "】");
             String createDpay = createDpay(config.getResult().toString() + PayApiConstant.Notfiy.NOTFIY_API_WAI + "/ShenFuDpay-noyfit", wit);
             if (StrUtil.isNotBlank(createDpay) && createDpay.equals(WIT_RESULT)) {
+                witComment(wit.getOrderId());
                 return Result.buildSuccessMessage("代付成功等待处理");
             } else {
                 return Result.buildFailMessage(createDpay);

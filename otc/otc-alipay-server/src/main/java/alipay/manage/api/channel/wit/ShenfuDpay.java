@@ -104,6 +104,7 @@ public class ShenfuDpay extends PayOrderService {
         JSONObject parseObj = JSONUtil.parseObj(post);
         String object = parseObj.getStr("ret_code");
         if ("0000".equals(object)) {
+            witComment(wit.getOrderId());
             return WIT_RESULT;
         } else {
             withdrawEr(wit, parseObj.getStr("ret_msg"), wit.getRetain2());

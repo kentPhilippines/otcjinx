@@ -290,4 +290,9 @@ public class UserInfoServiceImpl implements UserInfoService {
     public UserInfo findDealUrl(String orderAccount) {
         return userInfoMapper.findDealUrl(orderAccount);
     }
+
+    @Override
+    public UserInfo findUserAgent(String appId) {
+        return userInfoMapper.findUserAgent(appId);
+    }
 }

@@ -1,7 +1,6 @@
 
 package test.number;
 
-import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.RandomUtil;
@@ -22,8 +21,8 @@ import java.util.Map;
 public class witTest {
 	public static void main(String[] args) {
 
-        //	new witTest().deal();
-        String userid = "facai123";
+        new witTest().deal();
+       /* String userid = "facai123";
         String key = "52927A864A704AE384E4E167A9772CEB";//交易密钥
         String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCZVMSZHduYMj+KCPhsGR+r/KsRdNlsOKav/aJ+Bo3aGDW7oTnRLs9NABQHrIiXf666AhzFLK6sAeplFCa16caUriZGE+hnJPVUYMuO73/Zq0QTTyCRVUmxF+i98Rqi2cJFBeTfK46RDAZojmtzD8d+j1/FzQ38cZT7FB3/XjsrewIDAQAB";
         //	new witTest().wit(userid, key, publicKey);
@@ -51,7 +50,7 @@ public class witTest {
             ThreadUtil.execute(() -> {
                 new witTest().wit(userid3, key3, publickey3);
             });
-        }
+        }*/
 
 
 		//相应结果集：{"success":true,"message":"支付处理中","result":{"sussess":true,"cod":0,"openType":1,"returnUrl":"http://api.tjzfcy.com/gateway/bankgateway/payorder/order/60326816340490956.html"},"code":null}

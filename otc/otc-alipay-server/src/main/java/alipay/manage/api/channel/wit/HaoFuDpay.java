@@ -147,6 +147,7 @@ public class HaoFuDpay extends PayOrderService {
 		if(ObjectUtil.isNotNull(object)) {
 			log.info("当前豪富的订单为：" + object + "");
 			if ("T".equals(object)) {
+				witComment(orderId);
 				return "SUCCESS";
 			} else {
 				Object object2 = parseObj.get("fail_msg");

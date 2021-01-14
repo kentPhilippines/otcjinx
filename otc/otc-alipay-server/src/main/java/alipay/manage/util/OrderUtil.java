@@ -613,7 +613,7 @@ public class OrderUtil {
      */
     boolean agentDealPay(DealOrderApp orderApp, boolean flag, String ip) {
         String appId = orderApp.getOrderAccount();
-        UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(appId);
+        UserInfo userInfo = userInfoServiceImpl.findUserAgent(appId);
         if (StrUtil.isBlank(userInfo.getAgent())) {
             log.info("【当前账户无代理商，不进行结算】");
             boolean flag1 = dealOrderAppDao.updateOrderIsAgent(orderApp.getOrderId(), "YES");
@@ -859,7 +859,7 @@ public class OrderUtil {
         UserRate userRate = userRateDao.findProductFeeByAll(wit.getUserId(), product, channelId);//查询费率情况
         final String finalChannelId = channelId;
         final String finalProduct = product;
-        UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(wit.getUserId());
+        UserInfo userInfo = userInfoServiceImpl.findUserAgent(wit.getUserId());
         if (StrUtil.isNotBlank(userInfo.getAgent())) {
             ThreadUtil.execute(() -> {
                 witAgent(wit, userInfo.getAgent(), finalProduct, finalChannelId, userRate, ip, flag1);

@@ -59,11 +59,11 @@ public interface UserInfoMapper {
      * @param userId
      * @return
      */
-    @Select("select id, userId, userName, password, payPasword, salt, userType, switchs, userNode , " +
-            "    agent, isAgent, credit, receiveOrderState, remitOrderState  " +
-            "    createTime, submitTime, status,   minAmount, maxAmount   , " +
-            "    qrRechargeList,dealUrl,queueList, startTime,endTime,timesTotal," +
-            "totalAmount,autoWit from alipay_user_info where userId = #{userId}")
+    @Select("select id, userId, userName, password, payPasword, salt, userType, switchs, userNode," +
+            "    agent, isAgent, credit, receiveOrderState, remitOrderState," +
+            "    createTime, submitTime, status, privateKey, publicKey, minAmount, maxAmount," +
+            "    qrRechargeList,dealUrl,queueList,witip,startTime,endTime,timesTotal,totalAmount," +
+            "autoWit from alipay_user_info where userId = #{userId}")
     UserInfo findUserByUserId(@Param("userId") String userId);
 
     @Select("select * from alipay_user_rate where userId = #{userId} and payTypr = #{passCode} and switchs = 1")
@@ -127,4 +127,9 @@ public interface UserInfoMapper {
             "   dealUrl " +
             " from alipay_user_info where userId = #{userId}")
     UserInfo findDealUrl(String orderAccount);
+
+    @Select("select id, userId, userName,   userType, switchs, userNode," +
+            "    agent, isAgent " +
+            "  from alipay_user_info where userId = #{userId}")
+    UserInfo findUserAgent(String appId);
 }

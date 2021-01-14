@@ -118,8 +118,9 @@ public class AmountRunUtil {
      * @param wit      代付订单
      * @return
      */
-    public Result addWitFee(UserFund userFund, BigDecimal subtract, Withdraw wit,String generationIp,boolean flag) {
-        return add(AGNEET_WIT_FRREE,userFund,wit.getOrderId(),subtract,generationIp,"代付代理商分润", flag ? RUNTYPE_ARTIFICIAL : RUNTYPE_NATURAL);
+    public Result addWitFee(UserFund userFund1, BigDecimal subtract, Withdraw wit, String generationIp, boolean flag) {
+        UserFund userFund = userInfoServiceImpl.findBalace(userFund1.getUserId()); //当前账户资金
+        return add(AGNEET_WIT_FRREE, userFund, wit.getOrderId(), subtract, generationIp, "代付代理商分润", flag ? RUNTYPE_ARTIFICIAL : RUNTYPE_NATURAL);
     }
 
     /**

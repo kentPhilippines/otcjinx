@@ -66,4 +66,10 @@ public interface WithdrawMapper {
             "where orderId = #{orderId}")
     int updataOrderStatus1(@Param("orderId") String orderId, @Param("approval") String approval,
                            @Param("comment") String comment, @Param("orderStatus") String orderStatusEr);
+
+
+    @Update("update alipay_withdraw set " +
+            "comment = #{comment}" +
+            "where orderId = #{orderId}")
+    void updateComment(@Param("orderId") String orderId, @Param("comment") String comment);
 }

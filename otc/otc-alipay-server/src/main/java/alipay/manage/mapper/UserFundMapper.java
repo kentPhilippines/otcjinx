@@ -3,7 +3,6 @@ package alipay.manage.mapper;
 import alipay.manage.bean.Amount;
 import alipay.manage.bean.UserFund;
 import alipay.manage.bean.UserFundExample;
-import alipay.manage.bean.UserInfo;
 import org.apache.ibatis.annotations.*;
 
 import java.math.BigDecimal;
@@ -31,9 +30,9 @@ public interface UserFundMapper {
     @Select("select * from alipay_user_fund where userType = 2 and accountBalance > #{amount}  ")
     List<UserFund> findUserByAmount(@Param("amount") BigDecimal amount);
 
-    @Select("select  id, userId, userName, cashBalance, rechargeNumber, freezeBalance, accountBalance, \n" +
-            "    sumDealAmount, sumRechargeAmount, sumProfit, sumAgentProfit, sumOrderCount, todayDealAmount, \n" +
-            "    todayProfit, todayOrderCount, todayAgentProfit, userType, agent, isAgent, createTime, \n" +
+    @Select("select  id, userId, userName, cashBalance, rechargeNumber, freezeBalance, accountBalance, " +
+            "    sumDealAmount, sumRechargeAmount, sumProfit, sumAgentProfit, sumOrderCount, todayDealAmount, " +
+            "    todayProfit, todayOrderCount, todayAgentProfit, userType, agent, isAgent, createTime, " +
             "    version  from alipay_user_fund where userId=#{userId}")
     UserFund findUserFundByUserId(@Param("userId") String userId);
 
@@ -51,11 +50,11 @@ public interface UserFundMapper {
     List<UserFund> findUserByAmountAgent(@Param("amount") BigDecimal amount);
 
 
-    @Select("select  userId, userName, cashBalance, rechargeNumber, freezeBalance, accountBalance from alipay_user_fund where userId=#{userId}")
+    @Select("select  userId, userName, cashBalance, rechargeNumber, " +
+            "freezeBalance, accountBalance ,quota  from alipay_user_fund where userId=#{userId}")
     UserFund fundUserFundAccounrBalace(@Param("userId") String userId);
 
     @Select("select  userId, userName, accountBalance from alipay_user_fund where userId=#{userId}")
     UserFund findBalace(String userId);
 
-    UserInfo findDealUrl(String orderAccount);
 }

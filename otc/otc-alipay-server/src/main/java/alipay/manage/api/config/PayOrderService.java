@@ -4,6 +4,7 @@ import alipay.manage.api.channel.util.ChannelInfo;
 import alipay.manage.api.feign.ConfigServiceClient;
 import alipay.manage.bean.*;
 import alipay.manage.mapper.ChannelFeeMapper;
+import alipay.manage.mapper.WithdrawMapper;
 import alipay.manage.service.*;
 import alipay.manage.util.OrderUtil;
 import alipay.manage.util.amount.AmountPublic;
@@ -211,25 +212,32 @@ public abstract class PayOrderService implements PayService {
 	}
 	/**
 	 * <p>代付失败</p>
-     * @param wit
-     * @param msg
-     * @param ip
-     * @return
-     */
-    public Result withdrawEr(Withdraw wit, String msg, String ip) {
-        Result withrawOrderErBySystem = orderUtilImpl.withrawOrderErBySystem(wit.getOrderId(), ip, msg);
-        return withrawOrderErBySystem;
-    }
+	 * @param wit
+	 * @param msg
+	 * @param ip
+	 * @return
+	 */
+	public Result withdrawEr(Withdraw wit, String msg, String ip) {
+		Result withrawOrderErBySystem = orderUtilImpl.withrawOrderErBySystem(wit.getOrderId(), ip, msg);
+		return withrawOrderErBySystem;
+	}
+
+	@Resource
+	private WithdrawMapper withdrawDao;
+
+	public void witComment(String orderId) {
+		withdrawDao.updateComment(orderId, "已提交三方处理");
+	}
 
 
-    /**
-     * 请求渠道时,获取渠道详情
-     *
-     * @param channelId
-     * @param payType
-     * @return
-     */
-    protected ChannelInfo getChannelInfo(String channelId, String payType) {
+	/**
+	 * 请求渠道时,获取渠道详情
+	 *
+	 * @param channelId
+	 * @param payType
+	 * @return
+	 */
+	protected ChannelInfo getChannelInfo(String channelId, String payType) {
         ChannelInfo channelInfo = new ChannelInfo();
         UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(channelId);
         channelInfo.setChannelAppId(userInfo.getUserNode());

@@ -179,14 +179,22 @@ public interface UserInfoService {
 	 *
 	 * @param userId
 	 * @return
-	 */
-	UserFund findBalace(String userId);
+     */
+    UserFund findBalace(String userId);
 
-	/**
-	 * 查询商户交易url
-	 *
-	 * @param orderAccount
-	 * @return
-	 */
-	UserInfo findDealUrl(String orderAccount);
+    /**
+     * 查询商户交易url
+     *
+     * @param orderAccount
+     * @return
+     */
+    UserInfo findDealUrl(String orderAccount);
+
+    /**
+     * 代理商专用查询
+     *
+     * @param appId
+     * @return
+     */
+    UserInfo findUserAgent(String appId);
 }
