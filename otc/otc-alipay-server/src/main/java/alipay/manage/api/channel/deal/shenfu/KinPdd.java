@@ -2,8 +2,9 @@ package alipay.manage.api.channel.deal.shenfu;
 
 import alipay.manage.api.channel.util.kinpay.PayUtil;
 import alipay.manage.api.config.PayOrderService;
-import alipay.manage.api.feign.ConfigServiceClient;
 import alipay.manage.bean.DealOrderApp;
+import alipay.manage.bean.UserInfo;
+import alipay.manage.service.UserInfoService;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
@@ -14,7 +15,6 @@ import cn.hutool.log.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import otc.api.alipay.Common;
-import otc.bean.config.ConfigFile;
 import otc.common.PayApiConstant;
 import otc.result.Result;
 
@@ -28,7 +28,7 @@ import java.util.Map;
 public class KinPdd extends PayOrderService {
     private static final Log log = LogFactory.get();
     @Autowired
-    ConfigServiceClient configServiceClientImpl;
+    private UserInfoService userInfoServiceImpl;
 
     @Override
     public Result deal(DealOrderApp dealOrderApp, String payType) {
@@ -37,8 +37,13 @@ public class KinPdd extends PayOrderService {
         String create = create(dealOrderApp, channelId);
         if (StrUtil.isNotBlank(create)) {
             log.info("【本地订单创建成功，开始请求远程三方支付】");
-            Result config = configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.SERVER_IP);
-            PddBean createOrder = createOrder(config.getResult() + PayApiConstant.Notfiy.NOTFIY_API_WAI + "/kinPdd-notfiy", dealOrderApp.getOrderAmount(), create);
+            UserInfo dealUrl = userInfoServiceImpl.findDealUrl(dealOrderApp.getOrderAccount());
+            if (StrUtil.isBlank(dealUrl.getDealUrl())) {
+                orderEr(dealOrderApp, "当前商户交易url未设置");
+                return Result.buildFailMessage("请联系运营为您的商户好设置交易url");
+            }
+            PddBean createOrder = createOrder(dealUrl.getDealUrl()
+                    + PayApiConstant.Notfiy.NOTFIY_API_WAI + "/kinPdd-notfiy", dealOrderApp.getOrderAmount(), create);
             if (ObjectUtil.isNull(createOrder)) {
                 boolean orderEr = orderEr(dealOrderApp);
                 if (orderEr) {
@@ -46,8 +51,8 @@ public class KinPdd extends PayOrderService {
                 }
             } else {
                 return Result.buildSuccessResultCode("支付处理中", createOrder.getRedirect_url(), 1);
-			}
-		}
+            }
+        }
 		return  Result.buildFailMessage("支付错误");
 	}
 	static SimpleDateFormat d = new SimpleDateFormat("yyyyMMddHHmmss");

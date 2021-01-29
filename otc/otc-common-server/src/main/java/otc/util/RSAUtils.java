@@ -9,15 +9,14 @@ import otc.exception.BusinessException;
 import javax.crypto.Cipher;
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
-import java.security.KeyFactory;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.Signature;
+import java.security.*;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 
@@ -27,9 +26,34 @@ public class RSAUtils {
     public static final Integer KEY_SIZE = 1024;
     public static final String RSA_ALGORITHM_SIGN = "SHA256WithRSA";
     private static final Log log = LogFactory.get();
+
     /**
      * 随机生成密钥对
      */
+    public static List<String> genKeyPair() {
+        try {
+            // KeyPairGenerator类用于生成公钥和私钥对，基于RSA算法生成对象
+            KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("RSA");
+            // 初始化密钥对生成器
+            keyPairGen.initialize(KEY_SIZE);
+            // 生成一个密钥对，保存在keyPair中
+            KeyPair keyPair = keyPairGen.generateKeyPair();
+            // 得到私钥
+            RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
+            // 得到公钥
+            RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
+            String publicKeyString = java.util.Base64.getEncoder().encodeToString(publicKey.getEncoded());
+            // 得到私钥字符串
+            String privateKeyString = java.util.Base64.getEncoder().encodeToString(privateKey.getEncoded());
+            // 将公钥和私钥保存到List
+            List<String> rsaList = new ArrayList<>();
+            rsaList.add(publicKeyString);
+            rsaList.add(privateKeyString);
+            return rsaList;
+        } catch (NoSuchAlgorithmException var15) {
+            return null;
+        }
+    }
 
     /**
      * 公钥对象

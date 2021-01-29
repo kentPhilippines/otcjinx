@@ -1,10 +1,10 @@
 package otc.util.number;
 
+import org.apache.commons.lang.Validate;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
-
-import org.apache.commons.lang.Validate;
 
 public class GenerateOrderNo {
 	// 使用单例模式，不允许直接创建实例
@@ -23,7 +23,7 @@ public class GenerateOrderNo {
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
     // 获取当前时间年月日时分秒毫秒字符串
     private static String getNowDateStr() {
-        return System.currentTimeMillis()+"";
+        return sdf.format(new Date());
     }
     /*
      * 生成一个订单号
@@ -39,6 +39,8 @@ public class GenerateOrderNo {
         return param + dataStr   + extra + random;
     }
     private static final Random RANDOM = new Random();
+
+
     public static int nextInt(final int startInclusive, final int endExclusive) {
         Validate.isTrue(endExclusive >= startInclusive,
                 "Start value must be smaller or equal to end value.");

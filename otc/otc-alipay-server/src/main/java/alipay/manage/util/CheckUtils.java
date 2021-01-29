@@ -9,7 +9,6 @@ import otc.common.SystemConstants;
 import otc.result.Result;
 import otc.util.MapUtil;
 import otc.util.RSAUtils;
-import otc.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
@@ -27,8 +26,9 @@ public class CheckUtils {
 
 
     public static Result requestVerify(HttpServletRequest request, Map<String, Object> paramMap, String key) {
-        if (!checkParam(paramMap)) {
-            return Result.buildFailMessage("必传参数为空");
+        Result result = checkParam(paramMap);
+        if (!result.isSuccess()) {
+            return result;
         }
         log.info("【访问URL：" + request.getRequestURL() + "】");
         log.info("【请求参数字符编码: " + request.getCharacterEncoding() + "】");
@@ -44,7 +44,7 @@ public class CheckUtils {
         return Result.buildSuccess();
     }
 
-    private static boolean witcheckParam(Map<String, Object> map) {
+    private static Result witcheckParam(Map<String, Object> map) {
         String appid = (String) map.get("appid");
         String orderId = (String) map.get("apporderid");
         String ordertime = (String) map.get("ordertime");
@@ -54,19 +54,35 @@ public class CheckUtils {
         String bankcode = (String) map.get("bankcode");
         String notifyurl = (String) map.get("notifyurl");
         String rsasign = (String) map.get("sign");
-        if (StrUtil.isEmpty(rsasign)
-                || StrUtil.isEmpty(notifyurl)
-                || StrUtil.isEmpty(bankcode)
-                || StrUtil.isEmpty(acctname)
-                || StrUtil.isEmpty(amount)
-                || StrUtil.isEmpty(acctno)
-                || StrUtil.isEmpty(ordertime)
-                || StrUtil.isEmpty(orderId)
-                || StrUtil.isEmpty(appid)
-        ) {
-            return false;
+
+        if (StrUtil.isEmpty(rsasign)) {
+            return Result.buildFailMessage("sign 字段为null,plese check");
         }
-        return true;
+        if (StrUtil.isEmpty(notifyurl)) {
+            return Result.buildFailMessage("notifyurl 字段为null,plese check");
+        }
+        if (StrUtil.isEmpty(acctname)) {
+            return Result.buildFailMessage("acctname 字段为null,plese check");
+        }
+        if (StrUtil.isEmpty(ordertime)) {
+            return Result.buildFailMessage("ordertime 字段为null,plese check");
+        }
+        if (StrUtil.isEmpty(acctno)) {
+            return Result.buildFailMessage("acctno 字段为null,plese check");
+        }
+        if (StrUtil.isEmpty(amount)) {
+            return Result.buildFailMessage("amount 字段为null,plese check");
+        }
+        if (StrUtil.isEmpty(bankcode)) {
+            return Result.buildFailMessage("bankcode 字段为null,plese check");
+        }
+        if (StrUtil.isEmpty(orderId)) {
+            return Result.buildFailMessage("orderId 字段为null,plese check");
+        }
+        if (StrUtil.isEmpty(appid)) {
+            return Result.buildFailMessage("appid 字段为null,plese check");
+        }
+        return Result.buildSuccess();
     }
 
     /**
@@ -95,7 +111,7 @@ public class CheckUtils {
      * @param map
      * @return
      */
-    public static boolean checkParam(Map<String, Object> map) {
+    public static Result checkParam(Map<String, Object> map) {
         String appId = (String) map.get("appId");
         String orderId = (String) map.get("orderId");
         String notifyUrl = (String) map.get("notifyUrl");
@@ -103,25 +119,35 @@ public class CheckUtils {
         String passCode = (String) map.get("passCode");
         String applyDate = (String) map.get("applyDate");
         String rsaSign = (String) map.get("sign");
-        if (StringUtils.isEmpty(appId)) {
-            return false;
+        if (StrUtil.isEmpty(appId)) {
+            return Result.buildFailMessage("appId 字段为null,plese check");
         }
-        if (StringUtils.isEmpty(orderId)
-                || StringUtils.isEmpty(notifyUrl)
-                || StringUtils.isEmpty(amount)
-                || StringUtils.isEmpty(passCode)
-                || StringUtils.isEmpty(applyDate)
-                || StringUtils.isEmpty(rsaSign)
-        ) {
-            return false;
+        if (StrUtil.isEmpty(orderId)) {
+            return Result.buildFailMessage("orderId 字段为null,plese check");
         }
-        return true;
+        if (StrUtil.isEmpty(notifyUrl)) {
+            return Result.buildFailMessage("notifyUrl 字段为null,plese check");
+        }
+        if (StrUtil.isEmpty(amount)) {
+            return Result.buildFailMessage("amount 字段为null,plese check");
+        }
+        if (StrUtil.isEmpty(passCode)) {
+            return Result.buildFailMessage("passCode 字段为null,plese check");
+        }
+        if (StrUtil.isEmpty(applyDate)) {
+            return Result.buildFailMessage("applyDate 字段为null,plese check");
+        }
+        if (StrUtil.isEmpty(rsaSign)) {
+            return Result.buildFailMessage("rsaSign 字段为null,plese check");
+        }
+        return Result.buildSuccess();
     }
 
 
     public static Result requestWithdrawalVerify(HttpServletRequest request, Map<String, Object> paramMap, String key) {
-        if (!witcheckParam(paramMap)) {
-            return Result.buildFailMessage("必传参数为空");
+        Result result = witcheckParam(paramMap);
+        if (!result.isSuccess()) {
+            return result;
         }
         log.info("【访问URL：" + request.getRequestURL() + "】");
         log.info("【请求参数字符编码: " + request.getCharacterEncoding() + "】");

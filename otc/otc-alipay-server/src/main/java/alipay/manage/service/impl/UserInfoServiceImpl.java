@@ -117,6 +117,11 @@ public class UserInfoServiceImpl implements UserInfoService {
         criteria.andUserIdEqualTo(userFund.getUserId());
         criteria.andVersionEqualTo(userFund.getVersion());
         userFund.setVersion(null);
+        userFund.setId(null);
+        userFund.setUserName(null);
+        userFund.setUserType(null);
+        userFund.setIsAgent(null);
+        userFund.setCreateTime(null);
         int updateByExampleSelective = userFundDao.updateByExampleSelective(userFund, example);
         return updateByExampleSelective > 0 && updateByExampleSelective < 2;
     }
@@ -294,5 +299,10 @@ public class UserInfoServiceImpl implements UserInfoService {
     @Override
     public UserInfo findUserAgent(String appId) {
         return userInfoMapper.findUserAgent(appId);
+    }
+
+    @Override
+    public UserInfo findPassword(String appId) {
+        return userInfoMapper.findPassword(appId);
     }
 }

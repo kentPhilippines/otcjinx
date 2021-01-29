@@ -33,7 +33,7 @@ public interface UserFundMapper {
     @Select("select  id, userId, userName, cashBalance, rechargeNumber, freezeBalance, accountBalance, " +
             "    sumDealAmount, sumRechargeAmount, sumProfit, sumAgentProfit, sumOrderCount, todayDealAmount, " +
             "    todayProfit, todayOrderCount, todayAgentProfit, userType, agent, isAgent, createTime, " +
-            "    version  from alipay_user_fund where userId=#{userId}")
+            "    version ,quota  from alipay_user_fund where userId=#{userId}")
     UserFund findUserFundByUserId(@Param("userId") String userId);
 
     @Update("update alipay_user_fund set rechargeNumber = rechargeNumber + #{deduct}, freezeBalance = freezeBalance - #{deduct}, " +

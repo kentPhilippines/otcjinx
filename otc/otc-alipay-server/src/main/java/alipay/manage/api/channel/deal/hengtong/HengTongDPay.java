@@ -72,6 +72,24 @@ public class HengTongDPay extends PayOrderService {
          * 只有成功的订单会回调。
          * 收到回调后，请返回 "success" 字符串。
          * sign	M	签名，签名方式参考“签名说明”
+         *
+         *
+         *
+         * merchant	M	商户号
+         * requestReference	M	商户订单号
+         * merchantBank	M	取款银行编号。例如，ICBC，见下边《银行编号》
+         * merchantBankCardRealname	M	取款银行卡持卡人
+         * merchantBankCardAccount	M	取款银行卡账户
+         * merchantBankCardProvince	M	取款银行卡开户省
+         * merchantBankCardCity	M	取款银行卡开户市
+         * merchantBankCardBranch	M	取款银行卡开户分行
+         * amount	M	提款额度
+         * remark	O	备注
+         * callback	O	服务端回调地址。
+         * 订单成功或失败时，会回调。
+         * 收到回调后，请返回 "success" 字符串。
+         * 否则会再次回调（共6次）。不填写则不会回调。
+         * sign	M	签名，签名方式参考“签名说明”
          */
         String key = channelInfo.getChannelPassword();
         String merchant = channelInfo.getChannelAppId();
@@ -79,7 +97,7 @@ public class HengTongDPay extends PayOrderService {
         String callback = notify;
         String remark = "";
         String requestReference = wit.getOrderId();
-        String merchantBank = wit.getBankNo();
+        String merchantBank = wit.getBankcode();
         String merchantBankCardRealname = wit.getAccname();
         String merchantBankCardAccount = wit.getBankNo();
         String merchantBankCardProvince = "北京市";

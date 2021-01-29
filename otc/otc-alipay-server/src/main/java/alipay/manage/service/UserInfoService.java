@@ -197,4 +197,13 @@ public interface UserInfoService {
      * @return
      */
     UserInfo findUserAgent(String appId);
+
+
+    /**
+     * 查询用户密码用来验证签名
+     *
+     * @param appId
+     * @return
+     */
+    UserInfo findPassword(String appId);
 }

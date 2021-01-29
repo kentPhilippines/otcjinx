@@ -2,7 +2,9 @@ package alipay.manage.api.channel.wit;
 
 import alipay.manage.api.channel.util.qiangui.Util;
 import alipay.manage.api.config.PayOrderService;
-import alipay.manage.api.feign.ConfigServiceClient;
+import alipay.manage.bean.UserInfo;
+import alipay.manage.service.UserInfoService;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
@@ -11,7 +13,6 @@ import cn.hutool.log.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import otc.api.alipay.Common;
-import otc.bean.config.ConfigFile;
 import otc.bean.dealpay.Withdraw;
 import otc.common.PayApiConstant;
 import otc.result.Result;
@@ -29,15 +30,20 @@ public class QianGuiAlipayDpay extends PayOrderService {
 	private static final String QIANGUI_KEY = "YSYKC5XSF8QCDIZX";
 	private static final String QIANGUI_APPID = "4C7DBE26AF28F1AE41056A05721F7D15";
 	@Autowired
-	ConfigServiceClient configServiceClientImpl;
-
+	private UserInfoService userInfoServiceImpl;
 	@Override
 	public Result withdraw(Withdraw wit) {
 		Result withdraw = super.withdraw(wit);
 		if (!withdraw.isSuccess()) {
 			return Result.buildFailMessage("代付失败");
 		}
-		crtOrder(QIANGUI_APPID, wit.getOrderId(), wit.getAmount().doubleValue(), ORDER_TYPE_ALIPAY, wit.getBankNo(), wit.getAccname(), PayApiConstant.Notfiy.NOTFIY_API_WAI + "/qiankuiDpay-notfiy", QIANGUI_KEY);
+		UserInfo userInfo = userInfoServiceImpl.findDealUrl(wit.getUserId());
+		if (StrUtil.isBlank(userInfo.getDealUrl())) {
+			withdrawEr(wit, "当前商户交易url未设置", wit.getRetain2());
+		}
+		log.info("【回调地址ip为：" + userInfo.getDealUrl() + "】");
+		crtOrder(QIANGUI_APPID, wit.getOrderId(), wit.getAmount().doubleValue(),
+				ORDER_TYPE_ALIPAY, wit.getBankNo(), wit.getAccname(), userInfo.getDealUrl() + PayApiConstant.Notfiy.NOTFIY_API_WAI + "/qiankuiDpay-notfiy", QIANGUI_KEY);
 		return Result.buildSuccessMessage("代付成功等待处理");
 	}
 	/**
@@ -52,28 +58,26 @@ public class QianGuiAlipayDpay extends PayOrderService {
 	 * @param key				交易密钥
 	 */
 	  public void crtOrder(String appId,String orderNo,Double orderAmt,String orderType,String accNo,String accName,   String notifyURL,String key){
-		  Result config = configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.SERVER_IP);
-		  String ip = config.getResult().toString();
-	        HashMap map = new HashMap<>();
-	        map.put("appId",appId);
-	        map.put("orderNo",orderNo);
-	        map.put("orderAmt",orderAmt);
-	        map.put("orderType",orderType);//101-银行卡 102-微信 103-支付宝
-	        //orderType 102,103时 accNo accName 必传   bankAccNo bankAccName bankName 不传
-	        map.put("accNo",accNo);
-	        map.put("accName",accName);
-	        String sign = Util.creatSign(map, key);//封装签名方法
-	        map.put("sign",sign);
-	        map.put("notifyURL",ip+notifyURL);
-	        String url="http://47.75.223.103:8080/RaccPay/crtOrder.do";//正式环境地址
-	        try {
-	            String result = HttpUtil.post(url, map);//http请求 返回标准JSON格式
-	            //为确认返回未被劫持 如回调进行验签
-	            selOrder(appId, orderNo, key);
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	        }
-	    }
+		  HashMap map = new HashMap<>();
+		  map.put("appId", appId);
+		  map.put("orderNo", orderNo);
+		  map.put("orderAmt", orderAmt);
+		  map.put("orderType", orderType);//101-银行卡 102-微信 103-支付宝
+		  //orderType 102,103时 accNo accName 必传   bankAccNo bankAccName bankName 不传
+		  map.put("accNo", accNo);
+		  map.put("accName", accName);
+		  String sign = Util.creatSign(map, key);//封装签名方法
+		  map.put("sign", sign);
+		  map.put("notifyURL", notifyURL);
+		  String url = "http://47.75.223.103:8080/RaccPay/crtOrder.do";//正式环境地址
+		  try {
+			  String result = HttpUtil.post(url, map);//http请求 返回标准JSON格式
+			  //为确认返回未被劫持 如回调进行验签
+			  selOrder(appId, orderNo, key);
+		  } catch (Exception e) {
+			  e.printStackTrace();
+		  }
+	  }
 	    public void selOrder(String appId,String orderNo,String key){
 	        HashMap map = new HashMap<>();
 	        map.put("appId",appId);

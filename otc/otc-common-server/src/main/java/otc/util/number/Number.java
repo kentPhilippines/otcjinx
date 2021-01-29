@@ -1,14 +1,13 @@
 package otc.util.number;
 
 import cn.hutool.core.util.IdUtil;
-import cn.hutool.core.util.RandomUtil;
-import cn.hutool.core.util.StrUtil;
+import org.apache.commons.lang.Validate;
 import otc.api.alipay.Common;
 
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Random;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Number {
@@ -38,6 +37,8 @@ public class Number {
         return instance;
     }
 
+    private static final Random RANDOM = new Random();
+
     /**
      * <p>调用这个方法即可</p>
      *
@@ -45,14 +46,11 @@ public class Number {
      * @return
      * @throws UnknownHostException
      */
-    private static String GetRandom(final String haed) throws UnknownHostException {
+    private static String GetRandom(final String haed) {
         String Newnumber = null;
         String dateStr = getNowDateStr();
 
-        String ip = "";
-        for (String id : StrUtil.split(InetAddress.getLocalHost().getHostAddress().toString(), ".")) {
-            ip += id;
-        }
+
         //判断是时间是否相同
         if (dateStr.equals(now)) {
             lock.lock();//加锁
@@ -61,13 +59,13 @@ public class Number {
                     count = 1;
                 }
                 if (count < 10) {
-                    Newnumber = haed + ip + getNowDateStr() + "000" + count;
+                    Newnumber = haed + getNowDateStr() + "000" + count;
                 } else if (count < 100) {
-                    Newnumber = haed + ip + getNowDateStr() + "00" + count;
+                    Newnumber = haed + getNowDateStr() + "00" + count;
                 } else if (count < 1000) {
-                    Newnumber = haed + ip + getNowDateStr() + "0" + count;
+                    Newnumber = haed + getNowDateStr() + "0" + count;
                 } else {
-                    Newnumber = haed + ip + getNowDateStr() + count;
+                    Newnumber = haed + getNowDateStr() + count;
                 }
                 count++;
             } catch (Exception e) {
@@ -77,18 +75,19 @@ public class Number {
         } else {
             count = 1;
             now = getNowDateStr();
+            lock.lock();//加锁
             try {
                 if (count >= 10000) {
                     count = 1;
                 }
                 if (count < 10) {
-                    Newnumber = haed + ip + getNowDateStr() + "000" + count;
+                    Newnumber = haed + getNowDateStr() + "000" + count;
                 } else if (count < 100) {
-                    Newnumber = haed + ip + getNowDateStr() + "00" + count;
+                    Newnumber = haed + getNowDateStr() + "00" + count;
                 } else if (count < 1000) {
-                    Newnumber = haed + ip + getNowDateStr() + "0" + count;
+                    Newnumber = haed + getNowDateStr() + "0" + count;
                 } else {
-                    Newnumber = haed + ip + getNowDateStr() + count;
+                    Newnumber = haed + getNowDateStr() + count;
                 }
                 count++;
             } catch (Exception e) {
@@ -108,6 +107,16 @@ public class Number {
         return GenerateOrderNo.Generate("W");
     }
 
+    public static int nextInt(final int startInclusive, final int endExclusive) {
+        Validate.isTrue(endExclusive >= startInclusive,
+                "Start value must be smaller or equal to end value.");
+        Validate.isTrue(startInclusive >= 0, "Both range values must be non-negative.");
+
+        if (startInclusive == endExclusive) {
+            return startInclusive;
+        }
+        return startInclusive + RANDOM.nextInt(endExclusive - startInclusive);
+    }
 
     public static String getImg() {
         String objectId = IdUtil.objectId().toUpperCase();
@@ -138,11 +147,9 @@ public class Number {
 
 
     public static String getRunOrderId() {
-        String objectId = IdUtil.objectId().toUpperCase();
-        return Common.Deals.ORDERRUN + objectId;
+        String objectId = GetRandom(Common.Deals.ORDERRUN + nextInt(1000, 10000));
+        return objectId;
     }
-
-
     public static String getBDC() {
         String objectId = IdUtil.objectId().toUpperCase();
         return Common.Deals.WITDBC + objectId;
@@ -172,24 +179,12 @@ public class Number {
 
 
     public static String getWitOrderQr() {
-        try {
             return GetRandom(Common.Deals.ORDERWIT_QR);
-        } catch (UnknownHostException e) {
-            String randomString2 = RandomUtil.randomNumbers(15);
-            String orderId = Common.Deals.ORDERWIT_QR + randomString2;
-            return orderId;
-        }
     }
 
 
     public static String getWitOrderCa() {
-        try {
             return GetRandom(Common.Deals.ORDERWIT_CA);
-        } catch (UnknownHostException e) {
-            String randomString2 = RandomUtil.randomNumbers(15);
-            String orderId = Common.Deals.ORDERWIT_CA + randomString2;
-            return orderId;
-        }
     }
 
 

@@ -126,6 +126,7 @@ public class AmountConfig extends Util {
     protected Result deleteAmountBalance(UserFund userFund, final BigDecimal balance, final String addType, String orderId) {
         lock.lock();
         try {
+
             boolean flag = true;
             Integer lockMsg = 1;
             do {

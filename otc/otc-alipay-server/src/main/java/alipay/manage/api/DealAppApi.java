@@ -60,11 +60,11 @@ public class DealAppApi extends PayOrderService {
 		if (StrUtil.isBlank(appId) || StrUtil.isBlank(sign)) {
 			return Result.buildFailMessage("必传参数为空");
 		}
-		UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(appId);
+		UserInfo userInfo = userInfoServiceImpl.findPassword(appId);
 		if (ObjectUtil.isNull(userInfo)) {
 			return Result.buildFailMessage("商户不存在");
 		}
-		Map<String, Object> map = new ConcurrentHashMap<String, Object>();
+		Map<String, Object> map = new ConcurrentHashMap<String, Object>(5);
 		map.put("appId", appId);
 		map.put("sign", sign);
 		boolean verifySign = CheckUtils.verifySign(map, userInfo.getPayPasword());
@@ -72,7 +72,7 @@ public class DealAppApi extends PayOrderService {
 		if (!verifySign) {
 			return Result.buildFailMessage("签名错误");
 		}
-		UserFund fund = userInfoServiceImpl.fundUserFundAccounrBalace(appId);
+		UserFund fund = userInfoServiceImpl.findBalace(appId);
 		if (ObjectUtil.isNull(fund)) {
 			log.info("【当前查询的商户号不存在，请核实，商户号为：" + appId + "】");
 			return Result.buildFailMessage("当前查询的订单不存在，请核实");
@@ -101,7 +101,7 @@ public class DealAppApi extends PayOrderService {
 			if (StrUtil.isBlank(appId) || StrUtil.isBlank(appOrderId) || StrUtil.isBlank(sign)) {
 				return Result.buildFailMessage("必传参数为空");
 			}
-			UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(appId);
+			UserInfo userInfo = userInfoServiceImpl.findPassword(appId);
 			if (ObjectUtil.isNull(userInfo)) {
 				return Result.buildFailMessage("商户不存在");
 			}
@@ -137,7 +137,7 @@ public class DealAppApi extends PayOrderService {
 			if (StrUtil.isBlank(appId) || StrUtil.isBlank(appOrderId) || StrUtil.isBlank(sign)) {
 				return Result.buildFailMessage("必传参数为空");
 			}
-			UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(appId);
+			UserInfo userInfo = userInfoServiceImpl.findPassword(appId);
 			if (ObjectUtil.isNull(userInfo)) {
 				return Result.buildFailMessage("商户不存在");
 			}
@@ -155,6 +155,10 @@ public class DealAppApi extends PayOrderService {
 				return Result.buildFailMessage("签名错误");
 			}
 			DealOrderApp orderApp = orderAppServiceImpl.findOrderByApp(appId, appOrderId);
+			if (ObjectUtil.isNull(orderApp)) {
+				log.info("【当前查询的订单不存在，请核实，订单号为：" + appOrderId + "】");
+				return Result.buildFailMessage("当前查询的订单不存在，请核实");
+			}
 			Map<String, Object> mapr = new ConcurrentHashMap<String, Object>();
 			mapr.put("appId", appId);
 			mapr.put("appOrderId", orderApp.getAppOrderId());
@@ -174,7 +178,7 @@ public class DealAppApi extends PayOrderService {
 			if (StrUtil.isBlank(appId) || StrUtil.isBlank(appOrderId) || StrUtil.isBlank(sign)) {
 				return Result.buildFailMessage("必传参数为空");
 			}
-			UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(appId);
+			UserInfo userInfo = userInfoServiceImpl.findPassword(appId);
 			if (ObjectUtil.isNull(userInfo)) {
 				return Result.buildFailMessage("商户不存在");
 			}
@@ -235,7 +239,6 @@ public class DealAppApi extends PayOrderService {
 		}
 		Result pay = vendorRequestApi.pay(request);
 		if (!pay.isSuccess()) {
-			exceptionOrderServiceImpl.addDealOrderOthen(pay.getMessage(), request.getParameter("userId"), HttpUtil.getClientIP(request));
 			return pay;
 		}
 		Object result = pay.getResult();

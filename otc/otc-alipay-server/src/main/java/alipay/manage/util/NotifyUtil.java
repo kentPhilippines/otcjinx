@@ -7,6 +7,7 @@ import alipay.manage.bean.UserInfo;
 import alipay.manage.mapper.DealOrderAppMapper;
 import alipay.manage.service.OrderService;
 import alipay.manage.service.UserInfoService;
+import alipay.manage.service.WithdrawService;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.cron.CronUtil;
 import cn.hutool.cron.task.Task;
@@ -16,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import otc.api.alipay.Common;
+import otc.bean.dealpay.Withdraw;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -35,7 +37,9 @@ public class NotifyUtil {
     SettingFile settingFile;
     public static ConcurrentHashMap<String, Integer> map = new ConcurrentHashMap<>();//单台服务器推送30次   20秒推送一次    也就是一个订单最多推送 一台机器30次  分布式部署 1台 * 30
     @Autowired
-    CheckUtils checkUtils;
+    private CheckUtils checkUtils;
+    @Autowired
+    private WithdrawService withdrawServiceImpl;
     @Autowired
     UserInfoService userInfoServiceImpl;
     static final String SC5 = "*/20 * * * * ? ";
@@ -59,6 +63,35 @@ public class NotifyUtil {
 
     @Autowired
     RedisUtil redis;
+
+    public void wit(String orderId) {
+        log.info("【代付订单修改成功，现在开始通知下游，代付订单号：" + orderId + "】");
+        Map<String, Object> map = new HashMap<String, Object>();
+        Withdraw wit = withdrawServiceImpl.findOrderId(orderId);
+        UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(wit.getUserId());
+        map.put("apporderid", wit.getAppOrderId());
+        map.put("tradesno", wit.getOrderId());
+        map.put("status", wit.getOrderStatus());//0 预下单    1处理中  2 成功  3失败
+        map.put("amount", wit.getAmount());
+        map.put("appid", wit.getUserId());
+        String sign = CheckUtils.getSign(map, userInfo.getPayPasword());
+        map.put("sign", sign);
+        send(wit.getNotify(), orderId, map);
+    }
+
+    /**
+     * <p>发送通知</p>
+     *
+     * @param url     发送通知的地址
+     * @param orderId 发送订单ID
+     * @param msg     发送通知的内容
+     */
+    private void send(String url, String orderId, Map<String, Object> msg) {
+        String result = HttpUtil.post(url, msg, -1);
+        log.info("服务器返回结果为: " + result.toString());
+        log.info("【下游商户返回信息为成功,成功收到回调信息】");
+        //更新订单是否通知成功状态
+    }
 
     /**
      * <p>根据下游交易订单号,和订单状态 发送通知</p>

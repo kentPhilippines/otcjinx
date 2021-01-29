@@ -1,26 +1,8 @@
 package alipay.manage.api.channel.wit;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.Date;
-import java.util.Map;
-import java.util.TreeMap;
-
-import javax.net.ssl.SSLContext;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-
-import alipay.manage.api.channel.util.zhaunshi.Config;
-import alipay.manage.api.channel.util.zhaunshi.Md5Util;
-import alipay.manage.api.channel.util.zhaunshi.StringUtil;
 import alipay.manage.api.config.PayOrderService;
-import alipay.manage.api.feign.ConfigServiceClient;
-import cn.hutool.http.HttpUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
-import otc.api.alipay.Common;
-import otc.bean.config.ConfigFile;
 import otc.bean.dealpay.Withdraw;
 import otc.common.PayApiConstant;
 import otc.result.Result;
@@ -29,7 +11,6 @@ import otc.result.Result;
 public class ZuanShiDpay extends PayOrderService{
 	private static final Log log = LogFactory.get();
 	private   final String URL = "/gateway/api/v2/payouts";//钻石代付接口
-	@Autowired ConfigServiceClient configServiceClientImpl;
 	@Override
 	public Result withdraw(Withdraw wit) {
 		Result withdraw = super.withdraw(wit);

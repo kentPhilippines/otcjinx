@@ -1,11 +1,11 @@
 package alipay.manage.api.config;
 
 import alipay.manage.api.channel.util.ChannelInfo;
-import alipay.manage.api.feign.ConfigServiceClient;
 import alipay.manage.bean.*;
 import alipay.manage.mapper.ChannelFeeMapper;
 import alipay.manage.mapper.WithdrawMapper;
 import alipay.manage.service.*;
+import alipay.manage.util.NotifyUtil;
 import alipay.manage.util.OrderUtil;
 import alipay.manage.util.amount.AmountPublic;
 import alipay.manage.util.amount.AmountRunUtil;
@@ -17,7 +17,6 @@ import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import otc.api.alipay.Common;
-import otc.bean.config.ConfigFile;
 import otc.bean.dealpay.Withdraw;
 import otc.common.SystemConstants;
 import otc.result.Result;
@@ -36,26 +35,26 @@ import java.util.concurrent.locks.ReentrantLock;
  * @author kent
  */
 public abstract class PayOrderService implements PayService {
-    public static final Log log = LogFactory.get();
+	public static final Log log = LogFactory.get();
 	private static final String ORDER = "orderid";
 	@Autowired
 	private AmountPublic amountPublic;
 	@Autowired
 	private AmountRunUtil amountRunUtil;
-    @Autowired
-    private UserInfoService userInfoServiceImpl;
-    @Resource
-    private ConfigServiceClient configServiceClientImpl;
-    @Autowired
-    private OrderService orderServiceImpl;
-    @Autowired
-    private OrderAppService OrderAppServiceImpl;
-    @Autowired
-    private CorrelationService correlationServiceImpl;
-    @Autowired
-    private UserRateService userRateServiceImpl;
-    @Resource
-    private ChannelFeeMapper channelFeeDao;
+	@Autowired
+	private UserInfoService userInfoServiceImpl;
+	@Autowired
+	NotifyUtil notifyUtil;
+	@Autowired
+	private OrderService orderServiceImpl;
+	@Autowired
+	private OrderAppService OrderAppServiceImpl;
+	@Autowired
+	private CorrelationService correlationServiceImpl;
+	@Autowired
+	private UserRateService userRateServiceImpl;
+	@Resource
+	private ChannelFeeMapper channelFeeDao;
     @Autowired
     private OrderUtil orderUtilImpl;
 
@@ -161,7 +160,7 @@ public abstract class PayOrderService implements PayService {
 		Map<String, Object> param = MapUtil.newHashMap();
 		param.put(ORDER, dealOrderApp.getOrderId());
 		String encryptPublicKey = RSAUtils.getEncryptPublicKey(param, SystemConstants.INNER_PLATFORM_PUBLIC_KEY);
-		String URL = configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.SERVER_IP).getResult().toString();
+		String URL = "";//configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.SERVER_IP).getResult().toString();补充链接即可成为三方支付服务
 		return Result.buildSuccessResult(URL + "/pay/alipayScan/" + encryptPublicKey);
 	}
 	/**
@@ -219,6 +218,11 @@ public abstract class PayOrderService implements PayService {
 	 */
 	public Result withdrawEr(Withdraw wit, String msg, String ip) {
 		Result withrawOrderErBySystem = orderUtilImpl.withrawOrderErBySystem(wit.getOrderId(), ip, msg);
+		if (withrawOrderErBySystem.isSuccess()) {
+			ThreadUtil.execute(() -> {
+				notifyUtil.wit(wit.getOrderId());
+			});
+		}
 		return withrawOrderErBySystem;
 	}
 

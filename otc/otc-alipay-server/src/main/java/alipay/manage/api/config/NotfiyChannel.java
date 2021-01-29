@@ -7,13 +7,11 @@ import alipay.manage.bean.UserInfo;
 import alipay.manage.service.OrderService;
 import alipay.manage.service.UserInfoService;
 import alipay.manage.service.WithdrawService;
-import alipay.manage.util.CheckUtils;
 import alipay.manage.util.NotifyUtil;
 import alipay.manage.util.OrderUtil;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.http.HttpUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +19,6 @@ import otc.api.alipay.Common;
 import otc.bean.dealpay.Withdraw;
 import otc.result.Result;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -41,7 +37,10 @@ public abstract class NotfiyChannel {
     @Autowired private NotifyUtil notifyUtilImpl;
     @Autowired private OrderUtil orderUtilImpl;
     @Autowired private WithdrawService withdrawServiceImpl;
-    @Autowired private RedisLockUtil redisLockUtil;
+    @Autowired
+    private RedisLockUtil redisLockUtil;
+    @Autowired
+    NotifyUtil notifyUtil;
 
     public Result witNotfy(String orderId, String ip) {
         log.info("【进入代付回调抽象类，当前代付成功订单号：" + orderId + "】");
@@ -54,7 +53,7 @@ public abstract class NotfiyChannel {
         Result withrawOrderSu = orderUtilImpl.withrawOrderSu1(wit);
         if (withrawOrderSu.isSuccess()) {
             ThreadUtil.execute(() -> {
-                wit(orderId);
+                notifyUtil.wit(orderId);
             });
         }
         UserFund userFund = new UserFund();
@@ -72,7 +71,7 @@ public abstract class NotfiyChannel {
         Result result = orderUtilImpl.withrawOrderErBySystem(wit, ip, msg);
         if (result.isSuccess()) {
             ThreadUtil.execute(() -> {
-                wit(orderId);
+                notifyUtil.wit(orderId);
             });
         }
         return Result.buildFail();
@@ -103,38 +102,6 @@ public abstract class NotfiyChannel {
 
     public Result dealpayNotfiy(String orderId, String ip) {
         return dealpayNotfiy(orderId, ip, "三方系统回调成功");
-    }
-
-    /**
-     * <p>API下游代付通知</p>
-     */
-    void wit(String orderId) {
-        log.info("【代付订单修改成功，现在开始通知下游，代付订单号：" + orderId + "】");
-        Map<String, Object> map = new HashMap<String, Object>();
-        Withdraw wit = withdrawServiceImpl.findOrderId(orderId);
-        UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(wit.getUserId());
-        map.put("apporderid", wit.getAppOrderId());
-        map.put("tradesno", wit.getOrderId());
-        map.put("status", wit.getOrderStatus());//0 预下单    1处理中  2 成功  3失败
-        map.put("amount", wit.getAmount());
-        map.put("appid", wit.getUserId());
-        String sign = CheckUtils.getSign(map, userInfo.getPayPasword());
-        map.put("sign", sign);
-        send(wit.getNotify(), orderId, map);
-    }
-
-    /**
-     * <p>发送通知</p>
-     *
-     * @param url     发送通知的地址
-     * @param orderId 发送订单ID
-     * @param msg     发送通知的内容
-     */
-    private void send(String url, String orderId, Map<String, Object> msg) {
-        String result = HttpUtil.post(url, msg, -1);
-        log.info("服务器返回结果为: " + result.toString());
-        log.info("【下游商户返回信息为成功,成功收到回调信息】");
-        //更新订单是否通知成功状态
     }
 
 

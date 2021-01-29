@@ -2,7 +2,8 @@ package alipay.manage.api.channel.wit;
 
 import alipay.manage.api.channel.util.shenfu.PayUtil;
 import alipay.manage.api.config.PayOrderService;
-import alipay.manage.api.feign.ConfigServiceClient;
+import alipay.manage.bean.UserInfo;
+import alipay.manage.service.UserInfoService;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
@@ -13,7 +14,6 @@ import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import otc.bean.config.ConfigFile;
 import otc.bean.dealpay.Withdraw;
 import otc.common.PayApiConstant;
 import otc.result.Result;
@@ -27,9 +27,9 @@ public class ShenfuDpay extends PayOrderService {
     private static final Log log = LogFactory.get();
     private static final String SIGN_TYPE = "MD5";
     private static final String WIT_RESULT = "SUCCESS";
-    @Autowired
-    ConfigServiceClient configServiceClientImpl;
 
+    @Autowired
+    private UserInfoService userInfoServiceImpl;
     private static String getNowDateStr() {
         return DateUtil.format(new Date(), DatePattern.PURE_DATETIME_FORMAT);
     }
@@ -39,9 +39,13 @@ public class ShenfuDpay extends PayOrderService {
         log.info("【进入申付代付】");
         try {
             log.info("【本地订单创建成功，开始请求远程三方代付接口】");
-            Result config = configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.SERVER_IP);
-            log.info("【回调地址ip为：" + config.toString() + "】");
-            String createDpay = createDpay(config.getResult().toString() + PayApiConstant.Notfiy.NOTFIY_API_WAI + "/ShenFuDpay-noyfit", wit);
+            UserInfo userInfo = userInfoServiceImpl.findDealUrl(wit.getUserId());
+            if (StrUtil.isBlank(userInfo.getDealUrl())) {
+                withdrawEr(wit, "当前商户交易url未设置", wit.getRetain2());
+                return Result.buildFailMessage("请联系运营为您的商户好设置交易url");
+            }
+            log.info("【回调地址ip为：" + userInfo.getDealUrl() + "】");
+            String createDpay = createDpay(userInfo.getDealUrl().toString() + PayApiConstant.Notfiy.NOTFIY_API_WAI + "/ShenFuDpay-noyfit", wit);
             if (StrUtil.isNotBlank(createDpay) && createDpay.equals(WIT_RESULT)) {
                 return Result.buildSuccessMessage("代付成功等待处理");
             } else {

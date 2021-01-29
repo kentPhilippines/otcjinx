@@ -11,7 +11,6 @@ import alipay.manage.util.amount.AmountRunUtil;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.http.HttpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +25,6 @@ import otc.result.Result;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -70,7 +67,8 @@ public class OrderUtil {
     private RiskUtil riskUtil;
     @Autowired
     private CorrelationService correlationServiceImpl;
-
+    @Autowired
+    NotifyUtil notifyUtil;
     /**
      * <p>充值订单置为成功</p>
      *
@@ -442,40 +440,6 @@ public class OrderUtil {
         order.setWitType(witType);
         return withrawOrderSu(order);
     }
-
-    /**
-     * <p>API下游代付通知</p>
-     */
-    void wit(String orderId) {
-        ThreadUtil.sleep(2000);
-        log.info("【代付订单修改成功，现在开始通知下游，代付订单号：" + orderId + "】");
-        Map<String, Object> map = new HashMap<String, Object>();
-        Withdraw wit = withdrawServiceImpl.findOrderId(orderId);
-        UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(wit.getUserId());
-        map.put("apporderid", wit.getAppOrderId());
-        map.put("tradesno", wit.getOrderId());
-        map.put("status", wit.getOrderStatus());//0 预下单    1处理中  2 成功  3失败
-        map.put("amount", wit.getAmount());
-        map.put("appid", wit.getUserId());
-        String sign = CheckUtils.getSign(map, userInfo.getPayPasword());
-        map.put("sign", sign);
-        send(wit.getNotify(), orderId, map);
-    }
-
-    /**
-     * <p>发送通知</p>
-     *
-     * @param url     发送通知的地址
-     * @param orderId 发送订单ID
-     * @param msg     发送通知的内容
-     */
-    private void send(String url, String orderId, Map<String, Object> msg) {
-        String result = HttpUtil.post(url, msg, -1);
-        log.info("服务器返回结果为: " + result.toString());
-        log.info("【下游商户返回信息为成功,成功收到回调信息】");
-        //更新订单是否通知成功状态
-    }
-
     /**
      * <p>代付成功</p>
      * 手动渠道结算
@@ -499,7 +463,7 @@ public class OrderUtil {
         channelWitSu(wit.getOrderId(), wit, wit.getRetain2(), channel);
         agentDpayChannel(wit, wit.getRetain2(), wit.getWitType(), false);//新加代付代理商结算
         ThreadUtil.execute(() -> {
-            wit(wit.getOrderId());//通知
+            notifyUtil.wit(wit.getOrderId());//通知
         });
         return Result.buildSuccessMessage("代付成功");
     }
@@ -709,6 +673,9 @@ public class OrderUtil {
         if (!addAmountWFee.isSuccess()) {
             return addAmountWFee;
         }
+        ThreadUtil.execute(() -> {
+            notifyUtil.wit(wit.getOrderId());
+        });
         return Result.buildSuccessMessage("代付金额解冻成功");
     }
 
@@ -759,6 +726,9 @@ public class OrderUtil {
         if (!result1.isSuccess()) {
             return result1;
         }
+        ThreadUtil.execute(() -> {
+            notifyUtil.wit(wit.getOrderId());
+        });
         return Result.buildSuccessMessage("代付金额解冻成功");
     }
 

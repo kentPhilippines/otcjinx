@@ -132,4 +132,9 @@ public interface UserInfoMapper {
             "    agent, isAgent " +
             "  from alipay_user_info where userId = #{userId}")
     UserInfo findUserAgent(String appId);
+
+    @Select("select id, userId, userName, password, payPasword," +
+            "    privateKey, publicKey" +
+            " from alipay_user_info where userId = #{userId}")
+    UserInfo findPassword(String appId);
 }

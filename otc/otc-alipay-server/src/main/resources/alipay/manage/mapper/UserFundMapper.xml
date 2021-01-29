@@ -298,9 +298,6 @@
       <if test="record.id != null" >
         id = #{record.id,jdbcType=INTEGER},
       </if>
-      <if test="record.userId != null" >
-        userId = #{record.userId,jdbcType=VARCHAR},
-      </if>
       <if test="record.userName != null" >
         userName = #{record.userName,jdbcType=VARCHAR},
       </if>
@@ -376,7 +373,6 @@
       update alipay_user_fund
       set id = #{record.id,jdbcType=INTEGER},
       version = version+1,
-      userId = #{record.userId,jdbcType=VARCHAR},
       userName = #{record.userName,jdbcType=VARCHAR},
       cashBalance = #{record.cashBalance,jdbcType=DECIMAL},
       rechargeNumber = #{record.rechargeNumber,jdbcType=DECIMAL},
@@ -407,9 +403,6 @@
     update alipay_user_fund
     <set >
      version = version+1,
-      <if test="userId != null" >
-        userId = #{userId,jdbcType=VARCHAR},
-      </if>
       <if test="userName != null" >
         userName = #{userName,jdbcType=VARCHAR},
       </if>
@@ -481,7 +474,7 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="alipay.manage.bean.UserFund" >
     update alipay_user_fund
-    set userId = #{userId,jdbcType=VARCHAR},
+    set
      version = version+1,
       userName = #{userName,jdbcType=VARCHAR},
       cashBalance = #{cashBalance,jdbcType=DECIMAL},

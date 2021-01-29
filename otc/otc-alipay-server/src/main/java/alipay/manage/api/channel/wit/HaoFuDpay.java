@@ -2,7 +2,8 @@ package alipay.manage.api.channel.wit;
 
 import alipay.manage.api.channel.util.haofu.HaoFuUtil;
 import alipay.manage.api.config.PayOrderService;
-import alipay.manage.api.feign.ConfigServiceClient;
+import alipay.manage.bean.UserInfo;
+import alipay.manage.service.UserInfoService;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
@@ -12,7 +13,6 @@ import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import otc.bean.config.ConfigFile;
 import otc.bean.dealpay.Withdraw;
 import otc.common.PayApiConstant;
 import otc.result.Result;
@@ -27,9 +27,6 @@ import java.util.Map;
 @Component("HaoFuDpay")
 public class HaoFuDpay extends PayOrderService {
 	private static final Log log = LogFactory.get();
-	@Autowired
-	ConfigServiceClient configServiceClientImpl;
-
 	public static String createParam(Map<String, Object> map) {
 		try {
 			if (map == null || map.isEmpty()) {
@@ -50,6 +47,9 @@ public class HaoFuDpay extends PayOrderService {
 		}
 		return null;
 	}
+
+	@Autowired
+	private UserInfoService userInfoServiceImpl;
 
 	public static String md5(String a) {
 		String c = "";
@@ -73,9 +73,15 @@ public class HaoFuDpay extends PayOrderService {
 		log.info("【进入豪富代付】");
 		try {
 			log.info("【本地订单创建成功，开始请求远程三方代付接口】");
-			Result config = configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.SERVER_IP);
-			log.info("【回调地址ip为：" + config.toString() + "】");
-			String createDpay = createDpay(config.getResult().toString() + PayApiConstant.Notfiy.NOTFIY_API_WAI + "/HaoFuDpay-noyfit", wit.getOrderId(), wit.getAmount().doubleValue() + "", wit.getBankcode(), wit.getAccname(), wit.getBankNo());
+			UserInfo dealUrl = userInfoServiceImpl.findDealUrl(wit.getUserId());
+			if (StrUtil.isBlank(dealUrl.getDealUrl())) {
+				withdrawEr(wit, "当前商户交易url未设置", wit.getRetain1());
+				return Result.buildFailMessage("请联系运营为您的商户好设置交易url");
+			}
+			log.info("【回调地址ip为：" + dealUrl.getDealUrl() + "】");
+			String createDpay = createDpay(dealUrl.getDealUrl().toString() +
+							PayApiConstant.Notfiy.NOTFIY_API_WAI + "/HaoFuDpay-noyfit", wit.getOrderId(),
+					wit.getAmount().doubleValue() + "", wit.getBankcode(), wit.getAccname(), wit.getBankNo());
 			//create(wit.getBankcode(), intValue*100+"", wit.getOrderId(), wit.getBankNo(), wit.getAccname(),PayApiConstant.Notfiy.NOTFIY_API_WAI+"/zuanshiDpay-notfiy");
 			if (StrUtil.isNotBlank(createDpay) && "SUCCESS".equals(createDpay)) {
 				return Result.buildSuccessMessage("代付成功等待处理");
