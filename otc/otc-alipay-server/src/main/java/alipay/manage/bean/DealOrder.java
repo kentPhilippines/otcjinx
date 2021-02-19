@@ -1,16 +1,14 @@
 package alipay.manage.bean;
 
+import cn.hutool.core.util.ObjectUtil;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
-
-import cn.hutool.core.util.ObjectUtil;
 /**
  * <p>码商交易订单</p>
  * @author K
@@ -34,27 +32,40 @@ public class DealOrder implements Serializable{
     private String back;					//订单异步回调地址
     private String isNotify;				//是否發送通知 // YES 已發送 NO 未發送
     private String dealDescribe;			//交易备注
-    private Date createTime;				
+    private Date createTime;
     private Date submitTime;
-    private String payType;					//产品类型
+    private String payType;                    //产品类型
     private Integer feeId;
     private Integer status;
     private String retain1;
     private String retain2;
     private String retain3;
     private String retain4;
-	private String Time;
-	private List orderQrUserList;
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-	private Date usefulTime;
+    private String Time;
+    private String currency;  ///货币类型
+    private List orderQrUserList;
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date usefulTime;
+
     public Date getUsefulTime() {
-		return usefulTime;
-	}
-	public void setUsefulTime(Date usefulTime) {
-		this.usefulTime = usefulTime;
-	}
-	public String getPayType() {
-		return payType;
+        return usefulTime;
+    }
+
+    public void setUsefulTime(Date usefulTime) {
+        this.usefulTime = usefulTime;
+    }
+
+    public String getPayType() {
+        return payType;
 	}
 	public void setPayType(String payType) {
 		this.payType = payType;

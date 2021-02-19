@@ -1,16 +1,16 @@
 package test.number.channal;
 
-import alipay.manage.api.channel.util.yifu.YiFu02Util;
+import alipay.manage.api.channel.util.shenfu.PayUtil;
+import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.core.util.RandomUtil;
 import cn.hutool.http.HttpUtil;
-import cn.hutool.json.JSONObject;
-import cn.hutool.json.JSONUtil;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,32 +20,27 @@ public class yifu02 {
         notifytest();
     }
 
-    private static void notifytest() {
-        String key = YiFu02Util.XUNFU_KEY;
-        String merchant_id = YiFu02Util.XUNFU_APPID;
-        String order_id = "adadosahdosadhsadosa0970709";
-        String amount = 1000 + "00.00";
-        String pay_type = "alipayh5";
-        String notify_url = "123.12.312.312:9002";
-        String user_id = RandomUtil.randomString(10).toUpperCase();
-        String user_ip = "213.2.123.3";
-        Map<String, Object> map = new HashMap();
-        map.put("merchant_id", merchant_id);
-        map.put("order_id", order_id);
-        map.put("amount", amount);
-        map.put("pay_type", pay_type);
-        map.put("notify_url", notify_url);
-        map.put("user_id", user_id);
-        map.put("user_ip", user_ip);
-        String param = YiFu02Util.createParam(map);
-        System.out.println("【易付2号加签前的参数：" + param + "】");
-        String s = YiFu02Util.md5(param + "key=" + key);
-        map.put("sign", s);
-        System.out.println("【易付2号请求前的参数：" + map.toString() + "】");
-        String post = HttpUtil.post(YiFu02Util.XUNFU_URL, map);
-        System.out.println(post);
-        JSONObject jsonObject = JSONUtil.parseObj(post);
+    private static SimpleDateFormat d = new SimpleDateFormat("yyyyMMddHHmmss");
 
+    private static void notifytest() {
+        Map<String, Object> map = new HashMap();
+        map.put("oid_partner", "202102101152580034");
+        map.put("notify_url", "www.baidu.com");
+        map.put("sign_type", "MD5");
+        map.put("user_id", IdUtil.objectId());
+        map.put("no_order", IdUtil.objectId());
+        map.put("time_order", d.format(new Date()));
+        map.put("money_order", "1000");
+        map.put("name_goods", "huafei");
+        map.put("pay_type", "205");//PDD PDD 插件通道
+        map.put("info_order", "info_order");
+        String createParam = PayUtil.createParam(map);
+        System.out.println("【绅付请求参数：" + createParam + "】");
+        String md5 = PayUtil.md5(createParam + "789okjhy789okjuy7890plkju890olkju789okjhy789ok");
+        map.put("sign", md5);
+        String post = HttpUtil.post("http://ggsfapi.bbsixsix.com/gateway/bankgateway/pay", map);
+        System.out.println("【绅付返回数据：" + post + "】");
+        System.out.println(post);
     }
 
     /**
@@ -94,8 +89,8 @@ public class yifu02 {
         map.put("sign",s);
         System.out.println("【易付2号请求前的参数："+map.toString()+"】");
         String post = HttpUtil.post("http://apl.wuchengdu.com:12306/api/v1/createorder", map);
-        HttpUtil.decode(post,"utf-8");
-        System.out.println(post);
+        HttpUtil.decode(post, "utf-8");
+        System.out.println(post);//{"bank_name":"建设银行","card_no":"6217003110033402130","card_user":"农洪共","money_order":"1000.00","no_order":"C20210212151359978932599","oid_partner":"202102101152580034","ret_code":"0000","ret_msg":"SUCCESS","sign":"146b48c9d84e757afb09616cda259ee6"}
 
     }
     public static String md5(String a) {

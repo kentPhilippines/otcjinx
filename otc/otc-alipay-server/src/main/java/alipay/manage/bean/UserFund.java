@@ -36,6 +36,15 @@ public class UserFund implements Serializable{
     private Date submitTime;
     private Integer status;
     private Integer version;                //版本号
+    private String currency;
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
 
     public BigDecimal getQuota() {
         return quota;

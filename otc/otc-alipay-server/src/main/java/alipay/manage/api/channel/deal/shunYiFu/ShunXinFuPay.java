@@ -93,7 +93,7 @@ public class ShunXinFuPay extends PayOrderService {
         log.info("【顺心付签名参数为：" + param + "】");
         String s = ShunXinFuUtil.md5(param);
         map.put("sign", s);
-        log.info("【顺心付请求前参数为：" + param + "】");
+        log.info("【顺心付请求前参数为：" + map + "】");
         String post = HttpUtil.post(channelInfo.getDealurl(), map);
         log.info("【顺心付响应数据：" + post + "】");
         JSONObject jsonObject = JSONUtil.parseObj(post);

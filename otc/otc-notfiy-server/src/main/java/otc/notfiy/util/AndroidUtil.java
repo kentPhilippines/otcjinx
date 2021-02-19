@@ -88,7 +88,7 @@ public class AndroidUtil {
 			} else {
 				log.info("【短信回调数据记录失败】");
 			}
-			HashMap<String, Object> paramMap = new HashMap<>();
+			HashMap<String, Object> paramMap = new HashMap<>(100);
 			paramMap.put(Common.Notfiy.ORDER_AMOUNT, number);
 			paramMap.put(Common.Notfiy.ORDER_PHONE, deviceid);
 			paramMap.put(Common.Notfiy.ORDER_ENTER_IP, HttpUtil.getClientIP(request));
@@ -98,7 +98,7 @@ public class AndroidUtil {
 				msg.setRetain1(enterOrder.getResult().toString());
 				msg.setResult(enterOrder.getMessage());
 				flag = mmsServiceImpl.updataMms(msg);
-	}else {
+			} else {
 		msg.setResult(enterOrder.getMessage());
 		flag = mmsServiceImpl.updataMms(msg);
 	}

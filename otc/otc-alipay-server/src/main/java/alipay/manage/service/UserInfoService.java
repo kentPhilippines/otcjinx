@@ -206,4 +206,12 @@ public interface UserInfoService {
      * @return
      */
     UserInfo findPassword(String appId);
+
+    /**
+     * 查询账户货币类型
+     *
+     * @param appid
+     * @return
+     */
+    UserFund findCurrency(String appid);
 }

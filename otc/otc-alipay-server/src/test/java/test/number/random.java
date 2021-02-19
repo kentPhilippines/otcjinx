@@ -1,11 +1,28 @@
 package test.number;
 
+import cn.hutool.core.date.DatePattern;
+
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class random {
 	public static void main(String[] args) {
-		isNumber("2");
+		time();
 	}
+
+	static void time() {
+
+
+		long a = 1609780976;
+		SimpleDateFormat sdf = new SimpleDateFormat(DatePattern.NORM_DATETIME_PATTERN);
+		java.util.Date date = new Date(a * 1000);
+		String str = sdf.format(date);
+		System.out.println(str);
+
+
+	}
+
 
 	private static boolean isNumber(String str) {
 		BigDecimal a = new BigDecimal("1");

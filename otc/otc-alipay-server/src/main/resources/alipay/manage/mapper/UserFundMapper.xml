@@ -26,6 +26,7 @@
     <result column="submitTime" property="submitTime" jdbcType="TIMESTAMP" />
     <result column="status" property="status" jdbcType="INTEGER" />
     <result column="version" property="version" jdbcType="INTEGER" />
+    <result column="currency" property="currency" jdbcType="VARCHAR"/>
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -89,7 +90,7 @@
     id, userId, userName, cashBalance, rechargeNumber, freezeBalance, accountBalance, 
     sumDealAmount, sumRechargeAmount, sumProfit, sumAgentProfit, sumOrderCount, todayDealAmount, 
     todayProfit, todayOrderCount, todayAgentProfit, userType, agent, isAgent, createTime, 
-    submitTime, status, version ,quota
+    submitTime, status, version ,quota,currency
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="alipay.manage.bean.UserFundExample" >
     select

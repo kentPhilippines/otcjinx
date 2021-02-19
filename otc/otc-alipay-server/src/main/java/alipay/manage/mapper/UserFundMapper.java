@@ -57,4 +57,6 @@ public interface UserFundMapper {
     @Select("select  userId, userName, accountBalance from alipay_user_fund where userId=#{userId}")
     UserFund findBalace(String userId);
 
+    @Select("select userId ,currency where userId = #{userId} ")
+    UserFund findCurrency(@Param("userId") String userId);
 }

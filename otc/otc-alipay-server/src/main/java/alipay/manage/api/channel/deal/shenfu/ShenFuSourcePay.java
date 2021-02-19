@@ -1,5 +1,6 @@
 package alipay.manage.api.channel.deal.shenfu;
 
+import alipay.config.redis.RedisUtil;
 import alipay.manage.api.channel.util.ChannelInfo;
 import alipay.manage.api.channel.util.shenfu.PayUtil;
 import alipay.manage.api.config.PayOrderService;
@@ -11,6 +12,7 @@ import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
+import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,9 +27,14 @@ import java.util.Map;
 
 @Component("ShenFuSourcePay")
 public class ShenFuSourcePay extends PayOrderService {
+    private static final String MARS = "SHENFU";
+    private static final String PAY_URL = "Http://";
+
     private static SimpleDateFormat d = new SimpleDateFormat("yyyyMMddHHmmss");
     @Autowired
     private UserInfoService userInfoServiceImpl;
+    @Autowired
+    RedisUtil redis;
 
     @Override
     public Result deal(DealOrderApp dealOrderApp, String channel) throws Exception {
@@ -70,13 +77,33 @@ public class ShenFuSourcePay extends PayOrderService {
         map.put("sign", md5);
         String post = HttpUtil.post(channelInfo.getDealurl(), map);
         log.info("【绅付返回数据：" + post + "】");
-        log.info(post);
-        PddBean bean = JSONUtil.toBean(post, PddBean.class);
-        if (ObjectUtil.isNotNull(bean)) {
-            if ("0000".equals(bean.getRet_code())) {
-                return Result.buildSuccessResult(bean.getRedirect_url());
+        log.info(post);////{
+        // "bank_name":"建设银行",
+        // "card_no":"6217003110033402130",
+        // "card_user":"农洪共",
+        // "money_order":"1000.00",
+        // "no_order":"C20210212151359978932599",
+        // "oid_partner":"202102101152580034",
+        // "ret_code":"0000",
+        // "ret_msg":"SUCCESS",
+        // "sign":"146b48c9d84e757afb09616cda259ee6"
+        // }
+        //  PddBean bean = JSONUtil.toBean(post, PddBean.class);
+        JSONObject jsonObject = JSONUtil.parseObj(post);
+
+        if (ObjectUtil.isNotNull(jsonObject)) {
+            if ("0000".equals(jsonObject.getStr("ret_code"))) {
+                Map cardmap = new HashMap();
+                cardmap.put("bank_name", jsonObject.getStr("bank_name"));
+                cardmap.put("card_no", jsonObject.getStr("card_no"));
+                cardmap.put("card_user", jsonObject.getStr("card_user"));
+                cardmap.put("money_order", jsonObject.getStr("money_order"));
+                cardmap.put("no_order", jsonObject.getStr("no_order"));
+                cardmap.put("oid_partner", jsonObject.getStr("oid_partner"));
+                redis.hmset(MARS + orderId, cardmap, 600000);
+                return Result.buildSuccessResult(PAY_URL + "47.242.50.29:32437/pay?orderId=" + orderId + "&type=" + channelInfo.getChannelType());
             } else {
-                return Result.buildFailMessage(bean.getRet_msg());
+                return Result.buildFailMessage(jsonObject.getStr("ret_msg"));
             }
         }
         return Result.buildFail();

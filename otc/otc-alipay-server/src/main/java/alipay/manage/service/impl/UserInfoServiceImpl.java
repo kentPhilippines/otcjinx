@@ -305,4 +305,9 @@ public class UserInfoServiceImpl implements UserInfoService {
     public UserInfo findPassword(String appId) {
         return userInfoMapper.findPassword(appId);
     }
+
+    @Override
+    public UserFund findCurrency(String userId) {
+        return userFundDao.findCurrency(userId);
+    }
 }

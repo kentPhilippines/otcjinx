@@ -408,6 +408,8 @@ public class DealAppApi extends PayOrderService {
 		witb.setApply(wit.getApply());
 		witb.setBankcode(wit.getBankcode());
 		witb.setWitChannel(channelFee.getChannelId());
+		UserFund userFund = userInfoServiceImpl.findCurrency(wit.getAppid());
+		witb.setCurrency(userFund.getCurrency());
 		boolean flag = withdrawServiceImpl.addOrder(witb);
 		if (flag) {
 			return witb;
@@ -434,6 +436,8 @@ public class DealAppApi extends PayOrderService {
 		dealApp.setDealDescribe("下游商户发起充值交易");
 		dealApp.setRetain1(userRate.getPayTypr());
 		dealApp.setRetain3(userRate.getFee().multiply(new BigDecimal(dealBean.getAmount())).toString());
+		UserFund userFund = userInfoServiceImpl.findCurrency(userId);
+		dealApp.setCurrency(userFund.getCurrency());
 		boolean add = orderAppServiceImpl.add(dealApp);
 		if (add) {
 			return dealApp;

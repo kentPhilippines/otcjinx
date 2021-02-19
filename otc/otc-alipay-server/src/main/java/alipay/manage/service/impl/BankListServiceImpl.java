@@ -5,16 +5,16 @@ import alipay.manage.bean.BankListExample;
 import alipay.manage.mapper.BankListMapper;
 import alipay.manage.service.BankListService;
 import cn.hutool.core.util.StrUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import otc.api.alipay.Common;
 import otc.util.number.Number;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 @Component
 public class BankListServiceImpl implements BankListService {
-	@Autowired
+	@Resource
 	BankListMapper bankListMapper;
 
 	@Override

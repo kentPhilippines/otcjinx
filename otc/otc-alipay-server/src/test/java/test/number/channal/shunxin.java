@@ -18,7 +18,7 @@ shunxin {
         String partner = "1000043363";
         String service = "10108";
         String tradeNo = UUID.randomUUID().toString();
-        String amount = "700";
+        String amount = "700.00";
         String notifyUrl = "www.baidu.com";
         String extra = tradeNo;
         String key = "&" + "zzwyolmbhyledwlnta";

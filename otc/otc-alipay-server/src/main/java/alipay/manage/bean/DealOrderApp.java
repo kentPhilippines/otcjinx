@@ -3,8 +3,6 @@ package alipay.manage.bean;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 /**
  * <p>下游商户交易订单</p>
  * @author K
@@ -19,23 +17,35 @@ public class DealOrderApp implements Serializable{
     private BigDecimal orderAmount;					//订单金额
     private String orderIp;							//请求订单ip
     private String appOrderId;						//外部订单号
-    private Date createTime;					
-    private Integer feeId;							//使用费率id
-    private String notify;							//异步回调地址
-    private String back;							//同步跳转地址
-    private Date submitTime;				
+    private Date createTime;
+    private Integer feeId;                            //使用费率id
+    private String notify;                            //异步回调地址
+    private String back;                            //同步跳转地址
+    private Date submitTime;
     private String submitSystem;
     private Integer status;
     private String retain1;
     private String retain2;
     private String retain3;
-    private String dealDescribe;					//交易备注
+    private String dealDescribe;                    //交易备注
+    private String currency;  ///货币类型
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
+
     public void setDealDescribe(String dealDescribe) {
-		this.dealDescribe = dealDescribe;
-	}
-	public Integer getId() {
+        this.dealDescribe = dealDescribe;
+    }
+
+    public Integer getId() {
         return id;
     }
+
     public void setId(Integer id) {
         this.id = id;
     }
