@@ -25,10 +25,12 @@ public class UsdtPayApi implements USDT {
         try {
             Map<Object, Object> hmget = redis.hmget(MARS + orderId);
             info.setAddress(hmget.get(ADDRESS).toString());
+            info.setMoney(hmget.get(MONEY).toString());
+            info.setScan(hmget.get(USDTSCAN).toString());
         } catch (Exception e) {
-            log.info("【请求缓存银行卡数据失败，当前请求订单号：" + orderId + "】");
+            log.info("【请求缓存支付钱包地址数据失败，当前请求订单号：" + orderId + "】");
         }
-        log.info("【当前银行卡信息为：" + info.toString() + "】");
+        log.info("【当前支付钱包地址信息为：" + info.toString() + "】");
         return info;
     }
 }
@@ -36,6 +38,15 @@ public class UsdtPayApi implements USDT {
 class USDTInfo {
     private String address;
     private String scan;
+    private String money;
+
+    public String getMoney() {
+        return money;
+    }
+
+    public void setMoney(String money) {
+        this.money = money;
+    }
 
     public String getScan() {
         return scan;

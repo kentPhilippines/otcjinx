@@ -43,14 +43,19 @@ public class BankListServiceImpl implements BankListService {
 		bank1.setStatus(0);//数据无效
 		bankListMapper.updateByExampleSelective (bank1, example);
 		bank.setIsDeal(2); //数据逻辑可用
-		bank.setCardType(Common.Bank.BANK_QR);//码商上传的银行卡；
-		int insertSelective = bankListMapper.insertSelective(bank);
-		return insertSelective > 0 && insertSelective < 2;
-	}
+        bank.setCardType(Common.Bank.BANK_QR);//码商上传的银行卡；
+        int insertSelective = bankListMapper.insertSelective(bank);
+        return insertSelective > 0 && insertSelective < 2;
+    }
 
 
-	@Override
-	public BankList findBankByNo(String bankNo) {
-		return bankListMapper.selectBankCardByBankNo(bankNo);
-	}
+    @Override
+    public BankList findBankByNo(String bankNo) {
+        return bankListMapper.selectBankCardByBankNo(bankNo);
+    }
+
+    @Override
+    public List<BankList> findBankByAccount(String usdtPay) {
+        return bankListMapper.findBankByAccount(usdtPay);
+    }
 }

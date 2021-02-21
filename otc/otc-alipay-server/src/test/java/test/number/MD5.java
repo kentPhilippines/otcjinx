@@ -35,7 +35,8 @@ public class MD5 {
 	private static final String ENCODE_TYPE = "md5";
     /**
      * md5加密
-     * @param str
+     *
+     * @param
      * @return
      */
     public static String md5(String a) {

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="alipay.manage.mapper.USDTMapper">
+    <resultMap id="BaseResultMap" type="alipay.manage.api.channel.amount.recharge.usdt.USDTOrder">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="blockNumber" property="blockNumber" jdbcType="VARCHAR"/>
+        <result column="timeStamp" property="timeStamp" jdbcType="TIMESTAMP"/>
+        <result column="hash" property="hash" jdbcType="VARCHAR"/>
+        <result column="blockHash" property="blockHash" jdbcType="VARCHAR"/>
+        <result column="fromAccount" property="fromAccount" jdbcType="VARCHAR"/>
+        <result column="contractAddress" property="contractAddress" jdbcType="VARCHAR"/>
+        <result column="toAccount" property="toAccount" jdbcType="VARCHAR"/>
+        <result column="value" property="value" jdbcType="VARCHAR"/>
+        <result column="tokenName" property="tokenName" jdbcType="VARCHAR"/>
+        <result column="tokenSymbol" property="tokenSymbol" jdbcType="VARCHAR"/>
+        <result column="fromNow" property="fromNow" jdbcType="VARCHAR"/>
+        <result column="toNow" property="toNow" jdbcType="VARCHAR"/>
+        <!--  <result column="isDeal" property="isDeal" jdbcType="VARCHAR" />
+          <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
+          <result column="submitTime" property="submitTime" jdbcType="TIMESTAMP" />
+          <result column="status" property="status" jdbcType="INTEGER" />-->
+    </resultMap>
+    <insert id="insertOrder" parameterType="alipay.manage.api.channel.amount.recharge.usdt.USDTOrder"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into alipay_usdt_order
+        (blockNumber, `timeStamp`, hash, blockHash, fromAccount, contractAddress, toAccount, `value`,tokenName,tokenSymbol)
+        values
+        (#{blockNumber}, #{timeStamp},#{hash},#{blockHash},#{from},#{ontractAddress},#{to},#{value},#{tokenName},#{tokenSymbol})
+  commit;
+  </insert>
+</mapper>

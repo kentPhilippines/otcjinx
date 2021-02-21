@@ -2,10 +2,7 @@ package alipay.manage.mapper;
 
 import alipay.manage.bean.DealOrder;
 import alipay.manage.bean.DealOrderExample;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 
@@ -108,4 +105,16 @@ public interface DealOrderMapper {
 
     @Select("select id, orderId, associatedId, orderStatus, dealAmount ,orderAccount, orderQrUser,externalOrderId FROM alipay_deal_order  where  orderId = #{orderId}")
     DealOrder findOrderStatus(String orderId);
+
+    /*  @Insert("insert into  alipay_usdt_order (blockNumber, timeStamp, hash, blockHash, fromAccount, contractAddress, toAccount, value,tokenName,tokenSymbol) " +
+              "values (#{order.blockNumber}, #{order.timeStamp},#{order.hash},#{order.blockHash},#{order.from}" +
+              ",#{order.ontractAddress},#{order.to}#{order.value},#{order.tokenName},#{order.tokenSymbol})")
+      int addUsdtOrder(@Param("order")USDTOrder order);*/
+    @Insert("insert into  alipay_usdt_order (blockNumber, timeStamp, hash, blockHash, fromAccount, contractAddress, toAccount, value,tokenName,tokenSymbol) " +
+            "values (#{blockNumber}, #{timeStamp},#{hash},#{blockHash},#{from}" +
+            ",#{ontractAddress},#{to},#{value},#{tokenName},#{tokenSymbol})")
+    int addUsdtOrder(@Param("blockNumber") String blockNumber, @Param("timeStamp") String timeStamp,
+                     @Param("hash") String hash, @Param("blockHash") String blockHash, @Param("from") String from,
+                     @Param("contractAddress") String contractAddress, @Param("to") String to,
+                     @Param("value") String value, @Param("tokenName") String tokenName, @Param("tokenSymbol") String tokenSymbol);
 }

@@ -1,5 +1,6 @@
 package alipay.manage.service.impl;
 
+import alipay.manage.api.channel.amount.recharge.usdt.USDTOrder;
 import alipay.manage.bean.*;
 import alipay.manage.mapper.DealOrderMapper;
 import alipay.manage.mapper.RechargeMapper;
@@ -324,5 +325,11 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public DealOrder findOrderStatus(String orderId) {
         return dealOrderMapper.findOrderStatus(orderId);
+    }
+
+    @Override
+    public int addUsdtOrder(USDTOrder order) {
+        return dealOrderMapper.addUsdtOrder(order.getBlockNumber(), order.getTimeStamp(), order.getHash()
+                , order.getBlockHash(), order.getFrom(), order.getContractAddress(), order.getTo(), order.getValue(), order.getTokenName(), order.getTokenSymbol());
     }
 }

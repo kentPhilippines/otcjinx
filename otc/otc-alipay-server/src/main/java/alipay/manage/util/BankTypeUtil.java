@@ -25,6 +25,7 @@ public class BankTypeUtil {
 		BANK_MAP.put("Alipay", "Alipay");
 		BANK_MAP.put("Wechar", "Wechar");
 		BANK_MAP.put("ABC", BankEnum.ABC.getBankId());
+		BANK_MAP.put("USDT", BankEnum.USDT.getBankId());
 		BANK_MAP.put("ARCU", BankEnum.ARCU.getBankId());
 		BANK_MAP.put("PSBC", BankEnum.PSBC.getBankId());
 		BANK_MAP.put("ASCB", BankEnum.ASCB.getBankId());
@@ -282,7 +283,6 @@ public class BankTypeUtil {
 		BANK_MAP_NAME.put("ORBANK", BankEnum.ORBANK.getBankNameCn());
 
 
-
 		BANK_MAP_NAME.put("TACCB", BankEnum.TACCB.getBankNameCn());
 		BANK_MAP_NAME.put("TCCB", BankEnum.TCCB.getBankNameCn());
 		BANK_MAP_NAME.put("TCRCB", BankEnum.TCRCB.getBankNameCn());
@@ -290,15 +290,14 @@ public class BankTypeUtil {
 		BANK_MAP_NAME.put("URMQCCB", BankEnum.URMQCCB.getBankNameCn());
 
 
-
 		BANK_MAP_NAME.put("WHCCB", BankEnum.WHCCB.getBankNameCn());
+		BANK_MAP_NAME.put("USDT", BankEnum.USDT.getBankNameCn());
 		BANK_MAP_NAME.put("WHRCB", BankEnum.WHRCB.getBankNameCn());
 		BANK_MAP_NAME.put("WJRCB", BankEnum.WJRCB.getBankNameCn());
 		BANK_MAP_NAME.put("WRCB", BankEnum.WRCB.getBankNameCn());
 		BANK_MAP_NAME.put("WRCB", BankEnum.WRCB.getBankNameCn());
 		BANK_MAP_NAME.put("WZCB", BankEnum.WZCB.getBankNameCn());
 		BANK_MAP_NAME.put("ZBCB", BankEnum.ZBCB.getBankNameCn());
-
 
 
 		BANK_MAP_NAME.put("ZBCB", BankEnum.ZBCB.getBankNameCn());

@@ -101,35 +101,35 @@
 
         注意，table里面很多参数都是对javaModelGenerator，context等元素的默认属性的一个复写；
      -->
-           <!-- <property name="useActualColumnNames" value="false"/>-->
-		<table tableName="alipay_exception_order" domainObjectName="ExceptionOrder"
-			   enableCountByExample="true" enableUpdateByExample="true"
-			   enableDeleteByExample="true" enableSelectByExample="true"
-			   selectByExampleQueryId="true">
-			<property name="my.isgen.usekeys" value="true"/>
-			<property name="useActualColumnNames" value="true"/>
-			<generatedKey column="id" sqlStatement="JDBC"/>
-		</table>
-         <!--   	<table tableName="product_qrcode_running" domainObjectName="QrcodeRuning"   enableCountByExample="true"  enableUpdateByExample="true"  enableDeleteByExample="true"  enableSelectByExample="true"  selectByExampleQueryId="true">
-                    <property name="my.isgen.usekeys" value="true"/>
-                    <property name="useActualColumnNames" value="true"/>
-                    <generatedKey column="id" sqlStatement="JDBC"/>
-            </table>
-          	<table tableName="product_qrcode_tripartite_recharge" domainObjectName="QrcodeTripartiteRecharge"   enableCountByExample="true"  enableUpdateByExample="true"  enableDeleteByExample="true"  enableSelectByExample="true"  selectByExampleQueryId="true">
-                    <property name="my.isgen.usekeys" value="true"/>
-                    <property name="useActualColumnNames" value="true"/>
-                    <generatedKey column="id" sqlStatement="JDBC"/>
-            </table>
-          	<table tableName="product_qrcode_user" domainObjectName="QrcodeUser"   enableCountByExample="true"  enableUpdateByExample="true"  enableDeleteByExample="true"  enableSelectByExample="true"  selectByExampleQueryId="true">
-                    <property name="my.isgen.usekeys" value="true"/>
-                    <property name="useActualColumnNames" value="true"/>
-                    <generatedKey column="id" sqlStatement="JDBC"/>
-            </table>
-          	<table tableName="product_qrcode_config" domainObjectName="QrcodeConfig"   enableCountByExample="true"  enableUpdateByExample="true"  enableDeleteByExample="true"  enableSelectByExample="true"  selectByExampleQueryId="true">
-                    <property name="my.isgen.usekeys" value="true"/>
-                    <property name="useActualColumnNames" value="true"/>
-                    <generatedKey column="id" sqlStatement="JDBC"/>
-            </table>  -->
+        <!-- <property name="useActualColumnNames" value="false"/>-->
+        <table tableName="alipay_usdt_order" domainObjectName="UsdtOrder"
+               enableCountByExample="true" enableUpdateByExample="true"
+               enableDeleteByExample="true" enableSelectByExample="true"
+               selectByExampleQueryId="true">
+            <property name="my.isgen.usekeys" value="true"/>
+            <property name="useActualColumnNames" value="true"/>
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>
+        <!--   	<table tableName="product_qrcode_running" domainObjectName="QrcodeRuning"   enableCountByExample="true"  enableUpdateByExample="true"  enableDeleteByExample="true"  enableSelectByExample="true"  selectByExampleQueryId="true">
+                   <property name="my.isgen.usekeys" value="true"/>
+                   <property name="useActualColumnNames" value="true"/>
+                   <generatedKey column="id" sqlStatement="JDBC"/>
+           </table>
+             <table tableName="product_qrcode_tripartite_recharge" domainObjectName="QrcodeTripartiteRecharge"   enableCountByExample="true"  enableUpdateByExample="true"  enableDeleteByExample="true"  enableSelectByExample="true"  selectByExampleQueryId="true">
+                   <property name="my.isgen.usekeys" value="true"/>
+                   <property name="useActualColumnNames" value="true"/>
+                   <generatedKey column="id" sqlStatement="JDBC"/>
+           </table>
+             <table tableName="product_qrcode_user" domainObjectName="QrcodeUser"   enableCountByExample="true"  enableUpdateByExample="true"  enableDeleteByExample="true"  enableSelectByExample="true"  selectByExampleQueryId="true">
+                   <property name="my.isgen.usekeys" value="true"/>
+                   <property name="useActualColumnNames" value="true"/>
+                   <generatedKey column="id" sqlStatement="JDBC"/>
+           </table>
+             <table tableName="product_qrcode_config" domainObjectName="QrcodeConfig"   enableCountByExample="true"  enableUpdateByExample="true"  enableDeleteByExample="true"  enableSelectByExample="true"  selectByExampleQueryId="true">
+                   <property name="my.isgen.usekeys" value="true"/>
+                   <property name="useActualColumnNames" value="true"/>
+                   <generatedKey column="id" sqlStatement="JDBC"/>
+           </table>  -->
         <!--       <table tableName="manage_order_all" domainObjectName="OrderAll"   enableCountByExample="true"  enableUpdateByExample="true"  enableDeleteByExample="true"  enableSelectByExample="true"  selectByExampleQueryId="true">
                     <property name="my.isgen.usekeys" value="true"/>
                     <property name="useActualColumnNames" value="true"/>

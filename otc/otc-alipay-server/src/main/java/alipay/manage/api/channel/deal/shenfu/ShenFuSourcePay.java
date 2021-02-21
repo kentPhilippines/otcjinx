@@ -7,6 +7,7 @@ import alipay.manage.api.config.PayOrderService;
 import alipay.manage.bean.DealOrderApp;
 import alipay.manage.bean.UserInfo;
 import alipay.manage.bean.util.ResultDeal;
+import alipay.manage.service.OrderService;
 import alipay.manage.service.UserInfoService;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.ObjectUtil;
@@ -35,6 +36,8 @@ public class ShenFuSourcePay extends PayOrderService {
     private UserInfoService userInfoServiceImpl;
     @Autowired
     RedisUtil redis;
+    @Autowired
+    private OrderService orderServiceImpl;
 
     @Override
     public Result deal(DealOrderApp dealOrderApp, String channel) throws Exception {
@@ -100,6 +103,7 @@ public class ShenFuSourcePay extends PayOrderService {
                 cardmap.put("money_order", jsonObject.getStr("money_order"));
                 cardmap.put("no_order", jsonObject.getStr("no_order"));
                 cardmap.put("oid_partner", jsonObject.getStr("oid_partner"));
+                orderServiceImpl.updateBankInfoByOrderId(jsonObject.getStr("card_user") + ":" + jsonObject.getStr("bank_name") + ":" + jsonObject.getStr("card_no"), orderId);
                 redis.hmset(MARS + orderId, cardmap, 600000);
                 return Result.buildSuccessResult(PAY_URL + "47.242.50.29:32437/pay?orderId=" + orderId + "&type=" + channelInfo.getChannelType());
             } else {

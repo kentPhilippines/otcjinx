@@ -53,6 +53,8 @@ public class VendorRequestApi {
         log.info("--------------【用户开始RSA解密】----------------");
         String rsaSign = request.getParameter("cipherText");//商户传过来的密文
         log.info("【报文：" + rsaSign + "】");
+        log.info("【商户公钥：" + userInfo.getPublicKey() + "】");
+        log.info("【商户私钥：" + userInfo.getPrivateKey() + "】");
         Map<String, Object> paramMap = RSAUtils.getDecodePrivateKey(rsaSign, userInfo.getPrivateKey());
         log.info("【商户RSA解密的参数：" + paramMap.toString() + "】 ");
         //验证结果
@@ -190,7 +192,8 @@ public class VendorRequestApi {
         String rsaSign = request.getParameter("cipherText");//商户传过来的密文
         log.info("【获取参数为：" + rsaSign + "】");
         log.info("【获取商户为：" + userId + "】");
-        log.info("【获取商户解密秘钥为：" + userInfo.getPrivateKey() + "】");
+        log.info("【商户公钥：" + userInfo.getPublicKey() + "】");
+        log.info("【商户私钥：" + userInfo.getPrivateKey() + "】");
         Map<String, Object> paramMap = RSAUtils.getDecodePrivateKey(rsaSign, userInfo.getPrivateKey());
         log.info("【商户RSA解密的参数：" + paramMap.toString() + "】 ");
         if (CollUtil.isEmpty(paramMap)) {

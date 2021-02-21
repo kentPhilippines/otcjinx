@@ -13,6 +13,7 @@
     <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
     <result column="feeId" property="feeId" jdbcType="INTEGER" />
     <result column="notify" property="notify" jdbcType="VARCHAR" />
+    <result column="currency" property="currency" jdbcType="VARCHAR"/>
     <result column="back" property="back" jdbcType="VARCHAR" />
     <result column="submitTime" property="submitTime" jdbcType="TIMESTAMP" />
     <result column="submitSystem" property="submitSystem" jdbcType="VARCHAR" />
@@ -85,7 +86,7 @@
   <sql id="Base_Column_List" >
     id, orderId, orderType, orderAccount, orderStatus, orderAmount, orderIp, appOrderId, 
     createTime, feeId, notify, back, submitTime, submitSystem, status, retain1, retain2, 
-    retain3
+    retain3,currency
   </sql>
   <sql id="Blob_Column_List" >
     dealDescribe
@@ -148,14 +149,14 @@
       appOrderId, createTime, feeId, 
       notify, back, submitTime, 
       submitSystem, status, retain1, 
-      retain2, retain3, dealDescribe
+      retain2, retain3, dealDescribe,currency
       )
     values (#{orderId,jdbcType=VARCHAR}, #{orderType,jdbcType=INTEGER}, #{orderAccount,jdbcType=VARCHAR}, 
       #{orderStatus,jdbcType=BIT}, #{orderAmount,jdbcType=DECIMAL}, #{orderIp,jdbcType=VARCHAR}, 
       #{appOrderId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{feeId,jdbcType=INTEGER}, 
       #{notify,jdbcType=VARCHAR}, #{back,jdbcType=VARCHAR}, #{submitTime,jdbcType=TIMESTAMP}, 
       #{submitSystem,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{retain1,jdbcType=CHAR}, 
-      #{retain2,jdbcType=CHAR}, #{retain3,jdbcType=CHAR}, #{dealDescribe,jdbcType=LONGVARCHAR}
+      #{retain2,jdbcType=CHAR}, #{retain3,jdbcType=CHAR}, #{dealDescribe,jdbcType=LONGVARCHAR},#{currency}
       )
   </insert>
   <insert id="insertSelective" parameterType="alipay.manage.bean.DealOrderApp" useGeneratedKeys="true" keyProperty="id" >
@@ -204,17 +205,20 @@
         status,
       </if>
       <if test="retain1 != null" >
-        retain1,
+          retain1,
       </if>
-      <if test="retain2 != null" >
-        retain2,
-      </if>
-      <if test="retain3 != null" >
-        retain3,
-      </if>
-      <if test="dealDescribe != null" >
-        dealDescribe,
-      </if>
+        <if test="retain2 != null">
+            retain2,
+        </if>
+        <if test="retain3 != null">
+            retain3,
+        </if>
+        <if test="dealDescribe != null">
+            dealDescribe,
+        </if>
+        <if test="currency != null">
+            currency,
+        </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="orderId != null" >
@@ -260,17 +264,20 @@
         #{status,jdbcType=INTEGER},
       </if>
       <if test="retain1 != null" >
-        #{retain1,jdbcType=CHAR},
+          #{retain1,jdbcType=CHAR},
       </if>
-      <if test="retain2 != null" >
-        #{retain2,jdbcType=CHAR},
-      </if>
-      <if test="retain3 != null" >
-        #{retain3,jdbcType=CHAR},
-      </if>
-      <if test="dealDescribe != null" >
-        #{dealDescribe,jdbcType=LONGVARCHAR},
-      </if>
+        <if test="retain2 != null">
+            #{retain2,jdbcType=CHAR},
+        </if>
+        <if test="retain3 != null">
+            #{retain3,jdbcType=CHAR},
+        </if>
+        <if test="dealDescribe != null">
+            #{dealDescribe,jdbcType=LONGVARCHAR},
+        </if>
+        <if test="currency != null">
+            #{currency},
+        </if>
     </trim>
   </insert>
   <select id="countByExample" parameterType="alipay.manage.bean.DealOrderAppExample" resultType="java.lang.Integer" >

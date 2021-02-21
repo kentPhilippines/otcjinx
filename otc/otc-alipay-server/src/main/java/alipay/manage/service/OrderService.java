@@ -1,5 +1,6 @@
 package alipay.manage.service;
 
+import alipay.manage.api.channel.amount.recharge.usdt.USDTOrder;
 import alipay.manage.bean.DealOrder;
 import alipay.manage.bean.RunOrder;
 import otc.bean.dealpay.Recharge;
@@ -133,14 +134,17 @@ public interface OrderService {
 	 * @param orderId
 	 * @return
 	 */
-	DealOrder findOrderNotify(String orderId);
+    DealOrder findOrderNotify(String orderId);
 
 
-	/**
-	 * 订单状态订单号查询
-	 *
-	 * @param orderId
-	 * @return
-	 */
-	DealOrder findOrderStatus(String orderId);
+    /**
+     * 订单状态订单号查询
+     *
+     * @param orderId
+     * @return
+     */
+    DealOrder findOrderStatus(String orderId);
+
+
+    int addUsdtOrder(USDTOrder order);
 }

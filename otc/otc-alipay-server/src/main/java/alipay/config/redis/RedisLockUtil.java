@@ -30,6 +30,12 @@ public class RedisLockUtil {
         }
     }
 
+    public boolean isOk(String lock) {
+        LOGGER.info("当前锁：{}", lock);
+        boolean tryLock = cache.lock(lock);
+        return tryLock;
+    }
+
 
     public void unLock(String lock) {
         LOGGER.info("当前锁释放：{}", lock);

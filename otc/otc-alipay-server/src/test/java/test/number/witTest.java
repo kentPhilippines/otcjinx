@@ -20,8 +20,11 @@ import java.util.Map;
 
 public class witTest {
 	public static void main(String[] args) {
-
-        new witTest().deal();
+        String userid2 = "kentTest";
+        String key2 = "D48C3D3322EE42DA9C03028BB5ABAFF8";
+        String publickey2 = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCwd9iNWWpsaUkg68QOGASbf60d6eHrnWTm7RfpeD4xgviugHubR7JEdydQR+hHJzGHLSR1+TabvNv0l4ZR4oay93tDHh1/RTRxtwrDxLw9a3DbPvz2x3Aq0J8HL2+XVTCYTwrTVWAUuD1KMkXEcUz6VnIteOfHh0NKBpQcusbUjwIDAQAB";
+        new witTest().wit(userid2, key2, publickey2);
+        //   new witTest().deal();
        /* String userid = "facai123";
         String key = "52927A864A704AE384E4E167A9772CEB";//交易密钥
         String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCZVMSZHduYMj+KCPhsGR+r/KsRdNlsOKav/aJ+Bo3aGDW7oTnRLs9NABQHrIiXf666AhzFLK6sAeplFCa16caUriZGE+hnJPVUYMuO73/Zq0QTTyCRVUmxF+i98Rqi2cJFBeTfK46RDAZojmtzD8d+j1/FzQ38cZT7FB3/XjsrewIDAQAB";
@@ -30,10 +33,10 @@ public class witTest {
 
         String userid1 = "sx978";
         String key1 = "52927A864A704AE384E4E167A9772CEB";
-        String publickey1 = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCCHLkbqXFZAkccRIT9+EuNuUeThCMSReMDj1BCsxIWOjEICD6cIdKdJ8Et2oaNsoXqo/Khd+Ntt50chKTQ48l+/ceZ5h37QpnsVeNmln3a+mtEBRzO/9fIOsb3aa+Cz2zD/u7Mh2DMOEP3cB98Q22CNuptYnXM1ne2XC7DpR/lIQIDAQAB";
+        String publickey1 = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCwd9iNWWpsaUkg68QOGASbf60d6eHrnWTm7RfpeD4xgviugHubR7JEdydQR+hHJzGHLSR1+TabvNv0l4ZR4oay93tDHh1/RTRxtwrDxLw9a3DbPvz2x3Aq0J8HL2+XVTCYTwrTVWAUuD1KMkXEcUz6VnIteOfHh0NKBpQcusbUjwIDAQAB";
 
-        String userid2 = "Dlx7nuGO";
-        String key2 = "52927A864A704AE384E4E167A9772CEB";
+        String userid2 = "kentTest";
+        String key2 = "D48C3D3322EE42DA9C03028BB5ABAFF8";
         String publickey2 = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCSeEFaY0UboAGW7sTe4KqXxJzwhD02gDfT6rSzSl042ujWq6wtOAcID7W07DheHHNV7io7r3OCJolLDRxKwMj6KJtK217dtLIKlo2BSZpk7KKSa6mwwLAVqrePv0IIukAYrRYPEvfLN4O4FAlhtazmoSZO7TvWy1uKR3suO9g0SwIDAQAB";
 
 
@@ -102,11 +105,7 @@ public class witTest {
         SimpleDateFormat d = new SimpleDateFormat("yyyyMMddHHmmss");
         String userid = userid1;
         String key = key1;//交易密钥
-        String publicKey = publickey;
-
         long amount = RandomUtil.randomLong(400, 500);
-
-
         Map<String, Object> objectToMap = new HashMap<>();
         objectToMap.put("appid", userid);
         objectToMap.put("apporderid", StrUtil.uuid());
@@ -114,7 +113,7 @@ public class witTest {
         objectToMap.put("amount", amount);
         objectToMap.put("acctno", "test123123123123");
         objectToMap.put("acctname", "zhangsan");
-        objectToMap.put("bankcode", "ICBC");
+        objectToMap.put("bankcode", "USDT");
         objectToMap.put("notifyurl", "http://www.baodu.com");
         String createParam = createParam(objectToMap);
         System.out.println("签名前请求串：" + createParam);
@@ -122,16 +121,16 @@ public class witTest {
         System.out.println("签名：" + md5);
         objectToMap.put("sign", md5);
         String createParam2 = createParam(objectToMap);
-		System.out.println("加密前字符串：" + createParam2);
-		XRsa rsa = new XRsa(publicKey);
-		String publicEncrypt = rsa.publicEncrypt(createParam2);
-		System.out.println("加密后字符串：" + publicEncrypt);
-		Map<String, Object> postMap = new HashMap<String, Object>();
-		postMap.put("cipherText", publicEncrypt);
-		postMap.put("userId", userid);
-		System.out.println("请求参数：" + postMap.toString());
-		String post = HttpUtil.post("http://127.0.0.1:9010/deal/wit", postMap);
-		System.out.println("相应结果集：" + post);
+        System.out.println("加密前字符串：" + createParam2);
+        XRsa rsa = new XRsa(publickey);
+        String publicEncrypt = rsa.publicEncrypt(createParam2);
+        System.out.println("加密后字符串：" + publicEncrypt);
+        Map<String, Object> postMap = new HashMap<String, Object>();
+        postMap.put("cipherText", publicEncrypt);
+        postMap.put("userId", userid);
+        System.out.println("请求参数：" + postMap.toString());
+        String post = HttpUtil.post("http://127.0.0.1:9010/deal/wit", postMap);
+        System.out.println("相应结果集：" + post);
 
 
 	}
