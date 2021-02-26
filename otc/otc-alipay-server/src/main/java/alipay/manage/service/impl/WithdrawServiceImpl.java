@@ -24,14 +24,24 @@ public class WithdrawServiceImpl implements WithdrawService {
 		return withdrawDao.findWitOrder(orderId);
 	}
 
-	@Override
-	public Withdraw findOrderByApp(String appId, String appOrderId) {
-		return withdrawDao.findOrderByApp(appId, appOrderId);
-	}
+    @Override
+    public Withdraw findOrderByApp(String appId, String appOrderId) {
+        return withdrawDao.findOrderByApp(appId, appOrderId);
+    }
 
-	@Override
-	public void updateWitError(String orderId) {
-		withdrawDao.updataOrderStatusEr(orderId, Common.Order.Wit.ORDER_STATUS_ER, "账户扣减失败，订单失败");
-	}
+    @Override
+    public void updateWitError(String orderId) {
+        withdrawDao.updataOrderStatusEr(orderId, Common.Order.Wit.ORDER_STATUS_ER, "账户扣减失败，订单失败");
+    }
+
+    @Override
+    public Withdraw findEthFee() {
+        return withdrawDao.findEthFee();
+    }
+
+    @Override
+    public void updateEthFee(String orderId, String hash) {
+        withdrawDao.updateEthFee(orderId, hash);
+    }
 
 }

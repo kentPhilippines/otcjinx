@@ -72,4 +72,11 @@ public interface WithdrawMapper {
             "comment = #{comment}" +
             "where orderId = #{orderId}")
     void updateComment(@Param("orderId") String orderId, @Param("comment") String comment);
+
+
+    @Select("select orderId from alipay_withdraw where ethFee = 0 and currency = 'USDT' and orderStatus = 2 order by createTime asc limit 1 ")
+    Withdraw findEthFee();
+
+    @Update("update alipay_withdraw set ethFee = 1 , txhash = #{hash} where orderId = #{orderId} ")
+    void updateEthFee(@Param("orderId") String orderId, @Param("hash") String hash);
 }

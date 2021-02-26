@@ -2,10 +2,7 @@ package alipay.manage.service.impl;
 
 import alipay.manage.api.channel.amount.recharge.usdt.USDTOrder;
 import alipay.manage.bean.*;
-import alipay.manage.mapper.DealOrderMapper;
-import alipay.manage.mapper.RechargeMapper;
-import alipay.manage.mapper.RunOrderMapper;
-import alipay.manage.mapper.WithdrawMapper;
+import alipay.manage.mapper.*;
 import alipay.manage.service.CorrelationService;
 import alipay.manage.service.OrderService;
 import alipay.manage.util.SettingFile;
@@ -30,6 +27,8 @@ public class OrderServiceImpl implements OrderService {
     Logger log = LoggerFactory.getLogger(OrderServiceImpl.class);
     @Resource
     private DealOrderMapper dealOrderMapper;
+    @Resource
+    private DealOrderAppMapper dealOrderAppDao;
     @Resource
     private RunOrderMapper runOrderMapper;
     @Resource
@@ -331,5 +330,12 @@ public class OrderServiceImpl implements OrderService {
     public int addUsdtOrder(USDTOrder order) {
         return dealOrderMapper.addUsdtOrder(order.getBlockNumber(), order.getTimeStamp(), order.getHash()
                 , order.getBlockHash(), order.getFrom(), order.getContractAddress(), order.getTo(), order.getValue(), order.getTokenName(), order.getTokenSymbol());
+    }
+
+    @Override
+    public void updateUsdtTxHash(String orderId, String hash) {
+        int i = dealOrderMapper.updateUsdtTxHash(orderId, hash);
+        DealOrder orderByOrderId = dealOrderMapper.findOrderByOrderId(orderId);
+        int k = dealOrderAppDao.updateUsdtTxHash(orderByOrderId.getAssociatedId(), hash);
     }
 }

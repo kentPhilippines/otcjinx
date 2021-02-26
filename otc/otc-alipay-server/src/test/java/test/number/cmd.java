@@ -1,5 +1,7 @@
 package test.number;
 
+import cn.hutool.http.HttpUtil;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,9 +15,10 @@ public class cmd {
 
 
     public static void main(String[] args) {
-        String s = curlCmd("", "", "", "", "", "");
+        String s = HttpUtil.get("https://coinyep.com/zh/ex/ETH-USDT");
+
+
         System.out.println(s);
-        String ll = cmd(s);
     }
 
 

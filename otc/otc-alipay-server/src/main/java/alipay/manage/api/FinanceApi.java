@@ -1,12 +1,15 @@
 package alipay.manage.api;
 
+import alipay.manage.api.channel.amount.recharge.usdt.UsdtPayOut;
 import alipay.manage.api.config.FactoryForStrategy;
 import alipay.manage.bean.ChannelFee;
 import alipay.manage.mapper.ChannelFeeMapper;
+import alipay.manage.service.BankListService;
 import alipay.manage.service.WithdrawService;
 import alipay.manage.util.CheckUtils;
 import alipay.manage.util.LogUtil;
 import alipay.manage.util.OrderUtil;
+import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import org.slf4j.Logger;
@@ -24,6 +27,7 @@ import otc.util.RSAUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.util.Map;
 
 @RestController
@@ -42,6 +46,10 @@ public class FinanceApi {
     FactoryForStrategy factoryForStrategy;
     @Resource
     private ChannelFeeMapper channelFeeDao;
+    @Autowired
+    private UsdtPayOut usdtPayOutImpl;
+    @Autowired
+    private BankListService bankListServiceIMpl;
 
     /**
      * 财务审核商户提现记录状态
@@ -122,4 +130,50 @@ public class FinanceApi {
     }
 
 
+    /**
+     * USDT手动结算矿工费用
+     *
+     * @return
+     */
+    @PostMapping("/checkUSDT/{param:.+}")
+    public Result usdtEthFee(@PathVariable String param, HttpServletRequest request) {
+        logger.info("【==============开始进入手动结算USDT矿工费方法===============】");
+        logger.info("【手动结算USDT矿工费】后台传过来的参数：{}", param);
+        //平台内部私钥解密后台传过来的参数
+        Map<String, Object> paramMap = RSAUtils.getDecodePrivateKey(param, SystemConstants.INNER_PLATFORM_PRIVATE_KEY);
+        logger.info("【手动结算USDT矿工费】解密后台参数为：{}", paramMap);
+        if (ObjectUtil.isNull(paramMap.get("orderStatus"))) {
+            return Result.buildFailMessage("订单状态未传，疑似数据安全问题");
+        }
+
+    /*    BigDecimal usdt ,   //花费usdt
+                price  ,    //汽油价格
+                used,       //使用汽油数
+                eth,        //花费eth
+                priceUsdt;  //eth --> usdt 汇率
+        String hash;        //订单hash*/
+
+        Object usdt = paramMap.get("usdt");
+        Object orderId = paramMap.get("orderId");
+        Object price = paramMap.get("price");
+        Object used = paramMap.get("used");
+        Object eth = paramMap.get("eth");
+        Object approval = paramMap.get("approval");
+        Object priceUsdt = paramMap.get("priceUsdt");
+        Object hash = paramMap.get("hash");
+        if (null == usdt || null == price || null == used
+                || null == eth
+                || null == approval
+                || null == price || null == priceUsdt
+                || null == hash || null == orderId) {
+            return Result.buildFailMessage("部分数据未获取到，疑似数据安全问题");
+        }
+        ThreadUtil.execute(() -> {
+            logUtil.addLog(request, "当前后台结算usdt代付订单eth矿工费操作：" + paramMap.get("orderId") + "，：" + "，操作人：" + paramMap.get("approval").toString() + ", 结算usdt：" + usdt
+                    , paramMap.get("approval").toString());
+        });
+        Withdraw order = withdrawServiceImpl.findOrderId(orderId.toString());
+        return usdtPayOutImpl.usdtAmount(order, new BigDecimal(usdt.toString()), new BigDecimal(price.toString()),
+                new BigDecimal(used.toString()), new BigDecimal(eth.toString()), priceUsdt.toString(), hash.toString());
+    }
 }

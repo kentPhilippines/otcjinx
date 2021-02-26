@@ -137,14 +137,17 @@ public interface OrderService {
     DealOrder findOrderNotify(String orderId);
 
 
-    /**
-     * 订单状态订单号查询
-     *
-     * @param orderId
-     * @return
-     */
-    DealOrder findOrderStatus(String orderId);
+	/**
+	 * 订单状态订单号查询
+	 *
+	 * @param orderId
+	 * @return
+	 */
+	DealOrder findOrderStatus(String orderId);
 
 
-    int addUsdtOrder(USDTOrder order);
+	int addUsdtOrder(USDTOrder order);
+
+
+	void updateUsdtTxHash(String orderId, String hash);
 }

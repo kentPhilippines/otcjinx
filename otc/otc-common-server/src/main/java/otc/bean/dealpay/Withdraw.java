@@ -40,6 +40,15 @@ public class Withdraw implements Serializable{
     private String witChannel;
     private String chennelId;
     private String currency;
+    private Integer ethFee;  //eth手续费   1 已结算    0 未结算
+
+    public Integer getEthFee() {
+        return ethFee;
+    }
+
+    public void setEthFee(Integer ethFee) {
+        this.ethFee = ethFee;
+    }
 
     public String getCurrency() {
         return currency;

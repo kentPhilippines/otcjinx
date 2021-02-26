@@ -71,9 +71,13 @@ public interface DealOrderAppMapper {
      */
     @CacheEvict(value = ORDER_APP_INFO, allEntries = true)
     @Update("update alipay_deal_order_app set retain2 = #{yse} ,submitTime = NOW()   where orderId = #{orderId}")
-	boolean updateOrderIsAgent(@Param("orderId")  String orderId, @Param("yse")  String yse);
+    boolean updateOrderIsAgent(@Param("orderId") String orderId, @Param("yse") String yse);
 
     @Cacheable(cacheNames = {ORDER_APP_INFO}, unless = "#result == null")
     @Select("select *  from alipay_deal_order_app where appOrderId = #{appOrderId} and  orderAccount = #{appId}")
-    DealOrderApp findOrderByApp(@Param("appId")String appId,@Param("appOrderId") String appOrderId);
+    DealOrderApp findOrderByApp(@Param("appId") String appId, @Param("appOrderId") String appOrderId);
+
+
+    @Update("update alipay_deal_order_app  set txhash =  #{hash} where orderId = #{orderId} ")
+    int updateUsdtTxHash(@Param("orderId") String orderId, @Param("hash") String hash);
 }

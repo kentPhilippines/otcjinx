@@ -2,10 +2,15 @@ package alipay.manage.api.channel.amount.recharge.usdt;
 
 import alipay.config.redis.RedisUtil;
 import alipay.manage.api.config.NotfiyChannel;
+import alipay.manage.bean.BankList;
 import alipay.manage.bean.DealOrder;
+import alipay.manage.bean.UserFund;
 import alipay.manage.mapper.USDTMapper;
 import alipay.manage.service.BankListService;
 import alipay.manage.service.OrderService;
+import alipay.manage.service.WithdrawService;
+import alipay.manage.util.amount.AmountPublic;
+import alipay.manage.util.amount.AmountRunUtil;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
@@ -19,13 +24,18 @@ import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import otc.bean.alipay.OrderDealStatus;
+import otc.bean.dealpay.Withdraw;
 import otc.result.Result;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 @Component("UsdtPay-my")
@@ -34,9 +44,9 @@ public class UsdtPayOut extends NotfiyChannel implements USDT {
     //        String s = HttpUtil.get(" https://api.etherscan.io/api?module=account&action=tokentx&address=0x0418F374F25EdAb13D38a7D82b445cE9934Bfc12&page=1&offset=5&sort=asc&apikey=JYNM1VJSXN8JE6JCY5M9JGKBDB7KPJDC5M");
     //
 
-    private static final String FIND_URL = "https://api.etherscan.io/api?module=account&action=tokentx&address=";
-    private static final String APP_KEY = "JYNM1VJSXN8JE6JCY5M9JGKBDB7KPJDC5M";
-    private static final String ACCOUNT = "UsdtPay";//系统登记的渠道账户也是我们自己登记钱包地址的账户名
+    public static final String FIND_URL = "https://api.etherscan.io/api?module=account&action=tokentx&address=";
+    public static final String APP_KEY = "JYNM1VJSXN8JE6JCY5M9JGKBDB7KPJDC5M";
+    public static final String ACCOUNT = "UsdtPay";//系统登记的渠道账户也是我们自己登记钱包地址的账户名
     String FIND_AMOUNT_URL = "https://api.etherscan.io/api?module=account&action=balance&address=";
     String FIND_AMOUNT_URL_KEY = "&tag=latest&apikey=JYNM1VJSXN8JE6JCY5M9JGKBDB7KPJDC5M";
     @Resource
@@ -44,9 +54,46 @@ public class UsdtPayOut extends NotfiyChannel implements USDT {
     @Autowired
     private OrderService orderServiceImpl;
     @Autowired
+    WithdrawService withdrawServiceImpl;
+    @Autowired
     private BankListService bankListServiceIMpl;
     @Autowired
+    private AmountPublic amountPublicImpl;
+    @Autowired
+    private AmountRunUtil amountRunUtilImpl;
+    @Autowired
     private RedisUtil redis;
+
+    public static String findETHUSDTOrderList(String address) {
+        String url = FIND_URL + address + "&page=1&offset=20&sort=desc&apikey=" + APP_KEY;
+        return HttpUtil.get(url);
+    }
+
+    String findAMount(String address) {
+        String s = HttpUtil.get(FIND_AMOUNT_URL + address + FIND_AMOUNT_URL_KEY);
+        //{"status":"1","message":"OK","result":"8800000000000000"}
+        JSONObject jsonObject = JSONUtil.parseObj(s);
+        String result = jsonObject.getStr("result");
+        return result;
+    }
+
+    public Integer insterU(USDTOrder order) throws SQLException {
+        return Db.use().insertForGeneratedKey(
+                Entity.create("alipay_usdt_order")
+                        .set("blockNumber", order.getBlockNumber())
+                        .set("timeStamp", order.getTimeStamp())
+                        .set("hash", order.getHash())
+                        .set("blockHash", order.getBlockHash())
+                        .set("fromAccount", order.getFrom())
+                        .set("contractAddress", order.getContractAddress())
+                        .set("toAccount", order.getTo())
+                        .set("value", order.getValue())
+                        .set("tokenName", order.getTokenName())
+                        .set("tokenSymbol", order.getTokenSymbol())
+                        .set("fromNow", order.getFromNow())
+                        .set("toNow", order.getToNow())
+        ).intValue();
+    }
 
     public void findDealOrderLog() {
         log.info("【执行虚拟币回调订单主动查询】");
@@ -59,7 +106,7 @@ public class UsdtPayOut extends NotfiyChannel implements USDT {
             String[] split = account.toString().split("_");
             String address = split[0];//待支付成功地址
             String orderId = split[1];
-            String s = HttpUtil.get(FIND_URL + address + "&page=1&offset=20&sort=desc&apikey=" + APP_KEY);
+            String s = findETHUSDTOrderList(FIND_URL);
             JSONObject jsonObject = JSONUtil.parseObj(s);
             String status = jsonObject.getStr("status");
             if ("1".equals(status)) {
@@ -122,6 +169,7 @@ public class UsdtPayOut extends NotfiyChannel implements USDT {
                             if (((usdtTime - time) < TIME) && i > 1) {
                                 Result result1 = dealpayNotfiy(orderId, "127.0.0.1", "主动查询USDT订单交易成功");
                                 if (result1.isSuccess()) {//支付成功， 删除缓存标记
+                                    orderServiceImpl.updateUsdtTxHash(orderId, hash);
                                     redis.del(bankinfo);   //支付成功唯一标识
                                     redis.del(MARS + orderId);//终端用户获取支付地址信息
                                     redis.setRemove(MARS, address + "_" + orderId);//当前该地址和订单信息
@@ -136,29 +184,101 @@ public class UsdtPayOut extends NotfiyChannel implements USDT {
         }
     }
 
-    String findAMount(String address) {
-        String s = HttpUtil.get(FIND_AMOUNT_URL + address + FIND_AMOUNT_URL_KEY);
-        //{"status":"1","message":"OK","result":"8800000000000000"}
-        JSONObject jsonObject = JSONUtil.parseObj(s);
-        String result = jsonObject.getStr("result");
-        return result;
+    /**
+     * usdt代付订单自动结算手续费
+     *
+     * @return
+     */
+    @Transactional
+    public Result autoWitUSDT(String orderId) {
+        /**
+         *
+         * 获取我方所有usdt账号
+         * 通过地址拿到该笔交易的公链数据详情
+         * 通过出款账户匹配
+         * 确认当前出款数据
+         * 获取eth消耗  gasPrice *  gsaUsed
+         * 换算usdt     [ eth ==>  usdt https://coinyep.com/api/v1/?from=ETH&to=USDT&lang=zh&format=json   汇率减即可]
+         * 进行扣款
+         *
+         */
+
+        log.info("【==============开始进入自动结算usdt手续费方法===============】");
+        Withdraw orderWit = withdrawServiceImpl.findOrderId(orderId);
+        String bankNo = orderWit.getBankNo();//usdt代付地址
+        BigInteger bigInteger = new BigDecimal("1000000").toBigInteger();//虚拟币单位放大1000000比对
+        BigInteger bigInteger1 = orderWit.getAmount().toBigInteger();
+        BigInteger money = bigInteger1.multiply(bigInteger);
+        // 1， 获取我方所有usdt账号
+        List<BankList> bankList = bankListServiceIMpl.findBankByAccount(UsdtPayOut.ACCOUNT);
+        for (BankList bank : bankList) {
+            // 2，通过地址拿到该笔交易的公链数据详情
+            String ethusdtOrderList = UsdtPayOut.findETHUSDTOrderList(bank.getBankcardAccount());
+            JSONObject jsonObject = JSONUtil.parseObj(ethusdtOrderList);
+            String status = jsonObject.getStr("status");
+            if ("1".equals(status)) {
+                String resultjson = jsonObject.getStr("result");
+                JSONArray result = JSONUtil.parseArray(resultjson);
+                for (Object obj : result) {
+                    JSONObject jsonObject1 = JSONUtil.parseObj(obj);
+                    String to = jsonObject1.getStr("to");
+                    String timeStamp = jsonObject1.getStr("timeStamp");
+                    String hash = jsonObject1.getStr("hash");
+                    String blockHash = jsonObject1.getStr("blockHash");
+                    String from = jsonObject1.getStr("from");
+                    String contractAddress = jsonObject1.getStr("contractAddress");
+                    String value = jsonObject1.getStr("value");
+                    String key = from + to + value;
+                    String sign = bank.getBankcardAccount() + orderWit.getBankNo() + money;
+                    if (key.equals(sign)) {//当前订单
+                        //     3，通过出款账户匹配，确认当前出款数据
+                        String gasPrice = jsonObject1.getStr("gasPrice");
+                        String gasUsed = jsonObject1.getStr("gasUsed");
+                        BigDecimal price = new BigDecimal(gasPrice).divide(new BigDecimal("1000000000"), BigDecimal.ROUND_HALF_EVEN);
+                        price = price.divide(new BigDecimal("1000000000"));
+                        BigDecimal used = new BigDecimal(gasUsed);
+                        BigDecimal eth = price.multiply(used);
+                        //  4,获取eth消耗  gasPrice *  gsaUsed
+                        String rateResult = HttpUtil.get("https://coinyep.com/api/v1/?from=ETH&to=USDT&lang=zh&format=json");
+                        JSONObject rate = JSONUtil.parseObj(rateResult);
+                        String priceUsdt = jsonObject.getStr("price");
+                        BigDecimal usdtRate = new BigDecimal(priceUsdt);
+                        BigDecimal usdt = eth.multiply(usdtRate);
+                        return usdtAmount(orderWit, usdt, price, used, eth, priceUsdt, hash);
+                    }
+                }
+            }
+        }
+        return Result.buildFailMessage("结算异常");
     }
 
-    public Integer insterU(USDTOrder order) throws SQLException {
-        return Db.use().insertForGeneratedKey(
-                Entity.create("alipay_usdt_order")
-                        .set("blockNumber", order.getBlockNumber())
-                        .set("timeStamp", order.getTimeStamp())
-                        .set("hash", order.getHash())
-                        .set("blockHash", order.getBlockHash())
-                        .set("fromAccount", order.getFrom())
-                        .set("contractAddress", order.getContractAddress())
-                        .set("toAccount", order.getTo())
-                        .set("value", order.getValue())
-                        .set("tokenName", order.getTokenName())
-                        .set("tokenSymbol", order.getTokenSymbol())
-                        .set("fromNow", order.getFromNow())
-                        .set("toNow", order.getToNow())
-        ).intValue();
+
+    /**
+     * 结算usdt代付矿工手续费
+     *
+     * @param orderWit  代付订单
+     * @param usdt      花费usdt    折合usdt
+     * @param price     汽油单价
+     * @param used      使用汽油
+     * @param eth       折合eth
+     * @param priceUsdt eth -->usdt   汇率
+     * @param hash      usdt代付唯一订单
+     * @return
+     */
+    public Result usdtAmount(Withdraw orderWit, BigDecimal usdt, BigDecimal price, BigDecimal used, BigDecimal eth, String priceUsdt, String hash) {
+        UserFund fund = new UserFund();
+        fund.setUserId(orderWit.getUserId());
+        Result result1 = amountPublicImpl.deleteWithdraw(fund, usdt, orderWit.getOrderId());
+        if (result1.isSuccess()) {
+            String describe = "gasPrice:" + price + ",gasUsed:" + used + ",ETH:" + eth + ",ETH->USDT:" + priceUsdt + "USDT:" + usdt + ",Hash:" + hash + "";
+            Result result2 = amountRunUtilImpl.deleteUsdtFeeGas(orderWit, orderWit.getRetain2(), describe, usdt);
+            if (result2.isSuccess()) {
+                withdrawServiceImpl.updateEthFee(orderWit.getOrderId(), hash);
+                return Result.buildSuccessMessage("订单结算完毕");
+            }
+        }
+        return Result.buildSuccessMessage("结算异常");
     }
+
+
 }

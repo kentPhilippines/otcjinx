@@ -175,7 +175,6 @@ public class AmountPrivate extends Util {
 			return Result.buildFailMessage("当前授权额度减少执行失败");
 		}
 
-
 	}
 
 	/**

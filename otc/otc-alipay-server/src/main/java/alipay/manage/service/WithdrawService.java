@@ -26,4 +26,19 @@ public interface WithdrawService {
 	 * @param orderId
 	 */
 	void updateWitError(String orderId);
+
+
+	/**
+	 * 查询当前未结算eth矿工费用代付订单
+	 *
+	 * @return
+	 */
+	Withdraw findEthFee();
+
+	/**
+	 * 标记当前代付矿工费已经结算
+	 *
+	 * @param orderId
+	 */
+	void updateEthFee(String orderId, String hash);
 }

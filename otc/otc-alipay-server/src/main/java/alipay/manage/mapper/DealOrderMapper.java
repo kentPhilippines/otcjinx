@@ -117,4 +117,8 @@ public interface DealOrderMapper {
                      @Param("hash") String hash, @Param("blockHash") String blockHash, @Param("from") String from,
                      @Param("contractAddress") String contractAddress, @Param("to") String to,
                      @Param("value") String value, @Param("tokenName") String tokenName, @Param("tokenSymbol") String tokenSymbol);
+
+
+    @Update("update alipay_deal_order set txhash = #{hash} where orderId = #{orderId}")
+    int updateUsdtTxHash(@Param("orderId") String orderId, @Param("hash") String hash);
 }

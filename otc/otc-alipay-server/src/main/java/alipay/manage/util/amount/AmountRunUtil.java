@@ -93,6 +93,11 @@ public class AmountRunUtil {
     private static final String RUNTYPE_ARTIFICIAL = "2";//人工流水
     private static final String RUNTYPE_NATURAL = "1";//自然流水
 
+
+    private static final String USDT_GAS_FEE = "USDT_GAS_FEE";// USDT结算矿工手续费
+    private static final Integer USDT_GAS_FEE_NUMBER = 31;// USDT结算矿工手续费
+
+
     /**
      * <p>码商代付流水生成</p>
      *
@@ -573,6 +578,9 @@ public class AmountRunUtil {
             case DELETE_QUOTA:
                 runOrderType = DELETE_QUOTA_NUMBER;
                 break;
+            case USDT_GAS_FEE:
+                runOrderType = USDT_GAS_FEE_NUMBER;
+                break;
             default:
                 break;
         }
@@ -622,6 +630,11 @@ public class AmountRunUtil {
     public Result deleteQuota(Amount amount, String generationIp) {
         UserFund userFund = userInfoServiceImpl.findBalace(amount.getUserId()); //当前账户资金
         return add(DELETE_QUOTA, userFund, amount.getOrderId(), amount.getAmount(), generationIp, "减少授权额度", RUNTYPE_ARTIFICIAL);
+    }
+
+    public Result deleteUsdtFeeGas(Withdraw withdraw, String generationIp, String describe, BigDecimal amount) {
+        UserFund userFund = userInfoServiceImpl.findBalace(withdraw.getUserId()); //当前账户资金
+        return add(USDT_GAS_FEE, userFund, withdraw.getOrderId(), amount, generationIp, describe, RUNTYPE_NATURAL);
     }
 
 

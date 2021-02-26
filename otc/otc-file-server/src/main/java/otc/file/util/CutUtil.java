@@ -83,12 +83,12 @@ public class CutUtil {
 
 	}
 	public static void encode(String content,  String destPath, String fileName) throws Exception {
-		BufferedImage generate = QrCodeUtil.generate(content, QrConfig.create()  );
+		BufferedImage generate = QrCodeUtil.generate(content, QrConfig.create());
 		mkdirs(destPath);
 		String file = fileName + "";//生成随机文件名
-			ImageIO.write(generate, FORMAT_NAME, new File(destPath + "/" + file));
-		log.info("-------------------------图片生产成功-------------------------"+destPath + "/" + file);
-}
+		ImageIO.write(generate, FORMAT_NAME, new File(destPath + "/" + file));
+		log.info("-------------------------图片生产成功-------------------------" + destPath + "/" + file);
+	}
 
 public static void mkdirs(String destPath) {
 	File file = new File(destPath);
