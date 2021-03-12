@@ -86,15 +86,17 @@ public class PayApiConstant {
 	public class Queue{
 		public static final String QUEUE_API = "/queue-api";
 		public static final String FIND_QR = "/find-queue-qr";
-		public static final String UPDATA_QR = "/updata-queue-qr";
-		public static final String ADD_QR = "/add-queue-qr";
-		public static final String DELETE_QR = "/delete-queue-qr";
-		public static final String TASK_MEDIUM = "/task-medium";
+        public static final String UPDATA_QR = "/updata-queue-qr";
+        public static final String ADD_QR = "/add-queue-qr";
+        public static final String DELETE_QR = "/delete-queue-qr";
+        public static final String TASK_MEDIUM = "/task-medium";
 
-	}
-	public class Notfiy{
-		public static final String NOTFIY_API = "/notfiy-api";
-		public static final String NOTFIY_API_WAI = "/notfiy-api-pay";
-		public static final String NOTFIY_AGENT = "/notfiy-agent";
-	}
+    }
+
+    public class Notfiy {
+        public static final String NOTFIY_API = "/notfiy-api";
+        public static final String NOTFIY_API_WAI = "/notfiy-api-pay";
+        public static final String NOTFIY_AGENT = "/notfiy-agent";
+        public static final String OTHER_URL = "http://47.242.50.29:32437";
+    }
 }

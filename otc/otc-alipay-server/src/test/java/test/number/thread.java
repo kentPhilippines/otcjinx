@@ -1,20 +1,17 @@
 package test.number;
 
-import cn.hutool.core.thread.ThreadUtil;
+import cn.hutool.http.HttpUtil;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class thread {
 	public static void main(String[] args) {
-		StackTraceElement[] stackTrace = ThreadUtil.getStackTrace();
-		for(StackTraceElement sss:stackTrace) {
-			String className = sss.getClassName();
-			String fileName = sss.getFileName();
-			String methodName = sss.getMethodName();
-			int lineNumber = sss.getLineNumber();//代码行数
-			System.out.println(className);
-			System.out.println(fileName);
-		System.out.println(methodName);
-		System.out.println(lineNumber);
-		}
+		String url = "http://localhost/back/merchant/user/list";
+		Map map = new HashMap();
+		map.put("loginName", "kentMer1");
+		String post = HttpUtil.post(url, map);
+		System.out.println(post);
+	}
 	}
 
-}

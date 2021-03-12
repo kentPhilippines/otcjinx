@@ -66,7 +66,9 @@ public class UsdtPayOut extends NotfiyChannel implements USDT {
 
     public static String findETHUSDTOrderList(String address) {
         String url = FIND_URL + address + "&page=1&offset=20&sort=desc&apikey=" + APP_KEY;
-        return HttpUtil.get(url);
+        String s = HttpUtil.get(url);
+        log.info("【查询返回：" + s + "】");
+        return s;
     }
 
     String findAMount(String address) {
@@ -103,16 +105,18 @@ public class UsdtPayOut extends NotfiyChannel implements USDT {
             return;
         }
         for (Object account : orderList) {
+            log.info("【缓存数据为:" + account.toString() + "】");
             String[] split = account.toString().split("_");
             String address = split[0];//待支付成功地址
             String orderId = split[1];
-            String s = findETHUSDTOrderList(FIND_URL);
+            String s = findETHUSDTOrderList(address);
             JSONObject jsonObject = JSONUtil.parseObj(s);
             String status = jsonObject.getStr("status");
             if ("1".equals(status)) {
                 String resultjson = jsonObject.getStr("result");
                 JSONArray result = JSONUtil.parseArray(resultjson);
                 for (Object obj : result) {
+                    log.info("【查询usdt数据为:" + obj.toString() + "】");
                     USDTOrder usdt = new USDTOrder();
                     JSONObject jsonObject1 = JSONUtil.parseObj(obj);
                     String blockNumber = jsonObject1.getStr("blockNumber");
@@ -145,9 +149,10 @@ public class UsdtPayOut extends NotfiyChannel implements USDT {
                     if (null == o) {
                         int i = 0;
                         try {
+                            log.info("【保存本地usdt数据为：" + usdt.toString() + "】");
                             i = insterU(usdt);
                         } catch (Exception e) {
-
+                            i = 0;
                         }
                         if (i > 0) {
                             log.info("【数据标记成功，当前标记数据hash为：" + usdt.getHash() + "】");
@@ -155,8 +160,10 @@ public class UsdtPayOut extends NotfiyChannel implements USDT {
                         }
                         //验证是否有支付成功
                         String bankinfo = MARS + usdt.getValue() + usdt.getTo();   //支付成功标识
+                        log.info("【支付标记数据为：" + bankinfo + "】");
                         Object o1 = redis.get(bankinfo);//支付成功订单号  ，  如果不为空  则为支付成功
-                        if (null != o1 && usdt.getTo().equals(address)) {
+                        if (null != o1 && usdt.getTo().toUpperCase().equals(address.toUpperCase())) {
+                            log.info("【判定支付成功，当前订单号：" + orderId + "，当前支付地址：" + address + "】");
                             DealOrder order = orderServiceImpl.findOrderByOrderId(orderId);
                             if (order.getStatus().toString().equals(OrderDealStatus.成功.getIndex().toString())) {
                                 continue;

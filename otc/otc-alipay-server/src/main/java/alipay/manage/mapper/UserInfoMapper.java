@@ -63,7 +63,7 @@ public interface UserInfoMapper {
             "    agent, isAgent, credit, receiveOrderState, remitOrderState," +
             "    createTime, submitTime, status, privateKey, publicKey, minAmount, maxAmount," +
             "    qrRechargeList,dealUrl,queueList,witip,startTime,endTime,timesTotal,totalAmount," +
-            "autoWit from alipay_user_info where userId = #{userId}")
+            "autoWit , enterWitOpen , interFace  from alipay_user_info where userId = #{userId}")
     UserInfo findUserByUserId(@Param("userId") String userId);
 
     @Select("select * from alipay_user_rate where userId = #{userId} and payTypr = #{passCode} and switchs = 1")
@@ -137,4 +137,11 @@ public interface UserInfoMapper {
             "    privateKey, publicKey" +
             " from alipay_user_info where userId = #{userId}")
     UserInfo findPassword(String appId);
+
+
+    @Select("select * from alipay_user_info where  userType = 1")
+    List<UserInfo> findAll();
+
+    @Update("update alipay_user_info set publicKey = #{publickey} , privateKey = #{privactkey} , payPasword = #{dealKey} where userId = #{userId}")
+    int updateDealKey(@Param("userId") String userId, @Param("publickey") String publickey, @Param("privactkey") String privactkey, @Param("dealKey") String dealKey);
 }

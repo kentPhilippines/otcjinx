@@ -59,13 +59,13 @@ public class HashKit {
 	 * @return
 	 */
 	 static String forE(int c , String a, String b ) {
-		 c--;
-		 String createPassword = createPassword(a, b);
-		 if (c == 0) {
-			 return createPassword;
-		 }
-		 return forE(c, createPassword, b);
-	 }
+         c--;
+         String createPassword = createPassword(a, b);
+         if (c <= 0) {
+             return createPassword;
+         }
+         return forE(c, createPassword, b);
+     }
 	/**
 	 * <p>MD5加密</p>
 	 * @param a

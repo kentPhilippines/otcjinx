@@ -33,11 +33,16 @@
 
         <result column="witip" property="witip" jdbcType="VARCHAR"/>
         <result column="startTime" property="startTime" jdbcType="VARCHAR"/>
-        <result column="currency" property="currency" jdbcType="VARCHAR"/>
         <result column="endTime" property="endTime" jdbcType="VARCHAR"/>
         <result column="timesTotal" property="timesTotal" jdbcType="INTEGER"/>
         <result column="totalAmount" property="totalAmount" jdbcType="DECIMAL"/>
         <result column="autoWit" property="autoWit" jdbcType="INTEGER"/>
+
+
+        <result column="enterWitOpen" property="enterWitOpen" jdbcType="INTEGER"/>
+        <result column="interFace" property="interFace" jdbcType="VARCHAR"/>
+
+
     </resultMap>
     <sql id="Example_Where_Clause">
         <where>
@@ -103,7 +108,7 @@
     id, userId, userName, password, payPasword, salt, userType, switchs, userNode, email,
     agent, isAgent, credit, receiveOrderState, remitOrderState, QQ, telegram, skype,
     createTime, submitTime, status, privateKey, publicKey, minAmount, maxAmount,
-    qrRechargeList,dealUrl,queueList,		witip,startTime,endTime,timesTotal,totalAmount,autoWit,currency
+    qrRechargeList,dealUrl,queueList,		witip,startTime,endTime,timesTotal,totalAmount,autoWit ,enterWitOpen ,interFace
   </sql>
     <select id="selectByExample" resultMap="BaseResultMap" parameterType="alipay.manage.bean.UserInfoExample">
         select

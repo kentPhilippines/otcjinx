@@ -78,15 +78,15 @@ var gatheringCodeVM = new Vue({
 	},
 	methods : {
 		/**
-		 * 获取收款渠道
-		 */
+         * 获取收款渠道1
+         */
 		loadGatheringChannelDictItem : function() {
 			var that = this;
 			that.$http.get('/recharge/findEnabledPayType' ).then(function(res) {
 				this.gatheringChannelDictItems = res.body.result;
 				this.mediumDictItems = [
-					{mediumCode : 'alipay' , mediumName : '支付宝' }
-					]
+                    {mediumCode: 'card', mediumName: '银行卡'}
+                ]
 			});
 		},
 		query1 : function() {

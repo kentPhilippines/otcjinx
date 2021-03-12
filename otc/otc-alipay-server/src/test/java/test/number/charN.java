@@ -1,9 +1,8 @@
 package test.number;
 
 import cn.hutool.core.thread.ThreadUtil;
+import cn.hutool.http.HttpUtil;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -13,13 +12,9 @@ public class charN {
 
 	public static void main(String[] args) {
 
-		BigInteger bigInteger = new BigDecimal("180.00").toBigInteger();
-		BigInteger bigInteger1 = new BigDecimal("1000000").toBigInteger();
-		System.out.println(bigInteger);
-		System.out.println(bigInteger1);
+		String s = HttpUtil.get("Http://starpay168.com:5055/api-alipay/deal/wit");
 
-		BigInteger multiply = bigInteger.multiply(bigInteger1);
-		System.out.println(multiply);
+		System.out.println(s);
 	}
 
 	static boolean test() {

@@ -43,7 +43,7 @@ public class USDTTask {
     @Scheduled(cron = "0/15 * * * * ?")
     public void ethFee() {
         try {
-            if (redisLockUtil.isOk(KEY)) {
+            if (redisLockUtil.isOk(KEY + "1")) {
                 Withdraw wit = withdrawServiceImpl.findEthFee();
                 if (null != null && StrUtil.isNotEmpty(wit.getOrderId())) {
                     usdtPayOutImpl.autoWitUSDT(wit.getOrderId());

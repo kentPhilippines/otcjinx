@@ -1,6 +1,5 @@
 package otc.util.number;
 
-import org.apache.commons.lang.Validate;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -42,10 +41,6 @@ public class GenerateOrderNo {
 
 
     public static int nextInt(final int startInclusive, final int endExclusive) {
-        Validate.isTrue(endExclusive >= startInclusive,
-                "Start value must be smaller or equal to end value.");
-        Validate.isTrue(startInclusive >= 0, "Both range values must be non-negative.");
-
         if (startInclusive == endExclusive) {
             return startInclusive;
         }

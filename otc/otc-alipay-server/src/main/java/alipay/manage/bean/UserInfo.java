@@ -50,6 +50,27 @@ public class UserInfo implements Serializable{
     private String dealUrl;//代付URl
     private String fee;
     private Integer autoWit;//0:手动代付;1:自动代付
+    private Integer enterWitOpen;//0:关闭;1:开启
+
+
+    private String interFace;  //反查地址
+
+
+    public String getInterFace() {
+        return interFace;
+    }
+
+    public void setInterFace(String interFace) {
+        this.interFace = interFace;
+    }
+
+    public Integer getEnterWitOpen() {
+        return enterWitOpen;
+    }
+
+    public void setEnterWitOpen(Integer enterWitOpen) {
+        this.enterWitOpen = enterWitOpen;
+    }
 
     public Integer getAutoWit() {
         return autoWit;

@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import otc.api.alipay.Common;
 import otc.bean.dealpay.Withdraw;
+import otc.common.PayApiConstant;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -159,7 +160,7 @@ public class NotifyUtil {
         try {
             if (url.contains("https")) {
                 msg.put("url", url);
-                result = HttpUtil.post("http://47.242.50.29/forword", msg);
+                result = HttpUtil.post(PayApiConstant.Notfiy.OTHER_URL + "/forword", msg);
             } else {
                 result = HttpUtil.post(url, msg, 2000);
             }

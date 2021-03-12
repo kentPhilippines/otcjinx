@@ -201,27 +201,27 @@ public class DealAppApi extends PayOrderService {
 				log.info("【当前查询的订单不存在，请核实，订单号为：" + appOrderId + "】");
 				return Result.buildFailMessage("当前查询的订单不存在，请核实");
 			}
-			String clientIP = HttpUtil.getClientIP(request);
-			if (StrUtil.isBlank(clientIP)) {
-				return Result.buildFailMessage("未获取到代付查询ip");
-			}
-			Map<String, Object> mapr = new ConcurrentHashMap<String, Object>();
-			String commect = StrUtil.isBlank(witb.getComment()) ? "代付订单" : witb.getComment();
-			mapr.put("appId", appId);
-			mapr.put("appOrderId", witb.getAppOrderId());
-			mapr.put("amount", witb.getAmount());
-			mapr.put("orderStatus", witb.getOrderStatus());
-			mapr.put("msg", commect);
-			String sign2 = CheckUtils.getSign(mapr, userInfo.getPayPasword());
-			userInfo = null;
-			mapr = null;
-			FundBean fund = new FundBean();
-			fund.setAmount(witb.getAmount().toString());
-			fund.setOrderId(witb.getAppOrderId());
-			fund.setOrderStatus(witb.getOrderStatus());
-			//fund.setMsg(commect);
-			fund.setSign(sign2);
-			return Result.buildSuccessResult(fund);
+            String clientIP = HttpUtil.getClientIP(request);
+            if (StrUtil.isBlank(clientIP)) {
+                return Result.buildFailMessage("未获取到代付查询ip");
+            }
+            Map<String, Object> mapr = new ConcurrentHashMap<String, Object>();
+            String commect = StrUtil.isBlank(witb.getComment()) ? "代付订单" : witb.getComment();
+            mapr.put("appId", appId);
+            mapr.put("appOrderId", witb.getAppOrderId());
+            mapr.put("amount", witb.getAmount());
+            mapr.put("orderStatus", witb.getOrderStatus());
+            //mapr.put("msg", commect);
+            String sign2 = CheckUtils.getSign(mapr, userInfo.getPayPasword());
+            userInfo = null;
+            mapr = null;
+            FundBean fund = new FundBean();
+            fund.setAmount(witb.getAmount().toString());
+            fund.setOrderId(witb.getAppOrderId());
+            fund.setOrderStatus(witb.getOrderStatus());
+            //fund.setMsg(commect);
+            fund.setSign(sign2);
+            return Result.buildSuccessResult(fund);
 		}
 		return Result.buildFailMessage("查询失败");
 	}
@@ -310,27 +310,27 @@ public class DealAppApi extends PayOrderService {
 		String lock = this.getClass().getName() + "witOrder" + request.getParameter("userId");
 		redisLockUtil.redisLock(lock);
 		String manage = request.getParameter("manage");
-		boolean flag = false;
-		if (StrUtil.isNotBlank(manage)) {
-			flag = true;
-		}
-		Result withdrawal = vendorRequestApi.withdrawal(request, flag);
-		if (!withdrawal.isSuccess()) {
-			return withdrawal;
-		}
-		Object result = withdrawal.getResult();
-		WithdrawalBean wit = MapUtil.mapToBean((Map<String, Object>) result, WithdrawalBean.class);
-		wit.setIp(HttpUtil.getClientIP(request));
-		UserRate userRate = accountApiServiceImpl.findUserRateWitByUserId(wit.getAppid());
-		UserInfo userInfo = accountApiServiceImpl.findUserInfo(wit.getAppid());
-		String dpaytype = wit.getDpaytype();
-		ChannelFee channelFee = channelFeeDao.findImpl(userRate.getChannelId(), userRate.getPayTypr());
-		if (ObjectUtil.isNull(channelFee)) {
-			log.info("【通道实体不存在，费率配置错误】");
-			exceptionOrderServiceImpl.addWitOrder(wit, "用户报错：通道实体不存在，费率配置错误；处理方法：请检查商户提交的通道编码，反复确认", HttpUtil.getClientIP(request));
-			Result.buildFailMessage("通道实体不存在，费率配置错误");
-		}
-		String bankcode = BankTypeUtil.getBank(wit.getBankcode());
+        boolean flag = false;
+        if (StrUtil.isNotBlank(manage)) {
+            flag = true;
+        }
+        Result withdrawal = vendorRequestApi.withdrawal(request, flag);
+        if (!withdrawal.isSuccess()) {
+            return withdrawal;
+        }
+        Object result = withdrawal.getResult();
+        WithdrawalBean wit = MapUtil.mapToBean((Map<String, Object>) result, WithdrawalBean.class);
+        wit.setIp(VendorRequestApi.getIpAddress(request, wit.getAppid()));
+        UserRate userRate = accountApiServiceImpl.findUserRateWitByUserId(wit.getAppid());
+        UserInfo userInfo = accountApiServiceImpl.findUserInfo(wit.getAppid());
+        String dpaytype = wit.getDpaytype();
+        ChannelFee channelFee = channelFeeDao.findImpl(userRate.getChannelId(), userRate.getPayTypr());
+        if (ObjectUtil.isNull(channelFee)) {
+            log.info("【通道实体不存在，费率配置错误】");
+            exceptionOrderServiceImpl.addWitOrder(wit, "用户报错：通道实体不存在，费率配置错误；处理方法：请检查商户提交的通道编码，反复确认", HttpUtil.getClientIP(request));
+            Result.buildFailMessage("通道实体不存在，费率配置错误");
+        }
+        String bankcode = BankTypeUtil.getBank(wit.getBankcode());
 		if (StrUtil.isBlank(bankcode)) {
 			log.info("【当前银行卡类型不支持】");
 			log.info("【当前银行不支持代付，当前商户：" + wit.getAppid() + "，当前订单号:" + wit.getApporderid() + "】");

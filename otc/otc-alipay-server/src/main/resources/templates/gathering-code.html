@@ -82,9 +82,9 @@
 						<img style="float: right;"  src="https://i.alipayobjects.com/common/favicon/favicon.ico">
 					</div>
 					<div class="account-change-body-item">
-						<label>媒介:</label> <span>{{medium.code == 'alipay' ? '支付宝' :'其他'}}</span> 
-						<label>状态:</label> <span>{{medium.status == 1 ? '开启' : '关闭'}}</span>
-					</div>
+                        <label>媒介:</label> <span>{{medium.code == 'card' ? '银行卡' : '其他'}}</span>
+                        <label>状态:</label> <span>{{medium.status == 1 ? '开启' : '关闭'}}</span>
+                    </div>
 					<div class="account-change-body-item">
 						<label>账号:</label> <span class="account-change-body-item-highlight">{{medium.mediumNumber}}</span>
 					</div>
@@ -92,8 +92,8 @@
 						<label>收款人:</label> <span class="account-change-body-item-highlight">{{medium.mediumHolder}}</span>
 					</div>
 					 <div class="account-change-body-item">
-						<button class="btn btn-outline-info btn-lg" type="button" v-on:click="showQrManage(medium.mediumId)">二维码管理</button>
-						<button class="btn btn-outline-info btn-lg" type="button" v-on:click="showEditMediumPage(medium.mediumId)">编辑媒介</button>
+                         <!--<button class="btn btn-outline-info btn-lg" type="button" v-on:click="showQrManage(medium.mediumId)">二维码管理</button>-->
+                         <button class="btn btn-outline-info btn-lg" type="button" v-on:click="showEditMediumPage(medium.mediumId)">编辑媒介</button>
 					</div> 
 				</div>
 			</div>
@@ -163,15 +163,17 @@
 							<!-- <option v-for="dictItem in gatheringCodeStateDictItems" :value="dictItem.dictItemCode">{{dictItem.dictItemName}}</option> -->
 						</select>
 					</div>
-					<div class="form-group">
-						<label>媒介登录账户:</label> <input type="text"   class="form-control" placeholder="如支付宝或微信登录账户"  v-model="medium.mediumNumber">
-					</div>
+                <div class="form-group">
+                    <label>银行卡账号:</label> <input class="form-control" placeholder="如支付宝或微信登录账户" type="text"
+                                                 v-model="medium.mediumNumber">
+                </div>
 					<div class="form-group">
 						<label>收款人:</label> <input type="text" class="form-control"  placeholder="填写真实姓名"   v-model="medium.mediumHolder">
 					</div>
-					<div class="form-group">
-						<label>关联手机号/邮箱/编号:</label> <input type="text" class="form-control"  placeholder="请填写关联的手机号/邮箱/编号等" v-model="medium.mediumPhone">
-					</div>
+                <div class="form-group">
+                    <label>关联手机号:</label> <input class="form-control" placeholder="请填写关联的手机号/邮箱/编号等" type="text"
+                                                 v-model="medium.mediumPhone">
+                </div>
 						<form >
 					<button type="button" class="btn bg-primary btn-lg btn-block" style="background-color:#00a0e9" v-on:click="addMedium">保存</button>
 					<div v-show="editShow">

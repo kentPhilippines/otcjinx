@@ -60,7 +60,7 @@ public class UserContorller {
 		UserFund userFund = userInfoServiceImpl.findUserFundByAccount(user.getUserId());
 		UserRate rateR = userRateService.findUserRateR(user.getUserId());
 		user2.setAmount(userFund.getAccountBalance().toString());
-		user2.setFee(rateR.getFee().toString());
+//		user2.setFee(rateR.getFee().toString());
 		return Result.buildSuccessResult(user2);
 	}
 
@@ -135,27 +135,32 @@ public class UserContorller {
 	@PostMapping("/register")
 	@ResponseBody
 	public Result register(UserInfo user ,HttpServletRequest request) {
-		user.setPayPasword("zsqaz1234");
-		if (StrUtil.isBlank(user.getUserId()) || StrUtil.isBlank(user.getPassword())
-				|| StrUtil.isBlank(user.getPayPasword()) || StrUtil.isBlank(user.getUserName())
-				|| StrUtil.isBlank(user.getInviteCode())) {
-			return Result.buildFailResult("必填参数为空");
-		}
-		InviteCode code = inviteCodeServiceImpl.findInviteCode(user.getInviteCode());
-		if (code.getStatus() == 0) {
-			return Result.buildFailResult("当前邀请码不可使用");
-		}
-		user.setAgent(code.getBelongUser());//邀请码生成人
-		Result openAgentAccount = accountApiServiceImpl.addAccount(user);
-		boolean flag = false;
-		if (openAgentAccount.isSuccess()) {
-			flag = inviteCodeServiceImpl.updataInviteCode(user.getInviteCode(), user.getUserId());
-		}
-		if (openAgentAccount.isSuccess() && flag) {
-			return Result.buildSuccessResult();
-		}
-		return Result.buildFailMessage("注册失败");
-	}
+        if (StrUtil.isBlank(user.getUserId()) || StrUtil.isBlank(user.getPassword())
+                || StrUtil.isBlank(user.getPayPasword()) || StrUtil.isBlank(user.getUserName())
+                || StrUtil.isBlank(user.getInviteCode())) {
+            return Result.buildFailMessage("必填参数为空");
+        }
+        InviteCode code = inviteCodeServiceImpl.findInviteCode(user.getInviteCode());
+        if (code.getStatus() == 0) {
+            return Result.buildFailResult("当前邀请码不可使用");
+        }
+        user.setAgent(code.getBelongUser());//邀请码生成人
+        if ("member".equals(code.getUserType())) {
+            user.setIsAgent("2");
+        } else if ("agent".equals(code.getUserType())) {
+            user.setIsAgent("1");
+        }
+        user.setUserType(2);//卡商注册接口
+        Result openAgentAccount = accountApiServiceImpl.addAccount(user);
+        boolean flag = false;
+        if (openAgentAccount.isSuccess()) {
+            flag = inviteCodeServiceImpl.updataInviteCode(user.getInviteCode(), user.getUserId());
+        }
+        if (openAgentAccount.isSuccess() && flag) {
+            return Result.buildSuccessResult();
+        }
+        return Result.buildFailMessage("注册失败");
+    }
 	/**
 	 * <p>修改密码</p>
 	 * @param newLoginPwd

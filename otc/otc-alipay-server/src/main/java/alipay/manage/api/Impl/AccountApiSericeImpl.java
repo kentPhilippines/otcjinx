@@ -249,6 +249,8 @@ public class AccountApiSericeImpl implements AccountApiService {
     @Transactional(rollbackFor = Exception.class)
     public Result auditMerchantStatusByUserId(String userId, String paramKey, String paramValue) {
         int i = 0;
+        UserInfo userInfo = null;
+        UserStatusEnum userStatusEnum = null;
         switch (paramKey) {
             case "switchs"://商户状态
                 //更新userInfo表里的状态
@@ -259,9 +261,10 @@ public class AccountApiSericeImpl implements AccountApiService {
                 userInfoDao.closeMerchantRateChannel(userId, UserStatusEnum.CLOSE.getCode());
                 break;
             case "remitOrderState"://代付状态
+            case "enterWitOpen"://代付反查询开关
             case "receiveOrderState"://接单状态
-                UserInfo userInfo = userInfoDao.findUserByUserId(userId);
-                UserStatusEnum userStatusEnum = UserStatusEnum.resolve(UserStatusEnum.CLOSE.getCode());
+                userInfo = userInfoDao.findUserByUserId(userId);
+                userStatusEnum = UserStatusEnum.resolve(UserStatusEnum.CLOSE.getCode());
                 if (userStatusEnum.matches(userInfo.getSwitchs())) {
                     return Result.buildFailMessage("此商户已被停用，无法操作");
                 }

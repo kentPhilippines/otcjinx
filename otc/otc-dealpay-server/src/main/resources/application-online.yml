@@ -15,12 +15,14 @@ spring:
       connection-init-sql: SET NAMES utf8mb4
   redis:
     port: 6379
-    host: r-3nsnbeyh1ym8vjo2vf.redis.rds.aliyuncs.com
+    host: 172.29.17.156
     timeout: 5000
-    password: kentredis:Bffdasdsdada9ijnasd6
     pool:
-      max-idle: 200
+      max-idle: 100
       min-idle: 10
       max-active: 1000
       max-wait: -1
+
+
+
 #以上为线上发布配置文件

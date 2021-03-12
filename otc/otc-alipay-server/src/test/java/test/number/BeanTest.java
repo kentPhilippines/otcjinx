@@ -4,18 +4,13 @@ import java.math.BigDecimal;
 
 public class BeanTest {
 	public static void main(String[] args) {
-		BigDecimal rate = new BigDecimal("6.43633");
-		BigDecimal amount = new BigDecimal("200");
+        String amount = "1200.00";
+        int i = new BigDecimal(amount).intValue();
+        Integer integer = Integer.valueOf(i);
 
-		int i = amount.divide(rate, 6, BigDecimal.ROUND_CEILING).compareTo(new BigDecimal("300"));
-
-
-		System.out.println(
-				i
-
-		);
+        System.out.println(i);
 
 
-	}
+    }
 
 }

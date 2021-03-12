@@ -19,7 +19,7 @@ import java.util.Map;
 
 @Component("UsdtPay")
 public class UsdtPay extends PayOrderService implements USDT {
-    private static final String PAY_URL = "Http://";
+    private static final String PAY_URL = "http://";
     @Autowired
     RedisUtil redis;
     @Autowired
@@ -55,7 +55,9 @@ public class UsdtPay extends PayOrderService implements USDT {
             if (null != o) {
                 continue;
             }
+            log.info("【缓存支付数据为：" + bankinfo + "】");
             redis.set(bankinfo, orderId, TIME);//当前地址正在使用标记， 当前正在使用唯一标记为： 金额 + 钱包地址
+            Object k = redis.get(bankinfo);
             Map cardmap = new HashMap();
             cardmap.put(ADDRESS, bank.getBankcardAccount());//钱包地址
             cardmap.put(MONEY, orderAmount);//钱包地址

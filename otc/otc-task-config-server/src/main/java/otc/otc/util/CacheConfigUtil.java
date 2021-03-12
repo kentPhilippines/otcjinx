@@ -1,23 +1,22 @@
 package otc.otc.util;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
 import otc.bean.config.ConfigFile;
-import otc.otc.config.ConfigApi;
 import otc.result.Result;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * <p>配置类区分</p>
+ *
  * @author K
  */
 @Component
 public class CacheConfigUtil {
-	Logger log= LoggerFactory.getLogger(CacheConfigUtil.class);
+	Logger log = LoggerFactory.getLogger(CacheConfigUtil.class);
 	private static final String SYSTEM_PAY = ConfigFile.PAY;
 	private static final String SYSTEM_DEAL = ConfigFile.DEAL;
 	private static final String SYSTEM_ALIPAY = ConfigFile.ALIPAY;  
@@ -29,16 +28,16 @@ public class CacheConfigUtil {
 		dealMap();
 		payMap();
 	}
-	static void alipayMap(){
-		mapAlipay  = new HashMap<String, String>();
+	static void alipayMap() {
+		mapAlipay = new HashMap<String, String>();
 		mapAlipay.put(ConfigFile.Alipay.LOCAL_STORAGE_PATH, "/img");
 		mapAlipay.put(ConfigFile.Alipay.QR_OUT_TIME, "300");
 		mapAlipay.put(ConfigFile.Alipay.QR_IS_CLICK, "3000");
 		mapAlipay.put(ConfigFile.Alipay.FREEZE_PLAIN_VIRTUAL, "1800");
-		mapAlipay.put(ConfigFile.Alipay.TIBLE_LINK, "跑分");
+		mapAlipay.put(ConfigFile.Alipay.TIBLE_LINK, "金星");
 		mapAlipay.put(ConfigFile.Alipay.NEW_QRCODE_PRIORITY, "3");
 		mapAlipay.put(ConfigFile.Alipay.LOCAL_STORAGE_PATH_BAK, "/img/bak");
-		mapAlipay.put( ConfigFile.Alipay.SERVER_IP, "http://starpay168.com:5055/api-alipay");
+		mapAlipay.put(ConfigFile.Alipay.SERVER_IP, "http://starpay168.com:5055/api-alipay");
 	}
 	static void dealMap(){
 		mapDeal  = new HashMap<String, String>();

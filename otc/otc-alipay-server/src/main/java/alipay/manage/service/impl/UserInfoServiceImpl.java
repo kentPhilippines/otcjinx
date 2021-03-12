@@ -310,4 +310,21 @@ public class UserInfoServiceImpl implements UserInfoService {
     public UserFund findCurrency(String userId) {
         return userFundDao.findCurrency(userId);
     }
+
+    @Override
+    public List<UserInfo> finauserAll(String userId) {
+        if (StrUtil.isEmpty(userId)) {
+            return userInfoMapper.findAll();
+        }
+        List<UserInfo> userList = new ArrayList<>();
+        UserInfo user = userInfoMapper.findUserByUserId(userId);
+        userList.add(user);
+        return userList;
+    }
+
+    @Override
+    public boolean updateDealKey(String userId, String publickey, String privactkey, String key) {
+        int a = userInfoMapper.updateDealKey(userId, publickey, privactkey, key);
+        return a == 1;
+    }
 }

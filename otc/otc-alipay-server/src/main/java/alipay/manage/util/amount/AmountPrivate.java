@@ -4,6 +4,7 @@ import alipay.manage.bean.UserFund;
 import alipay.manage.bean.UserInfo;
 import alipay.manage.service.RunOrderService;
 import alipay.manage.service.UserInfoService;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.http.HttpUtil;
@@ -17,6 +18,8 @@ import otc.result.Result;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -68,14 +71,20 @@ public class AmountPrivate extends Util {
 		fund.setVersion(userFund.getVersion());
 		Boolean aBoolean = userInfoServiceImpl.updataAmount(fund);
 		if (aBoolean) {
-            log.info("【当前增加授权额度执行成功，操作的金额为：" + balance + "】");
-            log.info("【增加授权额度后的账户金额为：账户总余额：" + userFund.getAccountBalance() + "，当前利润账户【现金账户】：" + userFund.getCashBalance() + "，当前冻结账户：" + userFund.getFreezeBalance() + "当前操作金额为：" + balance + "】");
-            return Result.buildSuccessMessage("当前授权额度增加执行成功");
-        } else {
-            return Result.buildFailMessage("当前授权额度增加执行失败");
-        }
+			log.info("【当前增加授权额度执行成功，操作的金额为：" + balance + "】");
+			log.info("【增加授权额度后的账户金额为：账户总余额：" + userFund.getAccountBalance() + "，当前利润账户【现金账户】：" + userFund.getCashBalance() + "，当前冻结账户：" + userFund.getFreezeBalance() + "当前操作金额为：" + balance + "】");
+			return Result.buildSuccessMessage("当前授权额度增加执行成功");
+		} else {
+			return Result.buildFailMessage("当前授权额度增加执行失败");
+		}
 
 
+	}
+
+	static List accountList = new LinkedList();//迸发过高不关闭账户的例外
+
+	static {
+		accountList.add("QF168");
 	}
 
 	protected Result addFreezeAmount(UserFund userFund, BigDecimal amount) {
@@ -92,14 +101,14 @@ public class AmountPrivate extends Util {
 		userFund.setFreezeBalance(freezeBalance);
 		userFund.setCashBalance(cashBalance);
 		userFund.setRechargeNumber(rechargeNumber);
-		Boolean updataAmount = userInfoServiceImpl.updataAmount(userFund);
-        if (updataAmount) {
-            log.info("【当前解冻资金执行成功，操作的金额为：" + amount + "】");
-            log.info("【解冻资金后的账户金额为：账户总余额：" + accountBalance + "，当前利润账户【现金账户】：" + cashBalance + "，当前冻结账户：" + freezeBalance + "当前操作金额为：" + amount + "】");
-            return Result.buildSuccessMessage("当前金额解冻方法执行成功");
-        } else {
-            return Result.buildFailMessage("当前金额解冻方法执行失败");
-        }
+		Boolean updataAmount = updateAccountEr(userFund.getUserId());
+		if (updataAmount) {
+			log.info("【当前解冻资金执行成功，操作的金额为：" + amount + "】");
+			log.info("【解冻资金后的账户金额为：账户总余额：" + accountBalance + "，当前利润账户【现金账户】：" + cashBalance + "，当前冻结账户：" + freezeBalance + "当前操作金额为：" + amount + "】");
+			return Result.buildSuccessMessage("当前金额解冻方法执行成功");
+		} else {
+			return Result.buildFailMessage("当前金额解冻方法执行失败");
+		}
 
 	}
 
@@ -137,7 +146,7 @@ public class AmountPrivate extends Util {
             log.info("【金额修改后账户情况：当前账户总比较金额：" + accountBalance + "，当前账户充值点数：" + rechargeNumber + "，当前账户利润金额：" + cashBalance + "，当前账户冻结金额：" + freezeBalance + "，当前账户：" + userFund.getUserId() + "】");
         } else {
             log.info("【账户修改失败】");
-            Boolean updataStatusEr = userInfoServiceImpl.updataStatusEr(userFund.getUserId());
+			Boolean updataStatusEr = updateAccountEr(userFund.getUserId());
             if (updataStatusEr) {
                 log.info("【账户已修改为不可使用，当前账号为：" + userFund.getUserId() + "】");
             } else {
@@ -167,7 +176,7 @@ public class AmountPrivate extends Util {
 			log.info("【账户修改失败】");
 			ThreadUtil.execute(() -> {
                 //TODO 新建线程提交，该线程不受主线程事务控制
-                Boolean updataStatusEr = userInfoServiceImpl.updataStatusEr(userFund.getUserId());
+				Boolean updataStatusEr = updateAccountEr(userFund.getUserId());
                 if (updataStatusEr) {
                     log.info("【账户已修改为不可使用，当前账号为：" + userFund.getUserId() + "】");
                 }
@@ -205,7 +214,7 @@ public class AmountPrivate extends Util {
 			log.info("【账户修改失败】");
 			ThreadUtil.execute(() -> {
                 //TODO 新建线程提交，该线程不受主线程事务控制
-                Boolean updataStatusEr = userInfoServiceImpl.updataStatusEr(userFund.getUserId());
+				Boolean updataStatusEr = updateAccountEr(userFund.getUserId());
                 if (updataStatusEr) {
                     log.info("【账户已修改为不可使用，当前账号为：" + userFund.getUserId() + "】");
                 }
@@ -244,7 +253,7 @@ public class AmountPrivate extends Util {
 			log.info("【账户修改失败】");
 			ThreadUtil.execute(() -> {
                 //TODO 新建线程提交，该线程不受主线程事务控制
-                Boolean updataStatusEr = userInfoServiceImpl.updataStatusEr(userFund.getUserId());
+				Boolean updataStatusEr = updateAccountEr(userFund.getUserId());
                 if (updataStatusEr) {
                     log.info("【账户已修改为不可使用，当前账号为：" + userFund.getUserId() + "】");
                 }
@@ -284,7 +293,7 @@ public class AmountPrivate extends Util {
 			log.info("【账户修改失败】");
 			ThreadUtil.execute(() -> {
                 //TODO 新建线程提交，该线程不受主线程事务控制
-                Boolean updataStatusEr = userInfoServiceImpl.updataStatusEr(userFund.getUserId());
+				Boolean updataStatusEr = updateAccountEr(userFund.getUserId());
                 if (updataStatusEr) {
                     log.info("【账户已修改为不可使用，当前账号为：" + userFund.getUserId() + "】");
                 }
@@ -324,7 +333,7 @@ public class AmountPrivate extends Util {
 			log.info("【账户修改失败】");
 			ThreadUtil.execute(() -> {
                 //TODO 新建线程提交，该线程不受主线程事务控制
-                Boolean updataStatusEr = userInfoServiceImpl.updataStatusEr(userFund.getUserId());
+				Boolean updataStatusEr = updateAccountEr(userFund.getUserId());
                 if (updataStatusEr) {
                     log.info("【账户已修改为不可使用，当前账号为：" + userFund.getUserId() + "】");
                 }
@@ -355,7 +364,7 @@ public class AmountPrivate extends Util {
 		BigDecimal freezeBalance = userFund.getFreezeBalance();//当前冻结账户
 		BigDecimal rechargeNumber = userFund.getRechargeNumber();//当前充值点数
 		//	BigDecimal sumAgentProfit = userFund.getSumAgentProfit();//当前代理商分润  【当前订单为自己接单，不需要该字段】
-		BigDecimal sumDealAmount = userFund.getSumDealAmount();//当前交易分润	
+		BigDecimal sumDealAmount = userFund.getSumDealAmount();//当前交易分润
 		BigDecimal sumProfit = userFund.getSumProfit();//当前当前总的利润
 		//	BigDecimal todayAgentProfit = userFund.getTodayAgentProfit();//今日代理分润  【当前订单为自己接单，无需统计该字段】
 		BigDecimal todayDealAmount = userFund.getTodayDealAmount();//今日交易分润
@@ -388,8 +397,9 @@ public class AmountPrivate extends Util {
         } else {
             log.info("【账户修改失败】");
             ThreadUtil.execute(() -> {
+
                 //TODO 新建线程提交，该线程不受主线程事务控制
-                Boolean updataStatusEr = userInfoServiceImpl.updataStatusEr(userFund.getUserId());
+				Boolean updataStatusEr = updateAccountEr(userFund.getUserId());
                 if (updataStatusEr) {
                     log.info("【账户已修改为不可使用，当前账号为：" + userFund.getUserId() + "】");
                 }
@@ -411,10 +421,10 @@ public class AmountPrivate extends Util {
 		BigDecimal cashBalance = userFund.getCashBalance();//当前利润账户
 		BigDecimal freezeBalance = userFund.getFreezeBalance();//当前冻结账户
 		BigDecimal rechargeNumber = userFund.getRechargeNumber();//当前充值点数
-		BigDecimal sumAgentProfit = userFund.getSumAgentProfit();//当前代理商分润  
-		BigDecimal sumDealAmount = userFund.getSumDealAmount();//当前交易分润	
+		BigDecimal sumAgentProfit = userFund.getSumAgentProfit();//当前代理商分润
+		BigDecimal sumDealAmount = userFund.getSumDealAmount();//当前交易分润
 		BigDecimal sumProfit = userFund.getSumProfit();//当前总的利润  =  交易利润 + 代理利润
-		BigDecimal todayAgentProfit = userFund.getTodayAgentProfit();//今日代理分润  
+		BigDecimal todayAgentProfit = userFund.getTodayAgentProfit();//今日代理分润
 		BigDecimal todayDealAmount = userFund.getTodayDealAmount();//今日交易分润
 		Integer sumOrderCount = userFund.getSumOrderCount();//总订单笔数
 		Integer todayOrderCount = userFund.getTodayOrderCount();//今日订单笔数
@@ -424,7 +434,7 @@ public class AmountPrivate extends Util {
 		cashBalance = cashBalance.add(balance);//增加 分润账户
 		accountBalance = cashBalance.add(rechargeNumber).subtract(freezeBalance);
 		sumAgentProfit = sumAgentProfit.add(balance);
-        todayAgentProfit = todayAgentProfit.add(balance);
+		todayAgentProfit = todayAgentProfit.add(balance);
         todayProfit = todayProfit.add(balance);
         sumProfit = sumProfit.add(balance);
         userFund.setCashBalance(cashBalance);
@@ -440,7 +450,7 @@ public class AmountPrivate extends Util {
             log.info("【账户修改失败】");
             ThreadUtil.execute(() -> {
                 //TODO 新建线程提交，该线程不受主线程事务控制
-                Boolean updataStatusEr = userInfoServiceImpl.updataStatusEr(userFund.getUserId());
+				Boolean updataStatusEr = updateAccountEr(userFund.getUserId());
                 if (updataStatusEr) {
                     log.info("【账户已修改为不可使用，当前账号为：" + userFund.getUserId() + "】");
                 }
@@ -466,7 +476,7 @@ public class AmountPrivate extends Util {
 			log.info("【===========【经过系统核对后，当前用户账户存在问题，请重点关照该用户的账号，检查问题出现原因】===========】");
 			ThreadUtil.execute(() -> {
 				//TODO 新建线程提交，该线程不受主线程事务控制
-				userInfoServiceImpl.updataStatusEr(userFund.getUserId());
+				updateAccountEr(userFund.getUserId());
 			});
 			return Result.buildFail();
 		}
@@ -515,7 +525,7 @@ public class AmountPrivate extends Util {
 			log.info("【当前账户添加充值点数【失败】，请联系技术检查当前账户存在的异常情况】");
 			ThreadUtil.execute(() -> {
 				//TODO 新建线程提交，该线程不受主线程事务控制
-				userInfoServiceImpl.updataStatusEr(userFund.getUserId());
+				updateAccountEr(userFund.getUserId());
 			});
 			return Result.buildFail();
 		}
@@ -530,7 +540,7 @@ public class AmountPrivate extends Util {
 	 */
 	protected void addExcption(UserFund finalUserFund, String type, BigDecimal balance, String orderId) {
 		ThreadUtil.execute(() -> {
-			String url = "http://172.29.17.155:8889/api/send?text=";
+			String url = "http://172.29.17.156:8889/api/send?text=";
 			String test = "账户" + finalUserFund.getUserId() + "被系统自动关闭，当前关闭原因：触发系统自动结算，类型：" + type + "，当前重新结算金额：" + balance.longValue() + "，关联订单：" +
 					"" + orderId + "，触发时间：" + DatePattern.NORM_DATETIME_FORMAT.format(new Date());
 			test = HttpUtil.encode(test, "UTF-8");
@@ -542,7 +552,6 @@ public class AmountPrivate extends Util {
 		});
 
 	}
-
 
 	/**
 	 * 代付成功增加统计数据
@@ -573,7 +582,7 @@ public class AmountPrivate extends Util {
 			log.info("【当前账户添加充值点数【失败】，请联系技术检查当前账户存在的异常情况】");
 			ThreadUtil.execute(() -> {
 				//TODO 新建线程提交，该线程不受主线程事务控制
-				userInfoServiceImpl.updataStatusEr(userFund.getUserId());
+				updateAccountEr(userFund.getUserId());
 			});
 			return Result.buildFail();
 		}
@@ -608,11 +617,19 @@ public class AmountPrivate extends Util {
 			log.info("【当前账户添加充值点数【失败】，请联系技术检查当前账户存在的异常情况】");
 			ThreadUtil.execute(() -> {
 				//TODO 新建线程提交，该线程不受主线程事务控制
-				userInfoServiceImpl.updataStatusEr(userFund.getUserId());
+
+				updateAccountEr(userFund.getUserId());
+
 			});
 			return Result.buildFail();
 		}
 	}
 
+	Boolean updateAccountEr(String account) {
+		if (!CollUtil.contains(accountList, account)) {
+			return userInfoServiceImpl.updataStatusEr(account);
+		}
+		return Boolean.FALSE;
+	}
 
 }

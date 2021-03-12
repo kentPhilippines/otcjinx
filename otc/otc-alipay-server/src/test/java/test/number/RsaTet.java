@@ -2,16 +2,44 @@ package test.number;
 
 import otc.util.encode.XRsa;
 
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 
 public class RsaTet {
 
-	public static void main(String[] args) {
-		test1();
-		// 	test();
-	}
+    private static final String UTF_8 = "utf-8";
+    private static final String ENCODE_TYPE = "md5";
 
-	private static void test1() {
+    public static void main(String[] args) {
+        //test1();
+        // 	test();
+        //appId=Well001&appOrderId=GMW21030916310159139
+
+        String s = md5("amount=100&appId=Well001&orderId=GMW21030916310159139&success=true7378A36802E35F1EF0D387EA445A8429");
+        System.out.println(s);//51ec6af980b5e6c8060e4b00cddcf437
+
+
+    }
+
+    public static String md5(String a) {
+        String c = "";
+        MessageDigest md5;
+        String result = "";
+        try {
+            md5 = MessageDigest.getInstance(ENCODE_TYPE);
+            md5.update(a.getBytes(UTF_8));
+            byte[] temp;
+            temp = md5.digest(c.getBytes(UTF_8));
+            for (int i = 0; i < temp.length; i++)
+                result += Integer.toHexString((0x000000ff & temp[i]) | 0xffffff00).substring(6);
+        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+        }
+        return result;
+    }
+
+    private static void test1() {
         String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCvRvYBBFtPRCxDb+OedlBzzJSYaPnROvE5Xq0H3IuyxoweFoOrMGmlY79LWSXzTV20x5XRgREunFT5DVXZd96h9xpWQ6As/JkG1H8RsmzrWxhZilub3Nh39zAMoX9PoZ8X7+HKVOsUnvPSvw6JIO8duZKMh8wwIDgryPjHnYx3vQIDAQAB";
 
 

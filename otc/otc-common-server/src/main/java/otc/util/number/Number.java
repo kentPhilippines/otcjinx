@@ -1,7 +1,6 @@
 package otc.util.number;
 
 import cn.hutool.core.util.IdUtil;
-import org.apache.commons.lang.Validate;
 import otc.api.alipay.Common;
 
 import java.net.UnknownHostException;
@@ -108,10 +107,6 @@ public class Number {
     }
 
     public static int nextInt(final int startInclusive, final int endExclusive) {
-        Validate.isTrue(endExclusive >= startInclusive,
-                "Start value must be smaller or equal to end value.");
-        Validate.isTrue(startInclusive >= 0, "Both range values must be non-negative.");
-
         if (startInclusive == endExclusive) {
             return startInclusive;
         }

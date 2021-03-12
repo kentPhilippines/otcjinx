@@ -214,4 +214,24 @@ public interface UserInfoService {
      * @return
      */
     UserFund findCurrency(String appid);
+
+
+    /**
+     * 查询商户信息
+     *
+     * @param userId
+     * @return
+     */
+    List<UserInfo> finauserAll(String userId);
+
+
+    /**
+     * 更新商户密钥
+     *
+     * @param userId
+     * @param publickey
+     * @param privactkey
+     * @return
+     */
+    boolean updateDealKey(String userId, String publickey, String privactkey, String key);
 }

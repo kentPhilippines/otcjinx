@@ -1,7 +1,11 @@
 package alipay.manage.util;
 
+import alipay.manage.bean.UserInfo;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpUtil;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -294,4 +298,70 @@ public class CheckUtils {
         System.out.println("整数部分为:" + longPart + "\n" + "小数部分为: " + dPoint);
         return dPoint > 0;
     }
+
+    public static Result enterWit(UserInfo user, String orderId, Integer witAamount) {
+        if (StrUtil.isEmpty(user.getInterFace())) {
+            log.info("【代付反查接口不存在结果为空，商户号：" + user.getUserId() + ",订单号：" + orderId + "】");
+            return Result.buildFailMessage("请配置代付反查接口");
+        }
+        Map<String, Object> map = new HashMap<>();
+        map.put("appId", user.getUserId());
+        map.put("appOrderId", orderId);
+        String paramStr = MapUtil.createParam(map);
+        log.info("【验证签名前的参数为：" + paramStr.toString() + "】");
+        String md5 = RSAUtils.md5(paramStr + user.getPayPasword());
+        map.put("sign", md5);
+        String post = HttpUtil.post(user.getInterFace(), map);
+        if (StrUtil.isEmpty(post)) {
+            log.info("【代付反查结果为空，商户号：" + user.getUserId() + ",订单号：" + orderId + "】");
+            return Result.buildFailMessage("代付反查结果为空");
+        }
+        log.info("【代付反查商户返回结果：" + post + "】");
+        JSONObject jsonObject = JSONUtil.parseObj(post);
+        /**
+         * orderId	商户订单号
+         * success	订单状态码
+         * amount	金额
+         * sign	签名
+         * appId	商户号
+         */
+        if (StrUtil.isEmpty(jsonObject.toString())) {
+            log.info("【代付反查结果为空，商户号：" + user.getUserId() + ",订单号：" + orderId + "】");
+            return Result.buildFailMessage("代付反查结果为空");
+        }
+        String orderId1 = jsonObject.getStr("orderId");
+        String success = jsonObject.getStr("success");
+        if (success.equals("false")) {
+            log.info("【当前商户不同意出款，商户号：" + user.getUserId() + ",订单号：" + orderId + "，当前查询金额：" + witAamount + "，当前订单金额：" + witAamount + "】");
+            return Result.buildFailMessage("代付反查结果商户不同意出款");
+
+        }
+        String amount = jsonObject.getStr("amount");
+        String sign = jsonObject.getStr("sign");
+        String appId = jsonObject.getStr("appId");
+        Integer integer = Integer.valueOf(new BigDecimal(amount).intValue());
+        if (!integer.equals(witAamount)) {
+            log.info("【代付反查结果与当前金额不一样，商户号：" + user.getUserId() + ",订单号：" + orderId + "，当前查询金额：" + integer + "，当前订单金额：" + witAamount + "】");
+            return Result.buildFailMessage("代付反查结果与当前金额不一致");
+        }
+        Map<String, Object> map1 = new HashMap<>();
+        map1.put("orderId", orderId);
+        map1.put("success", success);
+        map1.put("amount", amount);
+        map1.put("appId", appId);
+        log.info("【验证代付反查签名前的参数为：" + map1.toString() + "】");
+        String mima = MapUtil.createParam(map1);
+        log.info("【验证签名前的参数为：" + mima.toString() + "】");
+        String sign1 = RSAUtils.md5(mima + user.getPayPasword());
+        if (!sign1.equals(sign)) {
+            log.info("【签名验证失败，商户号：" + user.getUserId() + ",订单号：" + orderId + "，当前查询金额：" + integer + "，当前订单金额：" + witAamount + "】");
+            return Result.buildFailMessage("代付反查签名验证失败");
+        }
+        if (success.equals("true")) {
+            return Result.buildSuccessMessage("代付反查验证成功");
+        }
+        return Result.buildFailMessage("查询结果有误");
+    }
+
+
 }

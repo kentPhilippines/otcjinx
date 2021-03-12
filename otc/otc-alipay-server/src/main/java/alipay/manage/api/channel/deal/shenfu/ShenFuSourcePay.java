@@ -29,7 +29,7 @@ import java.util.Map;
 @Component("ShenFuSourcePay")
 public class ShenFuSourcePay extends PayOrderService {
     private static final String MARS = "SHENFU";
-    private static final String PAY_URL = "Http://";
+    private static final String PAY_URL = "http://";
 
     private static SimpleDateFormat d = new SimpleDateFormat("yyyyMMddHHmmss");
     @Autowired
@@ -105,7 +105,7 @@ public class ShenFuSourcePay extends PayOrderService {
                 cardmap.put("oid_partner", jsonObject.getStr("oid_partner"));
                 orderServiceImpl.updateBankInfoByOrderId(jsonObject.getStr("card_user") + ":" + jsonObject.getStr("bank_name") + ":" + jsonObject.getStr("card_no"), orderId);
                 redis.hmset(MARS + orderId, cardmap, 600000);
-                return Result.buildSuccessResult(PAY_URL + "47.242.50.29:32437/pay?orderId=" + orderId + "&type=" + channelInfo.getChannelType());
+                return Result.buildSuccessResult(PayApiConstant.Notfiy.OTHER_URL + "/pay?orderId=" + orderId + "&type=" + channelInfo.getChannelType());
             } else {
                 return Result.buildFailMessage(jsonObject.getStr("ret_msg"));
             }

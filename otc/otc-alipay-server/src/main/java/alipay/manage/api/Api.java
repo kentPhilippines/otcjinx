@@ -613,7 +613,6 @@ public class Api {
         } else if (amountType.toString().equals(Common.Deal.AMOUNT_ORDER_DELETE)) {
             BigDecimal balance = userFund.getAccountBalance();
             BigDecimal deduct = new BigDecimal(amount.toString());
-            if (balance.compareTo(deduct) > -1) {//余额充足
                 Result deleteAmount2 = amountPublic.deleteAmount(userFund, deduct, orderId.toString());
                 if (deleteAmount2.isSuccess()) {
                     Result deleteAmount = amountRunUtil.deleteAmount(alipayAmount, clientIP);
@@ -626,9 +625,6 @@ public class Api {
                         }
                     }
                 }
-            } else {//余额不足
-                return Result.buildFailMessage("操作失败，账户余额不足");
-            }
         } else if (amountType.toString().equals(Common.Deal.AMOUNT_ORDER_DELETE_QUOTA)) {
             BigDecimal balance = userFund.getQuota();
             BigDecimal deduct = new BigDecimal(amount.toString());

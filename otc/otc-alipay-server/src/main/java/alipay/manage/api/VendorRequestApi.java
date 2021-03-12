@@ -19,6 +19,7 @@ import otc.api.alipay.Common;
 import otc.result.Result;
 import otc.util.RSAUtils;
 import otc.util.StringUtils;
+import otc.util.enums.UserStatusEnum;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
@@ -29,7 +30,7 @@ import java.util.Map;
 
 @Component
 public class VendorRequestApi {
-    Logger log = LoggerFactory.getLogger(VendorRequestApi.class);
+    static Logger log = LoggerFactory.getLogger(VendorRequestApi.class);
     @Autowired
     private AccountApiService accountApiServiceImpl;
     @Autowired
@@ -175,6 +176,78 @@ public class VendorRequestApi {
         return Result.buildSuccessResult(paramMap);
     }
 
+    public static String getIpAddress(HttpServletRequest request, String userId) {
+        String Xip = request.getHeader("X-Real-IP");
+        String XFor = request.getHeader("X-Forwarded-For");
+        log.info("【获取用户IP地址为：" + XFor + ",商户账号：" + userId + "】");
+        if (null == XFor) {
+            log.info("【重新获取用户IP地址为：" + HttpUtil.getClientIP(request) + ",商户账号：" + userId + "】");
+            return HttpUtil.getClientIP(request);
+        }
+        if (!StrUtil.isEmpty(XFor) && !"unKnown".equalsIgnoreCase(XFor)) {
+            //多次反向代理后会有多个ip值，第一个ip才是真实ip
+            if (null == XFor) {
+                log.info("【重新获取用户IP地址为：" + HttpUtil.getClientIP(request) + ",商户账号：" + userId + "】");
+                return HttpUtil.getClientIP(request);
+            } else {
+                String[] split = XFor.split(",");
+                return split[split.length - 1];
+            }
+        }
+        XFor = Xip;
+        if (!StrUtil.isEmpty(XFor) && !"unKnown".equalsIgnoreCase(XFor)) {
+            return XFor;
+        }
+        if (StrUtil.isEmpty(XFor.trim()) || "unknown".equalsIgnoreCase(XFor)) {
+            XFor = request.getHeader("Proxy-Client-IP");
+        }
+        if (StrUtil.isEmpty(XFor.trim()) || "unknown".equalsIgnoreCase(XFor)) {
+            XFor = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if (StrUtil.isEmpty(XFor.trim()) || "unknown".equalsIgnoreCase(XFor)) {
+            XFor = request.getHeader("HTTP_CLIENT_IP");
+        }
+        if (StrUtil.isEmpty(XFor.trim()) || "unknown".equalsIgnoreCase(XFor)) {
+            XFor = request.getHeader("HTTP_X_FORWARDED_FOR");
+        }
+        if (StrUtil.isEmpty(XFor.trim()) || "unknown".equalsIgnoreCase(XFor)) {
+            XFor = request.getRemoteAddr();
+        }
+        return XFor;
+    }
+
+    /**
+     * <p>核对订单</p>
+     *
+     * @param request
+     * @param
+     * @return
+     */
+    public Result checkOrderl(HttpServletRequest request) {
+        String userId = request.getParameter("userId");
+        UserInfo userInfo = accountApiServiceImpl.findUserInfo(userId);
+        if (userInfo == null) {
+            return Result.buildFailMessage("商户不存在");
+        }
+        log.info("--------------【用户开始RSA解密】----------------");
+        String rsaSign = request.getParameter("cipherText");//商户传过来的密文
+        log.info("【获取参数为：" + rsaSign + "】");
+        log.info("【获取商户为：" + userId + "】");
+        log.info("【获取商户解密秘钥为：" + userInfo.getPrivateKey() + "】");
+        Map<String, Object> paramMap = RSAUtils.getDecodePrivateKey(rsaSign, userInfo.getPrivateKey());
+        log.info("【商户RSA解密的参数：" + paramMap.toString() + "】 ");
+        if (CollUtil.isEmpty(paramMap)) {
+            return Result.buildFailMessage("RSA解密参数为空");
+        }
+        Result result = CheckUtils.requestWithdrawalVerify(request, paramMap, userInfo.getPayPasword());
+        if (result.isSuccess()) {
+            log.info("【requestVerif】方法验证通过");
+        } else {
+            return result;
+        }
+        return Result.buildSuccessResult(paramMap);
+    }
+
     /**
      * <p>商户下单提现接口</p>
      *
@@ -261,30 +334,55 @@ public class VendorRequestApi {
             return Result.buildFailMessage("当前账户代付权限未开通");
         }
         if (!flag) {
-            String clientIP = HttpUtil.getClientIP(request);
+            String clientIP = getIpAddress(request, userInfo.getUserId());
             if (StrUtil.isBlank(clientIP)) {
-                return Result.buildFailMessage("未获取到代付ip");
+                clientIP = HttpUtil.getClientIP(request);
+                if (null == clientIP) {
+                    return Result.buildFailMessage("未获取到代付ip");
+                }
             }
+            if (StrUtil.isBlank(StrUtil.trim(clientIP))) {
+                clientIP = HttpUtil.getClientIP(request);
+            }
+            ;
+            clientIP = StrUtil.trim(clientIP);
             log.info("【当前用户代付ip为：" + clientIP + "】");
             String witip = userInfo.getWitip();
             log.info("【获取当前允许代付ip为：" + witip + "】");
             String[] split = witip.split(",");
             List<String> asList = Arrays.asList(split);
-            if (!asList.contains(clientIP)) {
+            if ((!asList.contains(StrUtil.trim(clientIP)))) {
+                String finalClientIP = StrUtil.trim(clientIP);
                 ThreadUtil.execute(() -> {
                     exceptionOrderServiceImpl.addWitEx(
                             userId,
                             paramMap.get("amount").toString(),
                             "商户相应提示：请绑定正确的代付ip；" +
-                                    "处理方法：当前商户代付ip存疑，请要求商户仔细核对；当前商户代付ip：" + clientIP + "，我方登记ip：" + asList.toString(),
-                            HttpUtil.getClientIP(request), paramMap.get("apporderid").toString());
+                                    "处理方法：当前商户代付ip存疑，请要求商户仔细核对；当前商户代付ip：" + finalClientIP + "，我方登记ip：" + asList.toString(),
+                            finalClientIP, paramMap.get("apporderid").toString());
                 });
                 return Result.buildFailMessage("请绑定正确的代付ip");
             }
-
+            UserStatusEnum userStatusEnum = UserStatusEnum.resolve(UserStatusEnum.CLOSE.getCode());
+            if (!userStatusEnum.matches(userInfo.getEnterWitOpen())) {
+                String amount = paramMap.get("amount").toString();
+                Result result1 = CheckUtils.enterWit(userInfo, paramMap.get("apporderid").toString(), Integer.valueOf(new BigDecimal(amount).intValue()));
+                if (!result1.isSuccess()) {
+                    log.info(result1.getMessage());
+                    ThreadUtil.execute(() -> {
+                        exceptionOrderServiceImpl.addWitEx(
+                                userId,
+                                paramMap.get("amount").toString(),
+                                "商户相应提示：" + result1.getMessage() + "；" +
+                                        "处理方法：联系技术",
+                                HttpUtil.getClientIP(request), paramMap.get("apporderid").toString());
+                    });
+                    return Result.buildFailMessage(result1.getMessage());
+                }
+            }
         } else {
-            log.info("【商户从后台提现不验证代付ip】");
         }
+
         String bankNo = paramMap.get("acctno").toString();
         String amount = paramMap.get("amount").toString();
         /*
@@ -353,38 +451,6 @@ public class VendorRequestApi {
         }
 
 
-        return Result.buildSuccessResult(paramMap);
-    }
-
-    /**
-     * <p>核对订单</p>
-     *
-     * @param request
-     * @param
-     * @return
-     */
-    public Result checkOrderl(HttpServletRequest request) {
-        String userId = request.getParameter("userId");
-        UserInfo userInfo = accountApiServiceImpl.findUserInfo(userId);
-        if (userInfo == null) {
-            return Result.buildFailMessage("商户不存在");
-        }
-        log.info("--------------【用户开始RSA解密】----------------");
-        String rsaSign = request.getParameter("cipherText");//商户传过来的密文
-        log.info("【获取参数为：" + rsaSign + "】");
-        log.info("【获取商户为：" + userId + "】");
-        log.info("【获取商户解密秘钥为：" + userInfo.getPrivateKey() + "】");
-        Map<String, Object> paramMap = RSAUtils.getDecodePrivateKey(rsaSign, userInfo.getPrivateKey());
-        log.info("【商户RSA解密的参数：" + paramMap.toString() + "】 ");
-        if (CollUtil.isEmpty(paramMap)) {
-            return Result.buildFailMessage("RSA解密参数为空");
-        }
-        Result result = CheckUtils.requestWithdrawalVerify(request, paramMap, userInfo.getPayPasword());
-        if (result.isSuccess()) {
-            log.info("【requestVerif】方法验证通过");
-        } else {
-            return result;
-        }
         return Result.buildSuccessResult(paramMap);
     }
 }

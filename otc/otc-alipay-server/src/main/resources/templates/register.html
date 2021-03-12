@@ -133,12 +133,12 @@
 						return;
 					}
 					that.$http.post('/userAccount/register', {
-						inviteCode : that.inviteCode,
-						accountId : that.userName,
-						accountName : that.realName,
-						password : that.loginPwd,
-						securityPassword : that.moneyPwd
-					}, {
+                        inviteCode: that.inviteCode,
+                        userId: that.userName,
+                        userName: that.realName,
+                        password: that.loginPwd,
+                        payPasword: that.moneyPwd
+                    }, {
 						emulateJSON : true
 					}).then(function(res) {
 						if(res.body.success){
