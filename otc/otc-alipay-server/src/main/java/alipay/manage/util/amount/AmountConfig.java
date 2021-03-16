@@ -124,80 +124,79 @@ public class AmountConfig extends Util {
 
     @Transactional
     protected Result deleteAmountBalance(UserFund userFund, final BigDecimal balance, final String addType, String orderId) {
-        lock.lock();
-        try {
-
-            boolean flag = true;
-            Integer lockMsg = 1;
-            do {
-                if (lockMsg != 1) {
-                    log.info("【当前账户乐观锁发生作用，再次执行，当前账户：" + userFund.getUserId() + "，金额："
-                            + balance + "，方法：addAmountBalance，类型：" + addType + "】");
-                    final UserFund finalUserFund = userFund;
-                    ThreadUtil.execute(() -> {
-                        amountPrivate.addExcption(finalUserFund, addType, balance, orderId);
-                    });
-                }
-                userFund = userInfoServiceImpl.findUserFundByAccount(userFund.getUserId());
-                if (!amountPrivate.clickUserFund(userFund).isSuccess()) {
-                    return Result.buildFailMessage("【资金账户存在问题】");
-                }
-                if (DELETE_DEAL.equals(addType)) {//交易减点数
-                    Result deductRecharge = amountPrivate.deductRecharge(userFund, balance);
-                    if (deductRecharge.isSuccess()) {
-                        flag = false;
-                        return deductRecharge;
+        synchronized (this.getClass()) {
+            try {
+                boolean flag = true;
+                Integer lockMsg = 1;
+                do {
+                    if (lockMsg != 1) {
+                        log.info("【当前账户乐观锁发生作用，再次执行，当前账户：" + userFund.getUserId() + "，金额："
+                                + balance + "，方法：addAmountBalance，类型：" + addType + "】");
+                        final UserFund finalUserFund = userFund;
+                        ThreadUtil.execute(() -> {
+                            amountPrivate.addExcption(finalUserFund, addType, balance, orderId);
+                        });
                     }
-                    lockMsg++;
-                    log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
-                } else if (DELETE_AMOUNT.equals(addType)) {//人工减钱
-                    Result deductBalance = amountPrivate.deductBalance(userFund, balance);
-                    if (deductBalance.isSuccess()) {
-                        flag = false;
-                        return deductBalance;
+                    userFund = userInfoServiceImpl.findUserFundByAccount(userFund.getUserId());
+                    if (!amountPrivate.clickUserFund(userFund).isSuccess()) {
+                        return Result.buildFailMessage("【资金账户存在问题】");
                     }
-                    log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
-                } else if (DELETE_WITHDRAW.equals(addType)) {
-                    Result withdrawBalance = amountPrivate.withdrawBalance(userFund, balance);
-                    if (withdrawBalance.isSuccess()) {
-                        flag = false;
-                        return withdrawBalance;
+                    if (DELETE_DEAL.equals(addType)) {//交易减点数
+                        Result deductRecharge = amountPrivate.deductRecharge(userFund, balance);
+                        if (deductRecharge.isSuccess()) {
+                            flag = false;
+                            return deductRecharge;
+                        }
+                        lockMsg++;
+                        log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
+                    } else if (DELETE_AMOUNT.equals(addType)) {//人工减钱
+                        Result deductBalance = amountPrivate.deductBalance(userFund, balance);
+                        if (deductBalance.isSuccess()) {
+                            flag = false;
+                            return deductBalance;
+                        }
+                        log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
+                    } else if (DELETE_WITHDRAW.equals(addType)) {
+                        Result withdrawBalance = amountPrivate.withdrawBalance(userFund, balance);
+                        if (withdrawBalance.isSuccess()) {
+                            flag = false;
+                            return withdrawBalance;
+                        }
+                        lockMsg++;
+                        log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
+                    } else if (DELETE_FREEZE.equals(addType)) {
+                        Result freezeBalance = amountPrivate.freezeBalance(userFund, balance);
+                        if (freezeBalance.isSuccess()) {
+                            flag = false;
+                            return freezeBalance;
+                        }
+                        lockMsg++;
+                        log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
+                    } else if (DELETE_QUOTA.equals(addType)) {
+                        Result freezeBalance = amountPrivate.deleteQuota(userFund, balance);
+                        if (freezeBalance.isSuccess()) {
+                            flag = false;
+                            return freezeBalance;
+                        }
+                        lockMsg++;
+                        log.info("【账户授权额度失败，请查询当前时间范围内的异常情况】");
                     }
-                    lockMsg++;
-                    log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
-                } else if (DELETE_FREEZE.equals(addType)) {
-                    Result freezeBalance = amountPrivate.freezeBalance(userFund, balance);
-                    if (freezeBalance.isSuccess()) {
-                        flag = false;
-                        return freezeBalance;
+                    if (lockMsg > 20) {
+                        log.info("【当前账户余额扣除失败，请查询当前时间范围内的异常情况，当前账户：" + userFund.getUserId() + "，金额：" +
+                                balance + "，方法：addAmountBalance，类型：" + addType + "】");
+                        log.info("【账户金额冻结失败，请查询当前时间范围内的异常情况，并修改当前账户交易和资金状态为 不可用】");
+                        if (userInfoServiceImpl.updataStatusEr(userFund.getUserId())) {
+                            log.info("【账户已修改为不可使用，当前账号为：" + userFund.getUserId() + "】");
+                        } else {
+                            throw new UserException("账户修改异常", null);
+                        }
+                        log.info("【当前账户余额扣除失败，请联系技术人员查询情况，当前账户：" + userFund.getUserId() + "】");
+                        return Result.buildFailMessage("【当前账户余额扣除失败，请联系技术人员查看当前服务异常】");
                     }
-                    lockMsg++;
-                    log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
-                } else if (DELETE_QUOTA.equals(addType)) {
-                    Result freezeBalance = amountPrivate.deleteQuota(userFund, balance);
-                    if (freezeBalance.isSuccess()) {
-                        flag = false;
-                        return freezeBalance;
-                    }
-                    lockMsg++;
-                    log.info("【账户授权额度失败，请查询当前时间范围内的异常情况】");
-                }
-                if (lockMsg > 20) {
-                    log.info("【当前账户余额扣除失败，请查询当前时间范围内的异常情况，当前账户：" + userFund.getUserId() + "，金额：" +
-                            balance + "，方法：addAmountBalance，类型：" + addType + "】");
-                    log.info("【账户金额冻结失败，请查询当前时间范围内的异常情况，并修改当前账户交易和资金状态为 不可用】");
-                    if (userInfoServiceImpl.updataStatusEr(userFund.getUserId())) {
-                        log.info("【账户已修改为不可使用，当前账号为：" + userFund.getUserId() + "】");
-                    } else {
-                        throw new UserException("账户修改异常", null);
-                    }
-                    log.info("【当前账户余额扣除失败，请联系技术人员查询情况，当前账户：" + userFund.getUserId() + "】");
-                    return Result.buildFailMessage("【当前账户余额扣除失败，请联系技术人员查看当前服务异常】");
-                }
-            } while (flag);
-            lockMsg = null;
-        } finally {
-            lock.unlock();
+                } while (flag);
+                lockMsg = null;
+            } finally {
+            }
         }
         return Result.buildFailMessage("传参异常");
     }

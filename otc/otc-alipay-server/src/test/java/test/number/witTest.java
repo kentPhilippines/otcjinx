@@ -45,7 +45,7 @@ public class witTest {
 		String userid3 = "632QP888";
 		String key3 = "004475525F277F44BA4CDE4670B8E727";
 		String publickey3 = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCZhADxkdiJFcFaqamlhcxE+bzekfJJFH/qm6sSXg88J+L5q1uboF7LVhtx7t0oz855PED77GsuVbwYhx42ztr4DsU4+5YJEJ/OQL0In3zOkU58mCeTGBbdeoR3DxjBBIkrmC8p6FjdeGw75Gf2YAnImYji+OOv9SX7+kWYBm/yZwIDAQAB";
-		for (int a = 0; a <= 2; a++) {
+		for (int a = 0; a <= 1; a++) {
 			ThreadUtil.execute(() -> {
 				new witTest().wit(userid1, key1, publickey1);
 			});
@@ -166,17 +166,17 @@ public class witTest {
         String md5 = getKeyedDigestUTF8(createParam + key);
         System.out.println("签名：" + md5);
         deal.setSign(md5);
-        Map<String, Object> objectToMap2 = MapUtil.objectToMap(deal);
-        String createParam2 = createParam(objectToMap2);
-        System.out.println("加密前字符串：" + createParam2);
-        XRsa rsa = new XRsa(publicKey);
+		Map<String, Object> objectToMap2 = MapUtil.objectToMap(deal);
+		String createParam2 = createParam(objectToMap2);
+		System.out.println("加密前字符串：" + createParam2);
+		XRsa rsa = new XRsa(publicKey);
 		String publicEncrypt = rsa.publicEncrypt(createParam2);
 		System.out.println("加密后字符串：" + publicEncrypt);
 		Map<String, Object> postMap = new HashMap<String, Object>();
 		postMap.put("cipherText", publicEncrypt);
 		postMap.put("userId", userid);
 		System.out.println("请求参数：" + postMap.toString());
-		String post = HttpUtil.post("http://starpay168.com:5055/api-alipay/deal/pay", postMap);
+		String post = HttpUtil.post("http://127.0.0.1:5055/api-alipay/deal/pay", postMap);
 		System.out.println("相应结果集：" + post);
 
 	}

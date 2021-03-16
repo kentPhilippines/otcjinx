@@ -337,7 +337,7 @@ public class DealAppApi extends PayOrderService {
 		if (ObjectUtil.isNull(userId)) {
 			return Result.buildFailMessage("当前传参，参数格式错误，请使用[application/x-www-form-urlencoded]表单格式传参");
 		}
-		//	redisLockUtil.redisLock(RedisLockUtil.AMOUNT_USER_KEY + userId);
+		redisLockUtil.redisLock(RedisLockUtil.AMOUNT_USER_KEY + userId);
 		String manage = request.getParameter("manage");
 		boolean flag = false;
 		if (StrUtil.isNotBlank(manage)) {
@@ -398,7 +398,7 @@ public class DealAppApi extends PayOrderService {
 			exceptionOrderServiceImpl.addWitOrder(wit, "用户报错：当前通道编码不存在；处理方法：提交技术人员处理，报错信息：" + e.getMessage(), HttpUtil.getClientIP(request));
 			log.info("【当前通道编码对于的实体类不存在】");
 			withdrawServiceImpl.updateWitError(bean.getOrderId());
-			//	redisLockUtil.unLock(RedisLockUtil.AMOUNT_USER_KEY  + userId);
+			redisLockUtil.unLock(RedisLockUtil.AMOUNT_USER_KEY + userId);
 			return Result.buildFailMessage("当前通道编码不存在");
 		} finally {
 			bean = null;
@@ -408,7 +408,7 @@ public class DealAppApi extends PayOrderService {
 			wit = null;
 			userRate = null;
 			result = null;
-			//		redisLockUtil.unLock(RedisLockUtil.AMOUNT_USER_KEY  + userId);
+			redisLockUtil.unLock(RedisLockUtil.AMOUNT_USER_KEY + userId);
 		}
 		return deal;
 	}
