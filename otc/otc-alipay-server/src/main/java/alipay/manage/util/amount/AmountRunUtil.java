@@ -107,8 +107,7 @@ public class AmountRunUtil {
      * @return
      */
     public Result deleteAmount(Withdraw withdraw, String generationIp, Boolean flag) {
-        UserFund userFund = userInfoServiceImpl.findBalace(withdraw.getUserId()); //当前账户资金
-        Result delete = delete(WITHDRAY_AMOUNT, userFund, withdraw.getOrderId(), withdraw.getActualAmount(), generationIp, "账户代付冻结", flag ? RUNTYPE_ARTIFICIAL : RUNTYPE_NATURAL);
+        Result delete = delete(WITHDRAY_AMOUNT, withdraw.getUserId(), withdraw.getOrderId(), withdraw.getActualAmount(), generationIp, "账户代付冻结", flag ? RUNTYPE_ARTIFICIAL : RUNTYPE_NATURAL);
         if (delete.isSuccess()) {
             return delete;
         }
@@ -118,14 +117,12 @@ public class AmountRunUtil {
     /**
      * 商户代付代理费用结算
      *
-     * @param userFund 商户号
      * @param subtract 金额
      * @param wit      代付订单
      * @return
      */
     public Result addWitFee(UserFund userFund1, BigDecimal subtract, Withdraw wit, String generationIp, boolean flag) {
-        UserFund userFund = userInfoServiceImpl.findBalace(userFund1.getUserId()); //当前账户资金
-        return add(AGNEET_WIT_FRREE, userFund, wit.getOrderId(), subtract, generationIp, "代付代理商分润", flag ? RUNTYPE_ARTIFICIAL : RUNTYPE_NATURAL);
+        return add(AGNEET_WIT_FRREE, userFund1.getUserId(), wit.getOrderId(), subtract, generationIp, "代付代理商分润", flag ? RUNTYPE_ARTIFICIAL : RUNTYPE_NATURAL);
     }
 
     /**
@@ -136,8 +133,7 @@ public class AmountRunUtil {
      * @return
      */
     public Result addAmountW(Withdraw withdraw, String generationIp) {
-        UserFund userFund = userInfoServiceImpl.findBalace(withdraw.getUserId()); //当前账户资金
-        return add(WITHDRAY_AMOUNT_OPEN, userFund, withdraw.getOrderId(), withdraw.getAmount(), generationIp, "代付失败解冻", RUNTYPE_ARTIFICIAL);
+        return add(WITHDRAY_AMOUNT_OPEN, withdraw.getUserId(), withdraw.getOrderId(), withdraw.getAmount(), generationIp, "代付失败解冻", RUNTYPE_ARTIFICIAL);
     }
 
     /**
@@ -148,8 +144,7 @@ public class AmountRunUtil {
      * @return
      */
     public Result addAmountChannelWitEr(Withdraw withdraw, String generationIp, BigDecimal bigDecimal) {
-        UserFund userFund = userInfoServiceImpl.findBalace(withdraw.getUserId()); //查询出来为渠道账户
-        return add(WITHDRAY_AMOUNT_OPEN, userFund, withdraw.getOrderId(), bigDecimal, generationIp, "商户成功代付订单置为失败", RUNTYPE_ARTIFICIAL);
+        return add(WITHDRAY_AMOUNT_OPEN, withdraw.getUserId(), withdraw.getOrderId(), bigDecimal, generationIp, "商户成功代付订单置为失败", RUNTYPE_ARTIFICIAL);
     }
 
     /**
@@ -160,8 +155,7 @@ public class AmountRunUtil {
      * @return
      */
     public Result addAmountWFee(Withdraw withdraw, String generationIp) {
-        UserFund userFund = userInfoServiceImpl.findBalace(withdraw.getUserId()); //当前账户资金
-        return add(WITHDRAY_AMOUNT_OPEN_FEE, userFund, withdraw.getOrderId(), withdraw.getFee(), generationIp, "代付失败手续费解冻", RUNTYPE_ARTIFICIAL);
+        return add(WITHDRAY_AMOUNT_OPEN_FEE, withdraw.getUserId(), withdraw.getOrderId(), withdraw.getFee(), generationIp, "代付失败手续费解冻", RUNTYPE_ARTIFICIAL);
     }
 
     /**
@@ -173,8 +167,7 @@ public class AmountRunUtil {
      * @return
      */
     public Result deleteAmountFee(Withdraw withdraw, String generationIp, Boolean flag) {
-        UserFund userFund = userInfoServiceImpl.findBalace(withdraw.getUserId()); //当前账户资金
-        Result delete = delete(WITHDRAY_AMOUNT_FEE, userFund, withdraw.getOrderId(), withdraw.getFee(), generationIp, "账户代付手续费冻结", flag ? RUNTYPE_ARTIFICIAL : RUNTYPE_NATURAL);
+        Result delete = delete(WITHDRAY_AMOUNT_FEE, withdraw.getUserId(), withdraw.getOrderId(), withdraw.getFee(), generationIp, "账户代付手续费冻结", flag ? RUNTYPE_ARTIFICIAL : RUNTYPE_NATURAL);
         if (delete.isSuccess()) {
             return delete;
         }
@@ -190,8 +183,7 @@ public class AmountRunUtil {
      * @return
      */
     public Result addAmount(Recharge recharge, String generationIp, Boolean flag) {
-        UserFund userFund = userInfoServiceImpl.findBalace(recharge.getUserId()); //当前账户资金
-        Result add = add(RECHANGE_AMOUNT, userFund, recharge.getOrderId(), recharge.getActualAmount(), generationIp, "码商充值", flag ? RUNTYPE_ARTIFICIAL : RUNTYPE_NATURAL);
+        Result add = add(RECHANGE_AMOUNT, recharge.getUserId(), recharge.getOrderId(), recharge.getActualAmount(), generationIp, "码商充值", flag ? RUNTYPE_ARTIFICIAL : RUNTYPE_NATURAL);
         if (add.isSuccess()) {
             return add;
         }
@@ -208,16 +200,14 @@ public class AmountRunUtil {
      * @return
      */
     public Result addAppProfit(String orderId, String userId, BigDecimal amount, String generationIp, Boolean flag) {
-        UserFund userFund = userInfoServiceImpl.findBalace(userId); //当前账户资金
-        Result add = add(PROFIT_AMOUNT_AGENT, userFund, orderId, amount, generationIp, "商户代理商，代理分润结算", flag ? RUNTYPE_ARTIFICIAL : RUNTYPE_NATURAL);
+        Result add = add(PROFIT_AMOUNT_AGENT, userId, orderId, amount, generationIp, "商户代理商，代理分润结算", flag ? RUNTYPE_ARTIFICIAL : RUNTYPE_NATURAL);
         return add;
     }
 
 
     public Result addAppProfit(alipay.manage.bean.DealOrderApp orderApp, String userId, BigDecimal multiply, String ip,
                                boolean flag) {
-        UserFund userFund = userInfoServiceImpl.findBalace(userId); //当前账户资金
-        Result add = add(PROFIT_AMOUNT_AGENT, userFund, orderApp.getOrderId(), multiply, orderApp.getOrderIp(), "商户代理商，代理分润结算", flag ? RUNTYPE_ARTIFICIAL : RUNTYPE_NATURAL, orderApp.getOrderAccount());
+        Result add = add(PROFIT_AMOUNT_AGENT, userId, orderApp.getOrderId(), multiply, orderApp.getOrderIp(), "商户代理商，代理分润结算", flag ? RUNTYPE_ARTIFICIAL : RUNTYPE_NATURAL, orderApp.getOrderAccount());
         return add;
     }
 
@@ -230,8 +220,7 @@ public class AmountRunUtil {
      * @return
      */
     public Result addDealAmountApp(alipay.manage.bean.DealOrderApp order, String generationIp, Boolean flag) {
-        UserFund userFund = userInfoServiceImpl.fundUserFundAccounrBalace(order.getOrderAccount());
-        Result add = add(ADD_DEAL_AMOUNT_APP, userFund, order.getOrderId(), order.getOrderAmount(), generationIp, "下游商户交易加款", flag ? RUNTYPE_ARTIFICIAL : RUNTYPE_NATURAL);
+        Result add = add(ADD_DEAL_AMOUNT_APP, order.getOrderAccount(), order.getOrderId(), order.getOrderAmount(), generationIp, "下游商户交易加款", flag ? RUNTYPE_ARTIFICIAL : RUNTYPE_NATURAL);
         if (add.isSuccess()) {
             return add;
         }
@@ -239,8 +228,7 @@ public class AmountRunUtil {
     }
 
     public Result deleteDealAmountFeeApp(alipay.manage.bean.DealOrderApp order, String generationIp, Boolean flag, BigDecimal fee) {
-        UserFund userFund = userInfoServiceImpl.fundUserFundAccounrBalace(order.getOrderAccount());
-        Result delete = delete(DELETE_DEAL_FEE_AMOUNT_APP, userFund, order.getOrderId(), fee, generationIp, "下游商户交易手续费扣除", flag ? RUNTYPE_ARTIFICIAL : RUNTYPE_NATURAL);
+        Result delete = delete(DELETE_DEAL_FEE_AMOUNT_APP, order.getOrderAccount(), order.getOrderId(), fee, generationIp, "下游商户交易手续费扣除", flag ? RUNTYPE_ARTIFICIAL : RUNTYPE_NATURAL);
         if (delete.isSuccess()) {
             return delete;
         }
@@ -256,13 +244,12 @@ public class AmountRunUtil {
      * @return
      */
     public Result addDealAmount(DealOrder order, String generationIp, Boolean flag) {
-        UserFund userFund = userInfoServiceImpl.fundUserFundAccounrBalace(order.getOrderQrUser());
         UserRate rate = userInfoServiceImpl.findUserRateById(order.getFeeId());
-        log.info("当前加入流水账号：" + userFund.getUserId() + "，当前流水金额：" + order.getDealAmount() + "，当前流水费率：" + rate.getFee() + "，");
+        log.info("当前加入流水账号：" + order.getOrderQrUser() + "，当前流水金额：" + order.getDealAmount() + "，当前流水费率：" + rate.getFee() + "，");
         BigDecimal dealAmount = order.getDealAmount();
         BigDecimal fee = rate.getFee();
         BigDecimal amount = dealAmount.multiply(fee);
-        Result add = add(PROFIT_AMOUNT_DEAL, userFund, order.getOrderId(), amount, generationIp, "商正常接单分润", flag ? RUNTYPE_ARTIFICIAL : RUNTYPE_NATURAL);
+        Result add = add(PROFIT_AMOUNT_DEAL, order.getOrderQrUser(), order.getOrderId(), amount, generationIp, "商正常接单分润", flag ? RUNTYPE_ARTIFICIAL : RUNTYPE_NATURAL);
         if (add.isSuccess()) {
             return add;
         }
@@ -277,8 +264,7 @@ public class AmountRunUtil {
      * @return
      */
     public Result addAmount(Amount amount, String generationIp) {
-        UserFund userFund = userInfoServiceImpl.fundUserFundAccounrBalace(amount.getUserId());
-        Result add = add(ADD_AMOUNT, userFund, amount.getOrderId(), amount.getActualAmount(),
+        Result add = add(ADD_AMOUNT, amount.getUserId(), amount.getOrderId(), amount.getActualAmount(),
                 generationIp, amount.getDealDescribe(), RUNTYPE_ARTIFICIAL);
         if (add.isSuccess()) {
             return add;
@@ -287,8 +273,7 @@ public class AmountRunUtil {
     }
 
     public Result addAmount(Amount amount, String clientIP, String descr) {
-        UserFund userFund = userInfoServiceImpl.fundUserFundAccounrBalace(amount.getUserId());
-        Result add = add(ADD_AMOUNT, userFund, amount.getOrderId(), amount.getActualAmount(),
+        Result add = add(ADD_AMOUNT, amount.getUserId(), amount.getOrderId(), amount.getActualAmount(),
                 clientIP, descr, RUNTYPE_ARTIFICIAL);
         if (add.isSuccess()) {
             return add;
@@ -306,8 +291,7 @@ public class AmountRunUtil {
      * @return
      */
     public Result deleteRechangerNumber(DealOrder order, String generationIp, Boolean flag) {
-        UserFund userFund = userInfoServiceImpl.fundUserFundAccounrBalace(order.getOrderQrUser());
-        Result delete = delete(DEAL_AMOUNT_DETETE, userFund, order.getOrderId(), order.getDealAmount(), generationIp,
+        Result delete = delete(DEAL_AMOUNT_DETETE, order.getOrderQrUser(), order.getOrderId(), order.getDealAmount(), generationIp,
                 "交易流水,扣除用户交易点数", flag ? RUNTYPE_ARTIFICIAL : RUNTYPE_NATURAL);
         if (delete.isSuccess()) {
             return delete;
@@ -323,8 +307,7 @@ public class AmountRunUtil {
      * @return
      */
     public Result deleteAmount(Amount amount, String generationIp) {
-        UserFund userFund = userInfoServiceImpl.fundUserFundAccounrBalace(amount.getUserId());
-        Result delete = delete(DETETE_AMOUNT, userFund, amount.getOrderId(), amount.getActualAmount(),
+        Result delete = delete(DETETE_AMOUNT, amount.getUserId(), amount.getOrderId(), amount.getActualAmount(),
                 generationIp, amount.getDealDescribe(), RUNTYPE_ARTIFICIAL);
         if (delete.isSuccess()) {
             return delete;
@@ -335,23 +318,21 @@ public class AmountRunUtil {
     /**
      * <p>当前账户加款流水</p>
      *
-     * @param userFund
      * @param associatedId
      * @param amount
      * @return
      */
     @SuppressWarnings("unused")
-    private Result add(String orderType, UserFund userFund, String associatedId, BigDecimal amount, String generationIp, String dealDescribe, String runType) {
+    private Result add(String orderType, String userId, String associatedId, BigDecimal amount, String generationIp, String dealDescribe, String runType) {
         String orderAccount, amountType, acountR, accountW;
         Integer runOrderType = null;
         BigDecimal amountNow;
-        orderAccount = userFund.getUserId();
+        orderAccount = userId;
         amountType = AMOUNT_TYPE_R;
         acountR = orderAccount;
         accountW = SYSTEM_APP;
         runOrderType = getRunOrderType(orderType);
-        amountNow = userFund.getAccountBalance();
-        Result amountRun = amountRun(associatedId, orderAccount, runOrderType, amount, generationIp, acountR, accountW, runType, amountType, dealDescribe, amountNow);
+        Result amountRun = amountRun(associatedId, orderAccount, runOrderType, amount, generationIp, acountR, accountW, runType, amountType, dealDescribe);
         if (amountRun.isSuccess()) {
             return amountRun;
         }
@@ -362,7 +343,6 @@ public class AmountRunUtil {
      * <p>代理上分润专用</p>
      *
      * @param orderType
-     * @param userFund
      * @param associatedId
      * @param amount
      * @param generationIp
@@ -371,17 +351,16 @@ public class AmountRunUtil {
      * @param user
      * @return
      */
-    private Result add(String orderType, UserFund userFund, String associatedId, BigDecimal amount, String generationIp, String dealDescribe, String runType, String user) {
+    private Result add(String orderType, String userId, String associatedId, BigDecimal amount, String generationIp, String dealDescribe, String runType, String user) {
         String orderAccount, amountType, acountR, accountW;
         Integer runOrderType = null;
         BigDecimal amountNow;
-        orderAccount = userFund.getUserId();
+        orderAccount = userId;
         amountType = AMOUNT_TYPE_R;
         acountR = orderAccount;
         accountW = SYSTEM_APP;
         runOrderType = getRunOrderType(orderType);
-        amountNow = userFund.getAccountBalance();
-        Result amountRun = amountRun(associatedId, orderAccount, runOrderType, amount, generationIp, acountR, accountW, runType, amountType, dealDescribe, amountNow, user);
+        Result amountRun = amountRun(associatedId, orderAccount, runOrderType, amount, generationIp, acountR, accountW, runType, amountType, dealDescribe, user);
         if (amountRun.isSuccess()) {
             return amountRun;
         }
@@ -391,22 +370,20 @@ public class AmountRunUtil {
     /**
      * <p>当前账户扣款流水</p>
      *
-     * @param userFund
      * @param associatedId
      * @param amount
      * @return
      */
-    public Result delete(String orderType, UserFund userFund, String associatedId, BigDecimal amount, String generationIp, String dealDescribe, String runType) {
+    public Result delete(String orderType, String userId, String associatedId, BigDecimal amount, String generationIp, String dealDescribe, String runType) {
         String orderAccount, amountType, acountR, accountW;
         Integer runOrderType = null;
         BigDecimal amountNow;
-        orderAccount = userFund.getUserId();
+        orderAccount = userId;
         amountType = AMOUNT_TYPE_W;
         acountR = SYSTEM_APP;
         accountW = orderAccount;
         runOrderType = getRunOrderType(orderType);
-        amountNow = userFund.getAccountBalance();
-        Result amountRun = amountRun(associatedId, orderAccount, runOrderType, amount, generationIp, acountR, accountW, runType, amountType, dealDescribe, amountNow);
+        Result amountRun = amountRun(associatedId, orderAccount, runOrderType, amount, generationIp, acountR, accountW, runType, amountType, dealDescribe);
         if (amountRun.isSuccess()) {
             return amountRun;
         }
@@ -432,7 +409,7 @@ public class AmountRunUtil {
     private Result amountRun(String associatedId, String orderAccount,
                              Integer runOrderType, BigDecimal amount, String generationIp,
                              String acountR, String accountW, String runType, String amountType
-            , String dealDescribe, BigDecimal amountNow) {
+            , String dealDescribe) {
         if (StrUtil.isBlank(associatedId) || StrUtil.isBlank(orderAccount)
                 || StrUtil.isBlank(generationIp)
                 || StrUtil.isBlank(runType)
@@ -451,7 +428,6 @@ public class AmountRunUtil {
         run.setDealDescribe(dealDescribe);
         run.setRunOrderType(runOrderType);
         run.setRunType(runType);
-        run.setAmountNow(amountNow);
         run.setAmount(amount);
         boolean addOrder = runOrderServiceImpl.addOrder(run);
         if (addOrder) {
@@ -473,14 +449,13 @@ public class AmountRunUtil {
      * @param runType
      * @param amountType
      * @param dealDescribe
-     * @param amountNow
      * @param user
      * @return
      */
     private Result amountRun(String associatedId, String orderAccount,
                              Integer runOrderType, BigDecimal amount, String generationIp,
                              String acountR, String accountW, String runType, String amountType
-            , String dealDescribe, BigDecimal amountNow, String user) {
+            , String dealDescribe, String user) {
         if (StrUtil.isBlank(associatedId) || StrUtil.isBlank(orderAccount)
                 || StrUtil.isBlank(generationIp)
                 || StrUtil.isBlank(runType)
@@ -499,7 +474,6 @@ public class AmountRunUtil {
         run.setDealDescribe(dealDescribe);
         run.setRunOrderType(runOrderType);
         run.setRunType(runType);
-        run.setAmountNow(amountNow);
         run.setAmount(amount);
         run.setRetain4(user);
         boolean addOrder = runOrderServiceImpl.addOrder(run);
@@ -595,8 +569,7 @@ public class AmountRunUtil {
      * @return
      */
     public Result addChannelWitFee(Withdraw withdraw, String generationIp, BigDecimal fee) {
-        UserFund userFund = userInfoServiceImpl.findBalace(withdraw.getWitChannel()); //当前账户资金
-        return add(CHANNEL_ADD_WIT_FEE, userFund, withdraw.getOrderId(), fee, generationIp, "渠道代付手续费流水", RUNTYPE_NATURAL);
+        return add(CHANNEL_ADD_WIT_FEE, withdraw.getWitChannel(), withdraw.getOrderId(), fee, generationIp, "渠道代付手续费流水", RUNTYPE_NATURAL);
     }
 
     /**
@@ -607,34 +580,28 @@ public class AmountRunUtil {
      * @return
      */
     public Result addChannelWit(Withdraw withdraw, String generationIp) {
-        UserFund userFund = userInfoServiceImpl.findBalace(withdraw.getWitChannel()); //当前账户资金
-        return add(CHANNEL_ADD_WIT, userFund, withdraw.getOrderId(), withdraw.getAmount(), generationIp, "渠道代付成功加款", RUNTYPE_NATURAL);
+        return add(CHANNEL_ADD_WIT, withdraw.getWitChannel(), withdraw.getOrderId(), withdraw.getAmount(), generationIp, "渠道代付成功加款", RUNTYPE_NATURAL);
     }
 
 
     public Result addFreeze(Amount amount, String generationIp) {
-        UserFund userFund = userInfoServiceImpl.findBalace(amount.getUserId()); //当前账户资金
-        return add(ADD_FREEZE, userFund, amount.getOrderId(), amount.getAmount(), generationIp, "小金库转入余额账户", RUNTYPE_ARTIFICIAL);
+        return add(ADD_FREEZE, amount.getUserId(), amount.getOrderId(), amount.getAmount(), generationIp, "小金库转入余额账户", RUNTYPE_ARTIFICIAL);
     }
 
     public Result deleteFreeze(Amount amount, String generationIp) {
-        UserFund userFund = userInfoServiceImpl.findBalace(amount.getUserId()); //当前账户资金
-        return add(DELETE_FREEZE, userFund, amount.getOrderId(), amount.getAmount(), generationIp, "余额账户转入小金库", RUNTYPE_ARTIFICIAL);
+        return add(DELETE_FREEZE, amount.getUserId(), amount.getOrderId(), amount.getAmount(), generationIp, "余额账户转入小金库", RUNTYPE_ARTIFICIAL);
     }
 
     public Result addQuota(Amount amountPrivate, String generationIp) {
-        UserFund userFund = userInfoServiceImpl.findBalace(amountPrivate.getUserId()); //当前账户资金
-        return add(ADD_QUOTA, userFund, amountPrivate.getOrderId(), amountPrivate.getAmount(), generationIp, "增加授权额度", RUNTYPE_ARTIFICIAL);
+        return add(ADD_QUOTA, amountPrivate.getUserId(), amountPrivate.getOrderId(), amountPrivate.getAmount(), generationIp, "增加授权额度", RUNTYPE_ARTIFICIAL);
     }
 
     public Result deleteQuota(Amount amount, String generationIp) {
-        UserFund userFund = userInfoServiceImpl.findBalace(amount.getUserId()); //当前账户资金
-        return add(DELETE_QUOTA, userFund, amount.getOrderId(), amount.getAmount(), generationIp, "减少授权额度", RUNTYPE_ARTIFICIAL);
+        return add(DELETE_QUOTA, amount.getUserId(), amount.getOrderId(), amount.getAmount(), generationIp, "减少授权额度", RUNTYPE_ARTIFICIAL);
     }
 
     public Result deleteUsdtFeeGas(Withdraw withdraw, String generationIp, String describe, BigDecimal amount) {
-        UserFund userFund = userInfoServiceImpl.findBalace(withdraw.getUserId()); //当前账户资金
-        return add(USDT_GAS_FEE, userFund, withdraw.getOrderId(), amount, generationIp, describe, RUNTYPE_NATURAL);
+        return add(USDT_GAS_FEE, withdraw.getUserId(), withdraw.getOrderId(), amount, generationIp, describe, RUNTYPE_NATURAL);
     }
 
 

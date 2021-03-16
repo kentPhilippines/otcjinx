@@ -196,9 +196,7 @@
       <if test="amountType != null" >
         amountType,
       </if>
-      <if test="amountNow != null" >
         amountNow,
-      </if>
       <if test="retain4 != null" >
         retain4,
       </if>
@@ -249,9 +247,7 @@
       <if test="amountType != null" >
         #{amountType,jdbcType=CHAR},
       </if>
-      <if test="amountNow != null" >
-        #{amountNow,jdbcType=DECIMAL},
-      </if>
+      (select accountBalance from alipay_user_fund where userId = #{orderAccount}) ,
       <if test="retain4 != null" >
         #{retain4,jdbcType=CHAR},
       </if>
