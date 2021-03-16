@@ -1,14 +1,13 @@
 package otc.api.impl;
 
-import java.util.HashMap;
-import java.util.List;
-
 import org.springframework.stereotype.Component;
-
 import otc.api.AlipayServiceClienFeign;
 import otc.bean.alipay.FileList;
 import otc.bean.alipay.Medium;
 import otc.result.Result;
+
+import java.util.HashMap;
+import java.util.List;
 @Component
 public class AlipayServiceClienFeignHystrix implements AlipayServiceClienFeign {
 
@@ -49,6 +48,11 @@ public class AlipayServiceClienFeignHystrix implements AlipayServiceClienFeign {
 	@Override
 	public Result userTask() {
 		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Result orderTask() {
 		return null;
 	}
 

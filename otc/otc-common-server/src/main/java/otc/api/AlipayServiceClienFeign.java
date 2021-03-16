@@ -1,27 +1,27 @@
 package otc.api;
 
-import java.util.HashMap;
-import java.util.List;
-
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import otc.api.impl.AlipayServiceClienFeignHystrix;
 import otc.bean.alipay.FileList;
 import otc.bean.alipay.Medium;
 import otc.common.PayApiConstant;
 import otc.result.Result;
 
+import java.util.HashMap;
+import java.util.List;
+
 /**
  * <p>alipay数据服务【接口】</p>
+ *
  * @author K
  */
-@FeignClient(value=PayApiConstant.Server.ALIPAY_SERVER, fallback = AlipayServiceClienFeignHystrix.class)
+@FeignClient(value = PayApiConstant.Server.ALIPAY_SERVER, fallback = AlipayServiceClienFeignHystrix.class)
 public interface AlipayServiceClienFeign {
-	
+
 	/**
 	 * <p>查询当前可用的媒介账号</p>
 	 * @param mediumType				媒介类型
@@ -63,16 +63,18 @@ public interface AlipayServiceClienFeign {
 	 * @param fileId
 	 */
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,value = PayApiConstant.File.FILE_API+PayApiConstant.File.OPEN_FILE)
-	public void updataFileIsDeal(@RequestParam("fileId")String fileId);
-	
-	
-	
-	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,value = PayApiConstant.Alipay.ORDER_API+PayApiConstant.Alipay.ORDER_ENTER_ORDER_SYSTEM)
+	public void updataFileIsDeal(@RequestParam("fileId") String fileId);
+
+
+	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, value = PayApiConstant.Alipay.ORDER_API + PayApiConstant.Alipay.ORDER_ENTER_ORDER_SYSTEM)
 	public Result enterOrder(HashMap<String, Object> paramMap);
-	
-	
-	@GetMapping(PayApiConstant.Alipay.TASK_API+PayApiConstant.Alipay.TASK_API_USER)
+
+
+	@GetMapping(PayApiConstant.Alipay.TASK_API + PayApiConstant.Alipay.TASK_API_USER)
 	public Result userTask();
-	
-	
+
+	@GetMapping(PayApiConstant.Alipay.TASK_API + PayApiConstant.Alipay.TASK_API_ORDER)
+	public Result orderTask();
+
+
 }

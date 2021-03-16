@@ -228,6 +228,14 @@ public class OrderUtil {
             if (order.getOrderStatus().toString().equals(OrderDealStatus.失败.getIndex().toString())) {
                 return Result.buildFailMessage("当前订单不支持修改");
             }
+            if (!orderServiceImpl.updateOrderStatus(order.getOrderId(), OrderDealStatus.成功.getIndex().toString(), msg)) {
+                return Result.buildFailMessage("订单修改失败，请重新发起成功");
+            } else {//修改成功，放入，等待定时任务跑结算
+                return Result.buildFailMessage("订单修改失败，请重新发起成功");
+            }
+        } finally {
+        }
+/*               修改为异步结算
             Result dealAmount = dealAmount(order, ip, flag, msg);
             if (!dealAmount.isSuccess()) {
                 throw new OrderException("订单修改异常", null);
@@ -239,9 +247,28 @@ public class OrderUtil {
         } catch (Exception e) {
             throw new OrderException("订单修改异常", null);
         } finally {
+        }*/
+    }
+
+    public Result settlement(DealOrder order) {
+        Result dealAmount = dealAmount(order, order.getGenerationIp(), false, order.getDealDescribe());
+        if (!dealAmount.isSuccess()) {
+            throw new OrderException("订单修改异常", null);
+        }
+        Result dealAmount1 = enterOrderApp(order.getAssociatedId(), order.getGenerationIp(), false);
+        if (!dealAmount1.isSuccess()) {
+            throw new OrderException("订单修改异常", null);
+        }
+        if (dealAmount1.isSuccess()) {
+            log.info("【订单修改成功，向下游发送回调：" + order.getOrderId() + "】");
+            ThreadUtil.execute(() -> {
+                notifyUtil.sendMsg(order.getOrderId());
+            });
+            return Result.buildSuccessMessage("订单修改成功");
         }
         return Result.buildSuccess();
     }
+
 
     @SuppressWarnings("unused")
     @Transactional
@@ -273,9 +300,7 @@ public class OrderUtil {
      * @return
      */
     public Result dealAmount(DealOrder order, String ip, Boolean flag, String msg) {
-        if (!orderServiceImpl.updateOrderStatus(order.getOrderId(), OrderDealStatus.成功.getIndex().toString(), msg)) {
-            return Result.buildFailMessage("订单修改失败，请重新发起成功");
-        }
+
         //TODO 这里结算模式可选设置为  是否为顶代模式，如果为订单模式 则  只扣减顶代的   账号金额     给当前码商增加利润
         //TODO 如果不为顶代模式 则直接按照当前现有模式  结算
         UserInfo user = userInfoServiceImpl.findUserByOrder(order.getOrderQrUser());

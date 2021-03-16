@@ -40,7 +40,7 @@ public class DealOrder implements Serializable{
     private String retain1;
     private String retain2;
     private String retain3;
-    private String retain4;
+    private Integer retain4;
     private String Time;
     private String currency;  ///货币类型
     private List orderQrUserList;
@@ -218,24 +218,31 @@ public class DealOrder implements Serializable{
     public void setRetain2(String retain2) {
         this.retain2 = retain2 == null ? null : retain2.trim();
     }
+
     public String getRetain3() {
         return retain3;
     }
+
     public void setRetain3(String retain3) {
         this.retain3 = retain3 == null ? null : retain3.trim();
     }
-    public String getRetain4() {
+
+    public Integer getRetain4() {
         return retain4;
     }
-    public void setRetain4(String retain4) {
-        this.retain4 = retain4 == null ? null : retain4.trim();
+
+    public void setRetain4(Integer retain4) {
+        this.retain4 = retain4;
     }
+
     public String getDealDescribe() {
         return dealDescribe;
     }
+
     public void setDealDescribe(String dealDescribe) {
         this.dealDescribe = dealDescribe == null ? null : dealDescribe.trim();
     }
+
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);

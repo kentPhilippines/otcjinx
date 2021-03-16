@@ -109,13 +109,7 @@ public abstract class NotfiyChannel {
         try {
             redisLockUtil.redisLock(RedisLockUtil.AMOUNT_USER_KEY + order.getOrderQrUser());
             Result dealAmount = orderUtilImpl.updataDealOrderSu(order.getOrderId(), msg, ip, false);
-            if (dealAmount.isSuccess()) {
-                log.info("【订单修改成功，向下游发送回调：" + orderId + "】");
-                ThreadUtil.execute(() -> {
-                    notifyUtilImpl.sendMsg(orderId);
-                });
-                return Result.buildSuccessMessage("订单修改成功");
-            }
+
         } finally {
             redisLockUtil.unLock(RedisLockUtil.AMOUNT_USER_KEY + order.getOrderQrUser());
         }

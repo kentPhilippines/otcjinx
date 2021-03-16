@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import otc.util.number.Number;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @Component
 public class RunorderServiceImpl implements RunOrderService {
@@ -18,5 +19,10 @@ public class RunorderServiceImpl implements RunOrderService {
 		run.setOrderId(Number.getRunOrderId());
 		int integer = runOrderDao.insertSelective(run);
 		return integer > 0 && integer < 2;
+	}
+
+	@Override
+	public List<RunOrder> findAssOrder(String associatedId) {
+		return runOrderDao.findAssOrder(associatedId);
 	}
 }

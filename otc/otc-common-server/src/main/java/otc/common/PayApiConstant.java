@@ -58,19 +58,20 @@ public class PayApiConstant {
 		public static final String ORDER_API = "/order-api";//订单处理接口
 		public static final String WIT_API_ENTER = "/wit-api-enter";//代付确认处理
 		public static final String ORDER_ENTER_ORDER = "/enter-orderQr";//订单状态修改及资金流水账户变动
-		public static final String ORDER_ENTER_ORDER_SYSTEM = "/enter-orderQr-system";//顶动感
+        public static final String ORDER_ENTER_ORDER_SYSTEM = "/enter-orderQr-system";//顶动感
 
 
-		public static final String MEDIUM_API = "/medium";                                    //媒介处理公共接口
-		public static final String FIND_MEDIUM_IS_DEAL = "/find-medium-is-deal";            //查询当前可以交易的媒介
-		public static final String AUDIT_MERCHANT_STATUS = "/audit-merchant-status"; //修改商户的状态
-		public static final String OFF_MEDIUM_QR = "/off-medium-qr"; //将不再队列中的二维码踢出队列
+        public static final String MEDIUM_API = "/medium";                                    //媒介处理公共接口
+        public static final String FIND_MEDIUM_IS_DEAL = "/find-medium-is-deal";            //查询当前可以交易的媒介
+        public static final String AUDIT_MERCHANT_STATUS = "/audit-merchant-status"; //修改商户的状态
+        public static final String OFF_MEDIUM_QR = "/off-medium-qr"; //将不再队列中的二维码踢出队列
 
-		public static final String TASK_API = "/task-api";    //定时任务接口
-		public static final String TASK_API_USER = "/user-api";	//账户的定时任务
+        public static final String TASK_API = "/task-api";    //定时任务接口
+        public static final String TASK_API_USER = "/user-api";    //账户的定时任务
+        public static final String TASK_API_ORDER = "/order-api";    //订单结算的定时任务
 
 
-	}
+    }
 
 	public class File{
 		public static final String FILE_API = "/file-api";//文件服务api

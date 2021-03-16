@@ -26,7 +26,7 @@
     <result column="retain1" property="retain1" jdbcType="CHAR" />
     <result column="retain2" property="retain2" jdbcType="CHAR" />
     <result column="retain3" property="retain3" jdbcType="CHAR" />
-    <result column="retain4" property="retain4" jdbcType="CHAR" />
+    <result column="retain4" property="retain4" jdbcType="BIT"/>
   </resultMap>
   <resultMap id="ResultMapWithBLOBs" type="alipay.manage.bean.DealOrder" extends="BaseResultMap" >
     <result column="dealDescribe" property="dealDescribe" jdbcType="LONGVARCHAR" />
@@ -155,7 +155,7 @@
       notify, back, isNotify, 
       createTime, submitTime, feeId, 
       status, retain1, retain2, 
-      retain3, retain4, dealDescribe,currency
+      retain3,   dealDescribe,currency
       )
     values (#{orderId,jdbcType=CHAR}, #{associatedId,jdbcType=CHAR}, #{orderStatus,jdbcType=BIT}, 
       #{dealAmount,jdbcType=DECIMAL}, #{dealFee,jdbcType=DECIMAL}, #{actualAmount,jdbcType=DECIMAL}, 
@@ -164,7 +164,7 @@
       #{notify,jdbcType=VARCHAR}, #{back,jdbcType=VARCHAR}, #{isNotify,jdbcType=VARCHAR}, 
       #{createTime,jdbcType=TIMESTAMP}, #{submitTime,jdbcType=TIMESTAMP}, #{feeId,jdbcType=INTEGER}, 
       #{status,jdbcType=INTEGER}, #{retain1,jdbcType=CHAR}, #{retain2,jdbcType=CHAR}, 
-      #{retain3,jdbcType=CHAR}, #{retain4,jdbcType=CHAR}, #{dealDescribe,jdbcType=LONGVARCHAR},#{currency}
+      #{retain3,jdbcType=CHAR},   #{dealDescribe,jdbcType=LONGVARCHAR},#{currency}
       )
   </insert>
   <insert id="insertSelective" parameterType="alipay.manage.bean.DealOrder" useGeneratedKeys="true" keyProperty="id" >
@@ -236,10 +236,8 @@
         <if test="retain3 != null">
             retain3,
         </if>
-        <if test="retain4 != null">
-            retain4,
-        </if>
-        <if test="dealDescribe != null">
+
+      <if test="dealDescribe != null">
             dealDescribe,
         </if>
         <if test="currency != null">
@@ -313,10 +311,8 @@
         <if test="retain3 != null">
             #{retain3,jdbcType=CHAR},
         </if>
-        <if test="retain4 != null">
-            #{retain4,jdbcType=CHAR},
-        </if>
-        <if test="dealDescribe != null">
+
+      <if test="dealDescribe != null">
             #{dealDescribe,jdbcType=LONGVARCHAR},
         </if>
         <if test="currency != null">
@@ -402,9 +398,7 @@
       <if test="record.retain3 != null" >
         retain3 = #{record.retain3,jdbcType=CHAR},
       </if>
-      <if test="record.retain4 != null" >
-        retain4 = #{record.retain4,jdbcType=CHAR},
-      </if>
+
       <if test="record.dealDescribe != null" >
         dealDescribe = #{record.dealDescribe,jdbcType=LONGVARCHAR},
       </if>
@@ -438,7 +432,6 @@
       retain1 = #{record.retain1,jdbcType=CHAR},
       retain2 = #{record.retain2,jdbcType=CHAR},
       retain3 = #{record.retain3,jdbcType=CHAR},
-      retain4 = #{record.retain4,jdbcType=CHAR},
       dealDescribe = #{record.dealDescribe,jdbcType=LONGVARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -469,7 +462,6 @@
       retain1 = #{record.retain1,jdbcType=CHAR},
       retain2 = #{record.retain2,jdbcType=CHAR},
       retain3 = #{record.retain3,jdbcType=CHAR},
-      retain4 = #{record.retain4,jdbcType=CHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -543,9 +535,7 @@
       <if test="retain3 != null" >
         retain3 = #{retain3,jdbcType=CHAR},
       </if>
-      <if test="retain4 != null" >
-        retain4 = #{retain4,jdbcType=CHAR},
-      </if>
+
       <if test="dealDescribe != null" >
         dealDescribe = #{dealDescribe,jdbcType=LONGVARCHAR},
       </if>
@@ -576,7 +566,6 @@
       retain1 = #{retain1,jdbcType=CHAR},
       retain2 = #{retain2,jdbcType=CHAR},
       retain3 = #{retain3,jdbcType=CHAR},
-      retain4 = #{retain4,jdbcType=CHAR},
       dealDescribe = #{dealDescribe,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -604,7 +593,6 @@
       retain1 = #{retain1,jdbcType=CHAR},
       retain2 = #{retain2,jdbcType=CHAR},
       retain3 = #{retain3,jdbcType=CHAR},
-      retain4 = #{retain4,jdbcType=CHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
 

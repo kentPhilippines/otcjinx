@@ -2,11 +2,11 @@ package alipay.manage.mapper;
 
 import alipay.manage.bean.RunOrder;
 import alipay.manage.bean.RunOrderExample;
-import java.util.List;
-
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 @Mapper
 public interface RunOrderMapper {
     int countByExample(RunOrderExample example);
@@ -36,5 +36,14 @@ public interface RunOrderMapper {
     int updateByPrimaryKeyWithBLOBs(RunOrder record);
 
     int updateByPrimaryKey(RunOrder record);
-      
+
+
+    /**
+     * 查询关联订单
+     *
+     * @param associatedId
+     * @return
+     */
+    @Select("select orderId , associatedId  from alipay_run_order  where associatedId = #{associatedId}")
+    List<RunOrder> findAssOrder(@Param("associatedId") String associatedId);
 }

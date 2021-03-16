@@ -74,7 +74,7 @@ public interface DealOrderMapper {
      * @return
      */
     @CacheEvict(value = ORDER_INFO_CHANNEL, allEntries = true)
-    @Update("update alipay_deal_order set orderStatus  = #{status} , dealDescribe   = #{mag} ,submitTime = NOW()   where  orderId = #{orderId}")
+    @Update("update alipay_deal_order set orderStatus  = #{status} , dealDescribe   = #{mag} ,submitTime = NOW()  , retain4  = 1   where  orderId = #{orderId}")
 	int updateOrderStatus(@Param("orderId")String orderId, @Param("status")String status, @Param("mag")String mag);
 
     @Cacheable(cacheNames = {ORDER_INFO_CHANNEL}, unless = "#result == null")
@@ -121,4 +121,20 @@ public interface DealOrderMapper {
 
     @Update("update alipay_deal_order set txhash = #{hash} where orderId = #{orderId}")
     int updateUsdtTxHash(@Param("orderId") String orderId, @Param("hash") String hash);
+
+
+    /*
+        查询未结算账户的订单  成功   且   retain4  = 1    且   10秒内 结算最多15 笔
+     */
+    @Select("select * from alipay_deal_order where orderStatus = 2  and  retain4 = 1 order by id limit 25   ")
+    List<DealOrder> findSuccessAndNotAmount();
+
+
+    /**
+     * 修改订单为以结算
+     *
+     * @param orderId
+     */
+    @Update(" update alipay_deal_order set retain4 = 0  where orderId = #{orderId}")
+    void updateSuccessAndAmount(@Param("orderId") String orderId);
 }
