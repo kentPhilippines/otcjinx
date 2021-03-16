@@ -1,17 +1,23 @@
 package test.number;
 
-import cn.hutool.http.HttpUtil;
-
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class thread {
+	static Lock lock = new ReentrantLock();
+
 	public static void main(String[] args) {
-		String url = "http://localhost/back/merchant/user/list";
-		Map map = new HashMap();
-		map.put("loginName", "kentMer1");
-		String post = HttpUtil.post(url, map);
-		System.out.println(post);
+		try {
+
+
+			lock.lock();
+
+
+		} finally {
+			lock.unlock();
+		}
 	}
-	}
+
+
+}
 

@@ -10,7 +10,6 @@ import alipay.manage.util.OrderUtil;
 import alipay.manage.util.amount.AmountPublic;
 import alipay.manage.util.amount.AmountRunUtil;
 import cn.hutool.core.map.MapUtil;
-import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.log.Log;
@@ -26,8 +25,6 @@ import otc.util.number.GenerateOrderNo;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Map;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * <p>请求交易抽象【交易】【代付】</p>
@@ -84,23 +81,21 @@ public abstract class PayOrderService implements PayService {
 		return orderEr(orderApp,"暂无支付渠道");
 	}
 	public String create(DealOrderApp orderApp,String channeId){
-		log.info("【开始创建本地订单，当前创建订单的商户订单为："+orderApp.toString()+"】");
-		log.info("【当前交易的渠道账号为："+channeId+"】");
+		log.info("【开始创建本地订单，当前创建订单的商户订单为：" + orderApp.toString() + "】");
+		log.info("【当前交易的渠道账号为：" + channeId + "】");
 		DealOrder order = new DealOrder();
-		String orderAccount = orderApp.getOrderAccount();//交易商户号
-		UserInfo accountInfo = userInfoServiceImpl.findUserInfoByUserId(orderAccount);//这里有为商户配置的 供应队列属性
-		UserInfo userinfo = userInfoServiceImpl.findUserInfoByUserId(channeId);//查询渠道账户
-		UserRate rate = userRateServiceImpl.findRateFee(orderApp.getFeeId());
+		UserInfo userinfo = userInfoServiceImpl.findDealUrl(channeId);//查询渠道账户
+		UserRate rate = userRateServiceImpl.findRateFeeType(orderApp.getFeeId());//长久缓存
 		ChannelFee channelFee = channelFeeDao.findChannelFee(rate.getChannelId(), rate.getPayTypr());
-		log.info("【当前交易的产品类型为："+userinfo.getUserNode()+"】");
+		log.info("【当前交易的产品类型为：" + userinfo.getUserNode() + "】");
 		order.setAssociatedId(orderApp.getOrderId());
 		order.setDealDescribe("正常交易订单");
 		order.setActualAmount(orderApp.getOrderAmount().subtract(new BigDecimal(orderApp.getRetain3())));
 		order.setDealAmount(orderApp.getOrderAmount());
 		order.setDealFee(new BigDecimal(orderApp.getRetain3()));
-        order.setExternalOrderId(orderApp.getAppOrderId());
-        order.setOrderAccount(orderApp.getOrderAccount());
-        order.setNotify(orderApp.getNotify());
+		order.setExternalOrderId(orderApp.getAppOrderId());
+		order.setOrderAccount(orderApp.getOrderAccount());
+		order.setNotify(orderApp.getNotify());
         String orderQrCh = GenerateOrderNo.Generate("C");
         order.setOrderId(orderQrCh);
         order.setOrderQrUser(userinfo.getUserId());
@@ -118,38 +113,12 @@ public abstract class PayOrderService implements PayService {
         log.info("【当前收取商户手续费：" + orderApp.getRetain3() + "】");
         BigDecimal subtract = new BigDecimal(orderApp.getRetain3()).subtract(multiply);
         log.info("【当前订单系统盈利：" + subtract + "】");
-        order.setRetain3(subtract.toString());
-		boolean addOrder = orderServiceImpl.addOrder(order);
-		if(addOrder) {
-			ThreadUtil.execute(()->{
-				corr(order,rate,channelFee);
-			});
-		}
+		order.setRetain3(subtract.toString());
+		orderServiceImpl.addOrder(order);
 		return orderQrCh;
 	};
 
-	/**
-	 * <p>数据数据统计</p>
-	 */
-	void corr(DealOrder order ,UserRate rate ,ChannelFee channelFee){
-		ThreadUtil.execute(()->{
-			CorrelationData corr = new CorrelationData();
-			corr.setAmount(order.getDealAmount());
-			corr.setOrderId(order.getOrderId());
-			corr.setOrderStatus(Integer.valueOf(order.getOrderStatus()));
-			corr.setUserId(order.getOrderQrUser());
-			corr.setAppId(order.getOrderAccount());
-			corr.setFee(rate.getFee());
-			corr.setChannelFee(new BigDecimal(channelFee.getChannelRFee()));
-			corr.setProfit(new BigDecimal(order.getRetain3()));
-			boolean addCorrelationDate = correlationServiceImpl.addCorrelationDate(corr);
-			if (addCorrelationDate) {
-				log.info("【订单号：" + order.getOrderId() + "，添加数据统计成功】");
-			} else {
-				log.info("【订单号：" + order.getOrderId() + "，添加数据统计失败】");
-			}
-		});
-	}
+
 	/**
 	 * <p>支付宝扫码支付实体</p>
 	 */
@@ -174,7 +143,6 @@ public abstract class PayOrderService implements PayService {
 		 */
 		return null;
 	}
-	static Lock lock = new  ReentrantLock();
 	/**
 	 * <p>代付</p>
 	 */
@@ -184,8 +152,8 @@ public abstract class PayOrderService implements PayService {
 		 * #####################################
 		 * 代付扣款操作
 		 */
-		lock.lock();
-	    try {
+		//	lock.lock();
+		try {
 			UserFund userFund = new UserFund();// userInfoServiceImpl.findUserFundByAccount(wit.getUserId());
 			userFund.setUserId(wit.getUserId());
 			Result deleteWithdraw = amountPublic.deleteWithdraw(userFund, wit.getActualAmount(), wit.getOrderId());
@@ -205,8 +173,8 @@ public abstract class PayOrderService implements PayService {
 				return Result.buildFailMessage("账户扣减失败,请联系技术人员处理");
 			}
 		}  finally {
-	        lock.unlock();
-	    }
+			//	lock.unlock();
+		}
 		return Result.buildSuccess();
 
 	}
@@ -220,9 +188,7 @@ public abstract class PayOrderService implements PayService {
 	public Result withdrawEr(Withdraw wit, String msg, String ip) {
 		Result withrawOrderErBySystem = orderUtilImpl.withrawOrderErBySystem(wit.getOrderId(), ip, msg);
 		if (withrawOrderErBySystem.isSuccess()) {
-			ThreadUtil.execute(() -> {
 				notifyUtil.wit(wit.getOrderId());
-			});
 		}
 		return withrawOrderErBySystem;
 	}
@@ -243,8 +209,8 @@ public abstract class PayOrderService implements PayService {
 	 * @return
 	 */
 	protected ChannelInfo getChannelInfo(String channelId, String payType) {
-        ChannelInfo channelInfo = new ChannelInfo();
-        UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(channelId);
+		ChannelInfo channelInfo = new ChannelInfo();
+		UserInfo userInfo = userInfoServiceImpl.findNotifyChannel(channelId);
         channelInfo.setChannelAppId(userInfo.getUserNode());
         channelInfo.setChannelPassword(userInfo.getPayPasword());
         channelInfo.setDealurl(userInfo.getDealUrl());

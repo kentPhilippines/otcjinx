@@ -217,9 +217,11 @@ public class OrderUtil {
         if (StrUtil.isBlank(orderId) || StrUtil.isBlank(ip)) {
             return Result.buildFailMessage("必传参数为空");
         }
-        lock.lock();
         try {
             DealOrder order = orderServiceImpl.findOrderStatus(orderId);
+            if (null == order) {
+                return Result.buildFailMessage("当前订单不存在");
+            }
             if (order.getOrderStatus().toString().equals(OrderDealStatus.成功.getIndex().toString())) {
                 return Result.buildFailMessage("当前订单不支持修改");
             }
@@ -234,16 +236,9 @@ public class OrderUtil {
             if (!dealAmount1.isSuccess()) {
                 throw new OrderException("订单修改异常", null);
             }
-            ThreadUtil.execute(() -> {//更新风控数据 统计数据等
-                DealOrder orderSu = orderServiceImpl.findOrderStatus(orderId);
-                if (orderSu.getOrderStatus().toString().equals(OrderDealStatus.成功.getIndex().toString())) {
-                    riskUtil.orderSu(order);
-                }
-            });
         } catch (Exception e) {
             throw new OrderException("订单修改异常", null);
         } finally {
-            lock.unlock();
         }
         return Result.buildSuccess();
     }
@@ -283,7 +278,7 @@ public class OrderUtil {
         }
         //TODO 这里结算模式可选设置为  是否为顶代模式，如果为订单模式 则  只扣减顶代的   账号金额     给当前码商增加利润
         //TODO 如果不为顶代模式 则直接按照当前现有模式  结算
-        UserInfo user = userInfoServiceImpl.findUserInfoByUserId(order.getOrderQrUser());
+        UserInfo user = userInfoServiceImpl.findUserByOrder(order.getOrderQrUser());
         UserFund userFund = new UserFund();
         userFund.setUserId(order.getOrderQrUser());
         if ("3".equals(user.getUserType().toString())) {//渠道账户结算
@@ -305,7 +300,7 @@ public class OrderUtil {
         }
         if (true) {//顶代结算模式
             String findAgent = correlationServiceImpl.findAgent(order.getOrderQrUser());
-            UserInfo userId = userInfoServiceImpl.findUserInfoByUserId(findAgent);
+            UserInfo userId = userInfoServiceImpl.findDealUrl(findAgent);
             /**
              * 1,获取顶代账号
              * 2,扣减顶代账户余额
@@ -596,7 +591,7 @@ public class OrderUtil {
     }
 
     private Result findUserRateList(String agent, String product, String channelId, UserRate rate, DealOrderApp orderApp, boolean flag, String ip) {
-        UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(agent);
+        UserInfo userInfo = userInfoServiceImpl.findUserAgent(agent);
         UserRate userRate = userRateDao.findProductFeeBy(agent, product, channelId);
         log.info("【当前代理商为：" + userRate.getUserId() + "】");
         log.info("【当前代理商结算费率：" + userRate.getFee() + "】");
@@ -841,7 +836,7 @@ public class OrderUtil {
 
     private Result witAgent(Withdraw wit, String username, String product, String channelId, UserRate rate, String ip, boolean flag) {
         UserRate userRate = userRateDao.findProductFeeByAll(username, product, channelId);//查询当前代理费率情况
-        UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(username);
+        UserInfo userInfo = userInfoServiceImpl.findUserAgent(username);
         log.info("【当前代理商为：" + userRate.getUserId() + "】");
         log.info("【当前代理商结算费率：" + userRate.getFee() + "】");
         log.info("【当前当前我方：" + rate.getUserId() + "】");

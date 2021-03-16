@@ -34,7 +34,7 @@ public class BaGPay extends PayOrderService {
         String create = create(dealOrderApp, channelId);
         if(StrUtil.isNotBlank(create)) {
             log.info("【本地订单创建成功，开始请求远程三方支付】");
-            UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(dealOrderApp.getOrderAccount());
+            UserInfo userInfo = userInfoServiceImpl.findDealUrl(dealOrderApp.getOrderAccount());
             if (StrUtil.isBlank(userInfo.getDealUrl())) {
                 orderEr(dealOrderApp, "当前商户交易url未设置");
                 return Result.buildFailMessage("请联系运营为您的商户号设置交易url");

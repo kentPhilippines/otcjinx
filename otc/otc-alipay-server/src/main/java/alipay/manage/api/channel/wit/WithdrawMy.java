@@ -11,6 +11,6 @@ public class WithdrawMy  extends PayOrderService{
 	
 	@Override
 	public Result withdraw(Withdraw wit) {
-			return Result.buildSuccessMessage("该笔代付已提交财务人员处理");
-	}
+        return Result.buildSuccessMessage("该笔代付已提交财务人员处理");
+    }
 }

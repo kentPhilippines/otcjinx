@@ -116,7 +116,6 @@ public class UserInfoServiceImpl implements UserInfoService {
         UserFundExample.Criteria criteria = example.createCriteria();
         criteria.andUserIdEqualTo(userFund.getUserId());
         criteria.andVersionEqualTo(userFund.getVersion());
-        userFund.setVersion(null);
         userFund.setId(null);
         userFund.setUserName(null);
         userFund.setUserType(null);
@@ -326,5 +325,20 @@ public class UserInfoServiceImpl implements UserInfoService {
     public boolean updateDealKey(String userId, String publickey, String privactkey, String key) {
         int a = userInfoMapper.updateDealKey(userId, publickey, privactkey, key);
         return a == 1;
+    }
+
+    @Override
+    public UserInfo findUserByOrder(String orderQrUser) {
+        return userInfoMapper.findUserByOrder(orderQrUser);
+    }
+
+    @Override
+    public UserInfo getSwitchs(String userId) {
+        return userInfoMapper.getSwitchs(userId);
+    }
+
+    @Override
+    public UserInfo findNotifyChannel(String channelId) {
+        return userInfoMapper.findNotifyChannel(channelId);
     }
 }

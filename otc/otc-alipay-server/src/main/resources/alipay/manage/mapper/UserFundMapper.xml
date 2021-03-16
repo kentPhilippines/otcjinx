@@ -293,8 +293,8 @@
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map" >
-    update alipay_user_fund
-    <set >
+      update alipay_user_fund
+      <set >
      version = version+1,
       <if test="record.id != null" >
         id = #{record.id,jdbcType=INTEGER},
@@ -361,9 +361,6 @@
       </if>
       <if test="record.status != null" >
         status = #{record.status,jdbcType=INTEGER},
-      </if>
-      <if test="record.version != null" >
-        version = #{record.version,jdbcType=INTEGER},
       </if>
     </set>
     <if test="_parameter != null" >

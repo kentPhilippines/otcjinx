@@ -225,13 +225,38 @@ public interface UserInfoService {
     List<UserInfo> finauserAll(String userId);
 
 
-    /**
-     * 更新商户密钥
-     *
-     * @param userId
-     * @param publickey
-     * @param privactkey
-     * @return
-     */
-    boolean updateDealKey(String userId, String publickey, String privactkey, String key);
+	/**
+	 * 更新商户密钥
+	 *
+	 * @param userId
+	 * @param publickey
+	 * @param privactkey
+	 * @return
+	 */
+	boolean updateDealKey(String userId, String publickey, String privactkey, String key);
+
+	/**
+	 * 针对交易结算做查询
+	 *
+	 * @param orderQrUser
+	 * @return
+	 */
+	UserInfo findUserByOrder(String orderQrUser);
+
+	/**
+	 * 查询交易状态
+	 *
+	 * @param userId
+	 * @return
+	 */
+	UserInfo getSwitchs(String userId);
+
+
+	/**
+	 * 针对渠道数据专门做缓存
+	 *
+	 * @param channelId
+	 * @return
+	 */
+	UserInfo findNotifyChannel(String channelId);
 }

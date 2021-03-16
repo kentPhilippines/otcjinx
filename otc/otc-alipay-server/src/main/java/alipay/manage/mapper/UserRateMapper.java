@@ -2,14 +2,18 @@ package alipay.manage.mapper;
 
 import alipay.manage.bean.UserRate;
 import alipay.manage.bean.UserRateExample;
-import java.util.List;
-
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
+import org.springframework.cache.annotation.Cacheable;
+
+import java.util.List;
+
 @Mapper
 public interface UserRateMapper {
+    static final String RATE = "USERRATE:INFO";
+
     int countByExample(UserRateExample example);
 
     int deleteByExample(UserRateExample example);
@@ -35,7 +39,6 @@ public interface UserRateMapper {
     /**
      * <p>查询当前用户唯一可用的代付费率</p>
      * @param userId
-     * @param prytype 
      * @return
      */
     @Select("select * from alipay_user_rate where feeType = 2 and `switchs` = 1 and userId = #{userId} ")
@@ -61,15 +64,26 @@ public interface UserRateMapper {
 	UserRate findUserRateInfoByUserId(@Param("userId") String userId);
 	/**
 	 * 查询码商入款费率
-	 * @param account
-	 * @return
-	 */
-	@Select("select * from alipay_user_rate where feeType = 1 and userId =  #{userId}")
-	UserRate findUserRateR(@Param("userId") String userId);
+     * @return
+     */
+    @Select("select * from alipay_user_rate where feeType = 1 and userId =  #{userId}")
+    UserRate findUserRateR(@Param("userId") String userId);
 
 
-	@Update("update alipay_user_rate set fee = #{fee},payTypr=#{payTypr} where feeType = 1 and userId = #{userId} ")
-	int updateRateR(@Param("userId")String userId, @Param("fee")String fee,@Param("payTypr")String payTypr);
+    @Update("update alipay_user_rate set fee = #{fee},payTypr=#{payTypr} where feeType = 1 and userId = #{userId} ")
+    int updateRateR(@Param("userId") String userId, @Param("fee") String fee, @Param("payTypr") String payTypr);
+
     @Select("select * from alipay_user_rate where userId = #{userId} and payTypr = #{product} and channelId = #{channel}")
     UserRate findProductFeeByAll(@Param("userId") String userId, @Param("product") String product, @Param("channel") String channelId);
+
+
+    /**
+     * 根据ip查询费率数据，不做费率计算和条件判断，可以做长久缓存
+     *
+     * @param feeId
+     * @return
+     */
+    @Cacheable(cacheNames = {RATE}, unless = "#result == null")
+    @Select("select * from alipay_user_rate where id = #{id}")
+    UserRate findRateFeeType(@Param("id") Integer id);
 }

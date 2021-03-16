@@ -69,7 +69,7 @@ public class NotifyUtil {
         log.info("【代付订单修改成功，现在开始通知下游，代付订单号：" + orderId + "】");
         Map<String, Object> map = new HashMap<String, Object>();
         Withdraw wit = withdrawServiceImpl.findOrderId(orderId);
-        UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(wit.getUserId());
+        UserInfo userInfo = userInfoServiceImpl.findPassword(wit.getUserId());
         map.put("apporderid", wit.getAppOrderId());
         map.put("tradesno", wit.getOrderId());
         map.put("status", wit.getOrderStatus());//0 预下单    1处理中  2 成功  3失败
@@ -103,7 +103,7 @@ public class NotifyUtil {
         log.info("=======[准备向下游商户发送通知]=======");
         DealOrder order = orderSerciceImpl.findOrderNotify(orderId);
         DealOrderApp orderApp = dealOrderAppDao.findOrderByOrderId(order.getAssociatedId());
-        UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(orderApp.getOrderAccount());
+        UserInfo userInfo = userInfoServiceImpl.findPassword(orderApp.getOrderAccount());
         /**
          * 		tradesno			M(5)				网关订单号
          status				M(32)				状态，2-成功，3-失败，1-处理中
@@ -210,7 +210,7 @@ public class NotifyUtil {
                 } else {
                     Integer o = (Integer) map.get(orderId);
                     o++;
-                    if (o > 30) {
+                    if (o > 5) {
                         log.info("【" + " 删除定时任务id  ：    " + orderId + "】");
                         CronUtil.remove(orderId);
                         map.remove(orderId);

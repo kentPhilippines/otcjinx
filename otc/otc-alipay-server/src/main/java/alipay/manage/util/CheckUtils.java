@@ -288,8 +288,7 @@ public class CheckUtils {
     }
 
 
-    public static boolean isNumber(String str) {
-        BigDecimal a = new BigDecimal(str);
+    public static boolean isNumber(BigDecimal a) {
         double dInput = a.doubleValue();
         long longPart = (long) dInput;
         BigDecimal bigDecimal = new BigDecimal(Double.toString(dInput));

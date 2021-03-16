@@ -28,11 +28,22 @@ public interface UserRateService {
 	 * @param payTypr           产品类型
 	 * @return
 	 */
-	boolean updateRateR(String userId, String fee,String payTypr);
+	boolean updateRateR(String userId, String fee, String payTypr);
+
 	/**
 	 * <p>根据费率ID查询费率</p>
+	 *
 	 * @param feeId
 	 * @return
 	 */
-	 UserRate findRateFee(Integer feeId);
+	UserRate findRateFee(Integer feeId);
+
+
+	/**
+	 * 查询用户费率，可以做长久缓存
+	 *
+	 * @param feeId
+	 * @return
+	 */
+	UserRate findRateFeeType(Integer feeId);
 }

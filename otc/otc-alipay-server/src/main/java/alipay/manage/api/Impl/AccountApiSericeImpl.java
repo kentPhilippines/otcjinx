@@ -278,4 +278,19 @@ public class AccountApiSericeImpl implements AccountApiService {
         }
     }
 
+    @Override
+    public UserInfo findPrivateKey(String userId) {
+        return userInfoDao.findPrivateKey(userId);
+    }
+
+    @Override
+    public UserInfo findClick(String userId) {
+        return userInfoDao.findClick(userId);
+    }
+
+    @Override
+    public UserInfo findautoWit(String userId) {
+        return userInfoDao.findautoWit(userId);
+    }
+
 }

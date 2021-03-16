@@ -15,7 +15,6 @@ import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Component;
-import otc.exception.order.OrderException;
 
 import javax.annotation.Resource;
 import java.lang.reflect.Method;
@@ -34,7 +33,7 @@ public class ServerAspect {
 
 
     @Around(value = "@annotation(redisLock)")
-    public Object handleRedisLock(ProceedingJoinPoint call, RedisLock redisLock) throws Throwable {
+    public Object handleRedisLock(ProceedingJoinPoint call, RedisLock redisLock) {
         Signature signature = call.getSignature();
         String className = signature.getDeclaringType().getSimpleName();
         String methodName = signature.getName();
@@ -67,12 +66,13 @@ public class ServerAspect {
                 return call.proceed();
             } catch (Throwable e) {
                 LOGGER.error("执行方法{}.{}报错，{}", className, methodName, e.getMessage());
-                throw e;
+                //  throw e;
             } finally {
                 cache.unlock(lock);
             }
         }
-        throw new OrderException("服务忙，请稍后再试", null);
+        //  throw new OrderException("服务忙，请稍后再试", null);
+        return null;
     }
 
     private String getSpELRealVal(ProceedingJoinPoint call, String spEL) {

@@ -73,11 +73,36 @@ public interface AccountApiService {
 	UserFund findUserFundByUserId(String userId);
 
 	/**
-	 *	根据商户的userId修改状态
-	 * @param userId        商户账号
-	 * @param paramKey        字段名
-	 * @param paramValue    状态值
-	 * @return				返回结果
+	 * 根据商户的userId修改状态
+	 *
+	 * @param userId     商户账号
+	 * @param paramKey   字段名
+	 * @param paramValue 状态值
+	 * @return 返回结果
 	 */
-    Result auditMerchantStatusByUserId(String userId, String paramKey, String paramValue);
+	Result auditMerchantStatusByUserId(String userId, String paramKey, String paramValue);
+
+	/**
+	 * 查询商户密钥
+	 *
+	 * @param userId
+	 * @return
+	 */
+	UserInfo findPrivateKey(String userId);
+
+	/**
+	 * 查询检查条件
+	 *
+	 * @param userId
+	 * @return
+	 */
+	UserInfo findClick(String userId);
+
+	/**
+	 * 查询是否为手动出款
+	 *
+	 * @param appid
+	 * @return
+	 */
+	UserInfo findautoWit(String appid);
 }

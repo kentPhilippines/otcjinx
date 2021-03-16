@@ -5,11 +5,16 @@ import alipay.manage.bean.UserInfo;
 import alipay.manage.bean.UserInfoExample;
 import alipay.manage.bean.UserRate;
 import org.apache.ibatis.annotations.*;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 
 import java.util.List;
 
 @Mapper
 public interface UserInfoMapper {
+    static final String USER = "USERINFO:INFO";
+    static final String USER_LONG = "USER_LONG:USERINFO:INFO";
+
     int countByExample(UserInfoExample example);
 
     int deleteByExample(UserInfoExample example);
@@ -24,12 +29,16 @@ public interface UserInfoMapper {
 
     UserInfo selectByPrimaryKey(@Param("id") Integer id, @Param("userId") String userId);
 
+    @CacheEvict(value = USER, allEntries = true)
     int updateByExampleSelective(@Param("record") UserInfo record, @Param("example") UserInfoExample example);
 
+    @CacheEvict(value = USER, allEntries = true)
     int updateByExample(@Param("record") UserInfo record, @Param("example") UserInfoExample example);
 
+    @CacheEvict(value = USER, allEntries = true)
     int updateByPrimaryKeySelective(UserInfo record);
 
+    @CacheEvict(value = USER, allEntries = true)
     int updateByPrimaryKey(UserInfo record);
 
     
@@ -71,21 +80,23 @@ public interface UserInfoMapper {
 
     List<UserInfo> getLoginAccountInfo(String userId);
 
-    @Select("select  id, userId, userName, cashBalance, rechargeNumber, freezeBalance, accountBalance, " +
-            " sumDealAmount, sumRechargeAmount, sumProfit, sumAgentProfit, sumOrderCount, todayDealAmount, " +
-            " todayProfit, todayOrderCount, todayAgentProfit, userType, agent, isAgent, createTime, " +
-            " submitTime, status, version from alipay_user_fund where userId = #{userId}")
+    @Select("select  id, userId, userName, cashBalance , freezeBalance, accountBalance  " +
+            " from alipay_user_fund where userId = #{userId}")
     UserFund selectUsrFundByUserId(@Param("userId") String userId);
 
+    @CacheEvict(value = USER, allEntries = true)
     @Update("update alipay_user_info set ${paramKey} = #{paramValue} where userId = #{userId} ")
     int updateMerchantStatusByUserId(@Param("userId") String userId, @Param("paramKey") String paramKey, @Param("paramValue") String paramValue);
 
+    @CacheEvict(value = USER, allEntries = true)
     @Update("update alipay_user_info set receiveOrderState = #{status}, remitOrderState = #{status} where userId = #{userId}")
     void stopAllStatusByUserId(@Param("userId") String userId, @Param("status") Integer status);
 
+    @CacheEvict(value = USER, allEntries = true)
     @Update("update alipay_user_rate set switchs = #{status} where userId = #{userId} and userType = 1 ")
     void closeMerchantRateChannel(@Param("userId") String userId, @Param("status") Integer status);
 
+    @CacheEvict(value = USER, allEntries = true)
     @Update("update alipay_user_info set switchs = 0 where userId = #{userId}")
 	int updataStatusEr(@Param("userId")String userId);
     /**
@@ -93,6 +104,7 @@ public interface UserInfoMapper {
      * @param user
      * @return
      */
+    @CacheEvict(value = USER, allEntries = true)
     int updateproxyByUser(UserInfo user);
 
     /**
@@ -101,10 +113,11 @@ public interface UserInfoMapper {
      * @param newPassword
      * @return
      */
+    @CacheEvict(value = USER, allEntries = true)
     @Update("update alipay_user_info set password = #{newPassword} where userId = #{userId}")
 	int updataPassword(@Param("userId")String userId, @Param("newPassword")String newPassword);
 
-    
+    @CacheEvict(value = USER, allEntries = true)
     @Update("update alipay_user_info set payPasword = #{newPassword} where userId = #{userId}")
 	int updataPayPassword(String userId, String newPayPassword);
 
@@ -120,23 +133,49 @@ public interface UserInfoMapper {
     void bak();
 
 
-    @Select("select * form alipay_user_info where userNode = #{userNode}")
+    /**
+     * 渠道查询可加缓存
+     *
+     * @param userNode
+     * @return
+     */
+    @Cacheable(cacheNames = {USER_LONG}, unless = "#result == null")
+    @Select("select * from alipay_user_info where userNode = #{userNode}")
     UserInfo findChannelAppId(@Param("userNode") String userNode);
 
-    @Select("select id, userId, userName, " +
+    /**
+     * 交易url可以长久缓存
+     *
+     * @param orderAccount
+     * @return
+     */
+    @Cacheable(cacheNames = {USER_LONG}, unless = "#result == null")
+    @Select("select id, userId, userName, userNode ,  " +
             "   dealUrl " +
             " from alipay_user_info where userId = #{userId}")
-    UserInfo findDealUrl(String orderAccount);
+    UserInfo findDealUrl(@Param("userId") String userId);
 
+    /**
+     * 代理关系可以加缓存  可以做长时间缓存
+     *
+     * @return
+     */
+    @Cacheable(cacheNames = {USER_LONG}, unless = "#result == null")
     @Select("select id, userId, userName,   userType, switchs, userNode," +
             "    agent, isAgent " +
             "  from alipay_user_info where userId = #{userId}")
-    UserInfo findUserAgent(String appId);
+    UserInfo findUserAgent(@Param("userId") String userId);
 
+    /**
+     * 密钥查询可以加缓存
+     *
+     * @return
+     */
+    @Cacheable(cacheNames = {USER_LONG}, unless = "#result == null")
     @Select("select id, userId, userName, password, payPasword," +
             "    privateKey, publicKey" +
             " from alipay_user_info where userId = #{userId}")
-    UserInfo findPassword(String appId);
+    UserInfo findPassword(@Param("userId") String userId);
 
 
     @Select("select * from alipay_user_info where  userType = 1")
@@ -144,4 +183,54 @@ public interface UserInfoMapper {
 
     @Update("update alipay_user_info set publicKey = #{publickey} , privateKey = #{privactkey} , payPasword = #{dealKey} where userId = #{userId}")
     int updateDealKey(@Param("userId") String userId, @Param("publickey") String publickey, @Param("privactkey") String privactkey, @Param("dealKey") String dealKey);
+
+
+    /**
+     * 用户密钥相关信息可以长久缓存
+     *
+     * @param userId
+     * @return
+     */
+    @Cacheable(cacheNames = {USER_LONG}, unless = "#result == null")
+    @Select("select id, userId, userName, password, payPasword, salt ," +
+            "      privateKey, publicKey  " +
+            "   from alipay_user_info where userId = #{userId}")
+    UserInfo findPrivateKey(@Param("userId") String userId);
+
+
+    @Select("select id, userId, userName,   switchs,   " +
+            "     receiveOrderState, remitOrderState, " +
+            "     minAmount, maxAmount," +
+            "    qrRechargeList,dealUrl,queueList,witip, timesTotal,totalAmount," +
+            "  enterWitOpen , witip  ,  interFace  from alipay_user_info where userId = #{userId}")
+    UserInfo findClick(@Param("userId") String userId);
+
+
+    @Cacheable(cacheNames = {USER}, unless = "#result == null")
+    @Select("select id, userId, userName,   userType, userNode," +
+            "    agent, isAgent " +
+            "  from alipay_user_info where userId = #{userId}")
+    UserInfo findUserByOrder(@Param("userId") String userId);
+
+
+    @Select("select id, userId, userName, switchs, userNode  " +
+            "  from alipay_user_info where userId = #{userId}")
+    UserInfo getSwitchs(@Param("userId") String userId);
+
+
+    /**
+     * 获取渠道信息，可以长久缓存
+     *
+     * @param userId
+     * @return
+     */
+    @Cacheable(cacheNames = {USER_LONG}, unless = "#result == null")
+    @Select("select id, userId, userName, password, payPasword," +
+            "    privateKey, publicKey  , witip   , dealUrl ,userNode   " +
+            " from alipay_user_info where userId = #{userId}")
+    UserInfo findNotifyChannel(@Param("userId") String userId);
+
+    @Select("select userId ,   autoWit   " +
+            " from alipay_user_info where userId = #{userId}")
+    UserInfo findautoWit(@Param("userId") String userId);
 }

@@ -4,12 +4,14 @@ import alipay.manage.bean.Amount;
 import alipay.manage.bean.UserFund;
 import alipay.manage.bean.UserFundExample;
 import org.apache.ibatis.annotations.*;
+import org.springframework.cache.annotation.Cacheable;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 @Mapper
 public interface UserFundMapper {
+    static final String USER = "USERINFO:FUND";
     int countByExample(UserFundExample example);
     int deleteByExample(UserFundExample example);
     int deleteByPrimaryKey(Integer id);
@@ -30,10 +32,10 @@ public interface UserFundMapper {
     @Select("select * from alipay_user_fund where userType = 2 and accountBalance > #{amount}  ")
     List<UserFund> findUserByAmount(@Param("amount") BigDecimal amount);
 
-    @Select("select  id, userId, userName, cashBalance, rechargeNumber, freezeBalance, accountBalance, " +
+    @Select(" select  id, userId, userName, cashBalance, rechargeNumber, freezeBalance, accountBalance, " +
             "    sumDealAmount, sumRechargeAmount, sumProfit, sumAgentProfit, sumOrderCount, todayDealAmount, " +
             "    todayProfit, todayOrderCount, todayAgentProfit, userType, agent, isAgent, createTime, " +
-            "    version ,quota  from alipay_user_fund where userId=#{userId}")
+            "    version ,quota  from alipay_user_fund  NOLOCK where userId=#{userId}")
     UserFund findUserFundByUserId(@Param("userId") String userId);
 
     @Update("update alipay_user_fund set rechargeNumber = rechargeNumber + #{deduct}, freezeBalance = freezeBalance - #{deduct}, " +
@@ -57,6 +59,8 @@ public interface UserFundMapper {
     @Select("select  userId, userName, accountBalance from alipay_user_fund where userId=#{userId}")
     UserFund findBalace(String userId);
 
+
+    @Cacheable(cacheNames = {USER}, unless = "#result == null")
     @Select("select userId ,currency from alipay_user_fund where userId = #{userId} ")
     UserFund findCurrency(@Param("userId") String userId);
 }
