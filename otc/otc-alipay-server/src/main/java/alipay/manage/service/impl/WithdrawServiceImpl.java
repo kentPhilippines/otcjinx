@@ -44,4 +44,9 @@ public class WithdrawServiceImpl implements WithdrawService {
         withdrawDao.updateEthFee(orderId, hash);
     }
 
+    @Override
+    public Withdraw findOrderByAppSum(String appId) {
+        return withdrawDao.findOrderByAppSum(appId);
+    }
+
 }

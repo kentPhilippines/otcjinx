@@ -1,7 +1,6 @@
 
 package test.number;
 
-import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.RandomUtil;
@@ -21,6 +20,8 @@ import java.util.Map;
 
 public class witTest {
 	public static void main(String[] args) {
+		new witTest().deal();
+
 /*
         String userid2 = "2u7rMduh";
         String key2 = "1CA9B6463CBE1809531432D0210D8346";
@@ -45,17 +46,17 @@ public class witTest {
 		String userid3 = "632QP888";
 		String key3 = "004475525F277F44BA4CDE4670B8E727";
 		String publickey3 = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCZhADxkdiJFcFaqamlhcxE+bzekfJJFH/qm6sSXg88J+L5q1uboF7LVhtx7t0oz855PED77GsuVbwYhx42ztr4DsU4+5YJEJ/OQL0In3zOkU58mCeTGBbdeoR3DxjBBIkrmC8p6FjdeGw75Gf2YAnImYji+OOv9SX7+kWYBm/yZwIDAQAB";
-		for (int a = 0; a <= 1; a++) {
+	  /*   	for (int a = 0; a <= 1; a++) {
 			ThreadUtil.execute(() -> {
 				new witTest().wit(userid1, key1, publickey1);
 			});
 			ThreadUtil.execute(() -> {
 				new witTest().wit(userid2, key2, publickey2);
 			});
-         /*      ThreadUtil.execute(() -> {
+          ThreadUtil.execute(() -> {
                 new witTest().wit(userid3, key3, publickey3);
             });*/
-		}
+	}
 
 
 		//相应结果集：{"success":true,"message":"支付处理中","result":{"sussess":true,"cod":0,"openType":1,"returnUrl":"http://api.tjzfcy.com/gateway/bankgateway/payorder/order/60326816340490956.html"},"code":null}
@@ -63,7 +64,7 @@ public class witTest {
 
 
 		//	HttpUtil.get("127.0.0.1:9010/pay/testWit?orderNo=W1598355653114710115");
-	}
+
 
 
 	public static String getKeyedDigestUTF8(String strSrc) {
@@ -141,23 +142,25 @@ public class witTest {
 	}
 
 	void deal() {
-        SimpleDateFormat d = new SimpleDateFormat("yyyyMMddHHmmss");
-	/*	String userid = "facai123";
-		String key = "52927A864A704AE384E4E167A9772CEB";//交易密钥
-        String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCZVMSZHduYMj+KCPhsGR+r/KsRdNlsOKav/aJ+Bo3aGDW7oTnRLs9NABQHrIiXf666AhzFLK6sAeplFCa16caUriZGE+hnJPVUYMuO73/Zq0QTTyCRVUmxF+i98Rqi2cJFBeTfK46RDAZojmtzD8d+j1/FzQ38cZT7FB3/XjsrewIDAQAB";
-*/
-        String userid = "USDTEST";
-        String key = "39244A564992477C98E5847626BAB90A";//交易密钥
-        String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCip57xWhaZtYbwNFIKs8RhZtEwgtKYVo+kRVna0EmLZ6TlVG2lLCpBkPlj1Xuo3aF7+bXXzccpiOA6dsK3Y1KdSr2/u0mj0ZCAEVxvqBMBusdbBl51GM9YEK2ZucvsUuOZ4/k6YOUTIUl8WfD8XhnrPPWoKWeWdhAmSdP6x28dJQIDAQAB";
+		SimpleDateFormat d = new SimpleDateFormat("yyyyMMddHHmmss");
+		String userid = "USDTEST";
+		String key = "91C3B668978C107E3950CD502538294C";//交易密钥
+		String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDKtB5mlXbyZeWhpcD+3rH8RbSeHTqXvNlhf2SHRmFBlhV35kH91Yjy9daPimc1DPC925tlp1fZPL7Q8d0TVgxgRAhqFghi8vZdAafBhsgOW/wjAzDQj/l6XbE+BvNAtqKc004pMBapsS7ahN3yUHg8qEJ1aDpBTBlakaQHs8rfPQIDAQAB";
+      /*
+        String userid = "kbo88";
+        String key = "7CDBBBEFCAAC44939DD629E234EEAC07";//交易密钥
+        String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCBezPAu1hAOIK625rkH5B0n3/5qIv9s5uXqebxhEIlPEP8TLaZU3OkaAizpSsyiU5ONnJUAN+6egQAFED5XdOcHq5xdw7MIt1JBP+7JRf7ejsBf/qZQTCjJVC/9jdfg9FMnfSn+bw5JpLuhVCQm3H7I5UShknNdkWKkNprL2lE/wIDAQAB";
+  */
 
-        Deal deal = new Deal();
-        deal.setAmount("10");//金额
-        deal.setAppId(userid);//商户号
-        deal.setApplyDate(d.format(new Date()));
-        deal.setNotifyUrl("http://starpay168.com:5055");
-        deal.setPageUrl("http://starpay168.com:5055");
-        deal.setOrderId(IdUtil.objectId());
-        deal.setPassCode("USDT");
+
+		Deal deal = new Deal();
+		deal.setAmount("500");//金额
+		deal.setAppId(userid);//商户号
+		deal.setApplyDate(d.format(new Date()));
+		deal.setNotifyUrl("http://starpay168.com:5055");
+		deal.setPageUrl("http://starpay168.com:5055");
+		deal.setOrderId(IdUtil.objectId());
+		deal.setPassCode("USDT");
         deal.setSubject("订单交易");
         deal.setUserid("USDT");  //to userid
         Map<String, Object> objectToMap = MapUtil.objectToMap(deal);
@@ -176,7 +179,7 @@ public class witTest {
 		postMap.put("cipherText", publicEncrypt);
 		postMap.put("userId", userid);
 		System.out.println("请求参数：" + postMap.toString());
-		String post = HttpUtil.post("http://127.0.0.1:5055/api-alipay/deal/pay", postMap);
+		String post = HttpUtil.post("http://bestpays456.com:26358/deal/pay", postMap);
 		System.out.println("相应结果集：" + post);
 
 	}

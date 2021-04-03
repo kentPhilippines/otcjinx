@@ -10,8 +10,8 @@ server:
 eureka:
   client:
     serviceUrl:
-      #defaultZone: http://172.29.17.156:8762/eureka/
-      defaultZone: http://127.0.0.1:8762/eureka/
+      defaultZone: http://172.29.17.156:8762/eureka/
+      #defaultZone: http://127.0.0.1:8762/eureka/
   instance:
     # 是否使用ip注册
     prefer-ip-address: true
@@ -48,8 +48,8 @@ spring:
       enabled: true
       #发布时修改为online配置文件
   profiles:
-    active: druid
-    #active: online
+    #active: druid
+    active: online
   servlet:
     multipart:
       max-file-size: 100MB

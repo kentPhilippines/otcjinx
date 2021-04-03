@@ -1,0 +1,192 @@
+package alipay.manage.api.deal;
+
+import alipay.config.redis.RedisLockUtil;
+import alipay.config.redis.RedisUtil;
+import alipay.manage.api.AccountApiService;
+import alipay.manage.api.DealAppApi;
+import alipay.manage.api.VendorRequestApi;
+import alipay.manage.api.config.FactoryForStrategy;
+import alipay.manage.api.config.PayOrderService;
+import alipay.manage.bean.ChannelFee;
+import alipay.manage.bean.UserFund;
+import alipay.manage.bean.UserInfo;
+import alipay.manage.bean.UserRate;
+import alipay.manage.bean.util.WithdrawalBean;
+import alipay.manage.mapper.ChannelFeeMapper;
+import alipay.manage.service.ExceptionOrderService;
+import alipay.manage.service.UserInfoService;
+import alipay.manage.service.WithdrawService;
+import alipay.manage.util.BankTypeUtil;
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import otc.api.alipay.Common;
+import otc.bean.dealpay.Withdraw;
+import otc.result.Result;
+import otc.util.MapUtil;
+import otc.util.number.Number;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
+import java.util.Map;
+
+@Component
+public class WitPay extends PayOrderService {
+    @Autowired
+    VendorRequestApi vendorRequestApi;
+    Logger log = LoggerFactory.getLogger(DealAppApi.class);
+    @Autowired
+    private FactoryForStrategy factoryForStrategy;
+    @Autowired
+    private AccountApiService accountApiServiceImpl;
+    @Autowired
+    private WithdrawService withdrawServiceImpl;
+    @Resource
+    private ChannelFeeMapper channelFeeDao;
+    @Autowired
+    private ExceptionOrderService exceptionOrderServiceImpl;
+    @Autowired
+    private UserInfoService userInfoServiceImpl;
+    @Autowired
+    private RedisLockUtil redisLockUtil;
+    @Autowired
+    private RedisUtil redis;
+
+    public Result wit(HttpServletRequest request) {
+        String userId = request.getParameter("userId");
+        if (ObjectUtil.isNull(userId)) {
+            return Result.buildFailMessage("当前传参，参数格式错误，请使用[application/x-www-form-urlencoded]表单格式传参");
+        }
+        redisLockUtil.redisLock(RedisLockUtil.AMOUNT_USER_KEY + userId);
+        String manage = request.getParameter("manage");
+        boolean flag = false;
+        if (StrUtil.isNotBlank(manage)) {
+            flag = true;
+        }
+        Result withdrawal = vendorRequestApi.withdrawal(request, flag);
+        if (!withdrawal.isSuccess()) {
+            return withdrawal;
+        }
+        Object result = withdrawal.getResult();
+        WithdrawalBean wit = MapUtil.mapToBean((Map<String, Object>) result, WithdrawalBean.class);
+        wit.setIp(VendorRequestApi.getIpAddress(request, wit.getAppid()));
+        UserRate userRate = accountApiServiceImpl.findUserRateWitByUserId(wit.getAppid());
+        ChannelFee channelFee = channelFeeDao.findImpl(userRate.getChannelId(), userRate.getPayTypr());//缓存已加
+        if (ObjectUtil.isNull(channelFee)) {
+            log.info("【通道实体不存在，费率配置错误】");
+            exceptionOrderServiceImpl.addWitOrder(wit, "用户报错：通道实体不存在，费率配置错误；处理方法：请检查商户提交的通道编码，反复确认", HttpUtil.getClientIP(request));
+            return Result.buildFailMessage("通道实体不存在，费率配置错误");
+        }
+        String bankcode = BankTypeUtil.getBank(wit.getBankcode());
+        if (StrUtil.isBlank(bankcode)) {
+            log.info("【当前银行不支持代付，当前商户：" + wit.getAppid() + "，当前订单号:" + wit.getApporderid() + "】");
+            exceptionOrderServiceImpl.addWitOrder(wit, "用户报错：当前银行不支持合， 银行code值错误；处理方法：请商户检查提交的银行卡code是否正确，商户code值为：" + bankcode, HttpUtil.getClientIP(request));
+            return Result.buildFailMessage("当前银行不支持合， 银行code值错误");
+        }
+        Object o = redis.get(wit.getApporderid() + userRate.getUserId());
+        if (null != o) {
+            if (o.toString().equals(wit.getApporderid() + userRate.getUserId())) {
+                log.info("【当前商户订单号重复：" + wit.getApporderid() + "】");
+                exceptionOrderServiceImpl.addWitOrder(wit, "用户报错：商户订单号重复；处理方法：提醒用户换一个订单号提交代付请求请求", HttpUtil.getClientIP(request));
+                return Result.buildFailMessage("商户订单号重复");
+            }
+        }
+        Withdraw bean = createWit(wit, userRate, flag, channelFee);
+        Result deal = null;
+        if (ObjectUtil.isNull(bean)) {
+            return Result.buildFailMessage("代付订单生成失败");
+        }
+        try {
+            UserInfo userInfo = accountApiServiceImpl.findautoWit(wit.getAppid());
+            //缓存数据
+            if (1 == userInfo.getAutoWit()) {
+                //自动推送
+                Result withdraw = super.withdraw(bean);
+                if (withdraw.isSuccess()) {
+                    deal = factoryForStrategy.getStrategy(channelFee.getImpl()).withdraw(bean);
+                } else {
+                    withdrawServiceImpl.updateWitError(bean.getOrderId());
+                    return Result.buildFailMessage("代付失败，当前排队爆满，请再次发起代付");
+                }
+            } else {
+                //手动处理
+                deal = super.withdraw(bean);
+            }
+
+        } catch (Exception e) {
+            log.error("[代码执行时候出现错误]", e);
+            //		super.withdrawEr(bean, "系统异常，请联系技术人员处理", HttpUtil.getClientIP(request));
+            exceptionOrderServiceImpl.addWitOrder(wit, "用户报错：当前通道编码不存在；处理方法：提交技术人员处理，报错信息：" + e.getMessage(), HttpUtil.getClientIP(request));
+            log.info("【当前通道编码对于的实体类不存在】");
+            withdrawServiceImpl.updateWitError(bean.getOrderId());
+            redisLockUtil.unLock(RedisLockUtil.AMOUNT_USER_KEY + userId);
+            return Result.buildFailMessage("当前通道编码不存在");
+        } finally {
+            bean = null;
+            o = null;
+            bankcode = null;
+            channelFee = null;
+            wit = null;
+            userRate = null;
+            result = null;
+            redisLockUtil.unLock(RedisLockUtil.AMOUNT_USER_KEY + userId);
+        }
+        return deal;
+    }
+
+    private Withdraw createWit(WithdrawalBean wit, UserRate userRate, Boolean fla, ChannelFee channelFee) {
+        log.info("【当前转换参数 代付实体类为：" + wit.toString() + "】");
+        String type = "";
+        String bankName = "";
+        if (fla) {
+            type = Common.Order.Wit.WIT_TYPE_API;
+        } else {
+            type = Common.Order.Wit.WIT_TYPE_MANAGE;
+        }
+        Withdraw witb = new Withdraw();
+        witb.setUserId(wit.getAppid());
+        witb.setAmount(new BigDecimal(wit.getAmount()));
+        witb.setFee(userRate.getFee());
+        witb.setActualAmount(new BigDecimal(wit.getAmount()));
+        witb.setMobile(wit.getMobile());
+        witb.setBankNo(wit.getAcctno());
+        witb.setAccname(wit.getAcctname());
+        bankName = wit.getBankName();
+        if (StrUtil.isBlank(bankName)) {
+            bankName = BankTypeUtil.getBankName(wit.getBankcode());
+        }
+        witb.setBankName(bankName);
+        witb.setWithdrawType(Common.Order.Wit.WIT_ACC);
+        witb.setOrderId(Number.getWitOrder());
+        witb.setOrderStatus(Common.Order.DealOrderApp.ORDER_STATUS_DISPOSE.toString());
+        witb.setNotify(wit.getNotifyurl());
+        witb.setRetain2(wit.getIp());//代付ip
+        witb.setAppOrderId(wit.getApporderid());
+        witb.setRetain1(type);
+        witb.setWitType(userRate.getPayTypr());//代付类型
+        witb.setApply(wit.getApply());
+        witb.setBankcode(wit.getBankcode());
+        witb.setWitChannel(channelFee.getChannelId());
+        UserFund userFund = userInfoServiceImpl.findCurrency(wit.getAppid());//缓存以加
+        witb.setCurrency(userFund.getCurrency());
+        boolean flag = false;
+        try {
+            flag = withdrawServiceImpl.addOrder(witb);
+        } catch (Exception e) {
+            log.info("【当前商户订单号重复：" + wit.getApporderid() + "】");
+            exceptionOrderServiceImpl.addWitOrder(wit, "用户报错：商户订单号重复；处理方法：提醒用户换一个订单号提交代付请求请求", wit.getIp());
+            //	throw new OrderException("订单号重复", null);
+        }
+        if (flag) {
+            redis.set(witb.getAppOrderId() + witb.getUserId(), witb.getAppOrderId() + witb.getUserId(), 60 * 60);
+            return witb;
+        }
+        return null;
+    }
+
+}

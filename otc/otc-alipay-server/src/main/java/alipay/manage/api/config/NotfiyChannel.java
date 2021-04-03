@@ -109,7 +109,9 @@ public abstract class NotfiyChannel {
         try {
             redisLockUtil.redisLock(RedisLockUtil.AMOUNT_USER_KEY + order.getOrderQrUser());
             Result dealAmount = orderUtilImpl.updataDealOrderSu(order.getOrderId(), msg, ip, false);
-
+            if (dealAmount.isSuccess()) {
+                return dealAmount;
+            }
         } finally {
             redisLockUtil.unLock(RedisLockUtil.AMOUNT_USER_KEY + order.getOrderQrUser());
         }

@@ -79,4 +79,10 @@ public interface WithdrawMapper {
 
     @Update("update alipay_withdraw set ethFee = 1 , txhash = #{hash} where orderId = #{orderId} ")
     void updateEthFee(@Param("orderId") String orderId, @Param("hash") String hash);
+
+
+    @Select(
+            "select  sum(amount) as amount " +
+                    "from alipay_withdraw where userId = #{appId} and TO_DAYS(createTime) =  TO_DAYS(now()) and orderStatus = 2  ; ")
+    Withdraw findOrderByAppSum(@Param("appId") String appId);
 }

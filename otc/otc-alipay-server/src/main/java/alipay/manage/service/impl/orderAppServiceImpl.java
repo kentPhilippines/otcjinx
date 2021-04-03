@@ -36,12 +36,17 @@ public class orderAppServiceImpl implements OrderAppService {
 
 	@Override
 	public void updateOrderSu(String orderId, String orderStatus) {
-		dealOrderAppDao.updateOrderSu(orderId,orderStatus);
+		dealOrderAppDao.updateOrderSu(orderId, orderStatus);
 	}
 
 	@Override
 	public DealOrderApp findOrderByApp(String appId, String appOrderId) {
-		return dealOrderAppDao.findOrderByApp(appId,appOrderId);
+		return dealOrderAppDao.findOrderByApp(appId, appOrderId);
+	}
+
+	@Override
+	public DealOrderApp findOrderByAppSum(String appId) {
+		return dealOrderAppDao.findOrderByAppSum(appId);
 	}
 
 }

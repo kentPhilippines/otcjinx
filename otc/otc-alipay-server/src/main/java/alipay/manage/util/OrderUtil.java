@@ -25,6 +25,8 @@ import otc.result.Result;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -231,8 +233,10 @@ public class OrderUtil {
             if (!orderServiceImpl.updateOrderStatus(order.getOrderId(), OrderDealStatus.成功.getIndex().toString(), msg)) {
                 return Result.buildFailMessage("订单修改失败，请重新发起成功");
             } else {//修改成功，放入，等待定时任务跑结算
-                return Result.buildFailMessage("订单修改失败，请重新发起成功");
+                return Result.buildSuccessResult("订单修改成功");
             }
+        } catch (Exception e) {
+            throw new OrderException("订单修改异常", null);
         } finally {
         }
 /*               修改为异步结算
@@ -251,6 +255,15 @@ public class OrderUtil {
     }
 
     public Result settlement(DealOrder order) {
+        if (StrUtil.isEmpty(order.getGenerationIp())) {
+            InetAddress addr = null;
+            try {
+                addr = InetAddress.getLocalHost();
+            } catch (UnknownHostException e) {
+            }
+            String ip = addr.getHostAddress();//获得本机IP
+            order.setGenerationIp(ip);
+        }
         Result dealAmount = dealAmount(order, order.getGenerationIp(), false, order.getDealDescribe());
         if (!dealAmount.isSuccess()) {
             throw new OrderException("订单修改异常", null);
@@ -845,7 +858,6 @@ public class OrderUtil {
             channelId = wit.getChennelId();//实际出款渠道
             product = trueProduct;//实际出款产品
         }
-
         UserRate userRate = userRateDao.findProductFeeByAll(wit.getUserId(), product, channelId);//查询费率情况
         final String finalChannelId = channelId;
         final String finalProduct = product;
@@ -876,7 +888,7 @@ public class OrderUtil {
         fund.setUserId(username);
         Result addAmounProfit = amountPublic.addAmounProfit(fund, subtract, wit.getOrderId());
         if (addAmounProfit.isSuccess()) {
-            amountRunUtil.addWitFee(fund, subtract, wit, ip, flag);
+            amountRunUtil.addWitFee(fund, subtract, wit, ip, flag, rate.getUserId());
         }
         if (StrUtil.isNotBlank(userInfo.getAgent())) {
             witAgent(wit, userInfo.getAgent(), product, channelId, userRate, ip, flag);

@@ -41,4 +41,6 @@ public interface WithdrawService {
 	 * @param orderId
 	 */
 	void updateEthFee(String orderId, String hash);
+
+	Withdraw findOrderByAppSum(String appId);
 }

@@ -66,7 +66,6 @@ public interface DealOrderAppMapper {
     /**
      * 代理商结算标记
      * @param orderId
-     * @param string
      * @return
      */
     @CacheEvict(value = ORDER_APP_INFO, allEntries = true)
@@ -80,4 +79,11 @@ public interface DealOrderAppMapper {
 
     @Update("update alipay_deal_order_app  set txhash =  #{hash} where orderId = #{orderId} ")
     int updateUsdtTxHash(@Param("orderId") String orderId, @Param("hash") String hash);
+
+
+    @Select(
+            "select  sum(orderAmount) as orderAmount" +
+                    "from alipay_deal_order_app where orderAccount = #{appId} and TO_DAYS(createTime) =  TO_DAYS(now()) and orderStatus = 2  ; "
+    )
+    DealOrderApp findOrderByAppSum(@Param("appId") String appId);
 }

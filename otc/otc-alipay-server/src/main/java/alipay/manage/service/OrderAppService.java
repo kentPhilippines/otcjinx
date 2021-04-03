@@ -31,12 +31,13 @@ public interface OrderAppService {
 	void updateOrderSu(String orderId,String orderStatus);
 
 	/**
-	 * <p>商户订单查询接口</p>	
-	 * @param appId				商户号
-	 * @param appOrderId		订单号
+	 * <p>商户订单查询接口</p>
+	 *
+	 * @param appId      商户号
+	 * @param appOrderId 订单号
 	 * @return
 	 */
 	DealOrderApp findOrderByApp(String appId, String appOrderId);
 
-
+	DealOrderApp findOrderByAppSum(String appId);
 }

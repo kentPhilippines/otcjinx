@@ -62,7 +62,7 @@ public interface DealOrderMapper {
      * @return
      */
     List<DealOrder> findMyOrder(DealOrder order);
-
+    @Cacheable(cacheNames = {ORDER_INFO_CHANNEL}, unless = "#result == null")
     @Select("select * from alipay_deal_order where orderId = #{orderId}")
 	DealOrder findOrderByOrderId(@Param("orderId")String orderId);
 
@@ -94,15 +94,14 @@ public interface DealOrderMapper {
     @Select("SELECT retain2 , orderId FROM alipay_deal_order WHERE createTime > DATE_ADD(NOW(),INTERVAL -20 MINUTE)  AND orderStatus = 1 AND orderQrUser = 'ChuanShanJia' LIMIT 100")
     List<DealOrder> findXianYuOrder2();
 
-    @CacheEvict(value = ORDER_INFO_CHANNEL, allEntries = true)
     @Update("update alipay_deal_order set orderQr = #{bank} where orderId = #{orderId}")
     int updateBankInfoByOrderId(String bank, String orderId);
 
-
+    @Cacheable(cacheNames = {ORDER_INFO_CHANNEL}, unless = "#result == null")
     @Select("select id, orderId, associatedId, orderStatus, dealAmount ,orderAccount, orderQrUser,externalOrderId,  notify  , isNotify  FROM alipay_deal_order  where  orderId = #{orderId}")
     DealOrder findOrderNotify(@Param("orderId") String orderId);
 
-
+    @Cacheable(cacheNames = {ORDER_INFO_CHANNEL}, unless = "#result == null")
     @Select("select id, orderId, associatedId, orderStatus, dealAmount ,orderAccount, orderQrUser,externalOrderId FROM alipay_deal_order  where  orderId = #{orderId}")
     DealOrder findOrderStatus(String orderId);
 
