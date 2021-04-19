@@ -45,8 +45,8 @@ public class MasterControlController {
 	@GetMapping("/getSystemSetting")
 	@ResponseBody
 	public Result getSystemSetting() {
-		Result config = configServiceClientFeignImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.TIBLE_LINK);
-		return Result.buildSuccessResults(config.getResult());
+		//	Result config = configServiceClientFeignImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.TIBLE_LINK);
+		return Result.buildSuccessResults("卡商");
 	}
 
 	/**

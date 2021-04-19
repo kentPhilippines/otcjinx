@@ -88,7 +88,13 @@ public class NotifyUtil {
      * @param msg     发送通知的内容
      */
     private void send(String url, String orderId, Map<String, Object> msg) {
-        String result = HttpUtil.post(url, msg, -1);
+        String result = "";
+        if (url.contains("https")) {
+            msg.put("url", url);
+            result = HttpUtil.post(PayApiConstant.Notfiy.OTHER_URL + "/witForword", msg);
+        } else {
+            result = HttpUtil.post(url, msg, 2000);
+        }
         log.info("服务器返回结果为: " + result.toString());
         log.info("【下游商户返回信息为成功,成功收到回调信息】");
         //更新订单是否通知成功状态
@@ -115,7 +121,6 @@ public class NotifyUtil {
          hmac				M(32)				签名数据
          */
         String apporderid = order.getExternalOrderId();
-        String tradesno = order.getAssociatedId();
         String status = order.getOrderStatus();
         BigDecimal amount = order.getDealAmount();
         String appid = order.getOrderAccount();

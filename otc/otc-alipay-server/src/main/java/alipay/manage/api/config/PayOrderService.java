@@ -10,6 +10,7 @@ import alipay.manage.util.OrderUtil;
 import alipay.manage.util.amount.AmountPublic;
 import alipay.manage.util.amount.AmountRunUtil;
 import cn.hutool.core.map.MapUtil;
+import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.log.Log;
@@ -211,14 +212,33 @@ public abstract class PayOrderService implements PayService {
 	protected ChannelInfo getChannelInfo(String channelId, String payType) {
 		ChannelInfo channelInfo = new ChannelInfo();
 		UserInfo userInfo = userInfoServiceImpl.findNotifyChannel(channelId);
-        channelInfo.setChannelAppId(userInfo.getUserNode());
-        channelInfo.setChannelPassword(userInfo.getPayPasword());
-        channelInfo.setDealurl(userInfo.getDealUrl());
-        ChannelFee channelFee = channelFeeDao.findChannelFee(channelId, payType);
-        channelInfo.setChannelType(channelFee.getChannelNo());
-        if (StrUtil.isNotBlank(userInfo.getWitip())) {
-            channelInfo.setWitUrl(userInfo.getWitip());
-        }
-        return channelInfo;
-    }
+		channelInfo.setChannelAppId(userInfo.getUserNode());
+		channelInfo.setChannelPassword(userInfo.getPayPasword());
+		channelInfo.setDealurl(userInfo.getDealUrl());
+		ChannelFee channelFee = channelFeeDao.findChannelFee(channelId, payType);
+		channelInfo.setChannelType(channelFee.getChannelNo());
+		if (StrUtil.isNotBlank(userInfo.getWitip())) {
+			channelInfo.setWitUrl(userInfo.getWitip());
+		}
+		return channelInfo;
+	}
+
+	/**
+	 * 修改代付订单为失败，只是单纯的失败
+	 *
+	 * @param orderId
+	 * @return
+	 */
+	protected Result withdrawErByAmount(String orderId, String msg) {
+		int a = withdrawDao.updataOrderStatusEr(orderId,
+				Common.Order.Wit.ORDER_STATUS_ER, msg);
+		if (a > 0) {
+			ThreadUtil.execute(() -> {
+				notifyUtil.wit(orderId);
+			});
+			return Result.buildSuccessMessage("修改成功");
+		} else {
+			return Result.buildFailMessage("修改失败");
+		}
+	}
 }

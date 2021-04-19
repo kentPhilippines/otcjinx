@@ -7,16 +7,17 @@ import java.util.Date;
  * <p>下游商户交易订单</p>
  * @author K
  */
-public class DealOrderApp implements Serializable{
-	private static final long serialVersionUID = 1L;
-    private Integer id;								//数据id
-    private String orderId;							//订单号	
-    private Integer orderType;						//订单类型:1交易,5代付
-    private String orderAccount;					//订单关联商户账号
-    private String orderStatus;						//订单状态:1处理中2成功3未收到回调4失败5超时6订单申述7人工处理
-    private BigDecimal orderAmount;					//订单金额
-    private String orderIp;							//请求订单ip
-    private String appOrderId;						//外部订单号
+public class DealOrderApp implements Serializable {
+    private static final long serialVersionUID = 1L;
+    private Integer id;                                //数据id
+    private String orderId;                            //订单号
+    private Integer orderType;                        //订单类型:1交易,5代付
+    private String orderAccount;                    //订单关联商户账号
+    private String orderStatus;                        //订单状态:1处理中2成功3未收到回调4失败5超时6订单申述7人工处理
+    private BigDecimal orderAmount;                    //订单金额
+    private BigDecimal orderAmount_orderAmount;                    //订单金额
+    private String orderIp;                            //请求订单ip
+    private String appOrderId;                        //外部订单号
     private Date createTime;
     private Integer feeId;                            //使用费率id
     private String notify;                            //异步回调地址
@@ -29,6 +30,14 @@ public class DealOrderApp implements Serializable{
     private String retain3;
     private String dealDescribe;                    //交易备注
     private String currency;  ///货币类型
+
+    public BigDecimal getOrderAmount_orderAmount() {
+        return orderAmount_orderAmount;
+    }
+
+    public void setOrderAmount_orderAmount(BigDecimal orderAmount_orderAmount) {
+        this.orderAmount_orderAmount = orderAmount_orderAmount;
+    }
 
     public String getCurrency() {
         return currency;

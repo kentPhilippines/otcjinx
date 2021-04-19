@@ -17,6 +17,7 @@ import alipay.manage.service.ExceptionOrderService;
 import alipay.manage.service.UserInfoService;
 import alipay.manage.service.WithdrawService;
 import alipay.manage.util.BankTypeUtil;
+import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
@@ -56,6 +57,8 @@ public class WitPay extends PayOrderService {
     private RedisLockUtil redisLockUtil;
     @Autowired
     private RedisUtil redis;
+
+    static final String COMMENT = "等待推送中";
 
     public Result wit(HttpServletRequest request) {
         String userId = request.getParameter("userId");
@@ -106,9 +109,9 @@ public class WitPay extends PayOrderService {
             //缓存数据
             if (1 == userInfo.getAutoWit()) {
                 //自动推送
-                Result withdraw = super.withdraw(bean);
-                if (withdraw.isSuccess()) {
-                    deal = factoryForStrategy.getStrategy(channelFee.getImpl()).withdraw(bean);
+                deal = super.withdraw(bean);
+                if (deal.isSuccess()) {
+                    deal = factoryForStrategy.getStrategy(channelFee.getImpl()).withdraw(bean);  //   暂时注释，当前修改后方案可能存在不稳定
                 } else {
                     withdrawServiceImpl.updateWitError(bean.getOrderId());
                     return Result.buildFailMessage("代付失败，当前排队爆满，请再次发起代付");
@@ -173,7 +176,9 @@ public class WitPay extends PayOrderService {
         witb.setBankcode(wit.getBankcode());
         witb.setWitChannel(channelFee.getChannelId());
         UserFund userFund = userInfoServiceImpl.findCurrency(wit.getAppid());//缓存以加
+        //    witb.setStatus(2);//未推送处理   未推送三方处理状态
         witb.setCurrency(userFund.getCurrency());
+        //  witb.setComment(Common.Order.DealOrderApp.COMMENT_WIT.toString());
         boolean flag = false;
         try {
             flag = withdrawServiceImpl.addOrder(witb);
@@ -188,5 +193,60 @@ public class WitPay extends PayOrderService {
         }
         return null;
     }
+
+    /**
+     * 此方法目的是防止结算并发
+     */
+
+    public Result witAutoPush(Withdraw order) {
+        Result deal = Result.buildFail();
+        try {
+            UserInfo userInfo = accountApiServiceImpl.findautoWit(order.getUserId());
+            //缓存数据
+            BigDecimal witAmount = order.getAmount();
+            UserFund userFund = userInfoServiceImpl.fundUserFundAccounrBalace(order.getUserId());
+            BigDecimal accountBalance = userFund.getAccountBalance();
+            BigDecimal quota = userFund.getQuota();
+            accountBalance = accountBalance.add(quota);
+            if (accountBalance.compareTo(witAmount.add(order.getFee())) == -1) {
+                ThreadUtil.execute(() -> {
+                    exceptionOrderServiceImpl.addWitEx(order.getUserId(), order.getAmount().toString(), "商户相应提示：当前账户金额不足；" + "处理方法：请检查商户金额是否足够，或者要求商户更换金额提交", order.getRetain2(), order.getAppOrderId());
+                });
+                deal = withdrawErByAmount(order.getOrderId(), "当前账户金额不足");
+                return Result.buildFailMessage("当前金额不足");
+            }
+            if (1 == userInfo.getAutoWit()) {
+                deal = super.withdraw(order);
+                if (deal.isSuccess()) {
+                    ChannelFee channelFee = channelFeeDao.findImpl(order.getWitChannel(), order.getWitType());//缓存已加
+                    deal = factoryForStrategy.getStrategy(channelFee.getImpl()).withdraw(order);
+                }
+                //修改订单为已推送 不管当前订单是否推送成功
+                boolean b = withdrawServiceImpl.updatePush(order.getOrderId());
+                if (b) {
+                    log.info("【当前订单已推送，状态已修改，当前订单号：" + order.getOrderId() + "】");
+                } else {
+                    log.info("【当前订单已推送，状态未修改，当前订单号：" + order.getOrderId() + "】");
+                }
+
+            } else {
+                deal = super.withdraw(order);
+            }
+
+        } catch (Exception e) {
+            log.error("【当前推送发生异常，修改订单为已推送状态，当前订单：" + order.getOrderId() + "】", e);
+            log.error(e.getMessage());
+            boolean b = withdrawServiceImpl.updatePush(order.getOrderId());
+            if (b) {
+                log.info("【当前订单已推送，状态已修改，当前订单号：" + order.getOrderId() + "】");
+            } else {
+                log.info("【当前订单已推送，状态未修改，当前订单号：" + order.getOrderId() + "】");
+            }
+        }
+
+
+        return deal;
+    }
+
 
 }

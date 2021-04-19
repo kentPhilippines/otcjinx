@@ -1,629 +1,695 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>接单</title>
-<script src="/static/js/layui/layui.all.js"></script> 
-<link href="/static/js/layui/css/layui.mobile.css" rel="stylesheet" type="text/css"> 
-<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/css/bootstrap.min.css">
-<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
-<script src="https://cdn.staticfile.org/popper.js/1.12.5/umd/popper.min.js"></script>
-<script src="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/js/bootstrap.min.js"></script>
-<script src="https://cdn.staticfile.org/vue/2.4.2/vue.min.js"></script>
-<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
-<link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-<script src="https://cdn.bootcss.com/layer/2.3/layer.js"></script>
-<script src="/static/js/common/common.js"></script>
-<link href="/static/css/common/common.css" rel="stylesheet" type="text/css">
-<link href="/static/js/layui/css/layui.css" rel="stylesheet" type="text/css"> 
-<style type="text/css">
-.suspend-receive-order {
-	padding-top: 6rem;
-}
-.gathering-item label {
-	text-align: end;
-	width: 8rem;
-	margin-right: 2rem;
-	color: #495057;
-	font-weight: bold;
-}
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+    <title>接单</title>
+    <script src="/static/js/layui/layui.all.js"></script>
+    <link href="/static/js/layui/css/layui.mobile.css" rel="stylesheet" type="text/css">
+    <link href="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/popper.js/1.12.5/umd/popper.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/4.1.0/js/bootstrap.min.js"></script>
+    <script src="https://cdn.staticfile.org/vue/2.4.2/vue.min.js"></script>
+    <script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+    <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/layer/2.3/layer.js"></script>
+    <script src="/static/js/common/common.js"></script>
+    <link href="/static/css/common/common.css" rel="stylesheet" type="text/css">
+    <link href="/static/js/layui/css/layui.css" rel="stylesheet" type="text/css">
+    <style type="text/css">
+        .suspend-receive-order {
+            padding-top: 6rem;
+        }
 
-.gathering-item span {
-	color: #0062cc;
-	font-weight: bold;
-}
+        .gathering-item label {
+            text-align: end;
+            width: 8rem;
+            margin-right: 2rem;
+            color: #495057;
+            font-weight: bold;
+        }
 
-.bounty-ranking-table {
-	
-}
+        .gathering-item span {
+            color: #0062cc;
+            font-weight: bold;
+        }
 
-.bounty-ranking-table th, .bounty-ranking-table td {
-	width: 33%;
-}
+        .bounty-ranking-table {
 
-.bounty-ranking-table tr, .bounty-ranking-table td {
-	text-align: start;
-}
+        }
 
-.bounty-ranking-table td {
-	padding-left: 0.5rem;
-}
-.suspend-receive-order-tip {
-	text-align: center;
-	font-weight: bold;
-	font-size: 1.4rem;
-	color: red;
-	padding-bottom: 4rem;
-}
+        .bounty-ranking-table th, .bounty-ranking-table td {
+            width: 33%;
+        }
 
-.receive-order-action {
-	display: flex;
-	justify-content: center;
-	flex-wrap: wrap;
-}
+        .bounty-ranking-table tr, .bounty-ranking-table td {
+            text-align: start;
+        }
 
-.receive-order-action-body {
-	border-radius: 50%;
-	background: linear-gradient(120deg, #fed176, #fd8793);
-	text-align: center;
-	height: 12rem;
-	width: 12rem;
-	line-height: 12rem;
-	color: #fff;
-	font-weight: bold;
-	font-size: 1.6rem;
-}
+        .bounty-ranking-table td {
+            padding-left: 0.5rem;
+        }
 
-.receive-order {
-	padding-top: 1rem;
-}
+        .suspend-receive-order-tip {
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.4rem;
+            color: red;
+            padding-bottom: 4rem;
+        }
 
-.receive-order-tip {
-	text-align: center;
-	font-weight: bold;
-	font-size: 1.4rem;
-	color: #495057;
-	padding-bottom: 1rem;
-}
+        .receive-order-action {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
 
-.suspend-receive-order-action {
-	display: flex;
-	justify-content: center;
-	flex-wrap: wrap;
-	padding-bottom: 1rem;
-}
+        .receive-order-action-body {
+            border-radius: 50%;
+            background: linear-gradient(120deg, #fed176, #fd8793);
+            text-align: center;
+            height: 12rem;
+            width: 12rem;
+            line-height: 12rem;
+            color: #fff;
+            font-weight: bold;
+            font-size: 1.6rem;
+        }
 
-.suspend-receive-order-action-body {
-	border-radius: 50%;
-	background: linear-gradient(120deg, #fed176, #fd8793);
-	text-align: center;
-	height: 8rem;
-	width: 8rem;
-	line-height: 8rem;
-	color: #e45d5d;
-	font-weight: bold;
-	font-size: 1.4rem;
-}
+        .receive-order {
+            padding-top: 1rem;
+        }
 
-.platform-order-list-area {
-	
-}
+        .receive-order-tip {
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.4rem;
+            color: #495057;
+            padding-bottom: 1rem;
+        }
 
-.platform-order-list-area-tip {
-	text-align: center;
-	padding-bottom: 1rem;
-	color: #dc3545;
-	font-weight: bold;
-}
+        .suspend-receive-order-action {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            padding-bottom: 1rem;
+        }
 
-.slide-fade-enter-active {
-	transition: all .3s ease;
-}
+        .suspend-receive-order-action-body {
+            border-radius: 50%;
+            background: linear-gradient(120deg, #fed176, #fd8793);
+            text-align: center;
+            height: 8rem;
+            width: 8rem;
+            line-height: 8rem;
+            color: #e45d5d;
+            font-weight: bold;
+            font-size: 1.4rem;
+        }
 
-.slide-fade-leave-active {
-	transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
-}
+        .platform-order-list-area {
 
-.slide-fade-enter, .slide-fade-leave-to {
-	transform: translateX(10px);
-	opacity: 0;
-}
+        }
 
-.platform-order {
-	background: rgb(242, 242, 242);
-	margin-bottom: 1rem;
-	display: flex;
-	padding-left: 1.2rem;
-	padding-right: 0.2rem;
-	padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-}
+        .platform-order-list-area-tip {
+            text-align: center;
+            padding-bottom: 1rem;
+            color: #dc3545;
+            font-weight: bold;
+        }
 
-.platform-order-body {
-	flex: 4;
-	display: flex;
-	flex-direction: column;
-	margin-top: 0.5rem;
-}
+        .slide-fade-enter-active {
+            transition: all .3s ease;
+        }
 
-.platform-order-body-item label {
-	text-align: end;
-	width: 5rem;
-	margin-right: 0.5rem;
-}
+        .slide-fade-leave-active {
+            transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+        }
 
-.platform-order-body-item span {
-	min-width: 5rem;
-	display: inline-block;
-}
+        .slide-fade-enter, .slide-fade-leave-to {
+            transform: translateX(10px);
+            opacity: 0;
+        }
 
-.platform-order-body-item button {
-	width: 96%;
-}
+        .platform-order {
+            background: rgb(242, 242, 242);
+            margin-bottom: 1rem;
+            display: flex;
+            padding-left: 1.2rem;
+            padding-right: 0.2rem;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+        }
 
-.platform-order-body-item-highlight {
-	color: #c3606a;
-}
-.account-change {
-	background-color: #f5f5f5;;
-	margin-bottom: 1rem;
-	display: flex;
-	padding-left: 1.2rem;
-	padding-right: 0.2rem;
-	padding-top: 0.5rem;
-	padding-bottom: 0.5rem;
-}
+        .platform-order-body {
+            flex: 4;
+            display: flex;
+            flex-direction: column;
+            margin-top: 0.5rem;
+        }
 
-.account-change-body {
-	flex: 4;
-	display: flex;
-	flex-direction: column;
-}
+        .platform-order-body-item label {
+            text-align: end;
+            width: 5rem;
+            margin-right: 0.5rem;
+        }
 
-.account-change-body-item label {
-	text-align: end;
-	width: 5rem;
-	margin-right: 0.5rem;
-}
+        .platform-order-body-item span {
+            min-width: 5rem;
+            display: inline-block;
+        }
 
-.account-change-body-item span {
-	min-width: 5rem;
-	display: inline-block;
-}
+        .platform-order-body-item button {
+            width: 96%;
+        }
 
-.account-change-body-item button {
-	width: 48%;
-}
+        .platform-order-body-item-highlight {
+            color: #c3606a;
+        }
 
-.account-change-body-item-highlight {
-	color: #c3606a;
-}
+        .account-change {
+            background-color: #f5f5f5;;
+            margin-bottom: 1rem;
+            display: flex;
+            padding-left: 1.2rem;
+            padding-right: 0.2rem;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+        }
 
-.page-link {
-	color: #007bff !important
-}
-</style>
+        .account-change-body {
+            flex: 4;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .account-change-body-item label {
+            text-align: end;
+            width: 5rem;
+            margin-right: 0.5rem;
+        }
+
+        .account-change-body-item span {
+            min-width: 5rem;
+            display: inline-block;
+        }
+
+        .account-change-body-item button {
+            width: 48%;
+        }
+
+        .account-change-body-item-highlight {
+            color: #c3606a;
+        }
+
+        .page-link {
+            color: #007bff !important
+        }
+    </style>
 </head>
 
 <body>
-	 <div th:replace="common/header::html"></div>
-	 <form class="layui-form" action="">
-	<div id="receiveOrder" v-cloak>
-		<div class="page-body">
-		<div class="card" v-show="isLoggedInFlag && showTodayReceiveOrderSituationFlag">
-				<div class="card-header">
-					<span>今日接单情况</span><span class="float-right" style="color: #dc3545; font-weight: bold;" v-on:click="showTotalReceiveOrderSituation">累计接单情况&gt;</span>
-				</div>
-				<div class="card-body">
-					<div class="row gathering-item">
-						<div class="col-sm-8 offset-sm-4">
-							<label>收款金额</label> <span>{{todayReceiveOrderSituation != null ? todayReceiveOrderSituation.todayOrderCount : 0}}元</span>
-						</div>
-					</div>
-					<div class="row gathering-item">
-						<div class="col-sm-8 offset-sm-4">
-							<label>已支付订单量</label> <span>{{todayReceiveOrderSituation != null ? todayReceiveOrderSituation.sumProfit : 0}}笔</span>
-						</div>
-					</div>
-					<div class="row gathering-item">
-						<div class="col-sm-8 offset-sm-4">
-							<label>奖励金</label> <span>{{todayReceiveOrderSituation != null ? todayReceiveOrderSituation.todayProfit : 0}}元</span>
-						</div>
-					</div>
-					<div class="row gathering-item" v-show="accountType == 'agent'">
-						<div class="col-sm-8 offset-sm-4">
-							<label>代理佣金</label> <span>{{todayReceiveOrderSituation != null ? todayReceiveOrderSituation.rebateAmount : 0}}元</span>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="card" v-show="isLoggedInFlag && !showTodayReceiveOrderSituationFlag">
-				<div class="card-header">
-					<span>累计接单情况</span><span class="float-right" style="color: #dc3545; font-weight: bold;" v-on:click="showTodayReceiveOrderSituation">今日接单情况&gt;</span>
-				</div>
-				<div class="card-body">
-					<div class="row gathering-item">
-						<div class="col-sm-8 offset-sm-4">
-							<label>收款金额</label> <span>{{totalReceiveOrderSituation != null ? totalReceiveOrderSituation.sumRechargeAmount : 0}}元</span>
-						</div>
-					</div>
-					<div class="row gathering-item">
-						<div class="col-sm-8 offset-sm-4">
-							<label>已支付订单量</label> <span>{{totalReceiveOrderSituation != null ? totalReceiveOrderSituation.sumDealAmount : 0}}笔</span>
-						</div>
-					</div>
-					<div class="row gathering-item">
-						<div class="col-sm-8 offset-sm-4">
-							<label>奖励金</label> <span>{{totalReceiveOrderSituation != null ? totalReceiveOrderSituation.sumProfit : 0}}元</span>
-						</div>
-					</div>
-					<div class="row gathering-item" v-show="accountType == 'agent'">
-						<div class="col-sm-8 offset-sm-4">
-							<label>代理佣金</label> <span>{{totalReceiveOrderSituation != null ? totalReceiveOrderSituation.sumAgentProfit : 0}}元</span>
-						</div>
-					</div>
-				</div>
-			</div>
-			<!-- <div class="suspend-receive-order" v-show="receiveOrderState == '2'">
-				<div class="suspend-receive-order-tip">当前处于停止接单状态</div>
-				<div class="receive-order-action">
-					<div class="receive-order-action-body" v-on:click="updateReceiveOrderState('1')">开始接单</div>
-				</div>
-			</div>
-			<div class="receive-order" v-show="receiveOrderState == '1'">
-				<div class="receive-order-tip">当前处于开始接单状态</div>
-				<div class="suspend-receive-order-action">
-					<div class="suspend-receive-order-action-body" v-on:click="updateReceiveOrderState('2')">停止接单</div>
-				</div> -->
+<div th:replace="common/header::html"></div>
+<form action="" class="layui-form">
+    <div id="receiveOrder" v-cloak>
+        <div class="page-body">
+            <div class="card" v-show="isLoggedInFlag && showTodayReceiveOrderSituationFlag">
+                <div class="card-header">
+                    <span>今日接单情况</span><span class="float-right" style="color: #dc3545; font-weight: bold;"
+                                             v-on:click="showTotalReceiveOrderSituation">累计接单情况&gt;</span>
+                </div>
+                <div class="card-body">
+                    <div class="row gathering-item">
+                        <div class="col-sm-8 offset-sm-4">
+                            <label>收款金额</label>
+                            <span>{{todayReceiveOrderSituation != null ? todayReceiveOrderSituation.todayOrderCount : 0}}元</span>
+                        </div>
+                    </div>
+                    <div class="row gathering-item">
+                        <div class="col-sm-8 offset-sm-4">
+                            <label>已支付订单量</label>
+                            <span>{{todayReceiveOrderSituation != null ? todayReceiveOrderSituation.sumProfit : 0}}笔</span>
+                        </div>
+                    </div>
+                    <div class="row gathering-item">
+                        <div class="col-sm-8 offset-sm-4">
+                            <label>奖励金</label>
+                            <span>{{todayReceiveOrderSituation != null ? todayReceiveOrderSituation.todayProfit : 0}}元</span>
+                        </div>
+                    </div>
+                    <div class="row gathering-item" v-show="accountType == 'agent'">
+                        <div class="col-sm-8 offset-sm-4">
+                            <label>代理佣金</label>
+                            <span>{{todayReceiveOrderSituation != null ? todayReceiveOrderSituation.rebateAmount : 0}}元</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card" v-show="isLoggedInFlag && !showTodayReceiveOrderSituationFlag">
+                <div class="card-header">
+                    <span>累计接单情况</span><span class="float-right" style="color: #dc3545; font-weight: bold;"
+                                             v-on:click="showTodayReceiveOrderSituation">今日接单情况&gt;</span>
+                </div>
+                <div class="card-body">
+                    <div class="row gathering-item">
+                        <div class="col-sm-8 offset-sm-4">
+                            <label>收款金额</label>
+                            <span>{{totalReceiveOrderSituation != null ? totalReceiveOrderSituation.sumRechargeAmount : 0}}元</span>
+                        </div>
+                    </div>
+                    <div class="row gathering-item">
+                        <div class="col-sm-8 offset-sm-4">
+                            <label>已支付订单量</label>
+                            <span>{{totalReceiveOrderSituation != null ? totalReceiveOrderSituation.sumDealAmount : 0}}笔</span>
+                        </div>
+                    </div>
+                    <div class="row gathering-item">
+                        <div class="col-sm-8 offset-sm-4">
+                            <label>奖励金</label>
+                            <span>{{totalReceiveOrderSituation != null ? totalReceiveOrderSituation.sumProfit : 0}}元</span>
+                        </div>
+                    </div>
+                    <div class="row gathering-item" v-show="accountType == 'agent'">
+                        <div class="col-sm-8 offset-sm-4">
+                            <label>代理佣金</label>
+                            <span>{{totalReceiveOrderSituation != null ? totalReceiveOrderSituation.sumAgentProfit : 0}}元</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="suspend-receive-order" v-show="receiveOrderState == '2'">
+                <div class="suspend-receive-order-tip">当前处于停止接单状态</div>
+                <div class="receive-order-action">
+                    <div class="receive-order-action-body" v-on:click="updateReceiveOrderState('1')">开始接单</div>
+                </div>
+            </div>
+            <div class="receive-order" v-show="receiveOrderState == '1'">
+                <div class="receive-order-tip">当前处于开始接单状态</div>
+                <div class="suspend-receive-order-action">
+                    <div class="suspend-receive-order-action-body" v-on:click="updateReceiveOrderState('2')">停止接单</div>
+                </div> -->
 
-			<!-- 	<div class="platform-order-list-area">
-					<transition name="slide-fade">
-					<div class="platform-order-list-area-tip" v-show="platformOrderListAreaTipFlag">{{platformOrderListAreaTip}}</div>
-					</transition>
-					<div class="platform-order" v-for="order in waitReceivingOrders">
-						<div class="platform-order-body">
-							<div class="platform-order-body-item">
-								<label>订单号:</label> <span>{{order.orderId}}</span>
-							</div>
-							<div class="platform-order-body-item">
-								<label>发起时间:</label> <span>{{order.createTime | dateFilter("yyyy-mm-dd hh:mm:ss")}}</span>
-							</div>
-							<div class="platform-order-body-item">
-								<label>二维码:</label> <span>{{order.orderQr  }}</span>
-							</div>
-							<div class="platform-order-body-item">
-								<label>收款渠道:</label> <span>{{
-								order.dealType  == 'alipay_qr' ? '支付宝'  :
-								order.dealType  != 'alipay_qr' ? '其他' : ''
-								}}</span>
-								<label>收款金额:</label> <span class="platform-order-body-item-highlight">{{order.dealAmount}}元</span>
-							</div>
-							<div class="platform-order-body-item">
-								<button class="btn btn-outline-danger btn-lg"   type="button" v-on:click="receiveOrder(order.orderId)">确认已收款</button>
-								<button class="btn btn-outline-danger btn-lg" style="margin-top: 1rem;" type="button" v-on:click=" ">二维码停止收款</button>
-							</div>
-						</div>
-					</div>
-				</div> -->
-				<div class="platform-order" v-for="gatheringCode in gatheringCodes">
-				<div class="platform-order-body">
-					<div class="account-change-body-item">
-						<label>支付宝:</label> <span>{{gatheringCode.mediumNumber }}</span>
-						<img style="float: right;"  src="https://i.alipayobjects.com/common/favicon/favicon.ico">
-					</div>
-					<div class="account-change-body-item">
-						<label>排队状态:</label> <span>{{gatheringCode.isQueue ==2?'未排队':'排队中'  }}</span>
-					</div>
-					<div class="account-change-body-item">
-					<!-- 	<label>收款渠道:</label> <span>{{gatheringCode.code == 'alipay_qr' ? '支付宝' :'其他'}}</span> -->
-						<label>状态:</label> <span class="account-change-body-item-highlight">{{gatheringCode.status == 1 ? '正在接单' : '未接单'}}</span>
-								<span class="account-change-body-item-highlight" style="float: right;margin-right: 1rem;" v-show="!(gatheringCode.fixation == '' || gatheringCode.fixation == null)  ">
+            <!-- 	<div class="platform-order-list-area">
+                    <transition name="slide-fade">
+                    <div class="platform-order-list-area-tip" v-show="platformOrderListAreaTipFlag">{{platformOrderListAreaTip}}</div>
+                    </transition>
+                    <div class="platform-order" v-for="order in waitReceivingOrders">
+                        <div class="platform-order-body">
+                            <div class="platform-order-body-item">
+                                <label>订单号:</label> <span>{{order.orderId}}</span>
+                            </div>
+                            <div class="platform-order-body-item">
+                                <label>发起时间:</label> <span>{{order.createTime | dateFilter("yyyy-mm-dd hh:mm:ss")}}</span>
+                            </div>
+                            <div class="platform-order-body-item">
+                                <label>二维码:</label> <span>{{order.orderQr  }}</span>
+                            </div>
+                            <div class="platform-order-body-item">
+                                <label>收款渠道:</label> <span>{{
+                                order.dealType  == 'alipay_qr' ? '支付宝'  :
+                                order.dealType  != 'alipay_qr' ? '其他' : ''
+                                }}</span>
+                                <label>收款金额:</label> <span class="platform-order-body-item-highlight">{{order.dealAmount}}元</span>
+                            </div>
+                            <div class="platform-order-body-item">
+                                <button class="btn btn-outline-danger btn-lg"   type="button" v-on:click="receiveOrder(order.orderId)">确认已收款</button>
+                                <button class="btn btn-outline-danger btn-lg" style="margin-top: 1rem;" type="button" v-on:click=" ">二维码停止收款</button>
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+            <div class="platform-order" v-for="gatheringCode in gatheringCodes">
+                <div class="platform-order-body">
+                    <div class="account-change-body-item">
+                        <label>支付宝:</label> <span>{{gatheringCode.mediumNumber }}</span>
+                        <img height="40px"
+                             src="https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1437076556,2698044114&fm=26&gp=0.jpg"
+                             style="float: right;" width="40px">
+                    </div>
+                    <div class="account-change-body-item">
+                        <label>排队状态:</label> <span>{{gatheringCode.isQueue == 2 ? '未排队' : '排队中' }}</span>
+                    </div>
+                    <div class="account-change-body-item">
+                        <!-- 	<label>收款渠道:</label> <span>{{gatheringCode.code == 'alipay_qr' ? '支付宝' :'其他'}}</span> -->
+                        <label>状态:</label> <span
+                            class="account-change-body-item-highlight">{{gatheringCode.status == 1 ? '正在接单' : '未接单'}}</span>
+                        <span class="account-change-body-item-highlight" style="float: right;margin-right: 1rem;"
+                              v-show="!(gatheringCode.fixation == '' || gatheringCode.fixation == null)  ">
 								
 								  <div class="layui-form-item" v-show="gatheringCode.status != 1"> 
 								   <div class="layui-input-block">
 								   <input type="checkbox" name="switch" lay-skin="switch">
-								   <div class=" layui-unselect layui-form-switch"   v-on:click="updataQrStatus(gatheringCode.id,gatheringCode.status)" lay-skin="_switch">
+								   <div class=" layui-unselect layui-form-switch"
+                                        lay-skin="_switch"
+                                        v-on:click="updataQrStatus(gatheringCode.id,gatheringCode.status)">
 								   <em></em>
 								   <i></i></div></div>
 								   </div>
-								  <div class="layui-form-item"  v-show="gatheringCode.status == 1"> 
+								  <div class="layui-form-item" v-show="gatheringCode.status == 1">
 								   <div class="layui-input-block">
 								   <input type="checkbox" name="switch" lay-skin="switch">
-								   <div class=" layui-unselect layui-form-switch layui-form-onswitch "   v-on:click="updataQrStatus(gatheringCode.id,gatheringCode.status)" lay-skin="_switch">
+								   <div class=" layui-unselect layui-form-switch layui-form-onswitch "
+                                        lay-skin="_switch"
+                                        v-on:click="updataQrStatus(gatheringCode.id,gatheringCode.status)">
 								   <em></em>
 								   <i></i></div></div>
 								   </div>
 						  		</span>
-						  		<div><label> 收款金额: </label> <span class="account-change-body-item-highlight">{{  gatheringCode.fixation == '' || gatheringCode.fixation == null  ?'无收款码':''+ gatheringCode.fixation  }}</span></div>
-					</div>
-					<!-- <div class="platform-order-body-item">
-						<button class="btn btn-outline-info btn-lg"  v-show="gatheringCode.status != 1" type="button" v-on:click="updataQrStatusSu(gatheringCode.id,gatheringCode.status)">开始接单</button>
-						<button class="btn btn-outline-danger btn-lg"  v-show="gatheringCode.status == 1" type="button" v-on:click="updataQrStatusEr(gatheringCode.id)">暂停接单</button>
-					</div> -->
-				</div>
-			</div>
-			 	
-				<div style="padding-left: 13rem;">
-				<ul class="pagination">
-					<li class="page-item"><a class="page-link" v-show="totalPage > 0 && pageNum > 1" v-on:click="prePage">上一页</a></li>
-					<li class="page-item"><a class="page-link" v-show="pageNum >= 1 && pageNum < totalPage" v-on:click="nextPage">下一页</a></li>
-				</ul>
-			</div>
-			</div>
-		</div>
-	</div>
-	  		</form>
-	<div th:replace="common/footer::html"></div>
-	<script type="text/javascript">
-		var receiveOrderVM = new Vue({
-			el : '#receiveOrder',
-			data : {
-				receiveOrderState : '',
-				waitReceivingOrders : [],
-				loadPlatformOrderInterval : null,
-				platformOrderListAreaTipFlag : true,
-				platformOrderListAreaTip : '',
-				gatheringChannelCode : '',
-				gatheringChannelDictItems : [],
-				status : '',
-				gatheringCodeStateDictItems : [],
-				gatheringCodes : [],
-				pageNum : 1,
-				totalPage : 1,
-				showGatheringCodeFlag : true,
-				isLoggedInFlag : false,
-				accountType : '',
-				showTodayReceiveOrderSituationFlag : false,
-				todayReceiveOrderSituation : {},
-				totalReceiveOrderSituation : {},
-				showTodayBountyRankFlag : true,
-				todayBountyRanks : [],
-				totalBountyRanks : []
-			},
-			filters: {
-				 dateFilter: function (data, format = "") {
-		             var dt = new Date(data);
-		             var y = dt.getFullYear();
-		             var m = (dt.getMonth()+1).toString().padStart(2,"0");
-		             var d = dt.getDate().toString().padStart(2,"0");
-		             var h = dt.getHours().toString().padStart(2,"0");
-		             var mm = dt.getMinutes().toString().padStart(2,"0");
-		             var s = dt.getSeconds().toString().padStart(2,"0");
-		             if (format.toLocaleLowerCase() === "yyyy-mm-dd" ||
-		                 format.toLocaleLowerCase() === "") {
-		                 return `${y}-${m}-${d}`;
-		             } else if (format.toLocaleLowerCase() === "yyyy/mm/dd") {
-		                 return `${y}/${m}/${d}`;
-		             } else if (format.toLocaleLowerCase() === "yyyy-mm-dd hh:mm:ss") {
-		                 return `${y}-${m}-${d} ${h}:${mm}:${s}`;
-		             } else if (format.toLocaleLowerCase() === "yyyy/mm/dd hh:mm:ss") {
-		                 return `${y}/${m}/${d} ${h}:${mm}:${s}`;
-		             } else {
-		                 return `输入的时间格式有误`;
-		             }
-		         }
-			 },
-			computed : {},
-			created : function() {
-			},
-			mounted : function() {
-				headerVM.title = '接单';
-				this.getUserAccountInfo();
-				this.loadGatheringCodeByPage();
-				var inviteCode = getQueryString('inviteCode');
-				if (inviteCode != null) {
-					window.sessionStorage.setItem('inviteCode', inviteCode);
-				}
-				this.loadSystemSetting();
-				this.getUserAccountInfo();
-			},
-			methods : {
-				updateReceiveOrderState : function(receiveOrderState) {
-					var that = this;
-					that.$http.post('/userAccount/updateReceiveOrderState', {
-						receiveOrderState : receiveOrderState
-					}, {
-						emulateJSON : true
-					}).then(function(res) {
-						that.getUserAccountInfo();
-					});
-				},
-				query : function() {
-					this.pageNum = 1;
-					this.loadGatheringCodeByPage();
-				},
+                        <div>
+                            <button class="btn btn-warning btn-lg btn-block" th:if="gatheringCode.status == 2"
+                                    type="button"
+                                    v-on:click="openMedium(medium.mediumId)">开启接单
+                            </button>
+                            <button class="btn btn-outline-info btn-lg" th:if="gatheringCode.status == 1" type="button"
+                                    v-on:click="offMedium(medium.mediumId)">关闭接单
+                            </button>
+                            <!--  <label> 收款金额: </label> <span
+                                  class="account-change-body-item-highlight">{{ gatheringCode.fixation == '' || gatheringCode.fixation == null ? '无收款码' : '' + gatheringCode.fixation
+                              }}</span>-->
+                        </div>
+                    </div>
+                    <!-- <div class="platform-order-body-item">
+                        <button class="btn btn-outline-info btn-lg"  v-show="gatheringCode.status != 1" type="button" v-on:click="updataQrStatusSu(gatheringCode.id,gatheringCode.status)">开始接单</button>
+                        <button class="btn btn-outline-danger btn-lg"  v-show="gatheringCode.status == 1" type="button" v-on:click="updataQrStatusEr(gatheringCode.id)">暂停接单</button>
+                    </div> -->
+                </div>
+            </div>
 
-				prePage : function() {
-					this.pageNum = this.pageNum - 1;
-					this.loadGatheringCodeByPage();
-				},
+            <div style="padding-left: 13rem;">
+                <ul class="pagination">
+                    <li class="page-item"><a class="page-link" v-on:click="prePage"
+                                             v-show="totalPage > 0 && pageNum > 1">上一页</a></li>
+                    <li class="page-item"><a class="page-link" v-on:click="nextPage"
+                                             v-show="pageNum >= 1 && pageNum < totalPage">下一页</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    </div>
+</form>
+<div th:replace="common/footer::html"></div>
+<script type="text/javascript">
+    var receiveOrderVM = new Vue({
+        el: '#receiveOrder',
+        data: {
+            receiveOrderState: '',
+            waitReceivingOrders: [],
+            loadPlatformOrderInterval: null,
+            platformOrderListAreaTipFlag: true,
+            platformOrderListAreaTip: '',
+            gatheringChannelCode: '',
+            gatheringChannelDictItems: [],
+            status: '',
+            gatheringCodeStateDictItems: [],
+            gatheringCodes: [],
+            pageNum: 1,
+            totalPage: 1,
+            showGatheringCodeFlag: true,
+            isLoggedInFlag: false,
+            accountType: '',
+            showTodayReceiveOrderSituationFlag: false,
+            todayReceiveOrderSituation: {},
+            totalReceiveOrderSituation: {},
+            showTodayBountyRankFlag: true,
+            todayBountyRanks: [],
+            totalBountyRanks: []
+        },
+        filters: {
+            dateFilter: function (data, format = "") {
+                var dt = new Date(data);
+                var y = dt.getFullYear();
+                var m = (dt.getMonth() + 1).toString().padStart(2, "0");
+                var d = dt.getDate().toString().padStart(2, "0");
+                var h = dt.getHours().toString().padStart(2, "0");
+                var mm = dt.getMinutes().toString().padStart(2, "0");
+                var s = dt.getSeconds().toString().padStart(2, "0");
+                if (format.toLocaleLowerCase() === "yyyy-mm-dd" ||
+                    format.toLocaleLowerCase() === "") {
+                    return `${y}-${m}-${d}`;
+                } else if (format.toLocaleLowerCase() === "yyyy/mm/dd") {
+                    return `${y}/${m}/${d}`;
+                } else if (format.toLocaleLowerCase() === "yyyy-mm-dd hh:mm:ss") {
+                    return `${y}-${m}-${d} ${h}:${mm}:${s}`;
+                } else if (format.toLocaleLowerCase() === "yyyy/mm/dd hh:mm:ss") {
+                    return `${y}/${m}/${d} ${h}:${mm}:${s}`;
+                } else {
+                    return `输入的时间格式有误`;
+                }
+            }
+        },
+        computed: {},
+        created: function () {
+        },
+        mounted: function () {
+            headerVM.title = '接单';
+            this.getUserAccountInfo();
+            this.loadGatheringCodeByPage();
+            var inviteCode = getQueryString('inviteCode');
+            if (inviteCode != null) {
+                window.sessionStorage.setItem('inviteCode', inviteCode);
+            }
+            this.loadSystemSetting();
+            this.getUserAccountInfo();
+        },
+        methods: {
+            updateReceiveOrderState: function (receiveOrderState) {
+                var that = this;
+                that.$http.post('/userAccount/updateReceiveOrderState', {
+                    receiveOrderState: receiveOrderState
+                }, {
+                    emulateJSON: true
+                }).then(function (res) {
+                    that.getUserAccountInfo();
+                });
+            },
+            query: function () {
+                this.pageNum = 1;
+                this.loadGatheringCodeByPage();
+            },
 
-				nextPage : function() {
-					this.pageNum = this.pageNum + 1;
-					this.loadGatheringCodeByPage();
-				},
-				loadSystemSetting : function() {
-					var that = this;
-					that.$http.get('/masterControl/getSystemSetting').then(function(res) {
-						document.title = res.body.result;
-						headerVM.title = res.body.result;
-					});
-				},
-				loadGatheringCodeByPage : function() {
-					var that = this;
-					that.$http.get('/qrcode/findIsMyQrcodePage', {
-						params : {
-							pageSize : 5,
-							pageNum : that.pageNum,
-							status : that.status,
-						}
-					}).then(function(res) {
-						that.gatheringCodes = res.body.result.content;
-						that.pageNum = res.body.result.pageNum;
-						that.totalPage = res.body.result.totalPage;
-					});
-				},
+            prePage: function () {
+                this.pageNum = this.pageNum - 1;
+                this.loadGatheringCodeByPage();
+            },
 
-				/**
-				 * 获取用户接单状态
-				 */
-				getUserAccountInfo : function() {
-					var that = this;
-					that.$http.get('/userAccount/getUserAccountInfo').then(function(res) {
-						that.receiveOrderState = res.body.result.receiveOrderState;
-						if (that.receiveOrderState == '1') {
-					//		that.loadPlatformOrder();
-							that.loadPlatformOrderInterval = window.setInterval(function() {
-							//	that.loadPlatformOrder();
-							}, 6000);
-						} else if (that.receiveOrderState == '2') {
-						//	that.waitReceivingOrders = [];
-							window.clearInterval(that.loadPlatformOrderInterval);
-						}
-					});
-				},
-				updataQrStatus : function(gatheringCodeId,status){
-					 if( status == 1 )
-						 this.updataQrStatusEr(gatheringCodeId);
-					else
-						this.updataQrStatusSu(gatheringCodeId);
-				},
-				updataQrStatusSu : function(gatheringCodeId) {
-					var that = this;
-					that.$http.get('/qrcode/updataMediumStatusSu', {
-						params : {
-							id : gatheringCodeId,
-						}
-					}).then(function(res) {
-						if(res.body.success)
-							that.loadGatheringCodeByPage();
-						else
-							layer.msg(res.body.message)
-					});
-				},
-				updataQrStatusEr : function(gatheringCodeId) {
-					var that = this;
-					that.$http.get('/qrcode/updataMediumStatusEr', {
-						params : {
-							id : gatheringCodeId,
-						}
-					}).then(function(res) {
-						that.loadGatheringCodeByPage();
-					});
-				},
-				
-				/*
-				*			获取当前订单 属于自己的  订单
-					*/
-				loadPlatformOrder : function() {
-					var that = this;
-					that.platformOrderListAreaTipFlag = true;
-					that.platformOrderListAreaTip = '正在获取订单...';
-					that.$http.get('/order/findMyWaitReceivingOrder').then(function(res) {
-						that.waitReceivingOrders = res.body.result;
-						if (that.waitReceivingOrders == null || that.waitReceivingOrders.length == 0) {
-							that.platformOrderListAreaTip = '暂无最新订单';
-						} else {
-							that.platformOrderListAreaTip = '已获取最新订单';
-						}
-						setTimeout(function() {
-							that.platformOrderListAreaTipFlag = false;
-						}, 2000);
-					});
-				},
-				/*
-				* 	今日奖励金排行
-			
-				loadTodayTop10BountyRank : function() {
-					var that = this;
-					that.$http.get('/statisticalAnalysis/findTodayTop10BountyRank').then(function(res) {
-						if(res){
-							that.todayBountyRanks = res.body.result;
-						}
-					});
-				},	*/
-				/*
-				*	累计奖励金获取
-				
-				loadTotalTop10BountyRank : function() {
-					var that = this;
-					that.$http.get('/statisticalAnalysis/findTotalTop10BountyRank').then(function(res) {
-						that.totalBountyRanks = res.body.result;
-					});
-				},
-				*/
-				/*
-				*	累计奖励金获取
-				*/
-				showTodayTop10BountyRank : function() {
-					this.showTodayBountyRankFlag = true;
-					this.loadTodayTop10BountyRank();
-				},
+            nextPage: function () {
+                this.pageNum = this.pageNum + 1;
+                this.loadGatheringCodeByPage();
+            },
+            loadSystemSetting: function () {
+                var that = this;
+                that.$http.get('/masterControl/getSystemSetting').then(function (res) {
+                    document.title = res.body.result;
+                    headerVM.title = res.body.result;
+                });
+            },
+            loadGatheringCodeByPage: function () {
+                var that = this;
+                that.$http.get('/qrcode/findIsMyQrcodePage', {
+                    params: {
+                        pageSize: 5,
+                        pageNum: that.pageNum,
+                        status: that.status,
+                    }
+                }).then(function (res) {
+                    that.gatheringCodes = res.body.result.content;
+                    that.pageNum = res.body.result.pageNum;
+                    that.totalPage = res.body.result.totalPage;
+                });
+            },
 
-				showTotalTop10BountyRank : function() {
-					this.showTodayBountyRankFlag = false;
-					this.loadTotalTop10BountyRank();
-				},
+            /**
+             * 获取用户接单状态
+             */
+            getUserAccountInfo: function () {
+                var that = this;
+                that.$http.get('/userAccount/getUserAccountInfo').then(function (res) {
+                    that.receiveOrderState = res.body.result.receiveOrderState;
+                    if (that.receiveOrderState == '1') {
+                        //		that.loadPlatformOrder();
+                        that.loadPlatformOrderInterval = window.setInterval(function () {
+                            //	that.loadPlatformOrder();
+                        }, 6000);
+                    } else if (that.receiveOrderState == '2') {
+                        //	that.waitReceivingOrders = [];
+                        window.clearInterval(that.loadPlatformOrderInterval);
+                    }
+                });
+            },
+            updataQrStatus: function (gatheringCodeId, status) {
+                if (status == 1)
+                    this.updataQrStatusEr(gatheringCodeId);
+                else
+                    this.updataQrStatusSu(gatheringCodeId);
+            },
+            updataQrStatusSu: function (gatheringCodeId) {
+                var that = this;
+                that.$http.get('/qrcode/updataMediumStatusSu', {
+                    params: {
+                        id: gatheringCodeId,
+                    }
+                }).then(function (res) {
+                    if (res.body.success)
+                        that.loadGatheringCodeByPage();
+                    else
+                        layer.msg(res.body.message)
+                });
+            },
+            updataQrStatusEr: function (gatheringCodeId) {
+                var that = this;
+                that.$http.get('/qrcode/updataMediumStatusEr', {
+                    params: {
+                        id: gatheringCodeId,
+                    }
+                }).then(function (res) {
+                    that.loadGatheringCodeByPage();
+                });
+            },
 
-				showTodayReceiveOrderSituation : function() {
-					this.showTodayReceiveOrderSituationFlag = true;
-					this.loadTodayReceiveOrderSituation();
-				},
+            /*
+            *			获取当前订单 属于自己的  订单
+                */
+            loadPlatformOrder: function () {
+                var that = this;
+                that.platformOrderListAreaTipFlag = true;
+                that.platformOrderListAreaTip = '正在获取订单...';
+                that.$http.get('/order/findMyWaitReceivingOrder').then(function (res) {
+                    that.waitReceivingOrders = res.body.result;
+                    if (that.waitReceivingOrders == null || that.waitReceivingOrders.length == 0) {
+                        that.platformOrderListAreaTip = '暂无最新订单';
+                    } else {
+                        that.platformOrderListAreaTip = '已获取最新订单';
+                    }
+                    setTimeout(function () {
+                        that.platformOrderListAreaTipFlag = false;
+                    }, 2000);
+                });
+            },
+            /*
+            * 	今日奖励金排行
 
-				showTotalReceiveOrderSituation : function() {
-					this.showTodayReceiveOrderSituationFlag = false;
-					this.loadTotalReceiveOrderSituation();
-				},
+            loadTodayTop10BountyRank : function() {
+                var that = this;
+                that.$http.get('/statisticalAnalysis/findTodayTop10BountyRank').then(function(res) {
+                    if(res){
+                        that.todayBountyRanks = res.body.result;
+                    }
+                });
+            },	*/
+            /*
+            *	累计奖励金获取
 
-				/*
-				*   	今日接单情况
-				*/
-				loadTodayReceiveOrderSituation : function() {
-					var that = this;
-					that.$http.get('/statisticalAnalysis/findMyTodayReceiveOrderSituation').then(function(res) {
-						that.todayReceiveOrderSituation = res.body.result;
-					});
-				},
+            loadTotalTop10BountyRank : function() {
+                var that = this;
+                that.$http.get('/statisticalAnalysis/findTotalTop10BountyRank').then(function(res) {
+                    that.totalBountyRanks = res.body.result;
+                });
+            },
+            */
+            /*
+            *	累计奖励金获取
+            */
+            showTodayTop10BountyRank: function () {
+                this.showTodayBountyRankFlag = true;
+                this.loadTodayTop10BountyRank();
+            },
 
-				loadTotalReceiveOrderSituation : function() {
-					var that = this;
-					that.$http.get('/statisticalAnalysis/findMyTotalReceiveOrderSituation').then(function(res) {
-						that.totalReceiveOrderSituation = res.body.result;
-					});
-				},
+            showTotalTop10BountyRank: function () {
+                this.showTodayBountyRankFlag = false;
+                this.loadTotalTop10BountyRank();
+            },
 
-				/**
-				 * 获取账号登录情况
-				 */
-				getUserAccountInfo : function() {
-					var that = this;
-					that.$http.get('/userAccount/getUserAccountInfo').then(function(res) {
-						if (res.body.result != null) {
-							that.isLoggedInFlag = true;
-							that.accountType = res.body.result.accountType;
-							that.showTodayReceiveOrderSituation();
-						}
-					});
-				},
-				receiveOrder : function(orderId) {
-					var that = this;
-					that.$http.get('/order/receiveOrder', {
-						params : {
-							orderId : orderId
-						}
-					}).then(function(res) {
-						layer.alert('接单成功,请及时审核', {
-							icon : 1,
-							time : 2000,
-							shade : false
-						});
-					    that.loadPlatformOrder();
-					});
-				}
-			}
-			
-		});
-	</script>
+            showTodayReceiveOrderSituation: function () {
+                this.showTodayReceiveOrderSituationFlag = true;
+                this.loadTodayReceiveOrderSituation();
+            },
+
+            showTotalReceiveOrderSituation: function () {
+                this.showTodayReceiveOrderSituationFlag = false;
+                this.loadTotalReceiveOrderSituation();
+            },
+
+            /*
+            *   	今日接单情况
+            */
+            loadTodayReceiveOrderSituation: function () {
+                var that = this;
+                that.$http.get('/statisticalAnalysis/findMyTodayReceiveOrderSituation').then(function (res) {
+                    that.todayReceiveOrderSituation = res.body.result;
+                });
+            },
+
+            loadTotalReceiveOrderSituation: function () {
+                var that = this;
+                that.$http.get('/statisticalAnalysis/findMyTotalReceiveOrderSituation').then(function (res) {
+                    that.totalReceiveOrderSituation = res.body.result;
+                });
+            },
+
+            /**
+             * 获取账号登录情况
+             */
+            getUserAccountInfo: function () {
+                var that = this;
+                that.$http.get('/userAccount/getUserAccountInfo').then(function (res) {
+                    if (res.body.result != null) {
+                        that.isLoggedInFlag = true;
+                        that.accountType = res.body.result.accountType;
+                        that.showTodayReceiveOrderSituation();
+                    }
+                });
+            },
+            receiveOrder: function (orderId) {
+                var that = this;
+                that.$http.get('/order/receiveOrder', {
+                    params: {
+                        orderId: orderId
+                    }
+                }).then(function (res) {
+                    layer.alert('接单成功,请及时审核', {
+                        icon: 1,
+                        time: 2000,
+                        shade: false
+                    });
+                    that.loadPlatformOrder();
+                });
+            },
+            openMedium: function (mediumId) {
+                var that = this;
+                that.$http.post('/statisticalAnalysis/openMedium', {
+                    params: {
+                        mediumId: mediumId
+                    }
+                }).then(function (res) {
+                    layer.alert('接单成功,请及时审核', {
+                        icon: 1,
+                        time: 2000,
+                        shade: false
+                    });
+                    that.loadPlatformOrder();
+                });
+
+            },
+            offMedium: function (mediumId) {
+                var that = this;
+                that.$http.post('/statisticalAnalysis/offMedium', {
+                    params: {
+                        mediumId: mediumId
+                    }
+                }).then(function (res) {
+                    layer.alert('接单成功,请及时审核', {
+                        icon: 1,
+                        time: 2000,
+                        shade: false
+                    });
+                    that.loadPlatformOrder();
+                });
+            }
+
+
+        }
+    });
+</script>
 </body>
 </html>

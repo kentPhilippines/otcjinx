@@ -2,9 +2,12 @@ package alipay.manage.service;
 
 import otc.bean.dealpay.Withdraw;
 
+import java.util.List;
+
 public interface WithdrawService {
 	/**
 	 * <p>代付订单生成</p>
+	 *
 	 * @param witb
 	 * @return
 	 */
@@ -43,4 +46,21 @@ public interface WithdrawService {
 	void updateEthFee(String orderId, String hash);
 
 	Withdraw findOrderByAppSum(String appId);
+
+
+	/**
+	 * 查询未推送订单
+	 *
+	 * @return
+	 */
+	List<Withdraw> findSuccessAndNotAmount();
+
+	/**
+	 * 修改订单 ： 已推送处理
+	 *
+	 * @param orderId
+	 */
+	void updateSuccessAndAmount(String orderId);
+
+	boolean updatePush(String orderId);
 }

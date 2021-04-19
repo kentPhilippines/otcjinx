@@ -9,21 +9,22 @@ import java.util.Date;
  * @author hx08
  *
  */
-public class Withdraw implements Serializable{
-	private static final long serialVersionUID = 1L;
-    private Integer id;				//数据id
-    private String orderId;			//订单号
-    private String userId;			//用户id
-    private String withdrawType;	//商户提现1，码商提现2
-    private String bankNo;			//提现银行卡				或者提现支付账号【登录账号】
-    private String accname;			//提现银行账户				或者提现支付宝昵称【支付宝昵称】
-    private String orderStatus;		//提现状态:预下单1处理中2成功3失败
-    private String bankName;		//银行姓名
-    private BigDecimal amount;		//提现金额
-    private BigDecimal fee;			//提现手续费
+public class Withdraw implements Serializable {
+    private static final long serialVersionUID = 1L;
+    private Integer id;                //数据id
+    private String orderId;            //订单号
+    private String userId;            //用户id
+    private String withdrawType;    //商户提现1，码商提现2
+    private String bankNo;            //提现银行卡				或者提现支付账号【登录账号】
+    private String accname;            //提现银行账户				或者提现支付宝昵称【支付宝昵称】
+    private String orderStatus;        //提现状态:预下单1处理中2成功3失败
+    private String bankName;        //银行姓名
+    private BigDecimal amount;        //提现金额
+    private BigDecimal amount_amount;        //提现金额
+    private BigDecimal fee;            //提现手续费
     private BigDecimal actualAmount;//实际到账费用
-    private String mobile;			//提现手机
-    private String notify;			//提现成功回调参数
+    private String mobile;            //提现手机
+    private String notify;            //提现成功回调参数
     private String appOrderId;        //下游商户订单号【如果为后台代付 则该字段为空】
     private Date createTime;
     private Date submitTime;
@@ -126,21 +127,35 @@ public class Withdraw implements Serializable{
     public String getUserId() {
         return userId;
     }
+
     public void setUserId(String userId) {
         this.userId = userId == null ? null : userId.trim();
     }
+
     public String getWithdrawType() {
         return withdrawType;
     }
+
     public void setWithdrawType(String withdrawType) {
         this.withdrawType = withdrawType == null ? null : withdrawType.trim();
     }
+
+    public BigDecimal getAmount_amount() {
+        return amount_amount;
+    }
+
+    public void setAmount_amount(BigDecimal amount_amount) {
+        this.amount_amount = amount_amount;
+    }
+
     public String getBankNo() {
         return bankNo;
     }
+
     public void setBankNo(String bankNo) {
         this.bankNo = bankNo == null ? null : bankNo.trim();
     }
+
     public String getAccname() {
         return accname;
     }

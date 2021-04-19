@@ -8,6 +8,7 @@ import alipay.manage.mapper.MediumMapper;
 import alipay.manage.mapper.UserInfoMapper;
 import alipay.manage.service.CorrelationService;
 import alipay.manage.service.MediumService;
+import alipay.manage.util.bankcardUtil.BankTypeUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import org.slf4j.Logger;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import otc.api.alipay.Common;
 import otc.bean.alipay.Medium;
+import otc.common.RedisConstant;
 import otc.util.number.Number;
 
 import javax.annotation.Resource;
@@ -24,19 +26,27 @@ import java.util.List;
 @Service
 public class MediumServiceImpl implements MediumService {
     Logger log = LoggerFactory.getLogger(MediumServiceImpl.class);
-    @Resource  MediumMapper mediumDao;
-    @Autowired UserInfoMapper userInfoMapper;
-    @Autowired CorrelationService correlationService;
-    @Autowired RedisUtil redisUtil;
+    @Resource
+    MediumMapper mediumDao;
+    @Resource
+    UserInfoMapper userInfoMapper;
+    @Autowired
+    CorrelationService correlationService;
+    @Autowired
+    RedisUtil redisUtil;
+
     @Override
     public boolean addMedium(Medium medium) {
-        MediumExample example =  new MediumExample();
+        MediumExample example = new MediumExample();
         MediumExample.Criteria criteria = example.createCriteria();
         if (StrUtil.isNotBlank(medium.getMediumNumber())) {
-            criteria.andMediumNumberEqualTo(medium.getMediumNumber());
+            criteria.andMediumNumberEqualTo(medium.getMediumNumber());//银行卡号
+            /**
+             * 这里验证唯一需要加上  银行卡类型
+             */
         }
         criteria.andIsDealEqualTo(Common.Medium.QR_IS_DEAL_ON);
-        if (CollUtil.isNotEmpty(mediumDao.selectByExample(example))) {
+        if (CollUtil.isNotEmpty(mediumDao.selectByExample(example))) {//验证银行卡号唯一
             return false;
         }
         String medium2 = Number.getMedum();
@@ -45,10 +55,14 @@ public class MediumServiceImpl implements MediumService {
         medium.setStatus(Integer.valueOf(Common.STATUS_IS_NOT_OK));
         String agentId = correlationService.findAgent(medium.getQrcodeId());
         medium.setAttr(agentId);//顶代标识
-        int insertSelective =mediumDao.insertSelective(medium);
+        /**
+         * 还需要   添加当前 银行卡当日最高接单金额， 以及当前银行卡当前回调标识，，， 各个银行都是不一样的   回调标识  在这里单独写方法以做区分
+         */
+        medium.setNotfiyMask(BankTypeUtil.replaceBank(medium.getAccount(), medium.getMediumNumber()));
+        int insertSelective = mediumDao.insertSelective(medium);
         Medium medium1 = mediumDao.findMediumBy(medium2);
         UserInfo user = userInfoMapper.findUserByUserId(medium1.getQrcodeId());
-        boolean deleteAccountMedium = correlationService.addAccountMedium(user.getUserId(),user.getUserId(), medium1.getId());
+        boolean deleteAccountMedium = correlationService.addAccountMedium(user.getUserId(), user.getUserId(), medium1.getId());
         if (deleteAccountMedium) {
             log.info("【账户，账户代理关系，账户媒介关系更新完毕】");
         } else {
@@ -146,11 +160,13 @@ public class MediumServiceImpl implements MediumService {
     @Override
     public List<Medium> findIsMyMediumPage(String accountId) {
         List<Medium> selectByExample = mediumDao.findIsMyMediumPage(accountId);
-//        for(Medium medium : selectByExample)
-//            if(redisUtil.hasKey(medium.getMediumNumber()+ RedisConstant.User.QUEUEQRNODE) )
-//                medium.setIsQueue("1");
-//            else
-//                medium.setIsQueue("2");
+        for (Medium medium : selectByExample) {
+            if (redisUtil.hasKey(medium.getMediumNumber() + RedisConstant.User.QUEUEQRNODE)) {
+                medium.setIsQueue("1");
+            } else {
+                medium.setIsQueue("2");
+            }
+        }
         return selectByExample;
     }
 

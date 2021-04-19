@@ -1,7 +1,6 @@
 package test.number;
 
 import cn.hutool.core.thread.ThreadUtil;
-import cn.hutool.http.HttpUtil;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -12,9 +11,6 @@ public class charN {
 
 	public static void main(String[] args) {
 
-		String s = HttpUtil.get("Http://starpay168.com:5055/api-alipay/deal/wit");
-
-		System.out.println(s);
 	}
 
 	static boolean test() {

@@ -1,11 +1,11 @@
 package alipay.manage.bean;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 
 public class Amount implements Serializable {
 
@@ -25,6 +25,15 @@ public class Amount implements Serializable {
     private String approval;
     private String comment;
     private String dealDescribe;
+    private String transferUserId;//转账入款人
+
+    public String getTransferUserId() {
+        return transferUserId;
+    }
+
+    public void setTransferUserId(String transferUserId) {
+        this.transferUserId = transferUserId;
+    }
 
     public Integer getId() {
         return id;

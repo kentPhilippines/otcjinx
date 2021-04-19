@@ -43,27 +43,36 @@ public class RechargeContorller {
     @Autowired LogUtil logUtil;
     @Autowired ProductService productService;
     @Autowired FactoryForStrategy factoryForStrategy;
-    @Autowired OrderService orderServiceImpl;
-    @Autowired UserFundService userFundServiceImpl;
-    @Autowired UserInfoService userInfoServiceImpl;
-    @Autowired WithdrawService withdrawServiceImpl;
-    @Autowired RechargeService rechargeServiceImpl;
-    @Autowired CorrelationService correlationServiceImpl;
-    private static final String MY_RECHARGE = "MyChannelRecharge";
-    private static final String MY_WITHDRAW = "MyChannelWithdraw";
-    private static final String RECHARGENO_NOTFIY = "127.0.0.1:3212/otc/rechaege-notfiy";
-    private static final String WIT_NOTFIY = "127.0.0.1:3212/otc/rechaege-notfiy";
-    /**
-     * <p>获取可用的充值渠道</p>
-     * <p>这里的渠道就是自营产品</p>
-     * @return
-     */
-    @RequestMapping("/findEnabledPayType")
-    @ResponseBody
-    public Result findEnabledPayType() {
-       List<Product> list = productService.findAllProduct();
-        return Result.buildSuccessResult(list);
-    }
+	@Autowired
+	OrderService orderServiceImpl;
+	@Autowired
+	UserFundService userFundServiceImpl;
+	@Autowired
+	UserInfoService userInfoServiceImpl;
+	@Autowired
+	WithdrawService withdrawServiceImpl;
+	@Autowired
+	RechargeService rechargeServiceImpl;
+	@Autowired
+	CorrelationService correlationServiceImpl;
+	private static final String MY_RECHARGE = "MyChannelRecharge";
+	private static final String MY_WITHDRAW = "MyChannelWithdraw";
+	private static final String RECHARGENO_NOTFIY = "127.0.0.1:3212/otc/rechaege-notfiy";
+	private static final String WIT_NOTFIY = "127.0.0.1:3212/otc/rechaege-notfiy";
+
+
+	/**
+	 * <p>获取可用的充值渠道</p>
+	 * <p>这里的渠道就是自营产品</p>
+	 *
+	 * @return
+	 */
+	@RequestMapping("/findEnabledPayType")
+	@ResponseBody
+	public Result findEnabledPayType() {
+		List<Product> list = productService.findAllProduct();
+		return Result.buildSuccessResult(list);
+	}
 
     /**
      * 充值生成订单

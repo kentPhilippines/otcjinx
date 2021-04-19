@@ -82,8 +82,8 @@ public interface DealOrderAppMapper {
 
 
     @Select(
-            "select  sum(orderAmount) as orderAmount" +
-                    "from alipay_deal_order_app where orderAccount = #{appId} and TO_DAYS(createTime) =  TO_DAYS(now()) and orderStatus = 2  ; "
+            " select  sum(orderAmount) as orderAmount " +
+                    " from alipay_deal_order_app where orderAccount = #{appId} and TO_DAYS(createTime) =  TO_DAYS(now()) and orderStatus = 2  group by orderStatus; "
     )
     DealOrderApp findOrderByAppSum(@Param("appId") String appId);
 }

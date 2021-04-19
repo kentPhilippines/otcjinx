@@ -16,6 +16,7 @@
     <result column="appOrderId" property="appOrderId" jdbcType="VARCHAR" />
      <result column="witChannel" property="witChannel"  />
     <result column="amount" property="amount" jdbcType="DECIMAL" />
+    <result column="amount_amount" property="amount_amount" jdbcType="DECIMAL"/>
     <result column="fee" property="fee" jdbcType="DECIMAL" />
     <result column="actualAmount" property="actualAmount" jdbcType="DECIMAL" />
     <result column="mobile" property="mobile" jdbcType="CHAR" />
@@ -358,7 +359,7 @@
         witType = #{record.witType},
       </if>
       <if test="record.appOrderId != null" >
-        witType = #{record.appOrderId},
+        appOrderId = #{record.appOrderId},
       </if>
     </set>
     <if test="_parameter != null" >
