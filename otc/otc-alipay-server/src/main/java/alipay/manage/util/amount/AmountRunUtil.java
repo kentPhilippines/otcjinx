@@ -98,6 +98,11 @@ public class AmountRunUtil {
     private static final Integer USDT_GAS_FEE_NUMBER = 31;// USDT结算矿工手续费
 
 
+    private static final String DETETE_AMOUNT_TRANSTER = "DETETE_AMOUNT_TRANSTER";//转账减款
+    private static final Integer DETETE_AMOUNT_TRANSTER_NUMBER = 32;//转账减款
+    private static final String ADD_AMOUNT_TRANSTER = "ADD_AMOUNT_TRANSTER";//转账加款
+    private static final Integer ADD_AMOUNT_TRANSTER_NUMBER = 33;//转账加款
+
     /**
      * <p>码商代付流水生成</p>
      *
@@ -556,6 +561,12 @@ public class AmountRunUtil {
             case USDT_GAS_FEE:
                 runOrderType = USDT_GAS_FEE_NUMBER;
                 break;
+            case DETETE_AMOUNT_TRANSTER:
+                runOrderType = DETETE_AMOUNT_TRANSTER_NUMBER;
+                break;
+            case ADD_AMOUNT_TRANSTER:
+                runOrderType = ADD_AMOUNT_TRANSTER_NUMBER;
+                break;
             default:
                 break;
         }
@@ -606,4 +617,22 @@ public class AmountRunUtil {
     }
 
 
+    public Result deleteAmountTRANS(Amount amount, String clientIP) {
+
+        Result delete = delete(DETETE_AMOUNT_TRANSTER, amount.getUserId(), amount.getOrderId(), amount.getActualAmount(),
+                clientIP, amount.getDealDescribe(), RUNTYPE_ARTIFICIAL);
+        if (delete.isSuccess()) {
+            return delete;
+        }
+        return Result.buildFailMessage("流水生成失败");
+    }
+
+    public Result addAmountTRANS(Amount amount, String clientIP) {
+        Result add = add(ADD_AMOUNT_TRANSTER, amount.getTransferUserId(), amount.getOrderId(), amount.getActualAmount(),
+                clientIP, amount.getDealDescribe(), RUNTYPE_ARTIFICIAL);
+        if (add.isSuccess()) {
+            return add;
+        }
+        return Result.buildFailMessage("流水生成失败");
+    }
 }

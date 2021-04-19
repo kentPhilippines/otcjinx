@@ -21,7 +21,7 @@ import java.util.Map;
 public class witTest {
 	public static void main(String[] args) {
 		new witTest().deal();
-
+		//find();
 /*
         String userid2 = "2u7rMduh";
         String key2 = "1CA9B6463CBE1809531432D0210D8346";
@@ -103,15 +103,29 @@ public class witTest {
 		return null;
 	}
 
+	static void find() {
+
+		String userid2 = "facai123";
+		String key2 = "52148D59F72532316ED398A1F3281D73";//交易密钥
+		Map<String, Object> map = new HashMap<>();
+		map.put("appId", userid2);
+		String createParam = createParam(map);
+		System.out.println("签名前请求串：" + createParam);
+		String md5 = getKeyedDigestUTF8(createParam + key2);
+		map.put("sign", md5);
+		String post = HttpUtil.post("127.0.0.1:9010/deal/findOrderSum", map);
+		System.out.println(post);
+
+	}
 
 	void wit(String userid1, String key1, String publickey) {
-        SimpleDateFormat d = new SimpleDateFormat("yyyyMMddHHmmss");
-        String userid = userid1;
-        String key = key1;//交易密钥
-        long amount = RandomUtil.randomLong(400, 500);
-        Map<String, Object> objectToMap = new HashMap<>();
-        objectToMap.put("appid", userid);
-        objectToMap.put("apporderid", StrUtil.uuid());
+		SimpleDateFormat d = new SimpleDateFormat("yyyyMMddHHmmss");
+		String userid = userid1;
+		String key = key1;//交易密钥
+		long amount = RandomUtil.randomLong(400, 500);
+		Map<String, Object> objectToMap = new HashMap<>();
+		objectToMap.put("appid", userid);
+		objectToMap.put("apporderid", StrUtil.uuid());
 		objectToMap.put("ordertime", d.format(new Date()) + "");
 		objectToMap.put("amount", 600);
 		objectToMap.put("acctno", "test123123123123");
@@ -121,7 +135,7 @@ public class witTest {
         String createParam = createParam(objectToMap);
         System.out.println("签名前请求串：" + createParam);
         String md5 = getKeyedDigestUTF8(createParam + key);
-        System.out.println("签名：" + md5);
+		System.out.println("签名：" + md5);
 		objectToMap.put("sign", md5);
 		String createParam2 = createParam(objectToMap);
 		System.out.println("加密前字符串：" + createParam2);
@@ -143,10 +157,16 @@ public class witTest {
 
 	void deal() {
 		SimpleDateFormat d = new SimpleDateFormat("yyyyMMddHHmmss");
-		String userid = "USDTEST";
-		String key = "91C3B668978C107E3950CD502538294C";//交易密钥
-		String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDKtB5mlXbyZeWhpcD+3rH8RbSeHTqXvNlhf2SHRmFBlhV35kH91Yjy9daPimc1DPC925tlp1fZPL7Q8d0TVgxgRAhqFghi8vZdAafBhsgOW/wjAzDQj/l6XbE+BvNAtqKc004pMBapsS7ahN3yUHg8qEJ1aDpBTBlakaQHs8rfPQIDAQAB";
-      /*
+		//	String userid = "USDTEST";
+		//	String key = "91C3B668978C107E3950CD502538294C";//交易密钥
+		//	String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDKtB5mlXbyZeWhpcD+3rH8RbSeHTqXvNlhf2SHRmFBlhV35kH91Yjy9daPimc1DPC925tlp1fZPL7Q8d0TVgxgRAhqFghi8vZdAafBhsgOW/wjAzDQj/l6XbE+BvNAtqKc004pMBapsS7ahN3yUHg8qEJ1aDpBTBlakaQHs8rfPQIDAQAB";
+		String userid = "186qp";
+		String key = "D3E467DE4346429A8750EB9F26DFDF5A";
+		String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCJUBzCpCxiekeXG0y1TkxWMJQW0rOTuZ6fZIDT2DNwwTUgWzAzCvEsw+6/0NiiCWTXk6z1x0JjNEaZA4rkIM6n9ixbiYL/lnYvXxEFH3CuL2v0EJvBT30xcm7UlWhusC2Ol6HwdnvZcfRqGKTbDiLmKh9TSbdalZLVFoRKniMwhwIDAQAB";
+
+
+
+		/*
         String userid = "kbo88";
         String key = "7CDBBBEFCAAC44939DD629E234EEAC07";//交易密钥
         String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCBezPAu1hAOIK625rkH5B0n3/5qIv9s5uXqebxhEIlPEP8TLaZU3OkaAizpSsyiU5ONnJUAN+6egQAFED5XdOcHq5xdw7MIt1JBP+7JRf7ejsBf/qZQTCjJVC/9jdfg9FMnfSn+bw5JpLuhVCQm3H7I5UShknNdkWKkNprL2lE/wIDAQAB";
@@ -161,12 +181,12 @@ public class witTest {
 		deal.setPageUrl("http://starpay168.com:5055");
 		deal.setOrderId(IdUtil.objectId());
 		deal.setPassCode("USDT");
-        deal.setSubject("订单交易");
-        deal.setUserid("USDT");  //to userid
-        Map<String, Object> objectToMap = MapUtil.objectToMap(deal);
-        String createParam = createParam(objectToMap);
-        System.out.println("签名前请求串：" + createParam);
-        String md5 = getKeyedDigestUTF8(createParam + key);
+		deal.setSubject("订单交易");
+		deal.setUserid("USDT");  //to userid
+		Map<String, Object> objectToMap = MapUtil.objectToMap(deal);
+		String createParam = createParam(objectToMap);
+		System.out.println("签名前请求串：" + createParam);
+		String md5 = getKeyedDigestUTF8(createParam + key);
         System.out.println("签名：" + md5);
         deal.setSign(md5);
 		Map<String, Object> objectToMap2 = MapUtil.objectToMap(deal);

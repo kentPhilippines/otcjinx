@@ -46,6 +46,15 @@ public interface WithdrawMapper {
     @Select("select * from alipay_withdraw where orderId = #{orderId}")
     Withdraw findWitOrder(@Param("orderId") String orderId);
 
+
+    /**
+     * 代付失败  附加修改订单为已推送
+     *
+     * @param orderId
+     * @param orderStatus
+     * @param comment
+     * @return
+     */
     @Update("update alipay_withdraw set " +
             "orderStatus = #{orderStatus}, " +
             "comment = #{comment}, " +
@@ -69,7 +78,7 @@ public interface WithdrawMapper {
 
 
     @Update("update alipay_withdraw set " +
-            "comment = #{comment}" +
+            "comment = #{comment} " +
             "where orderId = #{orderId}")
     void updateComment(@Param("orderId") String orderId, @Param("comment") String comment);
 
@@ -83,6 +92,6 @@ public interface WithdrawMapper {
 
     @Select(
             "select  sum(amount) as amount " +
-                    "from alipay_withdraw where userId = #{appId} and TO_DAYS(createTime) =  TO_DAYS(now()) and orderStatus = 2  ; ")
+                    " from alipay_withdraw where userId = #{appId} and TO_DAYS(createTime) =  TO_DAYS(now()) and orderStatus = 2   group by orderStatus ; ")
     Withdraw findOrderByAppSum(@Param("appId") String appId);
 }

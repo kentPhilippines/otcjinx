@@ -310,6 +310,7 @@ public class Api {
         if (!DeductStatusEnum.DEDUCT_STATUS_PROCESS.matches(Integer.parseInt(oldStatus))) {//状态不相等，说明订单已经被处理
             return Result.buildFailMessage("订单已被处理，不允许重复操作");
         }
+
         switch (amountType) {
             case Common.Deal.AMOUNT_ORDER_ADD:
                 if (orderStatus.equals(Common.Deal.AMOUNT_ORDER_SU)) {//加款订单成功，
@@ -462,8 +463,48 @@ public class Api {
                         }
                     }
                 }
-                return Result.buildFailMessage("人工处理授权失败");
+            case Common.Deal.AMOUNT_ORDER_FRANSFER:   //减少授权订单
+                if (orderStatus.equals(Common.Deal.AMOUNT_ORDER_SU)) {
+                    UserFund userFund = userInfoServiceImpl.fundUserFundAccounrBalace(amount.getUserId());
+                    if (userFund == null) {
+                        throw new BusinessException("此用户不存在");
+                    }
+                    BigDecimal balance = userFund.getAccountBalance();
+                    BigDecimal deduct = amount.getAmount();
+                    if (balance.compareTo(deduct) > -1) {//余额充足
+                        int a = amountDao.updataOrder(orderId.toString(), orderStatus.toString(), approval.toString(), comment.toString());
+                        //  userFund  减款人
+                        String transferUserId = amount.getTransferUserId();
+                        if (StrUtil.isEmpty(transferUserId)) {
+                            return Result.buildFailMessage("转入账户为空，请确认");
+                        }
+                        UserFund userFund1 = userInfoServiceImpl.fundUserFundAccounrBalace(transferUserId);//加款人
 
+                        Result result = amountPublic.deleteAmount(userFund, amount.getAmount(), orderId.toString());
+                        if (result.isSuccess()) {
+                            Result result1 = amountRunUtil.deleteAmountTRANS(amount, clientIP);
+                            if (!result1.isSuccess()) {
+                                throw new BusinessException("减款出错");
+                            }
+                        }
+                        Result result1 = amountPublic.addAmountAdd(userFund1, amount.getAmount(), amount.getOrderId());
+                        if (result1.isSuccess()) {
+                            Result result2 = amountRunUtil.addAmountTRANS(amount, clientIP);
+                            if (!result2.isSuccess()) {
+                                throw new BusinessException("减款出错");
+                            }
+                        }
+                        return Result.buildSuccessMessage("订单已处理");
+                    } else {//余额不足
+                        return Result.buildFailMessage("操作失败，账户余额不足");
+                    }
+                } else if (orderStatus.equals(Common.Deal.AMOUNT_ORDER_ER)) {
+                    int a = amountDao.updataOrder(orderId.toString(), orderStatus.toString(), approval.toString(), comment.toString());
+                    if (a > 0) {
+                        return Result.buildSuccessMessage("订单已处理为失败");
+                    }
+                }
+                return Result.buildFailMessage("人工处理失败");
             default:
                 return Result.buildFailMessage("人工处理订单失败");
         }
@@ -644,7 +685,6 @@ public class Api {
             } else {//余额不足
                 return Result.buildFailMessage("操作失败，账户余额不足");
             }
-
         }
         return Result.buildFailMessage("操作失败");
     }

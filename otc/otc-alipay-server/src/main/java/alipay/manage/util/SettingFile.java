@@ -84,5 +84,7 @@ public class SettingFile {
         boolean load = setting.load();
         return load;
     }
+
+
 }
 

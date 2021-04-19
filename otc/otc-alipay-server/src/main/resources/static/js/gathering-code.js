@@ -1,39 +1,43 @@
 var gatheringCodeVM = new Vue({
 	el : '#gatheringCode',
 	data : {
-		gatheringChannelCode : '',
-		gatheringChannelDictItems : [],
-		mediumDictItems : [],
-		qrcodeArray:[],
-		gatheringCodeStateDictItems : [],
-		accountTime : dayjs().format('YYYY-MM-DD'),
-		gatheringCodes : [],
-		mediums : [],
-		qrcodeId : '',
-		pageNum : 1,
-		pageNum1 : 1,
-		totalPage : 1,
-		totalPage1 : 1,
-		mediumCode : '',
-		mediumId:'',
-		editShow  : false,
-		mediumShow : true,
-		qrcodeShow : false,
-		addQrShow : false,
-		showGatheringCodeFlag : true,
-		mediumEdit : false,
-		editGatheringCode : {//二维码处理
-			gatheringChannelCode : '',
+		gatheringChannelCode: '',
+		gatheringChannelDictItems: [],
+		mediumDictItems: [],
+		mediumDictBankItems: [],
+		mediumDictBankTypeItems: [],
+		qrcodeArray: [],
+		gatheringCodeStateDictItems: [],
+		accountTime: dayjs().format('YYYY-MM-DD'),
+		gatheringCodes: [],
+		mediums: [],
+		qrcodeId: '',
+		pageNum: 1,
+		pageNum1: 1,
+		totalPage: 1,
+		totalPage1: 1,
+		mediumCode: '',
+		mediumId: '',
+		editShow: false,
+		mediumShow: true,
+		qrcodeShow: false,
+		addQrShow: false,
+		showGatheringCodeFlag: true,
+		mediumEdit: false,
+		editGatheringCode: {//二维码处理
+			gatheringChannelCode: '',
 			fixedGatheringAmount : true,
 			gatheringAmount : '',
 		},
 		medium : {//支付媒介处理
-			mediumId : '',
-			mediumNumber : '',
-			mediumPhone : '',
-			mediumHolder:'',
-			code : '',
-			status : ''
+			mediumId: '',
+			mediumNumber: '',
+			mediumPhone: '',
+			mediumHolder: '',
+			bankcode: '',
+			account: '',
+			code: '',
+			status: ''
 		},
 		showEditGatheringCodeFlag : false,
 	},
@@ -65,46 +69,64 @@ var gatheringCodeVM = new Vue({
 	},
 	mounted : function() {
 		var that = this;
-		headerVM.title = '收款码';
+		headerVM.title = '银行卡';
 		headerVM.showBackFlag = true;
 		that.loadGatheringChannelDictItem();
+		that.loadGatheringBankCodelDictItem();
 		that.loadMediumsByPage();
-		
-		$('.gathering-code-pic').on('fileuploaded', function(event, data, previewId, index) {
-	    	that.qrcodeId = data.response.result.join(',');
+
+		$('.gathering-code-pic').on('fileuploaded', function (event, data, previewId, index) {
+			that.qrcodeId = data.response.result.join(',');
 			that.addQrcodeInfoSu();
 		});
-		
+
 	},
 	methods : {
 		/**
-         * 获取收款渠道1
-         */
-		loadGatheringChannelDictItem : function() {
+		 * 获取收款渠道1
+		 */
+		loadGatheringChannelDictItem: function () {
 			var that = this;
-			that.$http.get('/recharge/findEnabledPayType' ).then(function(res) {
+			that.$http.get('/recharge/findEnabledPayType').then(function (res) {
 				this.gatheringChannelDictItems = res.body.result;
 				this.mediumDictItems = [
-                    {mediumCode: 'card', mediumName: '银行卡'}
-                ]
+					{mediumCode: 'card', mediumName: '银行卡'}
+				]
 			});
 		},
-		query1 : function() {
+		loadGatheringBankCodelDictItem: function () {
+			var that = this;
+			that.$http.get('/recharge/findEnabledPayType').then(function (res) {
+				this.gatheringChannelDictItems = res.body.result;
+				this.mediumDictBankItems = [
+					{mediumCode: 'PSBC', mediumName: '邮储银行'},
+					{mediumCode: 'CCB', mediumName: '建设银行'},
+					{mediumCode: 'ICBC', mediumName: '工商银行'},
+					{mediumCode: 'ABC', mediumName: '农业银行'},
+					{mediumCode: 'CMB', mediumName: '招商银行'},
+				]
+				this.mediumDictBankTypeItems = [
+					{mediumCode: 'W', mediumName: '出款卡'},
+					{mediumCode: 'R', mediumName: '入款卡'},
+				]
+			});
+		},
+		query1: function () {
 			this.pageNum1 = 1;
 			this.loadMediumsByPage();
 		},
 
-		prePage1 : function() {
+		prePage1: function () {
 			this.pageNum1 = this.pageNum1 - 1;
 			this.loadMediumsByPage();
 		},
 
-		nextPage1 : function() {
+		nextPage1: function () {
 			this.pageNum1 = this.pageNum1 + 1;
 			this.loadMediumsByPage();
 		},
 
-		loadMediumsByPage : function() {
+		loadMediumsByPage: function () {
 			var that = this;
 			that.$http.get('/statisticalAnalysis/findMediumsByPage', {
 				params : {
@@ -206,12 +228,13 @@ var gatheringCodeVM = new Vue({
 			var that = this;
 			if (mediumId == null || mediumId == '') {//添加收款媒介
 				that.medium = {
-						mediumId : '',
-						mediumNumber : '',
-						mediumPhone : '',
-						mediumHolder:'',
-						code : '',
-						status : ''
+					mediumId: '',
+					mediumNumber: '',
+					mediumPhone: '',
+					mediumHolder: '',
+					bankcode: '',
+					code: '',
+					status: ''
 				};
 				that.showEditMediumCodePageInner();
 			} else {//编辑收款媒介
@@ -309,31 +332,31 @@ var gatheringCodeVM = new Vue({
 				}
 			});
 		},
-		addQr : function(){//添加收款码
+		addQr: function () {//添加收款码
 			headerVM.showBackFlag = false;
 			headerVM.title = '添加收款码';
-			this.mediumShow = false; 
-			this.mediumEdit = false; 
-			this.qrcodeShow = false; 
-			this.addQrShow = true; 
+			this.mediumShow = false;
+			this.mediumEdit = false;
+			this.qrcodeShow = false;
+			this.addQrShow = true;
 			this.initFileUploadWidget();
 		},
-		reply : function(){ 
+		reply: function () {
 			headerVM.showBackFlag = true;
-			headerVM.title = '收款码';
-			this.mediumShow = true; 
-			this.mediumEdit = false; 
-			this.qrcodeShow = false; 
+			headerVM.title = '银行卡';
+			this.mediumShow = true;
+			this.mediumEdit = false;
+			this.qrcodeShow = false;
 		},
-		forQrManage  : function(){
+		forQrManage: function () {
 			headerVM.showBackFlag = false;
-			headerVM.title = '我的收款码';
+			headerVM.title = '我的银行卡';
 			this.mediumShow = false;//关闭主页面
 			this.mediumEdit = false;//打开编辑媒介页面
 			this.qrcodeShow = true;//二维码编辑页面关闭
 			this.addQrShow = false;//二维码编辑页面关闭
 		},
-		showEditGatheringCodePageInner : function() {
+		showEditGatheringCodePageInner: function () {
 			headerVM.showBackFlag = false;
 			headerVM.title = '添加收款码';
 			this.showGatheringCodeFlag = false;//展示所有二维码数据
@@ -380,33 +403,49 @@ var gatheringCodeVM = new Vue({
 			}
 			if (medium.mediumHolder == null || medium.mediumHolder == '') {
 				layer.alert('请填写收款人', {
-					title : '提示',
-					icon : 7,
-					time : 3000
+					title: '提示',
+					icon: 7,
+					time: 3000
 				});
 				return;
 			}
 			if (medium.mediumPhone == null || medium.mediumPhone == '') {
 				layer.alert('请填写关联手机号/邮箱/编号', {
-					title : '提示',
-					icon : 7,
-					time : 3000
+					title: '提示',
+					icon: 7,
+					time: 3000
 				});
 				return;
 			}
-			if(that.medium.mediumId == ''|| that.medium.mediumId == null){//媒介系统编号为NULL则是新增
-				that.$http.post('/statisticalAnalysis/addMedium',  that.medium ).then(function(res) {
-					if(res.body.success){
+			if (medium.bankcode == null || medium.bankcode == '') {
+				layer.alert('请选择银行卡类型/出款/入款', {
+					title: '提示',
+					icon: 7,
+					time: 3000
+				});
+				return;
+			}
+			if (medium.account == null || medium.account == '') {
+				layer.alert('请选择银行卡开户行', {
+					title: '提示',
+					icon: 7,
+					time: 3000
+				});
+				return;
+			}
+			if (that.medium.mediumId == '' || that.medium.mediumId == null) {//媒介系统编号为NULL则是新增
+				that.$http.post('/statisticalAnalysis/addMedium', that.medium).then(function (res) {
+					if (res.body.success) {
 						layer.alert('操作成功!', {
-							icon : 1,
-							time : 3000,
-							shade : false
+							icon: 1,
+							time: 3000,
+							shade: false
 						});
 						that.reply();
 						that.loadMediumsByPage();
-					}else{
+					} else {
 						layer.alert(res.body.message, {
-							icon : 1,
+							icon: 1,
 							time : 3000,
 							shade : false
 						});

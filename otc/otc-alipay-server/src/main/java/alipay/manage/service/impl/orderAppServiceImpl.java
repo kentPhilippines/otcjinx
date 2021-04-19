@@ -6,6 +6,7 @@ import alipay.manage.service.OrderAppService;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 
 @Component
 public class orderAppServiceImpl implements OrderAppService {
@@ -46,7 +47,13 @@ public class orderAppServiceImpl implements OrderAppService {
 
 	@Override
 	public DealOrderApp findOrderByAppSum(String appId) {
-		return dealOrderAppDao.findOrderByAppSum(appId);
+		DealOrderApp orderByAppSum = dealOrderAppDao.findOrderByAppSum(appId);
+		if (null == orderByAppSum) {
+			orderByAppSum = new DealOrderApp();
+			orderByAppSum.setOrderAmount(new BigDecimal("0"));
+		}
+
+		return orderByAppSum;
 	}
 
 }

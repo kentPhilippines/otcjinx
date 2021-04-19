@@ -7,6 +7,8 @@ import otc.api.alipay.Common;
 import otc.bean.dealpay.Withdraw;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
+import java.util.List;
 
 @Component
 public class WithdrawServiceImpl implements WithdrawService {
@@ -46,7 +48,27 @@ public class WithdrawServiceImpl implements WithdrawService {
 
     @Override
     public Withdraw findOrderByAppSum(String appId) {
-        return withdrawDao.findOrderByAppSum(appId);
+        Withdraw ordemaprByAppSum = withdrawDao.findOrderByAppSum(appId);
+        if (null == ordemaprByAppSum) {
+            ordemaprByAppSum = new Withdraw();
+            ordemaprByAppSum.setAmount(new BigDecimal("0"));
+        }
+        return ordemaprByAppSum;
+    }
+
+    @Override
+    public List<Withdraw> findSuccessAndNotAmount() {
+        return null;
+    }
+
+    @Override
+    public void updateSuccessAndAmount(String orderId) {
+
+    }
+
+    @Override
+    public boolean updatePush(String orderId) {
+        return false;
     }
 
 }

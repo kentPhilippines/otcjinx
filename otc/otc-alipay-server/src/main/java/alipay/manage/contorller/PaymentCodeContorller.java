@@ -335,7 +335,7 @@ public class PaymentCodeContorller {
         log.info("bizMembersValue ===>"+ bizMembersValue);
         //取两个集合的交集 接单人员集合
         List<String> bizingMembers = subLevelMembers.stream().filter(item -> bizMembersValue.contains(item)).collect(toList());
-        log.info("bizingMembers ===>"+ bizingMembers);
+        log.info("bizingMembers ===>" + bizingMembers);
 
         OnlineVO onlineVO = new OnlineVO();
         onlineVO.setLoginOnlineCount(loginMembers.size());
@@ -345,4 +345,14 @@ public class PaymentCodeContorller {
         onlineVO.setIsAgent(user.getIsAgent());
         return Result.buildSuccessResult("数据获取成功", onlineVO);
     }
+
+    @PostMapping("/offMedium")
+    @ResponseBody
+    public Result offMedium(HttpServletRequest request) {
+
+
+        return null;
+    }
+
+
 }
