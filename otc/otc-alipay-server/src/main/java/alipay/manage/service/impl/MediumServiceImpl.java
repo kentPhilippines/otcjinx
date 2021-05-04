@@ -21,6 +21,8 @@ import otc.common.RedisConstant;
 import otc.util.number.Number;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -212,14 +214,49 @@ public class MediumServiceImpl implements MediumService {
         return CollUtil.isEmpty(selectByExample)?null:CollUtil.getFirst(selectByExample);
     }
 
-	@Override
-	public List<Medium> findMediumByType(String mediumType) {
-		return mediumDao.findMediumByType1(mediumType);
-	}
+    @Override
+    public List<Medium> findMediumByType(String mediumType) {
+        return mediumDao.findMediumByType1(mediumType);
+    }
 
-	@Override
-	public List<Medium> findMediumByType(String mediumType, String code) {
-		return mediumDao.findMediumByType(mediumType,code);
-	}
+    @Override
+    public List<Medium> findMediumByType(String mediumType, String code) {
+        return mediumDao.findMediumByType(mediumType, code);
+    }
+
+    @Override
+    public List<Medium> findBankByAmount(BigDecimal amount, String[] code) {
+        List<Medium> medList = new ArrayList<>();
+
+        if (null == code || code.length == 0) {
+            return mediumDao.findBankByAmount(amount);
+        } else {
+
+
+            List<Medium> bankByAmountAndAttr = mediumDao.findBankByAmountAndAttr(code);
+            for (Medium med : bankByAmountAndAttr) {
+                Boolean a = Boolean.FALSE;
+                if (Double.valueOf(med.getMountNow()) + amount.toBigInteger().doubleValue() < Double.valueOf(med.getMountLimit())) {
+                    medList.add(med);
+                    a = Boolean.TRUE;
+                }
+                if (!a && Double.valueOf(med.getMountSystem()) + amount.toBigInteger().doubleValue() < Double.valueOf(med.getMountLimit())) {
+                    medList.add(med);
+                }
+            }
+
+
+            return medList;
+        }
+    }
+
+    @Override
+    public void updateMountNow(String bankAccount, BigDecimal dealAmount, String add) {
+        if (add.equals("sub")) {//减款
+            mediumDao.subMountNow(bankAccount, dealAmount);
+        } else if (add.equals("add")) {//加款
+            mediumDao.addMountNow(bankAccount, dealAmount);
+        }
+    }
 
 }

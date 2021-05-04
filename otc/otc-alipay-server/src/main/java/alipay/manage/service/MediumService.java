@@ -1,13 +1,15 @@
 package alipay.manage.service;
 
 
-import java.util.List;
-
 import otc.bean.alipay.Medium;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 public interface MediumService {
     /**
      * <p>添加收款媒介</p>
+     *
      * @param medium
      * @return
      */
@@ -96,13 +98,26 @@ public interface MediumService {
      * @param mediumType			媒介类型
      * @return
      */
-	List<Medium> findMediumByType(String mediumType);
+    List<Medium> findMediumByType(String mediumType);
 
-	/**
-	 * <p>根据媒介类型和媒介供应code 查询所有的可用的媒介</p>
-	 * @param mediumType				媒介类型
-	 * @param code						供应code
-	 * @return
-	 */
-	List<Medium> findMediumByType(String mediumType, String code);
+    /**
+     * <p>根据媒介类型和媒介供应code 查询所有的可用的媒介</p>
+     *
+     * @param mediumType 媒介类型
+     * @param code       供应code
+     * @return
+     */
+    List<Medium> findMediumByType(String mediumType, String code);
+
+
+    /**
+     * 根据金额查询符合要求的银行卡
+     *
+     * @param amount
+     * @param code
+     * @return
+     */
+    List<Medium> findBankByAmount(BigDecimal amount, String[] code);
+
+    void updateMountNow(String bankAccount, BigDecimal dealAmount, String add);
 }

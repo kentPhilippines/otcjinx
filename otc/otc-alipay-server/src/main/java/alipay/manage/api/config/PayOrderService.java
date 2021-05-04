@@ -10,7 +10,6 @@ import alipay.manage.util.OrderUtil;
 import alipay.manage.util.amount.AmountPublic;
 import alipay.manage.util.amount.AmountRunUtil;
 import cn.hutool.core.map.MapUtil;
-import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.log.Log;
@@ -69,19 +68,27 @@ public abstract class PayOrderService implements PayService {
 	public boolean orderEr(DealOrderApp orderApp, String msg) {
 		log.info("【将当前订单置为失败，当前交易订单号：" + orderApp.getOrderId() + "】");
 		DealOrder dealOrder = orderServiceImpl.findAssOrder(orderApp.getOrderId());
-		if(ObjectUtil.isNotNull(dealOrder)) {
+		if (ObjectUtil.isNotNull(dealOrder)) {
 			boolean updateOrderStatus = orderServiceImpl.updateOrderStatus(dealOrder.getOrderId(), Common.Order.DealOrder.ORDER_STATUS_ER, msg);
-			if(updateOrderStatus) {
+			if (updateOrderStatus) {
 				OrderAppServiceImpl.updateOrderEr(orderApp.getOrderId(), msg);
 				return true;
 			}
 		}
 		return false;
 	}
-	public boolean orderEr(DealOrderApp orderApp){
-		return orderEr(orderApp,"暂无支付渠道");
+
+	public boolean orderAppEr(DealOrderApp orderApp, String msg) {
+		log.info("【将当前订单置为失败，当前交易订单号：" + orderApp.getOrderId() + "】");
+		OrderAppServiceImpl.updateOrderEr(orderApp.getOrderId(), msg);
+		return true;
 	}
-	public String create(DealOrderApp orderApp,String channeId){
+
+	public boolean orderEr(DealOrderApp orderApp) {
+		return orderEr(orderApp, "暂无支付渠道");
+	}
+
+	public String create(DealOrderApp orderApp, String channeId) {
 		log.info("【开始创建本地订单，当前创建订单的商户订单为：" + orderApp.toString() + "】");
 		log.info("【当前交易的渠道账号为：" + channeId + "】");
 		DealOrder order = new DealOrder();
@@ -97,7 +104,7 @@ public abstract class PayOrderService implements PayService {
 		order.setExternalOrderId(orderApp.getAppOrderId());
 		order.setOrderAccount(orderApp.getOrderAccount());
 		order.setNotify(orderApp.getNotify());
-        String orderQrCh = GenerateOrderNo.Generate("C");
+		String orderQrCh = GenerateOrderNo.Generate("J");
         order.setOrderId(orderQrCh);
         order.setOrderQrUser(userinfo.getUserId());
         order.setOrderStatus(Common.Order.DealOrder.ORDER_STATUS_DISPOSE.toString());
@@ -233,9 +240,7 @@ public abstract class PayOrderService implements PayService {
 		int a = withdrawDao.updataOrderStatusEr(orderId,
 				Common.Order.Wit.ORDER_STATUS_ER, msg);
 		if (a > 0) {
-			ThreadUtil.execute(() -> {
 				notifyUtil.wit(orderId);
-			});
 			return Result.buildSuccessMessage("修改成功");
 		} else {
 			return Result.buildFailMessage("修改失败");

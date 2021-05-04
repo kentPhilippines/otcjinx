@@ -111,6 +111,7 @@ public class WitPay extends PayOrderService {
                 //自动推送
                 deal = super.withdraw(bean);
                 if (deal.isSuccess()) {
+                    log.info("【渠道类为：" + channelFee.toString() + "】");
                     deal = factoryForStrategy.getStrategy(channelFee.getImpl()).withdraw(bean);  //   暂时注释，当前修改后方案可能存在不稳定
                 } else {
                     withdrawServiceImpl.updateWitError(bean.getOrderId());

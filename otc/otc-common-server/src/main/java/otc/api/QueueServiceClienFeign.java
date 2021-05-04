@@ -1,17 +1,16 @@
 package otc.api;
 
-import java.util.List;
-
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import otc.api.impl.QueueServiceClienFeignHystrix;
 import otc.bean.alipay.FileList;
 import otc.bean.alipay.Medium;
 import otc.common.PayApiConstant;
 import otc.result.Result;
+
+import java.util.List;
 /**
  * <p>全局队列服务</p>
  * @author K
@@ -39,20 +38,22 @@ public interface QueueServiceClienFeign {
 	 * @param medium
 	 * @return
 	 */
-	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, value =PayApiConstant.Queue.QUEUE_API+PayApiConstant.Queue.ADD_QR )
+	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, value = PayApiConstant.Queue.QUEUE_API + PayApiConstant.Queue.ADD_QR)
 	public Result addNode(Medium medium);
-	
-	
-	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,value = PayApiConstant.Queue.QUEUE_API+PayApiConstant.Queue.DELETE_QR)
+
+
+	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, value = PayApiConstant.Queue.QUEUE_API + PayApiConstant.Queue.DELETE_QR)
 	public Result deleteNode(Medium medium);
-	
-	
+
+	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, value = PayApiConstant.Queue.QUEUE_API + PayApiConstant.Queue.UPDATA_BANK)
+	public void updataNodebank(@RequestParam("mediumNumber") String mediumNumber, @RequestParam("medium") Medium medium);
+
 	/**
 	 * <p>定时任务</p>
+	 *
 	 * @return
 	 */
-	@PostMapping(PayApiConstant.Queue.QUEUE_API+PayApiConstant.Queue.TASK_MEDIUM)
+	@PostMapping(PayApiConstant.Queue.QUEUE_API + PayApiConstant.Queue.TASK_MEDIUM)
 	public Result task();
-	
-	
+
 }

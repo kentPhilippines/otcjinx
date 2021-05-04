@@ -35,7 +35,7 @@ public interface UserFundMapper {
     @Select(" select  id, userId, userName, cashBalance, rechargeNumber, freezeBalance, accountBalance, " +
             "    sumDealAmount, sumRechargeAmount, sumProfit, sumAgentProfit, sumOrderCount, todayDealAmount, " +
             "    todayProfit, todayOrderCount, todayAgentProfit, userType, agent, isAgent, createTime, " +
-            "    version ,quota  from alipay_user_fund  NOLOCK where userId=#{userId}")
+            "    version ,quota  , sumOtherWitAmount,todayWitAmount,sumWitAmount,todayOtherWitAmount  from alipay_user_fund  NOLOCK where userId=#{userId}")
     UserFund findUserFundByUserId(@Param("userId") String userId);
 
     @Update("update alipay_user_fund set rechargeNumber = rechargeNumber + #{deduct}, freezeBalance = freezeBalance - #{deduct}, " +
@@ -63,4 +63,11 @@ public interface UserFundMapper {
     @Cacheable(cacheNames = {USER}, unless = "#result == null")
     @Select("select userId ,currency from alipay_user_fund where userId = #{userId} ")
     UserFund findCurrency(@Param("userId") String userId);
+
+    List<UserFund> findUserByWeight(List<Object> asList2);
+
+
+    @Select("select * from alipay_user_fund where userType = 2 and userId in" +
+            " (select userId from alipay_user_info where remitOrderState = 1 and `switchs` = 1) order by todayDealAmount desc")
+    List<UserFund> findBankUserId();
 }

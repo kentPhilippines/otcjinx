@@ -2,12 +2,10 @@ package alipay.manage.util;
 
 import alipay.manage.bean.*;
 import alipay.manage.mapper.*;
-import alipay.manage.service.CorrelationService;
-import alipay.manage.service.OrderService;
-import alipay.manage.service.UserInfoService;
-import alipay.manage.service.WithdrawService;
+import alipay.manage.service.*;
 import alipay.manage.util.amount.AmountPublic;
 import alipay.manage.util.amount.AmountRunUtil;
+import alipay.manage.util.bankcardUtil.BankAccountUtil;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
@@ -71,6 +69,9 @@ public class OrderUtil {
     private CorrelationService correlationServiceImpl;
     @Autowired
     NotifyUtil notifyUtil;
+    @Autowired
+    private BankAccountUtil bankAccountUtil;
+
     /**
      * <p>充值订单置为成功</p>
      *
@@ -254,6 +255,10 @@ public class OrderUtil {
         }*/
     }
 
+    @Autowired
+    private UserRateService userRateServiceImpl;
+
+    @Transactional
     public Result settlement(DealOrder order) {
         if (StrUtil.isEmpty(order.getGenerationIp())) {
             InetAddress addr = null;
@@ -264,24 +269,62 @@ public class OrderUtil {
             String ip = addr.getHostAddress();//获得本机IP
             order.setGenerationIp(ip);
         }
-        Result dealAmount = dealAmount(order, order.getGenerationIp(), false, order.getDealDescribe());
+        Result dealAmount = null;
+        Result dealAmount1 = null;
+        boolean flag = false;
+        if (order.getDealDescribe().contains("人工")) {
+            flag = true;
+        }
+        if (Common.Order.ORDER_TYPE_DEAL.toString().equals(order.getOrderType().toString())) {
+            //正常交易订单 结算
+            dealAmount = dealAmount(order, order.getGenerationIp(), false, order.getDealDescribe()); //  渠道结算
+        } else {
+            dealAmount = bankAccountUtil.accountOrderDealChannel(order, order.getGenerationIp(), flag);
+        }
         if (!dealAmount.isSuccess()) {
-            throw new OrderException("订单修改异常", null);
+            return dealAmount;
         }
-        Result dealAmount1 = enterOrderApp(order.getAssociatedId(), order.getGenerationIp(), false);
-        if (!dealAmount1.isSuccess()) {
-            throw new OrderException("订单修改异常", null);
-        }
-        if (dealAmount1.isSuccess()) {
-            log.info("【订单修改成功，向下游发送回调：" + order.getOrderId() + "】");
-            ThreadUtil.execute(() -> {
+
+
+        /**
+         * 商户订单结算
+         * 1， 商户代付结算
+         * 2， 卡商充值结算
+         * 3， 商户充值结算
+         */
+
+        if (Common.Order.ORDER_TYPE_DEAL.toString().equals(order.getOrderType().toString())) {
+            //商户充值结算
+            dealAmount1 = enterOrderApp(order.getAssociatedId(), order.getGenerationIp(), false);
+            if (dealAmount1.isSuccess()) {
+                log.info("【订单修改成功，向下游发送回调：" + order.getOrderId() + "】");
                 notifyUtil.sendMsg(order.getOrderId());
-            });
+                return Result.buildSuccessMessage("订单修改成功");
+            }
+        } else if (Common.Order.ORDER_TYPE_BANKCARD_W.toString().equals(order.getOrderType().toString())) {
+            // 商户代付结算
+            Withdraw orderWit = withdrawDao.findWitOrder(order.getAssociatedId());
+            orderWit.setComment("确认出款");
+            Result result1 = withrawOrderSu1(orderWit);
+            //商户代理商结算
+            if (!result1.isSuccess()) {
+                return result1;
+            }
+            Result result = agentDpayChannel(orderWit, order.getGenerationIp(), true);
+            if (!result.isSuccess()) {
+                return result1;
+            }
+            notifyUtil.wit(orderWit.getOrderId());
             return Result.buildSuccessMessage("订单修改成功");
+        } else if (Common.Order.ORDER_TYPE_BANKCARD_R.toString().equals(order.getOrderType().toString())) {
+            //卡商充值订单结算
+            Result result = rechargeSu(order.getAssociatedId());
+            if (!result.isSuccess()) {
+                return result;
+            }
         }
         return Result.buildSuccess();
     }
-
 
     @SuppressWarnings("unused")
     @Transactional
@@ -319,7 +362,7 @@ public class OrderUtil {
         UserInfo user = userInfoServiceImpl.findUserByOrder(order.getOrderQrUser());
         UserFund userFund = new UserFund();
         userFund.setUserId(order.getOrderQrUser());
-        if ("3".equals(user.getUserType().toString())) {//渠道账户结算
+        if ("3".equals(user.getUserType().toString()) || "2".equals(user.getUserType().toString())) {//渠道账户结算
             log.info("【进入渠道账户结算，当前渠道：" + user.getUserId() + "】");
             userFund.setUserId(user.getUserId());
             Result deleteDeal = amountPublic.deleteDeal(userFund, order.getDealAmount(), order.getOrderId());//扣除交易点数账户变动
@@ -330,79 +373,34 @@ public class OrderUtil {
             if (!deleteRechangerNumber.isSuccess()) {
                 return deleteRechangerNumber;
             }
-
-            log.info("【金额修改完毕，流水生成成功】");
-            return Result.buildSuccessResult();
-
-
-        }
-        if (true) {//顶代结算模式
-            String findAgent = correlationServiceImpl.findAgent(order.getOrderQrUser());
-            UserInfo userId = userInfoServiceImpl.findDealUrl(findAgent);
-            /**
-             * 1,获取顶代账号
-             * 2,扣减顶代账户余额
-             * 3,单笔交易分润汇入普通码商账号
-             */
-            userFund.setUserId(userId.getUserId());
-            Result deleteDeal = amountPublic.deleteDeal(userFund, order.getDealAmount(), order.getOrderId());//扣除交易点数账户变动
-            if (!deleteDeal.isSuccess()) {
-                return deleteDeal;
-            }
-            Result deleteRechangerNumber = amountRunUtil.deleteRechangerNumber(order, ip, flag);//扣除交易点数 流水生成
-            if (!deleteRechangerNumber.isSuccess()) {
-                return deleteRechangerNumber;
-            }
-            //顶代账户已扣减
-            //下面是对订单交易用户进行账户分润
-            //	UserRate userRate = userInfoServiceImpl.findUserRateById(order.getFeeId());
-            BigDecimal dealAmount = order.getDealAmount();
-            //		log.info("【当前交易金额："+dealAmount+"】");
-            //		UserInfo userOrder = userInfoServiceImpl.findUserInfoByUserId(order.getOrderQrUser());//当前接单用户
-            //		log.info("【当前订单交易码商："+userOrder.getUserId()+"】");
-            //		userFund.setUserId(userOrder.getUserId());
-
-            BigDecimal multiply = new BigDecimal("0");
-            Result addDeal = amountPublic.addDeal(userFund, multiply, dealAmount, order.getOrderId());
-            if (!addDeal.isSuccess()) {
-                return addDeal;
-            }
-            Result addDealAmount = amountRunUtil.addDealAmount(order, ip, flag);
-            if (!addDealAmount.isSuccess()) {
-                return addDealAmount;
-            }
-            log.info("【金额修改完毕，流水生成成功】");
-            return Result.buildSuccessResult();
-
-
-        } else {//正常结算模式
-            Result deleteDeal = amountPublic.deleteDeal(userFund, order.getDealAmount(), order.getOrderId());//扣除交易点数账户变动
-            if (!deleteDeal.isSuccess()) {
-                return deleteDeal;
-            }
-            Result deleteRechangerNumber = amountRunUtil.deleteRechangerNumber(order, ip, flag);//扣除交易点数 流水生成
-            if (!deleteRechangerNumber.isSuccess()) {
-                return deleteRechangerNumber;
-            }
-            UserRate findUserRateById = userInfoServiceImpl.findUserRateById(order.getFeeId());
-            BigDecimal dealAmount = order.getDealAmount();
-            log.info("【当前交易金额：" + dealAmount + "】");
-            BigDecimal fee = findUserRateById.getFee();
-            BigDecimal multiply = dealAmount.multiply(fee);
-            log.info("【当前分润费率：" + fee + "】");
-            log.info("【当前分润金额：" + multiply + "】");
-            Result addDeal = amountPublic.addDeal(userFund, multiply, dealAmount, order.getOrderId());
-            if (!addDeal.isSuccess()) {
-                return addDeal;
-            }
-            Result addDealAmount = amountRunUtil.addDealAmount(order, ip, flag);
-            if (!addDealAmount.isSuccess()) {
-                return addDealAmount;
+            if (user.getUserType().toString().equals("2")) {
+                Result result = amountPublic.addAmounRecharge(userFund, new BigDecimal(order.getRetain2()), order.getOrderId());
+                if (!result.isSuccess()) {
+                    return result;
+                }
+                Result addDealAmount = amountRunUtil.addDealAmount(order, ip, Boolean.FALSE);
+                if (!addDealAmount.isSuccess()) {
+                    return addDealAmount;
+                }
+            } else if (user.getUserType().toString().equals("3")) {
+                ChannelFee channelFee = channelFeeDao.findChannelFee(order.getOrderQrUser(), order.getRetain1());
+                String channelRFee = channelFee.getChannelRFee();
+                BigDecimal bigDecimal = new BigDecimal(channelRFee);
+                BigDecimal multiply = bigDecimal.multiply(order.getDealAmount());
+                Result result = amountPublic.addAmounRecharge(userFund, multiply, order.getOrderId());
+                if (!result.isSuccess()) {
+                    return result;
+                }
+                Result addDealAmount = amountRunUtil.addDealAmountChannel(order, ip, Boolean.FALSE, multiply);
+                if (!addDealAmount.isSuccess()) {
+                    return addDealAmount;
+                }
             }
             log.info("【金额修改完毕，流水生成成功】");
             return Result.buildSuccessResult();
         }
-
+        log.info("【错误代码，当前订单号：" + order.getOrderId() + "】");
+        return Result.buildFail();
     }
 
     /**
@@ -495,9 +493,10 @@ public class OrderUtil {
         channel.setUserId(wit.getChennelId());
         channelWitSu(wit.getOrderId(), wit, wit.getRetain2(), channel);
         agentDpayChannel(wit, wit.getRetain2(), wit.getWitType(), false);//新加代付代理商结算
-        ThreadUtil.execute(() -> {
-            notifyUtil.wit(wit.getOrderId());//通知
-        });
+        notifyUtil.wit(wit.getOrderId());//通知
+        UserFund userfund = new UserFund();
+        userfund.setUserId(wit.getUserId());
+        amountPublic.witStatis(userfund, wit.getAmount(), wit.getOrderId());
         return Result.buildSuccessMessage("代付成功");
     }
 
@@ -511,8 +510,12 @@ public class OrderUtil {
     public Result withrawOrderSu1(Withdraw wit) {
         int a = withdrawDao.updataOrderStatus(wit.getOrderId(), wit.getApproval(), wit.getComment(), Common.Order.Wit.ORDER_STATUS_SU, wit.getChennelId());
         if (a == 0 || a > 2) {
+
             return Result.buildFailMessage("订单状态修改失败");
         }
+        UserFund userfund = new UserFund();
+        userfund.setUserId(wit.getUserId());
+        amountPublic.witStatis(userfund, wit.getAmount(), wit.getOrderId());
         return Result.buildSuccessMessage("代付成功");
     }
 
@@ -556,6 +559,8 @@ public class OrderUtil {
      * @return
      */
     public Result enterOrderApp(String orderId, String ip, Boolean flag) {
+
+
         log.info("【进入商户订单结算方法】");
         if (StrUtil.isBlank(orderId)) {
             return Result.buildFailMessage("必传参数为空");
@@ -599,6 +604,8 @@ public class OrderUtil {
         if (feeApp.isSuccess()) {
             return feeApp;
         }
+
+
         return Result.buildFail();
     }
 
@@ -618,6 +625,8 @@ public class OrderUtil {
         }
         Integer feeId = orderApp.getFeeId();
         UserRate findFeeById = userRateDao.findFeeById(feeId);
+
+
         Result findUserRateList = findUserRateList(userInfo.getAgent(), findFeeById.getPayTypr(), findFeeById.getChannelId(), findFeeById, orderApp, flag, ip);
         if (findUserRateList.isSuccess()) {
             log.info("【当前订单代理商结算成功】");
@@ -648,7 +657,7 @@ public class OrderUtil {
         fund.setUserId(agent);
         Result addAmounProfit = amountPublic.addAmounProfit(fund, multiply, orderApp.getOrderId());
         if (addAmounProfit.isSuccess()) {
-            Result addAppProfit = amountRunUtil.addAppProfit(orderApp, fund.getUserId(), multiply, ip, flag);
+            Result addAppProfit = amountRunUtil.addAppProfit(orderApp.getOrderId(), fund.getUserId(), multiply, ip, flag);
             if (addAppProfit.isSuccess()) {
                 log.info("【流水成功】");
                 if (StrUtil.isNotBlank(userInfo.getAgent())) {
@@ -706,9 +715,7 @@ public class OrderUtil {
         if (!addAmountWFee.isSuccess()) {
             return addAmountWFee;
         }
-        ThreadUtil.execute(() -> {
             notifyUtil.wit(wit.getOrderId());
-        });
         return Result.buildSuccessMessage("代付金额解冻成功");
     }
 
@@ -759,9 +766,7 @@ public class OrderUtil {
         if (!result1.isSuccess()) {
             return result1;
         }
-        ThreadUtil.execute(() -> {
             notifyUtil.wit(wit.getOrderId());
-        });
         return Result.buildSuccessMessage("代付金额解冻成功");
     }
 

@@ -46,4 +46,18 @@ public interface UserRateService {
 	 * @return
 	 */
 	UserRate findRateFeeType(Integer feeId);
+
+	UserRate findUserRateWitByUserId(String userId);
+
+
+	/**
+	 * 查询当前账号费率
+	 *
+	 * @param agent
+	 * @param userType
+	 * @param payTypr
+	 * @param feeType
+	 * @return
+	 */
+	UserRate findAgentChannelFee(String agent, Integer userType, String payTypr, Integer feeType);
 }

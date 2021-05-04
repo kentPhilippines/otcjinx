@@ -103,6 +103,9 @@ public class AccountApiSericeImpl implements AccountApiService {
         if (userList.size() > 1) {
             return Result.buildFailMessage("当前用户错误，联系技术人员处理");
         }
+        if (CollUtil.isEmpty(userList)) {
+            return Result.buildFailMessage("当前用户不存在，请检查账号");
+        }
         UserInfo first = CollUtil.getFirst(userList);
         Result password = HashKit.encodePassword(user.getUserId(), user.getPassword(), first.getSalt());
         if (!password.isSuccess()) {

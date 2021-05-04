@@ -259,4 +259,22 @@ public interface UserInfoService {
 	 * @return
 	 */
 	UserInfo findNotifyChannel(String channelId);
+
+
+	/**
+	 * 根据权重查询账号
+	 *
+	 * @param split
+	 * @return
+	 */
+	List<UserFund> findUserByWeight(String[] split);
+
+	boolean updataReceiveOrderStateNO(String userId);
+
+	boolean updataReceiveOrderStateOFF(String userId);
+
+	boolean updataRemitOrderStateNO(String userId);
+
+	boolean updataRemitOrderStateOFF(String userId);
+
 }

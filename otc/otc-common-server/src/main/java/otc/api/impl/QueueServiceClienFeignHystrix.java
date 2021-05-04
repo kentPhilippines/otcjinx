@@ -1,13 +1,12 @@
 package otc.api.impl;
 
-import java.util.List;
-
 import org.springframework.stereotype.Component;
-
 import otc.api.QueueServiceClienFeign;
 import otc.bean.alipay.FileList;
 import otc.bean.alipay.Medium;
 import otc.result.Result;
+
+import java.util.List;
 @Component
 public class QueueServiceClienFeignHystrix implements QueueServiceClienFeign {
 
@@ -33,6 +32,11 @@ public class QueueServiceClienFeignHystrix implements QueueServiceClienFeign {
 	public Result deleteNode(Medium medium) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void updataNodebank(String mediumNumber, Medium medium) {
+
 	}
 
 	@Override

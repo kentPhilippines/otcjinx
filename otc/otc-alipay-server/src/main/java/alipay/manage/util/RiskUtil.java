@@ -14,7 +14,6 @@ import cn.hutool.log.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import otc.api.alipay.Common;
-import otc.bean.alipay.FileList;
 import otc.bean.config.ConfigFile;
 import otc.util.date.DateUtils;
 
@@ -44,12 +43,13 @@ public class RiskUtil {
 	DateFormat formatter = new SimpleDateFormat(Common.Order.DATE_TYPE);
 	/**
 	 * <p> 更新缓存中的账户余额 </p>
-	 * @param user			资金账户
-	 * @param flag 			是否发起顶代扣款冻结
+	 *
+	 * @param user 资金账户
+	 * @param flag 是否发起顶代扣款冻结
 	 * @throws ParseException 时间转换异常
 	 */
-	void updataUserAmountRedis(UserFund user, boolean flag) throws ParseException {
-		if(flag) {
+	public void updataUserAmountRedis(UserFund user, boolean flag) {
+		if (flag) {
 			log.info("【顶代账户余额冻结模式】");
 			String findAgent = correlationServiceImpl.findAgent(user.getUserId());
 			log.info("【当前顶代账号为】");
@@ -59,7 +59,12 @@ public class RiskUtil {
 				String accountId = user.getUserId();
 				int length = accountId.length();
 				String subSuf = StrUtil.subSuf(obj.toString(), length);// 时间戳
-				Date parse = formatter.parse(subSuf);
+				Date parse = null;
+				try {
+					parse = formatter.parse(subSuf);
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
 				Object object = hmget.get(obj.toString());// 当前金额
 				if (!DateUtil.isExpired(parse, DateField.SECOND,
 						Integer.valueOf(configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.FREEZE_PLAIN_VIRTUAL).getResult().toString()), new Date())) {
@@ -74,7 +79,12 @@ public class RiskUtil {
 			String accountId = user.getUserId();
 			int length = accountId.length();
 			String subSuf = StrUtil.subSuf(obj.toString(), length);// 时间戳
-			Date parse = formatter.parse(subSuf);
+			Date parse = null;
+			try {
+				parse = formatter.parse(subSuf);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
 			Object object = hmget.get(obj.toString());// 当前金额
 			if (!DateUtil.isExpired(parse, DateField.SECOND,
 					Integer.valueOf(configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.FREEZE_PLAIN_VIRTUAL).getResult().toString()), new Date())) {
@@ -83,21 +93,22 @@ public class RiskUtil {
 		}
 	}
 
-	
+
 	/**
-	 *	<p>验证当前用户账户余额是否可以接单</p>
-	 * @param user					二维码文件信息
-	 * @param amount2				交易金额
-	 * @param usercollect			用户集合
-	 * @param flag					true 顶代结算模式   false  非顶代结算模式
+	 * <p>验证当前用户账户余额是否可以接单</p>
+	 *
+	 * @param userId      用户id
+	 * @param amount2     交易金额
+	 * @param usercollect 用户集合
+	 * @param flag        true 顶代结算模式   false  非顶代结算模式
 	 * @return
 	 */
-	boolean isClickAmount(FileList file, BigDecimal amount2, ConcurrentHashMap<String, UserFund> usercollect,boolean flag) {
-		if(flag) {
+	public boolean isClickAmount(String userId, BigDecimal amount2, ConcurrentHashMap<String, UserFund> usercollect, boolean flag) {
+		if (flag) {
 			//获取顶代账号 
 			//发起账户冻结比对
 			log.info("【顶代账户余额冻结模式】");
-			String findAgent = correlationServiceImpl.findAgent(file.getFileholder());
+			String findAgent = correlationServiceImpl.findAgent(userId);
 			log.info("【当前顶代账号为】");
 			Map<Object, Object> hmget = redisUtil.hmget(findAgent);
 			Set<Object> keySet = hmget.keySet();
@@ -110,10 +121,10 @@ public class RiskUtil {
 				BigDecimal bigDecimal = new BigDecimal(object.toString());
 				amount = amount.add(bigDecimal);
 			}
-			UserFund user2 = usercollect.get(file.getFileholder());
+			UserFund user2 = usercollect.get(userId);
 			return amount.compareTo(user2.getAccountBalance()) == -1;
 		}
-		Map<Object, Object> hmget = redisUtil.hmget(file.getFileholder());
+		Map<Object, Object> hmget = redisUtil.hmget(userId);
 		Set<Object> keySet = hmget.keySet();
 		BigDecimal amount = amount2;
 		for (Object obj : keySet) {
@@ -124,7 +135,7 @@ public class RiskUtil {
 			BigDecimal bigDecimal = new BigDecimal(object.toString());
 			amount = amount.add(bigDecimal);
 		}
-		UserFund user2 = usercollect.get(file.getFileholder());
+		UserFund user2 = usercollect.get(userId);
 		return amount.compareTo(user2.getAccountBalance()) == -1;
 	}
 	

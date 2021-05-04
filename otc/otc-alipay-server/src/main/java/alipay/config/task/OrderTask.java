@@ -18,6 +18,7 @@ import otc.bean.dealpay.Withdraw;
 import otc.result.Result;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -59,8 +60,12 @@ public class OrderTask {
 			redis.set(KEY + order.getOrderId(), order.getOrderId(), 20); //防止多个任务同时获取一个订单发起结算
 			try {
 				List<RunOrder> runOrderList = RunOrderServiceimpl.findAssOrder(order.getOrderId());
-				List<RunOrder> runOrderList1 = RunOrderServiceimpl.findAssOrder(order.getAssociatedId());
+				List<RunOrder> runOrderList1 = new ArrayList<>();
+				if (!order.getAssociatedId().contains("W")) {
+					runOrderList1 = RunOrderServiceimpl.findAssOrder(order.getAssociatedId());
+				}
 				if (CollUtil.isNotEmpty(runOrderList) || CollUtil.isNotEmpty(runOrderList1)) {
+
 					dealOrderDao.updateSuccessAndAmount(order.getOrderId());
 					continue;
 				}

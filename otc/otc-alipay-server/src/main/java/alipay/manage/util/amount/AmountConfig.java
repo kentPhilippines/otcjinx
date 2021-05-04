@@ -60,6 +60,32 @@ public class AmountConfig extends Util {
                     }
                     lockMsg++;
                     log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
+                } else if (ADD_AMOUNT_RECHARGE_WIT.equals(addType)) {
+                    Result addAmountRecharge = amountPrivate.addAmountRechargeWit(userFund, balance);
+                    if (addAmountRecharge.isSuccess()) {
+                        flag = false;
+                        return addAmountRecharge;
+                    }
+                    lockMsg++;
+                    log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
+                } else if (ADD_AMOUNT_DEAL_WIT.equals(addType)) {
+                    Result addAmountRecharge = amountPrivate.addAmountDealWit(userFund, balance);
+                    if (addAmountRecharge.isSuccess()) {
+                        flag = false;
+                        return addAmountRecharge;
+                    }
+                    lockMsg++;
+                    log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
+                } else if (WIT_SUCCESSS_STS.equals(addType)) {
+                    log.info("【统计代付成功数据】");
+                    Result addAmountRecharge = amountPrivate.witSuccessStatis(userFund, balance);
+                    if (addAmountRecharge.isSuccess()) {
+                        flag = false;
+                        return addAmountRecharge;
+                    }
+                    lockMsg++;
+                    log.info("【统计代付成功数据失败，请查询当前时间范围内的异常情况】");
+
                 } else if (ADD_AMOUNT_PROFIT.equals(addType)) {//代理利润分成
                     Result profit = amountPrivate.addAmountAgentProfit(userFund, balance);
                     if (profit.isSuccess()) {

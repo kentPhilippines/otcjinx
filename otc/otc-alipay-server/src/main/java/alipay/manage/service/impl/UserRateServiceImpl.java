@@ -46,4 +46,14 @@ public class UserRateServiceImpl implements UserRateService {
 	public UserRate findRateFeeType(Integer feeId) {
 		return userRateMapper.findRateFeeType(feeId);
 	}
+
+	@Override
+	public UserRate findUserRateWitByUserId(String userId) {
+		return userRateMapper.findUserRateWitByUserId(userId);
+	}
+
+	@Override
+	public UserRate findAgentChannelFee(String agent, Integer userType, String payTypr, Integer feeType) {
+		return userRateMapper.findAgentChannelFee(agent, userType, payTypr, feeType);
+	}
 }

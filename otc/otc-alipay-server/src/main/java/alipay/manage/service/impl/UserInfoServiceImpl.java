@@ -25,9 +25,7 @@ import otc.result.Result;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @Component
 public class UserInfoServiceImpl implements UserInfoService {
@@ -45,6 +43,8 @@ public class UserInfoServiceImpl implements UserInfoService {
     private UserRateMapper userRateDao;
     @Resource
     private UserFundMapper userFundDao;
+    @Resource
+    private UserInfoMapper userInfoDao;
     @Resource
     private AttributeUtil attributeUtil;
 
@@ -340,5 +340,51 @@ public class UserInfoServiceImpl implements UserInfoService {
     @Override
     public UserInfo findNotifyChannel(String channelId) {
         return userInfoMapper.findNotifyChannel(channelId);
+    }
+
+    @Override
+    public List<UserFund> findUserByWeight(String[] split) {
+        //1,根据顶代账号查询所有下线账号   账号总开关开启， 出款接单开启
+        List<String> asList = null;
+        List<List<String>> list = new ArrayList();
+        for (String userId : split) {
+            String userIdList = userInfoMapper.queryChildAgents(userId);
+            String[] split2 = userIdList.split(",");
+            asList = Arrays.asList(split2);
+            list.add(asList);
+        }
+        Set<String> set = new HashSet<String>();
+        for (List<String> userIdList : list) {
+            for (String userId : userIdList) {
+                set.add(userId);
+            }
+        }
+        List<Object> asList2 = Arrays.asList(set.toArray());
+        return userFundDao.findUserByWeight(asList2);
+    }
+
+
+    @Override
+    public boolean updataReceiveOrderStateNO(String userId) {
+        int a = userInfoDao.updataReceiveOrderStateNO(userId);
+        return a > 0 && a < 2;
+    }
+
+    @Override
+    public boolean updataReceiveOrderStateOFF(String userId) {
+        int a = userInfoDao.updataReceiveOrderStateOFF(userId);
+        return a > 0 && a < 2;
+    }
+
+    @Override
+    public boolean updataRemitOrderStateNO(String userId) {
+        int a = userInfoDao.updataRemitOrderStateNO(userId);
+        return a > 0 && a < 2;
+    }
+
+    @Override
+    public boolean updataRemitOrderStateOFF(String userId) {
+        int a = userInfoDao.updataRemitOrderStateOFF(userId);
+        return a > 0 && a < 2;
     }
 }

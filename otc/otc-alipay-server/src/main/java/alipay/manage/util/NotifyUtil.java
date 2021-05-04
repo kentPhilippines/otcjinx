@@ -9,6 +9,7 @@ import alipay.manage.service.OrderService;
 import alipay.manage.service.UserInfoService;
 import alipay.manage.service.WithdrawService;
 import cn.hutool.core.date.DatePattern;
+import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.cron.CronUtil;
 import cn.hutool.cron.task.Task;
 import cn.hutool.http.HttpUtil;
@@ -77,7 +78,10 @@ public class NotifyUtil {
         map.put("appid", wit.getUserId());
         String sign = CheckUtils.getSign(map, userInfo.getPayPasword());
         map.put("sign", sign);
-        send(wit.getNotify(), orderId, map);
+        ThreadUtil.execute(() -> {
+            send(wit.getNotify(), orderId, map);
+        });
+
     }
 
     /**
@@ -134,7 +138,9 @@ public class NotifyUtil {
         map.put("statusdesc", statusdesc);
         String sign = CheckUtils.getSign(map, userInfo.getPayPasword());
         map.put("sign", sign);
-        send(order.getNotify(), order.getOrderId(), map, true);
+        ThreadUtil.execute(() -> {
+            send(order.getNotify(), order.getOrderId(), map, true);
+        });
     }
 
 

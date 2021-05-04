@@ -322,10 +322,16 @@
             <div class="platform-order" v-for="gatheringCode in gatheringCodes">
                 <div class="platform-order-body">
                     <div class="account-change-body-item">
-                        <label>支付宝:</label> <span>{{gatheringCode.mediumNumber }}</span>
+                        <label>银行卡:</label> <span>{{gatheringCode.mediumNumber }}</span>
                         <img height="40px"
                              src="https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1437076556,2698044114&fm=26&gp=0.jpg"
                              style="float: right;" width="40px">
+                    </div>
+                    <div class="account-change-body-item">
+                        <label>开户行:</label> <span>{{gatheringCode.account }}</span>
+                    </div>
+                    <div class="account-change-body-item">
+                        <label>账户名:</label> <span>{{gatheringCode.mediumHolder }}</span>
                     </div>
                     <div class="account-change-body-item">
                         <label>排队状态:</label> <span>{{gatheringCode.isQueue == 2 ? '未排队' : '排队中' }}</span>
@@ -334,8 +340,7 @@
                         <!-- 	<label>收款渠道:</label> <span>{{gatheringCode.code == 'alipay_qr' ? '支付宝' :'其他'}}</span> -->
                         <label>状态:</label> <span
                             class="account-change-body-item-highlight">{{gatheringCode.status == 1 ? '正在接单' : '未接单'}}</span>
-                        <span class="account-change-body-item-highlight" style="float: right;margin-right: 1rem;"
-                              v-show="!(gatheringCode.fixation == '' || gatheringCode.fixation == null)  ">
+                        <span class="account-change-body-item-highlight" style="float: right;margin-right: 1rem;">
 								
 								  <div class="layui-form-item" v-show="gatheringCode.status != 1"> 
 								   <div class="layui-input-block">
@@ -357,14 +362,8 @@
 								   </div>
 						  		</span>
                         <div>
-                            <button class="btn btn-warning btn-lg btn-block" th:if="gatheringCode.status == 2"
-                                    type="button"
-                                    v-on:click="openMedium(medium.mediumId)">开启接单
-                            </button>
-                            <button class="btn btn-outline-info btn-lg" th:if="gatheringCode.status == 1" type="button"
-                                    v-on:click="offMedium(medium.mediumId)">关闭接单
-                            </button>
-                            <!--  <label> 收款金额: </label> <span
+
+                        <!--  <label> 收款金额: </label> <span
                                   class="account-change-body-item-highlight">{{ gatheringCode.fixation == '' || gatheringCode.fixation == null ? '无收款码' : '' + gatheringCode.fixation
                               }}</span>-->
                         </div>

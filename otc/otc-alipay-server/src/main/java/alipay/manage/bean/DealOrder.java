@@ -28,18 +28,18 @@ public class DealOrder implements Serializable{
     private String orderQr;					//关联二维码
     private String externalOrderId;			//外部订单号(下游商户请求参数,用户数据回调)
     private String generationIp;			//订单生成IP(客户端ip或者是下游商户id)
-    private String notify;					//订单异步回调地址
-    private String back;					//订单异步回调地址
-    private String isNotify;				//是否發送通知 // YES 已發送 NO 未發送
-    private String dealDescribe;			//交易备注
+    private String notify;                    //订单异步回调地址
+    private String back;                    //订单异步回调地址
+    private String isNotify;                //是否發送通知 // YES 已發送 NO 未發送
+    private String dealDescribe;            //交易备注
     private Date createTime;
     private Date submitTime;
     private String payType;                    //产品类型
     private Integer feeId;
     private Integer status;
     private String retain1;
-    private String retain2;
-    private String retain3;
+    private String retain2;             //卡商入款   渠道  成本
+    private String retain3;             //当笔预交易系统分润【未扣除代理商分润】
     private Integer retain4;
     private String Time;
     private String currency;  ///货币类型

@@ -10,3 +10,11 @@
 登陆密码：aaa111
 交易密钥 ： 8708fwe0fhiuhsdhcsdu0dshcuhhcakdcadc00ehc0
 账号： 202104191433446914
+
+
+
+
+
+        /* and  (( mountSystem + #{amount}) <![CDATA[ < ]] `mountLimit` ) and attr in    <foreach collection="code" item="list" open="(" separator="," close=")">
+          #{list}
+      </foreach>*/

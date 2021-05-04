@@ -13,11 +13,12 @@ public interface OrderService {
 	/**
 	 * <p>码商查询自己的订单</p>
 	 *
+	 * @param id
 	 * @param userId     账户号
 	 * @param createTime 时间
 	 * @return
 	 */
-	List<DealOrder> findOrderByUser(String userId, String createTime);
+	List<DealOrder> findOrderByUser(String userId, String createTime, String orderStatus);
 
 	/**
 	 * <p>根据关联订单号查询唯一的订单信息</p>
@@ -150,4 +151,21 @@ public interface OrderService {
 
 
 	void updateUsdtTxHash(String orderId, String hash);
+
+	/**
+	 * 根据外部订单查询
+	 *
+	 * @param externalOrderId
+	 * @return
+	 */
+	List<DealOrder> findExternalOrderId(String externalOrderId);
+
+
+	/**
+	 * 根据订单号查询充值订单
+	 *
+	 * @param rechargeId
+	 * @return
+	 */
+	Recharge findrecharge(String rechargeId);
 }

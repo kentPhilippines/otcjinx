@@ -53,14 +53,14 @@ public class UserContorller {
 	public Result getUserAccountInfo(HttpServletRequest request) {
 		UserInfo user = sessionUtil.getUser(request);
 		if (ObjectUtil.isNull(user)) {
-	        log.info("当前用户未登陆");
-	        return Result.buildFailMessage("当前用户未登陆");
-	    }
+			log.info("当前用户未登陆");
+			return Result.buildFailMessage("当前用户未登陆");
+		}
 		UserInfo user2 = userInfoServiceImpl.findUserInfoByUserId(user.getUserId());
 		UserFund userFund = userInfoServiceImpl.findUserFundByAccount(user.getUserId());
 		UserRate rateR = userRateService.findUserRateR(user.getUserId());
 		user2.setAmount(userFund.getAccountBalance().toString());
-//		user2.setFee(rateR.getFee().toString());
+		user2.setFee(rateR.getFee().toString());
 		return Result.buildSuccessResult(user2);
 	}
 
@@ -304,5 +304,85 @@ public class UserContorller {
 			return Result.buildSuccessMessage("修改成功");
 		}
 		return Result.buildFailMessage("修改失败");
+	}
+
+	/**
+	 * <p>接单入款开启状态</p>
+	 *
+	 * @param request
+	 * @return
+	 */
+	@GetMapping("/updataReceiveOrderStateNO")
+	@ResponseBody
+	public Result updataReceiveOrderStateNO(HttpServletRequest request) {
+		UserInfo user = sessionUtil.getUser(request);
+		if (ObjectUtil.isNull(user)) {
+			return Result.buildFailMessage("当前用户未登录");
+		}
+		boolean flag = userInfoServiceImpl.updataReceiveOrderStateNO(user.getUserId());
+		if (flag) {
+			return Result.buildSuccessResult();
+		}
+		return Result.buildFailResult("状态修改失败");
+	}
+
+	/**
+	 * <p>接单入款开启状态</p>
+	 *
+	 * @param request
+	 * @return
+	 */
+	@GetMapping("/updataReceiveOrderStateOFF")
+	@ResponseBody
+	public Result updataReceiveOrderStateOFF(HttpServletRequest request) {
+		UserInfo user = sessionUtil.getUser(request);
+		if (ObjectUtil.isNull(user)) {
+			return Result.buildFailMessage("当前用户未登录");
+		}
+		boolean flag = userInfoServiceImpl.updataReceiveOrderStateOFF(user.getUserId());
+		if (flag) {
+			return Result.buildSuccessResult();
+		}
+		return Result.buildFailResult("状态修改失败");
+	}
+
+	/**
+	 * <p>收款接单开启</p>
+	 *
+	 * @param request
+	 * @return
+	 */
+	@GetMapping("/updataRemitOrderStateNO")
+	@ResponseBody
+	public Result updataRemitOrderStateNO(HttpServletRequest request) {
+		UserInfo user = sessionUtil.getUser(request);
+		if (ObjectUtil.isNull(user)) {
+			return Result.buildFailMessage("当前用户未登录");
+		}
+		boolean flag = userInfoServiceImpl.updataRemitOrderStateNO(user.getUserId());
+		if (flag) {
+			return Result.buildSuccessResult();
+		}
+		return Result.buildFailResult("状态修改失败");
+	}
+
+	/**
+	 * <p>收款接单关闭</p>
+	 *
+	 * @param request
+	 * @return
+	 */
+	@GetMapping("/updataRemitOrderStateOFF")
+	@ResponseBody
+	public Result updataRemitOrderStateOFF(HttpServletRequest request) {
+		UserInfo user = sessionUtil.getUser(request);
+		if (ObjectUtil.isNull(user)) {
+			return Result.buildFailMessage("当前用户未登录");
+		}
+		boolean flag = userInfoServiceImpl.updataRemitOrderStateOFF(user.getUserId());
+		if (flag) {
+			return Result.buildSuccessResult();
+		}
+		return Result.buildFailResult("状态修改失败");
 	}
 }

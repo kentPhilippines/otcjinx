@@ -24,7 +24,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-@Component("ShenFuSourcePay")
+@Component("HuiTongFUSourcePay")
 public class HuiTongFuSourcePay extends PayOrderService {
     private static final String MARS = "SHENFU";
     private static final String PAY_URL = "http://";

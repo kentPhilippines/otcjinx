@@ -384,30 +384,30 @@ public class AmountPrivate extends Util {
 		todayOrderCount += 1;
 		todayProfit = todayProfit.add(balance);
 		userFund.setAccountBalance(accountBalance);
-        userFund.setCashBalance(cashBalance);
-        userFund.setFreezeBalance(freezeBalance);
-        userFund.setRechargeNumber(rechargeNumber);
-        userFund.setSumDealAmount(sumDealAmount);
-        userFund.setSumOrderCount(sumOrderCount);
-        userFund.setSumProfit(sumProfit);
-        userFund.setTodayDealAmount(todayDealAmount);
-        userFund.setTodayOrderCount(todayOrderCount);
-        userFund.setTodayProfit(todayProfit);
-        Boolean updataAmount = userInfoServiceImpl.updataAmount(userFund);
-        if (updataAmount) {
-            log.info("【金额修改后账户情况：当前账户总比较金额：" + accountBalance + "，当前账户充值点数：" + rechargeNumber + "，当前账户利润金额：" + cashBalance + "，当前账户冻结金额：" + freezeBalance + "，当前账户：" + userFund.getUserId() + "】");
-        } else {
-            log.info("【账户修改失败】");
-            ThreadUtil.execute(() -> {
+		userFund.setCashBalance(cashBalance);
+		userFund.setFreezeBalance(freezeBalance);
+		userFund.setRechargeNumber(rechargeNumber);
+		userFund.setSumDealAmount(sumDealAmount);
+		userFund.setSumOrderCount(sumOrderCount);
+		userFund.setSumProfit(sumProfit);
+		userFund.setTodayDealAmount(todayDealAmount);
+		userFund.setTodayOrderCount(todayOrderCount);
+		userFund.setTodayProfit(todayProfit);
+		Boolean updataAmount = userInfoServiceImpl.updataAmount(userFund);
+		if (updataAmount) {
+			log.info("【金额修改后账户情况：当前账户总比较金额：" + accountBalance + "，当前账户充值点数：" + rechargeNumber + "，当前账户利润金额：" + cashBalance + "，当前账户冻结金额：" + freezeBalance + "，当前账户：" + userFund.getUserId() + "】");
+		} else {
+			log.info("【账户修改失败】");
+			ThreadUtil.execute(() -> {
 
-                //TODO 新建线程提交，该线程不受主线程事务控制
+				//TODO 新建线程提交，该线程不受主线程事务控制
 				Boolean updataStatusEr = updateAccountEr(userFund.getUserId());
-                if (updataStatusEr) {
-                    log.info("【账户已修改为不可使用，当前账号为：" + userFund.getUserId() + "】");
-                }
-            });
-            throw new UserException("账户修改异常", null);
-        }
+				if (updataStatusEr) {
+					log.info("【账户已修改为不可使用，当前账号为：" + userFund.getUserId() + "】");
+				}
+			});
+			throw new UserException("账户修改异常", null);
+		}
 		return Result.buildSuccessResult();
 	}
 
@@ -533,6 +533,57 @@ public class AmountPrivate extends Util {
 		}
 	}
 
+	protected Result addAmountRechargeWit(UserFund userFund, BigDecimal balance) {
+		UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(userFund.getUserId());
+		if (Common.User.USER_INFO_OFF.equals(userInfo.getSwitchs())) {
+			log.info("【===========【当前账户被标记为禁止使用资金账户功能，请检查该账户存在的交易异常，当前账户为：" + userInfo.getUserId() + "】===========】");
+			//TODO 当前位置除了做运行日志记录和数据日志记录，还应将该处存在的问题推送到系统醒目的地方
+			return Result.buildFailMessage("当前账户被禁止使用资金流水功能，请检查账户是否存在异常");
+		}
+		BigDecimal accountBalance = userFund.getAccountBalance();
+		BigDecimal cashBalance = userFund.getCashBalance();
+		BigDecimal freezeBalance = userFund.getFreezeBalance();
+		BigDecimal rechargeNumber = userFund.getRechargeNumber();
+
+		BigDecimal sumWitAmount = userFund.getSumOtherWitAmount();
+		BigDecimal todayWitAmount = userFund.getTodayOtherWitAmount();
+
+
+		sumWitAmount = sumWitAmount.add(balance);
+		todayWitAmount = todayWitAmount.add(balance);
+
+
+		log.info("【当前账户余额：" + accountBalance + "】");
+		log.info("【当前账户利润余额：" + cashBalance + "】");
+		log.info("【当前账户冻结余额：" + freezeBalance + "】");
+		log.info("【当前账户充值点数：" + rechargeNumber + "】");
+		rechargeNumber = rechargeNumber.add(balance);
+		accountBalance = rechargeNumber.subtract(freezeBalance).add(cashBalance);
+
+
+		log.info("【当前金额加款操作。。。。。。。。。】");
+		userFund.setRechargeNumber(rechargeNumber);
+		userFund.setAccountBalance(accountBalance);
+		userFund.setSumOtherWitAmount(sumWitAmount);
+		userFund.setTodayOtherWitAmount(todayWitAmount);
+		Boolean flag = userInfoServiceImpl.updataAmount(userFund);
+		if (flag) {
+			log.info("【当前账户添加充值点数成功资金详细情况如下：】");
+			log.info("【当前账户余额：" + accountBalance + "】");
+			log.info("【当前账户利润余额：" + cashBalance + "】");
+			log.info("【当前账户冻结余额：" + freezeBalance + "】");
+			log.info("【当前账户充值点数：" + rechargeNumber + "】");
+			return Result.buildSuccessMessage("当前账户充值金额添加成功");
+		} else {
+			log.info("【当前账户添加充值点数【失败】，请联系技术检查当前账户存在的异常情况】");
+			ThreadUtil.execute(() -> {
+				//TODO 新建线程提交，该线程不受主线程事务控制
+				updateAccountEr(userFund.getUserId());
+			});
+			return Result.buildFail();
+		}
+	}
+
 	/**
 	 * 记录资金修改失败
 	 *
@@ -603,8 +654,8 @@ public class AmountPrivate extends Util {
 		BigDecimal todayWitAmount = userFund.getTodayWitAmount();//当日代付数据
 		Integer version = userFund.getVersion();//修改版本号
 		log.info("【当前账户历史累计代付金额为：" + sumWitAmount + "，当日代付累计金额为：" + todayWitAmount + "，当前代付账号为：" + userFund.getUserId() + ",当前代付金额为：" + balance + "】");
-		sumWitAmount = sumWitAmount.add(balance);
-		todayWitAmount = todayWitAmount.add(balance);
+		sumWitAmount = sumWitAmount.subtract(balance);
+		todayWitAmount = todayWitAmount.subtract(balance);
 		userFund.setSumWitAmount(sumWitAmount);
 		userFund.setTodayWitAmount(todayWitAmount);
 		Boolean flag = userInfoServiceImpl.updataAmount(userFund);
@@ -634,4 +685,46 @@ public class AmountPrivate extends Util {
 		return Boolean.FALSE;
 	}
 
+	public Result addAmountDealWit(UserFund userFund, BigDecimal balance) {
+		log.info("【当前方法为 【卡商出款交易利润加钱】， ：" + "，当前操作金额为：" + balance + "】");
+		UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(userFund.getUserId());
+		if (Common.User.USER_INFO_OFF.equals(userInfo.getSwitchs())) {
+			log.info("【===========【当前账户被标记为禁止使用资金账户功能，请检查该账户存在的交易异常，当前账户为：" + userInfo.getUserId() + "】===========】");
+			//TODO 当前位置除了做运行日志记录和数据日志记录，还应将该处存在的问题推送到系统醒目的地方
+			return Result.buildFailMessage("当前账户被禁止使用资金流水功能，请检查账户是否存在异常");
+		}
+		BigDecimal accountBalance = userFund.getAccountBalance();//当前账户比较金额
+		BigDecimal cashBalance = userFund.getCashBalance();//当前利润账户
+		BigDecimal freezeBalance = userFund.getFreezeBalance();//当前冻结账户
+		BigDecimal rechargeNumber = userFund.getRechargeNumber();//当前充值点数
+		BigDecimal sumProfit = userFund.getSumProfit();//当前当前总的利润
+		BigDecimal todayProfit = userFund.getTodayProfit();//今日总利润  =  今日代理分润 + 今日接单分润
+		log.info("【金额修改后账户情况：当前账户总比较金额：" + accountBalance + "，当前账户充值点数：" + rechargeNumber + "，当前账户利润金额：" + cashBalance + "，当前账户冻结金额：" + freezeBalance + "，当前账户：" + userFund.getUserId() + "】");
+		//以上为当前账户情况
+		cashBalance = cashBalance.add(balance);
+		accountBalance = cashBalance.add(rechargeNumber).subtract(freezeBalance);
+		sumProfit = sumProfit.add(balance);
+		todayProfit = todayProfit.add(balance);
+		userFund.setAccountBalance(accountBalance);
+		userFund.setRechargeNumber(rechargeNumber);
+		userFund.setSumProfit(sumProfit);
+		userFund.setTodayProfit(todayProfit);
+		userFund.setCashBalance(cashBalance);
+		Boolean updataAmount = userInfoServiceImpl.updataAmount(userFund);
+		if (updataAmount) {
+			log.info("【金额修改后账户情况：当前账户总比较金额：" + accountBalance + "，当前账户充值点数：" + rechargeNumber + "，当前账户利润金额：" + cashBalance + "，当前账户冻结金额：" + freezeBalance + "，当前账户：" + userFund.getUserId() + "】");
+		} else {
+			log.info("【账户修改失败】");
+			ThreadUtil.execute(() -> {
+
+				//TODO 新建线程提交，该线程不受主线程事务控制
+				Boolean updataStatusEr = updateAccountEr(userFund.getUserId());
+				if (updataStatusEr) {
+					log.info("【账户已修改为不可使用，当前账号为：" + userFund.getUserId() + "】");
+				}
+			});
+			throw new UserException("账户修改异常", null);
+		}
+		return Result.buildSuccessResult();
+	}
 }

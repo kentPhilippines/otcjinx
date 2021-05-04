@@ -79,6 +79,8 @@ public class Common {
 
 		public static final Integer ORDER_TYPE_DEAL = 1;//交易订单
 		public static final Integer ORDER_TYPE_WIT = 5;//代付充值
+		public static final Integer ORDER_TYPE_BANKCARD_R = 3;// 卡商入款订单
+		public static final Integer ORDER_TYPE_BANKCARD_W = 4;// 卡商出款订单
 		public static final Integer DAPY_OPEN = 1;//代付开启
 		public static final Integer DAPY_OFF = 2;//代付关闭
 		public static final Integer OFF = 0;//总开关 关闭
@@ -181,13 +183,13 @@ public class Common {
 		public static final String AMOUNT_ORDER_HE = "2";//订单处理中【加减款订单】
 		public static final String AMOUNT_ORDER_ER = "4";//订单失败 【加减款订单】
 	}
-	
-	
-	
-	public static class Medium{
+
+
+	public static class Medium {
 		public static final String QR_IS_DEAL_OFF = "1";//二维码不可用
 		public static final String QR_IS_DEAL_ON = "2";//二维码可用
 		public static final String MEDIUM_ALIPAY = "alipay";
+		public static final String MEDIUM_BANK = "card";
 		public static final String IMG_NUMBER = "IMG";//图片标签
 		public static final String MM_NUMBER = "MM";//图片标签
 		public static final String BANK_NUMBER = "BK";//媒介标签

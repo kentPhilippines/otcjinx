@@ -30,9 +30,9 @@ public class BankTypeUtil {
             case BANK_NAME_ICBC:
             case BANK_NAME_ABC:
             case BANK_NAME_CMB:
-                return StrUtil.sub(bankAccount, 0, length - 4);
+                return bankAccount.split(StrUtil.sub(bankAccount, 0, length - 4))[1];
             case BANK_NAME_PSBC:
-                return StrUtil.sub(bankAccount, 0, length - 3);
+                return bankAccount.split(StrUtil.sub(bankAccount, 0, length - 3))[1];
         }
         return null;
     }

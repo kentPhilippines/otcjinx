@@ -23,7 +23,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-@Component("Shenfu04Dpay")
+@Component("HuiTongFuDpay")
 public class HuiTongFUDpay extends PayOrderService {
     private static final Log log = LogFactory.get();
     private static final String SIGN_TYPE = "MD5";
@@ -104,7 +104,7 @@ public class HuiTongFUDpay extends PayOrderService {
             log.info("【汇通付代付签名前参数：" + createParam + "】");
             String md5 = PayUtil.md5(createParam + channelInfo.getChannelPassword());
             map.put("sign", md5);
-            map.put("url", channelInfo.getDealurl());
+            map.put("url", channelInfo.getWitUrl());
             log.info("【当前汇通付代付请求参数为：" + map.toString() + "】");
             String post = HttpUtil.post(PayApiConstant.Notfiy.OTHER_URL + "/forwordSendShenFuWit", map);
             log.info("【汇通付代付响应参数为：" + post + "】");

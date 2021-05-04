@@ -1,6 +1,6 @@
 package alipay.manage.api.channel.amount.withdraw;
 
-import alipay.manage.api.config.PayOrderService;
+import alipay.manage.api.channel.amount.AmountObject;
 import alipay.manage.util.OrderUtil;
 import alipay.manage.util.bankcardUtil.CreateOrder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +13,8 @@ import otc.result.Result;
  *
  * @author hx08
  */
-@Component("MyChannelWithdraw")
-public class MyChannel extends PayOrderService {
+@Component("MyChannelQrWithdraw")
+public class MyQrChannel extends AmountObject {
 	@Autowired
 	OrderUtil orderUtil;
 	@Autowired
@@ -22,15 +22,10 @@ public class MyChannel extends PayOrderService {
 
 	@Override
 	public Result withdraw(Withdraw wit) {
-		//Result withrawOrder = orderUtil.withrawOrder(wit.getOrderId(), wit.getRetain2(), false);
-
-
-		Result result = createOrder.witAddOrder(wit, null);
-		if (!result.isSuccess()) {
-			withdrawEr(wit, result.getMessage(), wit.getRetain2());
+		Result withrawOrder = orderUtil.withrawOrder(wit.getOrderId(), wit.getRetain2(), false);
+		if (withrawOrder.isSuccess()) {
+			return super.withdraw(wit);
 		}
-		return result;
-
 		// TODO 商户或 码商 代付接口
 
 
@@ -40,13 +35,13 @@ public class MyChannel extends PayOrderService {
 		 username	 		[string]			是						用户姓名	展开
 		 area_code	 		[string]									国际区号(不传默认86，香港852/台湾886/澳门853)	展开
 		 phone	 			[string]			是						手机号	展开
-			id_card_type	 	[int]										证件类型	展开
-			id_card_num	 		[string]									证件号码	展开
-			email	 			[string]									邮箱	展开
-			pay_card_num	 	[string]			是						银行卡号	展开
-			pay_card_bank	 	[string]			是						开户银行	展开
-			pay_card_branch	 	[string]									开户支行	展开
-			company_order_num	[string]			是						商户订单号	展开
+		 id_card_type	 	[int]										证件类型	展开
+		 id_card_num	 		[string]									证件号码	展开
+		 email	 			[string]									邮箱	展开
+		 pay_card_num	 	[string]			是						银行卡号	展开
+		 pay_card_bank	 	[string]			是						开户银行	展开
+		 pay_card_branch	 	[string]									开户支行	展开
+		 company_order_num	[string]			是						商户订单号	展开
 		 coin_sign	 		[string]			是						数字货币标识	展开
 		 coin_sum	 		[string]			是						交易总额CNY 与coin_amount二选一	展开
 		 coin_amount	 		[string]			是						实际成交数量 与coin_sum二选一	展开
@@ -57,9 +52,8 @@ public class MyChannel extends PayOrderService {
 		 async_url	 		[string]			是						异步回调地址	展开
 		 sign	 			[string]			是						签名比对
 		 */
-		//	return withrawOrder;
+		return withrawOrder;
 	}
-	
-	
+
 
 }

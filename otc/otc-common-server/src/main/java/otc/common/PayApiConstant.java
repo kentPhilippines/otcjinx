@@ -91,7 +91,7 @@ public class PayApiConstant {
         public static final String ADD_QR = "/add-queue-qr";
         public static final String DELETE_QR = "/delete-queue-qr";
         public static final String TASK_MEDIUM = "/task-medium";
-
+		public static final String UPDATA_BANK = "/updata-queue-bank";
     }
 
     public class Notfiy {

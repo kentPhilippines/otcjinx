@@ -10,20 +10,22 @@ import java.util.Date;
  */
 public class UserFund implements Serializable{
 	private static final long serialVersionUID = 1L;
-    private Integer id;						//数据id
-    private String userId;					//用户id
-    private String userName;				//用户姓名
-    private BigDecimal cashBalance;			//现金账户【分润】
-    private BigDecimal rechargeNumber;		//充值点数
-    private BigDecimal freezeBalance;		//冻结账户
+    private Integer id;                        //数据id
+    private String userId;                    //用户id
+    private String userName;                //用户姓名
+    private BigDecimal cashBalance;            //现金账户【分润】
+    private BigDecimal rechargeNumber;        //充值点数
+    private BigDecimal freezeBalance;        //冻结账户
     private BigDecimal accountBalance;        //可取现账户金额【码商账户余额=冻结金额+现金账户+充值点数】
     private BigDecimal quota;                //授权额度
     private BigDecimal sumDealAmount;        //累计交易额
     private BigDecimal sumWitAmount;        //累计交易额
+    private BigDecimal sumOtherWitAmount;        //累计出款交易额
+    private BigDecimal todayOtherWitAmount;        //当日出款交易额
     private BigDecimal sumRechargeAmount;    //累计充值金额【充值成功时统计记录】
-    private BigDecimal sumProfit;			//累计利润金额
-    private BigDecimal sumAgentProfit;		//累计代理商利润【如果当前账户为商户则该数据为0】
-    private Integer sumOrderCount;			//累计接单笔数
+    private BigDecimal sumProfit;            //累计利润金额
+    private BigDecimal sumAgentProfit;        //累计代理商利润【如果当前账户为商户则该数据为0】
+    private Integer sumOrderCount;            //累计接单笔数
     private BigDecimal todayDealAmount;        //当日接单金额
     private BigDecimal todayWitAmount;        //当日接单金额
     private BigDecimal todayProfit;            //当日接单利润【代理利润+接单利润=当日利润】
@@ -37,6 +39,24 @@ public class UserFund implements Serializable{
     private Integer status;
     private Integer version;                //版本号
     private String currency;
+
+
+    public BigDecimal getTodayOtherWitAmount() {
+        return todayOtherWitAmount;
+    }
+
+    public void setTodayOtherWitAmount(BigDecimal todayOtherWitAmount) {
+        this.todayOtherWitAmount = todayOtherWitAmount;
+    }
+
+    public BigDecimal getSumOtherWitAmount() {
+
+        return sumOtherWitAmount;
+    }
+
+    public void setSumOtherWitAmount(BigDecimal sumOtherWitAmount) {
+        this.sumOtherWitAmount = sumOtherWitAmount;
+    }
 
     public String getCurrency() {
         return currency;

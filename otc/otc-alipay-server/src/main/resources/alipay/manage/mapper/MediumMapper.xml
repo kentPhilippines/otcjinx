@@ -16,6 +16,8 @@
         <result column="status" property="status" jdbcType="INTEGER"/>
         <result column="isDeal" property="isDeal" jdbcType="CHAR"/>
 
+        <result column="attr" property="attr" jdbcType="VARCHAR"/>
+        <result column="notfiyMask" property="notfiyMask" jdbcType="VARCHAR"/>
         <result column="bankcode" property="bankcode" jdbcType="CHAR"/>
         <result column="account" property="account" jdbcType="VARCHAR"/>
         <result column="mountNow" property="mountNow" jdbcType="DECIMAL"/>
@@ -454,7 +456,7 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
 
-    <select id="findIsMyMediumPage" parameterType="String" resultType="otc.bean.alipay.Medium">
+    <select id="findIsMyMediumPage1" parameterType="String" resultType="otc.bean.alipay.Medium">
 		(SELECT
 			 (SELECT GROUP_CONCAT("",fixationAmount,"元") AS fixation  FROM alipay_file_list t2 WHERE  t2.`concealId` = m.`mediumId`    AND t2.isDeal = '2') AS
 			    fixation,
@@ -491,4 +493,30 @@
 		ORDER BY m.id DESC
 		LIMIT 9999999)
   </select>
+    <select id="findIsMyMediumPage" parameterType="String" resultType="otc.bean.alipay.Medium">
+		 SELECT
+			   id, mediumNumber, mediumId, mediumHolder,mediumNote, mediumPhone, qrcodeId, code, createTime,
+    submitTime, status, isDeal,attr,bankcode,account,mountNow,mountSystem,mountLimit,notfiyMask
+		FROM
+			alipay_medium
+			WHERE
+			 isDeal = '2'
+			AND  `qrcodeId` = #{accountId}
+		ORDER BY  id DESC
+  </select>
+
+    <select id="findBankByAmountAndAttr" resultType="otc.bean.alipay.Medium">
+
+
+        select id, mediumNumber, mediumId, mediumHolder,mediumNote, mediumPhone, qrcodeId, code, createTime,
+        submitTime, status, isDeal,attr,bankcode,account,mountNow,mountSystem,mountLimit,notfiyMask
+        from alipay_medium where
+        isDeal = '2'and status = 1 and attr in
+        <foreach collection="code" item="list" open="(" separator="," close=")">
+            #{list}
+        </foreach>
+
+    </select>
+
+
 </mapper>

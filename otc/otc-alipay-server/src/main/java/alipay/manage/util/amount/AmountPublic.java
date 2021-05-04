@@ -56,25 +56,38 @@ public class AmountPublic extends Util {
 
 
 	/**
-	 * <p><strong>增加交易点数</strong></p>
-	 *
-	 * @param userFund 当前账户实体【必传字段为userId】
-	 * @param balance  当前操作金额
-	 * @return
-	 */
-	public Result addAmounRecharge(UserFund userFund, BigDecimal balance, String orderId) {
-		return amountConfig.addAmountBalance(userFund, balance, ADD_AMOUNT_RECHARGE, new BigDecimal(0), orderId);
-	}
+     * <p><strong>增加交易点数</strong></p>
+     *
+     * @param userFund 当前账户实体【必传字段为userId】
+     * @param balance  当前操作金额
+     * @return
+     */
+    public Result addAmounRecharge(UserFund userFund, BigDecimal balance, String orderId) {
+        return amountConfig.addAmountBalance(userFund, balance, ADD_AMOUNT_RECHARGE, new BigDecimal(0), orderId);
+    }
 
-	/**
-	 * <p><strong>增加代理商利润</strong></p>
-	 *
-	 * @param userFund 当前账户实体【必传字段为userId】
-	 * @param balance  当前操作金额
-	 * @return
-	 */
-	public Result addAmounProfit(UserFund userFund, BigDecimal balance, String orderId) {
-		return amountConfig.addAmountBalance(userFund, balance, ADD_AMOUNT_PROFIT, new BigDecimal(0), orderId);
+
+    /**
+     * 卡商出款结算
+     *
+     * @param userFund 卡商账户
+     * @param balance  出款金额
+     * @param orderId  订单号
+     * @return
+     */
+    public Result addAmounRechargeWit(UserFund userFund, BigDecimal balance, String orderId) {
+        return amountConfig.addAmountBalance(userFund, balance, Util.ADD_AMOUNT_RECHARGE_WIT, new BigDecimal(0), orderId);
+    }
+
+    /**
+     * <p><strong>增加代理商利润</strong></p>
+     *
+     * @param userFund 当前账户实体【必传字段为userId】
+     * @param balance  当前操作金额
+     * @return
+     */
+    public Result addAmounProfit(UserFund userFund, BigDecimal balance, String orderId) {
+        return amountConfig.addAmountBalance(userFund, balance, ADD_AMOUNT_PROFIT, new BigDecimal(0), orderId);
 	}
 
 	/**
@@ -86,30 +99,41 @@ public class AmountPublic extends Util {
 	 */
 	public Result addAmountAdd(UserFund userFund, BigDecimal balance, String orderId) {
 		return amountConfig.addAmountBalance(userFund, balance, ADD_AMOUNT, new BigDecimal(0), orderId);
-	}
+    }
 
-	/**
-	 * <p><strong>增加交易分润</strong></p>
-	 *
-	 * @param userFund   资金账户
-	 * @param balance    记录资金【分润金额】
-	 * @param dealAmount 交易金额【订单金额】
-	 * @return
-	 */
-	public Result addDeal(UserFund userFund, BigDecimal balance, BigDecimal dealAmount, String orderId) {
-		return amountConfig.addAmountBalance(userFund, balance, ADD_AMOUNT_DEAL, dealAmount, orderId);
-	}
+    /**
+     * <p><strong>增加交易分润</strong></p>
+     *
+     * @param userFund   资金账户
+     * @param balance    记录资金【分润金额】
+     * @param dealAmount 交易金额【订单金额】
+     * @return
+     */
+    public Result addDeal(UserFund userFund, BigDecimal balance, BigDecimal dealAmount, String orderId) {
+        return amountConfig.addAmountBalance(userFund, balance, ADD_AMOUNT_DEAL, dealAmount, orderId);
+    }
 
+    /**
+     * 卡商出款费率结算
+     *
+     * @param userFund
+     * @param fee
+     * @param orderId
+     * @return
+     */
+    public Result addDealWit(UserFund userFund, BigDecimal fee, String orderId) {
+        return amountConfig.addAmountBalance(userFund, fee, ADD_AMOUNT_DEAL_WIT, new BigDecimal(0), orderId);
+    }
 
-	/**
-	 * 资金账户余额加钱，解冻账户余额
-	 *
-	 * @param userFund
-	 * @param freezeAmont
-	 * @return
-	 */
-	public Result addFreeze(UserFund userFund, BigDecimal freezeAmont, String orderId) {
-		return amountConfig.addAmountBalance(userFund, freezeAmont, ADD_FREEZE, new BigDecimal(0), orderId);
+    /**
+     * 资金账户余额加钱，解冻账户余额
+     *
+     * @param userFund
+     * @param freezeAmont
+     * @return
+     */
+    public Result addFreeze(UserFund userFund, BigDecimal freezeAmont, String orderId) {
+        return amountConfig.addAmountBalance(userFund, freezeAmont, ADD_FREEZE, new BigDecimal(0), orderId);
 	}
 
 	/**
@@ -153,17 +177,27 @@ public class AmountPublic extends Util {
 	 * @return
 	 */
 	public Result deleteAmount(UserFund userFund, BigDecimal balance, String orderId) {
-		return amountConfig.deleteAmountBalance(userFund, balance, DELETE_AMOUNT, orderId);
-	}
+        return amountConfig.deleteAmountBalance(userFund, balance, DELETE_AMOUNT, orderId);
+    }
 
-	/**
-	 * <p><strong>人工冻结</strong></p>
-	 *
-	 * @param userFund 当前账户实体【必传字段为userId】
-	 * @param balance  当前操作金额
-	 * @return
-	 */
-	public Result deleteFreeze(UserFund userFund, BigDecimal balance, String orderId) {
-		return amountConfig.deleteAmountBalance(userFund, balance, DELETE_FREEZE,orderId);
-	}
+    /**
+     * <p><strong>人工冻结</strong></p>
+     *
+     * @param userFund 当前账户实体【必传字段为userId】
+     * @param balance  当前操作金额
+     * @return
+     */
+    public Result deleteFreeze(UserFund userFund, BigDecimal balance, String orderId) {
+        return amountConfig.deleteAmountBalance(userFund, balance, DELETE_FREEZE, orderId);
+    }
+
+
+    public Result witStatis(UserFund userFund, BigDecimal balance, String orderId) {
+        return amountConfig.addAmountBalance(userFund, balance, WIT_SUCCESSS_STS, new BigDecimal(0), orderId);
+    }
+
+
+    public Result addAmounProfitBank(UserFund userFund, BigDecimal balance, String orderId) {
+        return amountConfig.addAmountBalance(userFund, balance, Util.ADD_AMOUNT_PROFIT_BANK, new BigDecimal(0), orderId);
+    }
 }

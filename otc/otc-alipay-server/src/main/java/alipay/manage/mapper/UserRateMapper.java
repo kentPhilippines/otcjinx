@@ -42,10 +42,10 @@ public interface UserRateMapper {
      * @return
      */
     @Select("select * from alipay_user_rate where feeType = 2 and `switchs` = 1 and userId = #{userId} ")
-	UserRate findUserRateWitByUserId(@Param("userId") String userId );
+    UserRate findUserRateWitByUserId(@Param("userId") String userId );
 
     @Select("select * from alipay_user_rate where feeType = 1 and userId = #{userId} and `switchs` = 1 and payTypr = #{productAlipayScan} and status  = 1")
-	UserRate findUserRate(@Param("userId")String userId,@Param("productAlipayScan") String productAlipayScan);
+    UserRate findUserRate(@Param("userId")String userId,@Param("productAlipayScan") String productAlipayScan);
 
     /**
      * 通过用户查询产品的费率
@@ -55,15 +55,16 @@ public interface UserRateMapper {
      */
     @Select("select * from alipay_user_rate where userId = #{userId} and payTypr = #{payTypr} and channelId = #{channel}")
     UserRate findProductFeeBy(@Param("userId")String userId,@Param("payTypr") String productCode,@Param("channel")  String channel);
-    
-    
+
+
     @Select("select * from alipay_user_rate where id = #{id}")
-	UserRate findFeeById(@Param("id")Integer id);
-    
+    UserRate findFeeById(@Param("id")Integer id);
+
     @Select("select * from alipay_user_rate where userId = #{userId}")
-	UserRate findUserRateInfoByUserId(@Param("userId") String userId);
-	/**
-	 * 查询码商入款费率
+    UserRate findUserRateInfoByUserId(@Param("userId") String userId);
+
+    /**
+     * 查询码商入款费率
      * @return
      */
     @Select("select * from alipay_user_rate where feeType = 1 and userId =  #{userId}")
@@ -86,4 +87,16 @@ public interface UserRateMapper {
     @Cacheable(cacheNames = {RATE}, unless = "#result == null")
     @Select("select * from alipay_user_rate where id = #{id}")
     UserRate findRateFeeType(@Param("id") Integer id);
+
+    /**
+     * 查询费率，不管是否开关
+     *
+     * @param userId   账号
+     * @param userType 用户类型
+     * @param payTypr  支付类型
+     * @param feeType  费率类型
+     * @return
+     */
+    @Select("select * from alipay_user_rate where userId = #{userId} and userType = #{userType} and payTypr = #{payTypr} and feeType  = #{feeType}")
+    UserRate findAgentChannelFee(@Param("userId") String userId, @Param("userType") Integer userType, @Param("payTypr") String payTypr, @Param("feeType") Integer feeType);
 }

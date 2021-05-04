@@ -103,6 +103,18 @@ public class AmountRunUtil {
     private static final String ADD_AMOUNT_TRANSTER = "ADD_AMOUNT_TRANSTER";//转账加款
     private static final Integer ADD_AMOUNT_TRANSTER_NUMBER = 33;//转账加款
 
+
+    private static final Integer RECHANGE_AMOUNT_NUMBER_WIT_NUMBER = 34;
+    private static final String RECHANGE_AMOUNT_NUMBER_WIT = "RECHANGE_AMOUNT_NUMBER_WIT";
+    private static final String RECHANGE_AMOUNT_NUMBER_WIT_FEE = "RECHANGE_AMOUNT_NUMBER_WIT_FEE";
+    private static final Integer RECHANGE_AMOUNT_NUMBER_WIT_FEE_NUMBER = 35;
+
+
+    private static final String PROFIT_AMOUNT_AGENT_BANK_R = "PROFIT_AMOUNT_AGENT_BANK_R";
+    private static final Integer PROFIT_AMOUNT_AGENT_BANK_R_NUMBER = 36;
+    private static final String PROFIT_AMOUNT_AGENT_BANK_W = "PROFIT_AMOUNT_AGENT_BANK_W";
+    private static final Integer PROFIT_AMOUNT_AGENT_BANK_W_NUMBER = 37;
+
     /**
      * <p>码商代付流水生成</p>
      *
@@ -211,11 +223,6 @@ public class AmountRunUtil {
     }
 
 
-    public Result addAppProfit(alipay.manage.bean.DealOrderApp orderApp, String userId, BigDecimal multiply, String ip,
-                               boolean flag) {
-        Result add = add(PROFIT_AMOUNT_AGENT, userId, orderApp.getOrderId(), multiply, orderApp.getOrderIp(), "商户代理商，代理分润结算", flag ? RUNTYPE_ARTIFICIAL : RUNTYPE_NATURAL, orderApp.getOrderAccount());
-        return add;
-    }
 
     /**
      * <p>增加商户交易流水</p>
@@ -251,11 +258,21 @@ public class AmountRunUtil {
      */
     public Result addDealAmount(DealOrder order, String generationIp, Boolean flag) {
         UserRate rate = userInfoServiceImpl.findUserRateById(order.getFeeId());
-        log.info("当前加入流水账号：" + order.getOrderQrUser() + "，当前流水金额：" + order.getDealAmount() + "，当前流水费率：" + rate.getFee() + "，");
+        log.info("【三方卡商结算手续费流水】当前加入流水账号：" + order.getOrderQrUser() + "，当前流水金额：" + order.getDealAmount() + "，当前流水费率：" + rate.getFee() + "，");
         BigDecimal dealAmount = order.getDealAmount();
         BigDecimal fee = rate.getFee();
         BigDecimal amount = dealAmount.multiply(fee);
-        Result add = add(PROFIT_AMOUNT_DEAL, order.getOrderQrUser(), order.getOrderId(), amount, generationIp, "商正常接单分润", flag ? RUNTYPE_ARTIFICIAL : RUNTYPE_NATURAL);
+        Result add = add(PROFIT_AMOUNT_DEAL, order.getOrderQrUser(), order.getOrderId(), amount, generationIp, "卡商正常接单分润", flag ? RUNTYPE_ARTIFICIAL : RUNTYPE_NATURAL);
+        if (add.isSuccess()) {
+            return add;
+        }
+        return Result.buildFailMessage("流水生成失败");
+    }
+
+    public Result addDealAmountChannel(DealOrder order, String generationIp, Boolean flag, BigDecimal amount) {
+        log.info("【四方渠道结算手续费流水】当前加入流水账号：" + order.getOrderQrUser() + "，当前流水金额：" + order.getDealAmount() + "，当前流水费率：" + amount + "，");
+        BigDecimal dealAmount = order.getDealAmount();
+        Result add = add(PROFIT_AMOUNT_DEAL, order.getOrderQrUser(), order.getOrderId(), amount, generationIp, "卡商正常接单分润", flag ? RUNTYPE_ARTIFICIAL : RUNTYPE_NATURAL);
         if (add.isSuccess()) {
             return add;
         }
@@ -567,6 +584,18 @@ public class AmountRunUtil {
             case ADD_AMOUNT_TRANSTER:
                 runOrderType = ADD_AMOUNT_TRANSTER_NUMBER;
                 break;
+            case RECHANGE_AMOUNT_NUMBER_WIT:
+                runOrderType = RECHANGE_AMOUNT_NUMBER_WIT_NUMBER;
+                break;
+            case RECHANGE_AMOUNT_NUMBER_WIT_FEE:
+                runOrderType = RECHANGE_AMOUNT_NUMBER_WIT_FEE_NUMBER;
+                break;
+            case PROFIT_AMOUNT_AGENT_BANK_R:
+                runOrderType = PROFIT_AMOUNT_AGENT_BANK_R_NUMBER;
+                break;
+            case PROFIT_AMOUNT_AGENT_BANK_W:
+                runOrderType = PROFIT_AMOUNT_AGENT_BANK_W_NUMBER;
+                break;
             default:
                 break;
         }
@@ -634,5 +663,32 @@ public class AmountRunUtil {
             return add;
         }
         return Result.buildFailMessage("流水生成失败");
+    }
+
+    public Result addOrderBankCardWit(DealOrder order, String clientIP, Boolean flag) {
+        Result add = add(RECHANGE_AMOUNT_NUMBER_WIT, order.getOrderQrUser(), order.getOrderId(), order.getActualAmount(),
+                clientIP, order.getDealDescribe(), flag ? RUNTYPE_ARTIFICIAL : RUNTYPE_NATURAL);
+        if (add.isSuccess()) {
+            return add;
+        }
+        return Result.buildFailMessage("流水生成失败");
+    }
+
+    public Result addOrderBankCardWitFee(DealOrder order, String ip, BigDecimal amount, Boolean flag) {
+        Result add = add(RECHANGE_AMOUNT_NUMBER_WIT_FEE, order.getOrderQrUser(), order.getOrderId(), amount,
+                ip, order.getDealDescribe(), flag ? RUNTYPE_ARTIFICIAL : RUNTYPE_NATURAL);
+        if (add.isSuccess()) {
+            return add;
+        }
+        return Result.buildFailMessage("流水生成失败");
+    }
+
+    public Result addAppProfitBank(String orderId, String userId, BigDecimal amount, String ip, boolean flag, Integer feeType) {
+        if (feeType == 1) {//卡商入款 代理分润
+            Result add = add(PROFIT_AMOUNT_AGENT_BANK_R, userId, orderId, amount, ip, "入款，代理分润结算", flag ? RUNTYPE_ARTIFICIAL : RUNTYPE_NATURAL);
+            return add;
+        }
+        Result add = add(PROFIT_AMOUNT_AGENT_BANK_W, userId, orderId, amount, ip, "出款，代理分润结算", flag ? RUNTYPE_ARTIFICIAL : RUNTYPE_NATURAL);
+        return add;
     }
 }

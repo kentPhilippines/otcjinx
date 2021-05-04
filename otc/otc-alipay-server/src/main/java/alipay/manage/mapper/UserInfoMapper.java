@@ -233,4 +233,41 @@ public interface UserInfoMapper {
     @Select("select userId ,   autoWit   " +
             " from alipay_user_info where userId = #{userId}")
     UserInfo findautoWit(@Param("userId") String userId);
+
+    @Select("select queryChildAgents(#{userId})")
+    String queryChildAgents(String userId);
+
+    @CacheEvict(value = USER, allEntries = true)
+    @Update("update alipay_user_info set receiveOrderState = 1 where userId = #{userId}")
+    int updataReceiveOrderStateNO(@Param("userId") String userId);
+
+    /**
+     * <p>关闭用户接单</p>
+     *
+     * @param userId
+     * @return
+     */
+    @CacheEvict(value = USER, allEntries = true)
+    @Update("update alipay_user_info set receiveOrderState = 2 where userId = #{userId}")
+    int updataReceiveOrderStateOFF(@Param("userId") String userId);
+
+    /**
+     * 打开出款接单
+     *
+     * @param userId
+     * @return
+     */
+    @CacheEvict(value = USER, allEntries = true)
+    @Update("update alipay_user_info set remitOrderState = 1 where userId = #{userId}")
+    int updataRemitOrderStateNO(@Param("userId") String userId);
+
+    /**
+     * 关闭出款接单
+     *
+     * @param userId
+     * @return
+     */
+    @CacheEvict(value = USER, allEntries = true)
+    @Update("update alipay_user_info set remitOrderState = 2 where userId = #{userId}")
+    int updataRemitOrderStateOFF(@Param("userId") String userId);
 }

@@ -1,16 +1,19 @@
 var auditOrderVM = new Vue({
 	el : '#auditOrder',
 	data : {
-		appealTypeDictItems : [],
-		showWaitConfirmOrderFlag : true,
-		waitConfirmOrders : [],
-		selectedOrder : {},
-		appealType : '',
-		actualPayAmount : '',
-		pageNum : 1,
-		receiveOrderTime : dayjs().format('YYYY-MM-DD'),
-		totalPage : 1,
-		userSreenshotIds : ''
+		appealTypeDictItems: [],
+		showWaitConfirmOrderFlag: true,
+		waitConfirmOrders: [],
+		bankCardList: [],
+		selectedOrder: {},
+		appealType: '',
+		orderStatus: '1',
+		bankCard: '',
+		actualPayAmount: '',
+		pageNum: 1,
+		receiveOrderTime: dayjs().format('YYYY-MM-DD'),
+		totalPage: 1,
+		userSreenshotIds: ''
 	},
 	 filters: {
 		 dateFilter: function (data, format = "") {
@@ -42,9 +45,9 @@ var auditOrderVM = new Vue({
 		var that = this;
 		headerVM.title = '审核订单';
 		//that.loadAppealTypeDictItem();
+		that.getBankCard();
 		that.loadPlatformOrder();
-
-		$('.sreenshot').on('filebatchuploadsuccess', function(event, data) {
+		$('.sreenshot').on('filebatchuploadsuccess', function (event, data) {
 			that.userSreenshotIds = data.response.result.join(',');
 			that.userStartAppealInner();
 		});
@@ -77,17 +80,59 @@ var auditOrderVM = new Vue({
 				this.appealTypeDictItems = res.body.data;
 			});
 		},
- */
-		
-		loadPlatformOrder : function() {
+		 */
+		enterOrder: function (orderId, bank) {
+			debugger;
 			var that = this;
-			that.$http.get('/order/findMyWaitConfirmOrder',{
-				params : {
-					pageSize : 5,
-					pageNum : that.pageNum,
-					createTime : that.receiveOrderTime
+			var bankCard = $("." + orderId + "").val();
+			if (bank == '' || bank == null) {
+				if (bankCard == null || bankCard == '') {
+					layer.alert('请确认出款卡', {
+						title: '提示',
+						icon: 7,
+						time: 3000
+					});
+				} else {
+					that.$http.get('/qrcode/setBankCard', {
+						params: {
+							bankCard: bankCard,
+							orderId: orderId
+						}
+					}).then(function (res) {
+						window.location.href = res.body.result;
+
+					});
 				}
-			}).then(function(res) {
+			} else {
+				that.$http.get('/qrcode/setBankCard', {
+					params: {
+						bankCard: bankCard,
+						orderId: orderId
+					}
+				}).then(function (res) {
+					window.location.href = res.body.result;
+
+				});
+			}
+		},
+
+		getBankCard: function () {
+			var that = this;
+			that.$http.get('/qrcode/getBankCardList').then(function (res) {
+				that.bankCardList = res.body.result;
+			});
+
+		},
+		loadPlatformOrder: function () {
+			var that = this;
+			that.$http.get('/order/findMyWaitConfirmOrder', {
+				params: {
+					pageSize: 5,
+					orderStatus: this.orderStatus,
+					pageNum: that.pageNum,
+					createTime: that.receiveOrderTime
+				}
+			}).then(function (res) {
 				that.waitConfirmOrders = res.body.result.content;
 				that.pageNum = res.body.result.pageNum;
 				that.totalPage = res.body.result.totalPage;

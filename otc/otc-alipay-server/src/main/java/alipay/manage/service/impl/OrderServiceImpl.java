@@ -41,8 +41,8 @@ public class OrderServiceImpl implements OrderService {
     private CorrelationService correlationServiceImpl;
 
     @Override
-    public List<DealOrder> findOrderByUser(String userId, String createTime) {
-        List<DealOrder> selectByExample = dealOrderMapper.selectByExampleByMyId(userId, createTime);
+    public List<DealOrder> findOrderByUser(String userId, String createTime, String orderStatus) {
+        List<DealOrder> selectByExample = dealOrderMapper.selectByExampleByMyId(userId, createTime, orderStatus);
         return selectByExample;
     }
 
@@ -337,5 +337,15 @@ public class OrderServiceImpl implements OrderService {
         int i = dealOrderMapper.updateUsdtTxHash(orderId, hash);
         DealOrder orderByOrderId = dealOrderMapper.findOrderByOrderId(orderId);
         int k = dealOrderAppDao.updateUsdtTxHash(orderByOrderId.getAssociatedId(), hash);
+    }
+
+    @Override
+    public List<DealOrder> findExternalOrderId(String externalOrderId) {
+        return null;
+    }
+
+    @Override
+    public Recharge findrecharge(String rechargeId) {
+        return null;
     }
 }

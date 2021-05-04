@@ -85,14 +85,34 @@ public class ChannelFee implements Serializable{
 	}
 	public String getProductId() {
 		return productId;
-	}
-	public void setProductId(String productId) {
-		this.productId = productId;
-	}
-	public String getImpl() {
-		return impl;
-	}
-	public void setImpl(String impl) {
-		this.impl = impl;
-	}
+    }
+
+    public void setProductId(String productId) {
+        this.productId = productId;
+    }
+
+    public String getImpl() {
+        return impl;
+    }
+
+    public void setImpl(String impl) {
+        this.impl = impl;
+    }
+
+
+    @Override
+    public String toString() {
+        return "ChannelFee{" +
+                "id=" + id +
+                ", createTime=" + createTime +
+                ", submitTime=" + submitTime +
+                ", status=" + status +
+                ", channelRFee='" + channelRFee + '\'' +
+                ", channelDFee='" + channelDFee + '\'' +
+                ", channelId='" + channelId + '\'' +
+                ", productId='" + productId + '\'' +
+                ", impl='" + impl + '\'' +
+                ", channelNo='" + channelNo + '\'' +
+                '}';
+    }
 }

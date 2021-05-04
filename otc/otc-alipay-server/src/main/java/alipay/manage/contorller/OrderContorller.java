@@ -73,21 +73,21 @@ public class OrderContorller {
 		 * 						dealAmount : 订单交易金额
 		 * 						createTime : 订单创建时间
 		 * 						dealType : 订单类型  (中文 ced:UTF-8)   例  alipay_qr:支付宝扫码
-		 */					 
+		 */
 		return null;
 	}
+
 	@GetMapping("/findMyWaitConfirmOrder")
 	@ResponseBody
-	public Result findMyWaitConfirmOrder(HttpServletRequest request,String pageNum,String pageSize,String createTime) {
+	public Result findMyWaitConfirmOrder(HttpServletRequest request, String pageNum, String pageSize, String createTime, String orderStatus) {
 		UserInfo user2 = sessionUtil.getUser(request);
 		if (ObjectUtil.isNull(user2)) {
-	        log.info("当前用户未登陆");
-	        return Result.buildFailMessage("当前用户未登陆");
-	    }
+			log.info("当前用户未登陆");
+			return Result.buildFailMessage("当前用户未登陆");
+		}
 		log.info("获取当前用户----->" + user2.getUserId());
 		PageHelper.startPage(Integer.valueOf(pageNum), Integer.valueOf(pageSize));
-		List<DealOrder> listOrder = orderServiceImpl.findOrderByUser(user2.getUserId(),createTime);
-		log.info("获取的集合:"+ listOrder);
+		List<DealOrder> listOrder = orderServiceImpl.findOrderByUser(user2.getUserId(), createTime, orderStatus);
 		PageInfo<DealOrder> pageInfo = new PageInfo<DealOrder>(listOrder);
 		PageResult<DealOrder> pageR = new PageResult<DealOrder>();
 		pageR.setContent(pageInfo.getList());

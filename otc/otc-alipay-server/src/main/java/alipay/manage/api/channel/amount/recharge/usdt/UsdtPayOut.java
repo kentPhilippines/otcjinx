@@ -43,7 +43,6 @@ public class UsdtPayOut extends NotfiyChannel implements USDT {
     public static final Log log = LogFactory.get();
     //        String s = HttpUtil.get(" https://api.etherscan.io/api?module=account&action=tokentx&address=0x0418F374F25EdAb13D38a7D82b445cE9934Bfc12&page=1&offset=5&sort=asc&apikey=JYNM1VJSXN8JE6JCY5M9JGKBDB7KPJDC5M");
     //
-
     public static final String FIND_URL = "https://api.etherscan.io/api?module=account&action=tokentx&address=";
     public static final String APP_KEY = "JYNM1VJSXN8JE6JCY5M9JGKBDB7KPJDC5M";
     public static final String ACCOUNT = "UsdtPay";//系统登记的渠道账户也是我们自己登记钱包地址的账户名
@@ -174,6 +173,18 @@ public class UsdtPayOut extends NotfiyChannel implements USDT {
                             long usdtTime = parse.getTime();
                             log.info("【支付时间和订单时间比较，是否符合支付成功判定】");
                             if (((usdtTime - time) < TIME) && i > 1) {
+                                DealOrder orderByOrderId = orderServiceImpl.findOrderByOrderId(orderId);
+                                String externalOrderId = orderByOrderId.getExternalOrderId();
+                                List<DealOrder> orderList1 = orderServiceImpl.findExternalOrderId(externalOrderId);
+                                for (DealOrder exOrder : orderList1) {
+                                    boolean kentusdtmanage = exOrder.getOrderAccount().equals("KENTUSDTMANAGE");//内充 usdt 转 cny 专用账号
+                                    if (kentusdtmanage) {
+                                        Result result1 = dealpayNotfiy(exOrder.getOrderId(), "127.0.0.1", "USDT转CNY，USDT到账成功");
+                                        if (result1.isSuccess()) {
+                                            orderServiceImpl.updateUsdtTxHash(orderId, hash);
+                                        }
+                                    }
+                                }
                                 Result result1 = dealpayNotfiy(orderId, "127.0.0.1", "主动查询USDT订单交易成功");
                                 if (result1.isSuccess()) {//支付成功， 删除缓存标记
                                     orderServiceImpl.updateUsdtTxHash(orderId, hash);

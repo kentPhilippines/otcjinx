@@ -154,6 +154,8 @@ public class FileListServiceImpl implements FileListService {
     	 * ####################################
     	 * 这里暂时先采取原来的方案，换粗这里肯定是要加的
     	 */
+
+
         return fileListMapper.findQrByAmount(amount);
     }
 

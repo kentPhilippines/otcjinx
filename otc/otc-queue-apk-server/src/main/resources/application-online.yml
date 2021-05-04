@@ -1,0 +1,50 @@
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://182.16.89.146:8761/eureka/
+  instance:
+    # 是否使用ip注册
+    prefer-ip-address: true
+    # ${spring.cloud.client.ip-address}:${server.port}  局域网这样配置
+    #  本地调试则要直接写死ip 【这个ip为注册时候的 调用ip】
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}
+    # 注册ip地址 公网注册地址112.121.162.162
+    ip-address: ${spring.cloud.client.ip-address}
+    # 注册ip端口
+    non-secure-port: ${server.port}
+    hostname: ${spring.cloud.client.ip-address}:${server.port}
+    # status-page-url : c.biancheng.net
+spring:
+  application:
+    name: otc-queue-apk-server
+    thymeleaf:
+      cache: false
+      prefix: classpath:/templates/
+      suffix: .html
+      encoding: UTF-8
+      content-type: text/html
+      mode: HTML5
+    cloud:
+      config:
+        label: master
+        profile: dev
+        discovery:
+          enabled: true
+          serviceId: queue-apk-server
+      bus:
+        enabled: true
+        trace:
+          enabled: true
+  redis:
+    port: 6379
+    host: 127.0.0.1
+    timeout: 5000
+    pool:
+      max-idle: 100
+      min-idle: 10
+      max-active: 1000
+      max-wait: -1
+feign.hystrix.enabled: true
+logging:
+  level:
+    otc.*: debug   #以上为线上发布配置文件

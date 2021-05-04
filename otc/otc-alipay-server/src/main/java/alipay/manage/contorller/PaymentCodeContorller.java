@@ -346,6 +346,13 @@ public class PaymentCodeContorller {
         return Result.buildSuccessResult("数据获取成功", onlineVO);
     }
 
+
+    /**
+     * 关闭接单银行卡
+     *
+     * @param request
+     * @return
+     */
     @PostMapping("/offMedium")
     @ResponseBody
     public Result offMedium(HttpServletRequest request) {

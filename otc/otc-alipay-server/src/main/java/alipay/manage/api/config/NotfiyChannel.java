@@ -9,7 +9,6 @@ import alipay.manage.service.UserInfoService;
 import alipay.manage.service.WithdrawService;
 import alipay.manage.util.NotifyUtil;
 import alipay.manage.util.OrderUtil;
-import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.log.Log;
@@ -59,9 +58,7 @@ public abstract class NotfiyChannel {
         Withdraw wit = withdrawServiceImpl.findOrderId(orderId);
         Result result = orderUtilImpl.withrawOrderErBySystem(wit, ip, msg);
         if (result.isSuccess()) {
-            ThreadUtil.execute(() -> {
                 notifyUtil.wit(orderId);
-            });
         }
         return Result.buildFail();
     }
@@ -83,9 +80,7 @@ public abstract class NotfiyChannel {
         wit.setComment("代付成功");
         Result withrawOrderSu = orderUtilImpl.withrawOrderSu1(wit);
         if (withrawOrderSu.isSuccess()) {
-            ThreadUtil.execute(() -> {
                 notifyUtil.wit(orderId);
-            });
         }
         try {
             redisLockUtil.redisLock(RedisLockUtil.AMOUNT_USER_KEY + wit.getUserId());

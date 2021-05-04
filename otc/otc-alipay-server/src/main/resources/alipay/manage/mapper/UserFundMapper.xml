@@ -17,16 +17,22 @@
     <result column="sumOrderCount" property="sumOrderCount" jdbcType="INTEGER" />
     <result column="todayDealAmount" property="todayDealAmount" jdbcType="DECIMAL" />
     <result column="todayProfit" property="todayProfit" jdbcType="DECIMAL" />
-    <result column="todayOrderCount" property="todayOrderCount" jdbcType="INTEGER" />
-    <result column="todayAgentProfit" property="todayAgentProfit" jdbcType="DECIMAL" />
-    <result column="userType" property="userType" jdbcType="CHAR" />
-    <result column="agent" property="agent" jdbcType="VARCHAR" />
-    <result column="isAgent" property="isAgent" jdbcType="CHAR" />
-    <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
-    <result column="submitTime" property="submitTime" jdbcType="TIMESTAMP" />
-    <result column="status" property="status" jdbcType="INTEGER" />
-    <result column="version" property="version" jdbcType="INTEGER" />
-    <result column="currency" property="currency" jdbcType="VARCHAR"/>
+      <result column="todayOrderCount" property="todayOrderCount" jdbcType="INTEGER"/>
+      <result column="todayAgentProfit" property="todayAgentProfit" jdbcType="DECIMAL"/>
+      <result column="userType" property="userType" jdbcType="CHAR"/>
+      <result column="agent" property="agent" jdbcType="VARCHAR"/>
+      <result column="isAgent" property="isAgent" jdbcType="CHAR"/>
+      <result column="createTime" property="createTime" jdbcType="TIMESTAMP"/>
+      <result column="submitTime" property="submitTime" jdbcType="TIMESTAMP"/>
+      <result column="status" property="status" jdbcType="INTEGER"/>
+      <result column="version" property="version" jdbcType="INTEGER"/>
+      <result column="currency" property="currency" jdbcType="VARCHAR"/>
+      <result column="sumOtherWitAmount" property="sumOtherWitAmount" jdbcType="DECIMAL"/>
+      <result column="todayWitAmount" property="todayWitAmount" jdbcType="DECIMAL"/>
+      <result column="sumWitAmount" property="sumWitAmount" jdbcType="DECIMAL"/>
+      <result column="todayOtherWitAmount" property="todayOtherWitAmount" jdbcType="DECIMAL"/>
+
+
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -90,7 +96,7 @@
     id, userId, userName, cashBalance, rechargeNumber, freezeBalance, accountBalance, 
     sumDealAmount, sumRechargeAmount, sumProfit, sumAgentProfit, sumOrderCount, todayDealAmount, 
     todayProfit, todayOrderCount, todayAgentProfit, userType, agent, isAgent, createTime, 
-    submitTime, status, version ,quota,currency
+    submitTime, status, version ,quota,currency,sumOtherWitAmount,todayWitAmount,sumWitAmount,todayOtherWitAmount
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="alipay.manage.bean.UserFundExample" >
     select
@@ -202,17 +208,29 @@
         isAgent,
       </if>
       <if test="createTime != null" >
-        createTime,
+          createTime,
       </if>
-      <if test="submitTime != null" >
-        submitTime,
-      </if>
-      <if test="status != null" >
-        status,
-      </if>
-      <if test="version != null" >
-        version,
-      </if>
+        <if test="submitTime != null">
+            submitTime,
+        </if>
+        <if test="status != null">
+            status,
+        </if>
+        <if test="version != null">
+            version,
+        </if>
+        <if test="sumOtherWitAmount != null">
+            sumOtherWitAmount,
+        </if>
+        <if test="todayWitAmount != null">
+            todayWitAmount,
+        </if>
+        <if test="sumWitAmount != null">
+            sumWitAmount,
+        </if>
+        <if test="todayOtherWitAmount != null">
+            todayOtherWitAmount,
+        </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="userId != null" >
@@ -273,17 +291,29 @@
         #{isAgent,jdbcType=CHAR},
       </if>
       <if test="createTime != null" >
-        #{createTime,jdbcType=TIMESTAMP},
+          #{createTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="submitTime != null" >
-        #{submitTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="status != null" >
-        #{status,jdbcType=INTEGER},
-      </if>
-      <if test="version != null" >
-        #{version,jdbcType=INTEGER},
-      </if>
+        <if test="submitTime != null">
+            #{submitTime,jdbcType=TIMESTAMP},
+        </if>
+        <if test="status != null">
+            #{status,jdbcType=INTEGER},
+        </if>
+        <if test="version != null">
+            #{version,jdbcType=INTEGER},
+        </if>
+        <if test="sumOtherWitAmount != null">
+            #{sumOtherWitAmount},
+        </if>
+        <if test="todayWitAmount != null">
+            #{todayWitAmount},
+        </if>
+        <if test="sumWitAmount != null">
+            #{sumWitAmount},
+        </if>
+        <if test="todayOtherWitAmount != null">
+            #{todayOtherWitAmount},
+        </if>
     </trim>
   </insert>
   <select id="countByExample" parameterType="alipay.manage.bean.UserFundExample" resultType="java.lang.Integer" >
@@ -308,24 +338,37 @@
         <if test="record.rechargeNumber != null">
             rechargeNumber = #{record.rechargeNumber,jdbcType=DECIMAL},
         </if>
-        <if test="record.freezeBalance != null">
-            freezeBalance = #{record.freezeBalance,jdbcType=DECIMAL},
-        </if>
-        <if test="record.accountBalance != null">
-            accountBalance = #{record.accountBalance,jdbcType=DECIMAL},
-        </if>
-        <if test="record.quota != null">
-            quota = #{record.quota,jdbcType=DECIMAL},
-        </if>
-        <if test="record.sumDealAmount != null">
-            sumDealAmount = #{record.sumDealAmount,jdbcType=DECIMAL},
-        </if>
-        <if test="record.sumRechargeAmount != null">
-            sumRechargeAmount = #{record.sumRechargeAmount,jdbcType=DECIMAL},
-        </if>
-        <if test="record.sumProfit != null">
-            sumProfit = #{record.sumProfit,jdbcType=DECIMAL},
-        </if>
+          <if test="record.freezeBalance != null">
+              freezeBalance = #{record.freezeBalance,jdbcType=DECIMAL},
+          </if>
+          <if test="record.accountBalance != null">
+              accountBalance = #{record.accountBalance,jdbcType=DECIMAL},
+          </if>
+          <if test="record.quota != null">
+              quota = #{record.quota,jdbcType=DECIMAL},
+          </if>
+          <if test="record.sumOtherWitAmount != null">
+              sumOtherWitAmount = #{record.sumOtherWitAmount,jdbcType=DECIMAL},
+          </if>
+          <if test="record.todayWitAmount != null">
+              todayWitAmount = #{record.todayWitAmount,jdbcType=DECIMAL},
+          </if>
+          <if test="record.sumWitAmount != null">
+              sumWitAmount = #{record.sumWitAmount,jdbcType=DECIMAL},
+          </if>
+          <if test="record.todayOtherWitAmount != null">
+              todayOtherWitAmount = #{record.todayOtherWitAmount,jdbcType=DECIMAL},
+          </if>
+
+          <if test="record.sumDealAmount != null">
+              sumDealAmount = #{record.sumDealAmount,jdbcType=DECIMAL},
+          </if>
+          <if test="record.sumRechargeAmount != null">
+              sumRechargeAmount = #{record.sumRechargeAmount,jdbcType=DECIMAL},
+          </if>
+          <if test="record.sumProfit != null">
+              sumProfit = #{record.sumProfit,jdbcType=DECIMAL},
+          </if>
       <if test="record.sumAgentProfit != null" >
         sumAgentProfit = #{record.sumAgentProfit,jdbcType=DECIMAL},
       </if>
@@ -380,6 +423,10 @@
       sumDealAmount = #{record.sumDealAmount,jdbcType=DECIMAL},
       sumRechargeAmount = #{record.sumRechargeAmount,jdbcType=DECIMAL},
       sumProfit = #{record.sumProfit,jdbcType=DECIMAL},
+      sumOtherWitAmount = #{record.sumOtherWitAmount,jdbcType=DECIMAL},
+      todayOtherWitAmount = #{record.todayOtherWitAmount,jdbcType=DECIMAL},
+      todayWitAmount = #{record.todayWitAmount,jdbcType=DECIMAL},
+      sumWitAmount = #{record.sumWitAmount,jdbcType=DECIMAL},
       sumAgentProfit = #{record.sumAgentProfit,jdbcType=DECIMAL},
       sumOrderCount = #{record.sumOrderCount,jdbcType=INTEGER},
       todayDealAmount = #{record.todayDealAmount,jdbcType=DECIMAL},
@@ -416,8 +463,20 @@
         <if test="accountBalance != null">
             accountBalance = #{accountBalance,jdbcType=DECIMAL},
         </if>
+        <if test="sumOtherWitAmount != null">
+            sumOtherWitAmount = #{sumOtherWitAmount,jdbcType=DECIMAL},
+        </if>
+        <if test="todayOtherWitAmount != null">
+            todayOtherWitAmount = #{todayOtherWitAmount,jdbcType=DECIMAL},
+        </if>
+        <if test="sumWitAmount != null">
+            sumWitAmount = #{sumWitAmount,jdbcType=DECIMAL},
+        </if>
         <if test="quota != null">
             quota = #{quota,jdbcType=DECIMAL},
+        </if>
+        <if test="todayWitAmount != null">
+            todayWitAmount = #{todayWitAmount,jdbcType=DECIMAL},
         </if>
         <if test="sumDealAmount != null">
             sumDealAmount = #{sumDealAmount,jdbcType=DECIMAL},
@@ -487,6 +546,9 @@
       sumOrderCount = #{sumOrderCount,jdbcType=INTEGER},
       todayDealAmount = #{todayDealAmount,jdbcType=DECIMAL},
       todayProfit = #{todayProfit,jdbcType=DECIMAL},
+      sumOtherWitAmount = #{sumOtherWitAmount,jdbcType=DECIMAL},
+      todayOtherWitAmount = #{todayOtherWitAmount,jdbcType=DECIMAL},
+      todayWitAmount = #{todayWitAmount,jdbcType=DECIMAL},
       todayOrderCount = #{todayOrderCount,jdbcType=INTEGER},
       todayAgentProfit = #{todayAgentProfit,jdbcType=DECIMAL},
       userType = #{userType,jdbcType=CHAR},
@@ -498,4 +560,16 @@
       version = #{version,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER} and version = #{version,jdbcType=INTEGER}
   </update>
+    <select id="findUserByWeight" resultType="alipay.manage.bean.UserFund">
+        select * from alipay_user_fund
+        where userId in
+        (select userId from
+        alipay_user_info where `switchs` = 1
+        and receiveOrderState = 1
+        and userId in
+        <foreach collection="asList" item="list" open="(" separator="," close=")">
+            #{list}
+        </foreach>
+        )
+    </select>
 </mapper>

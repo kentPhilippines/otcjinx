@@ -19,9 +19,10 @@ public interface DealOrderMapper {
 
     @CacheEvict(value = ORDER_INFO_CHANNEL, allEntries = true)
     int deleteByPrimaryKey(Integer id);
-
+    @CacheEvict(value = ORDER_INFO_CHANNEL, allEntries = true)
     int insert(DealOrder record);
 
+    @CacheEvict(value = ORDER_INFO_CHANNEL, allEntries = true)
     int insertSelective(DealOrder record);
 
     List<DealOrder> selectByExampleWithBLOBs(DealOrderExample example);
@@ -47,14 +48,16 @@ public interface DealOrderMapper {
 
     @CacheEvict(value = ORDER_INFO_CHANNEL, allEntries = true)
     int updateByPrimaryKey(DealOrder record);
+
     /**
      * <p>根据用户id 查询交易订单</p>
-     * @param createTime
+     *
+     * @param id
      * @param userId
+     * @param createTime
      * @return
      */
-    @Cacheable(cacheNames = {ORDER_INFO_CHANNEL}, unless = "#result == null")
-    List<DealOrder> selectByExampleByMyId(@Param("userId")String userId,@Param("createTime") String createTime);
+    List<DealOrder> selectByExampleByMyId(@Param("userId") String userId, @Param("createTime") String createTime, @Param("orderStatus") String orderStatus);
 
     /**
      * <p>根据用户id查询自己的交易订单号记录</p>
@@ -125,7 +128,10 @@ public interface DealOrderMapper {
     /*
         查询未结算账户的订单  成功   且   retain4  = 1    且   10秒内 结算最多15 笔
      */
-    @Select("select * from alipay_deal_order where orderStatus = 2  and  retain4 = 1 order by id limit 25   ")
+    @Select("" + " " +
+            " ( select * from alipay_deal_order where orderStatus = 2  and  retain4 = 1   and (orderType = 1 or orderType = 3 )order by id limit 25) " +
+            " union all " +
+            " ( select * from alipay_deal_order  where orderStatus = 2  and  retain4 = 1   and  orderType = 4  and   submitTime <= DATE_SUB(NOW(), INTERVAL 20 MINUTE) )  ")
     List<DealOrder> findSuccessAndNotAmount();
 
 

@@ -30,7 +30,10 @@ import otc.util.number.Number;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -56,7 +59,7 @@ public class RechargeContorller {
 	@Autowired
 	CorrelationService correlationServiceImpl;
 	private static final String MY_RECHARGE = "MyChannelRecharge";
-	private static final String MY_WITHDRAW = "MyChannelWithdraw";
+	private static final String MY_WITHDRAW = "MyChannelQrWithdraw";
 	private static final String RECHARGENO_NOTFIY = "127.0.0.1:3212/otc/rechaege-notfiy";
 	private static final String WIT_NOTFIY = "127.0.0.1:3212/otc/rechaege-notfiy";
 
@@ -118,10 +121,10 @@ public class RechargeContorller {
 		}
 		if (recharge.isSuccess()) {
 			Object result = recharge.getResult();
-			LinkedHashMap<Object, Object> map = (LinkedHashMap<Object, Object>) result;
+			//LinkedHashMap<Object, Object> map = (LinkedHashMap<Object, Object>) result;
 			//	Map<String, Object> objectToMap = otc.util.MapUtil.objectToMap(result);
-        	log.info("【json数据："+map.toString()+"】");
-        	return Result.buildSuccessResult(map.get("url"));
+			//	log.info("【json数据："+map.toString()+"】");
+			return recharge;
         }
         return Result.buildFailMessage("暂无充值渠道");
     }
