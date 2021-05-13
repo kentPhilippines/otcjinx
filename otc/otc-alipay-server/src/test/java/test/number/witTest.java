@@ -20,7 +20,9 @@ import java.util.Map;
 
 public class witTest {
 	public static void main(String[] args) {
-		//	new witTest().deal();
+		for (int a = 0; a <= 19; a++) {
+			new witTest().deal();
+		}
 		//find();
 /*
         String userid2 = "2u7rMduh";
@@ -38,7 +40,7 @@ public class witTest {
 		String userid1 = "sx978";
 		String key1 = "D0FBE6229950990760223703DEEEC4F1";
 		String publickey1 = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCLIjBF1o1rJECZyD8a5qr+vwcdd1EPl+zCpZqhXV8Vn/zNNbAYguIKPkuCIIdp6bG2knsO0qjVJ0kaVRFoa72Vztku8zSQP+4huijDIBofX5FtXgjS91OMx5tNV9f3FaHd9X9BoVvUp8/BiPIYuD231s8F5PcpGHBP0fRdLI7HmwIDAQAB";
-		new witTest().wit(userid1, key1, publickey1);
+		//	new witTest().wit(userid1, key1, publickey1);
 		//USDT测试账号
 		//     String userid2 = "kentTest";
 		//    String key2 = "F71915AEE539D5B34EC913E9DA124821";

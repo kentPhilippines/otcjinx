@@ -78,12 +78,12 @@ public abstract class NotfiyChannel {
             return Result.buildFailMessage("当前代付回调重复");
         }
         wit.setComment("代付成功");
+        redisLockUtil.redisLock(RedisLockUtil.AMOUNT_USER_KEY + wit.getUserId());
         Result withrawOrderSu = orderUtilImpl.withrawOrderSu1(wit);
         if (withrawOrderSu.isSuccess()) {
                 notifyUtil.wit(orderId);
         }
         try {
-            redisLockUtil.redisLock(RedisLockUtil.AMOUNT_USER_KEY + wit.getUserId());
             UserFund userFund = new UserFund();
             userFund.setUserId(wit.getWitChannel());
             orderUtilImpl.channelWitSu(orderId, wit, ip, userFund);

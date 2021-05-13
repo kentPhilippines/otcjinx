@@ -76,12 +76,6 @@ public class HuiTongFuDpayNotify extends NotfiyChannel {
                 if (result.isSuccess()) {
                     return "success";
                 }
-            } else if ("FAILURE".equals(result_pay)) {
-                witNotfyEr(no_order, clientIP, "代付失败");
-                return "success";
-            } else if ("CANCEL".equals(result_pay)) {
-                witNotfyEr(no_order, clientIP, "代付退款");
-                return "success";
             }
         } else {
             return "error";

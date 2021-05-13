@@ -601,7 +601,7 @@ public class AmountPrivate extends Util {
 			String ids = "-1001464340513,480024035";
 			id += ids;
 			String s = url + test + id;
-			HttpUtil.get(s);
+			HttpUtil.get(s, 1000);
 		});
 
 	}
