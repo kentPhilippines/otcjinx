@@ -53,14 +53,21 @@ public interface WithdrawService {
 	 *
 	 * @return
 	 */
-	List<Withdraw> findSuccessAndNotAmount();
+    List<Withdraw> findSuccessAndNotAmount();
 
-	/**
-	 * 修改订单 ： 已推送处理
-	 *
-	 * @param orderId
-	 */
-	void updateSuccessAndAmount(String orderId);
+    /**
+     * 修改订单 ： 已推送处理
+     *
+     * @param orderId
+     */
+    void updateSuccessAndAmount(String orderId);
 
-	boolean updatePush(String orderId);
+    boolean updatePush(String orderId);
+
+    /**
+     * 查询未推送代付订单
+     *
+     * @return
+     */
+    List<Withdraw> findNotPush();
 }

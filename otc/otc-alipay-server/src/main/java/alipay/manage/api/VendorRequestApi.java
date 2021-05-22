@@ -140,10 +140,10 @@ public class VendorRequestApi {
         String userId = request.getParameter("userId");//商户号
         UserInfo userInfo = accountApiServiceImpl.findClick(userId);
         UserInfo key = accountApiServiceImpl.findPrivateKey(userId);
-        userInfo.setPayPasword(key.getPayPasword());
         if (null == userInfo || null == key) {
             return Result.buildFailMessage("商户不存在");
         }
+        userInfo.setPayPasword(key.getPayPasword());
         log.info("--------------【用户开始RSA解密】----------------");
         String rsaSign = request.getParameter("cipherText");//商户传过来的密文
         log.info("【获取参数为：" + rsaSign + "】");
@@ -156,7 +156,7 @@ public class VendorRequestApi {
         if (!result.isSuccess()) {
             return result;
         }
-        UserRate userRate = accountApiServiceImpl.findUserRateWitByUserId(userId);
+        UserRate userRate = accountApiServiceImpl.findUserRateWitByUserId(userId, paramMap.get("amount").toString());
         if (ObjectUtil.isNull(userRate)) {
             ThreadUtil.execute(() -> {
                 exceptionOrderServiceImpl.addWitEx(userId, paramMap.get("amount").toString(), "商户相应提示：代付费率为开通或状态未开启；" + "处理方法：请重点检查商户代付费率是否配置开启", HttpUtil.getClientIP(request), paramMap.get("apporderid").toString());
@@ -220,6 +220,7 @@ public class VendorRequestApi {
         }
         String amount1 = paramMap.get("amount").toString();
         BigDecimal witAmount = new BigDecimal(amount1);
+        /*
         UserFund userFund = userInfoServiceImpl.fundUserFundAccounrBalace(userId);
         BigDecimal accountBalance = userFund.getAccountBalance();
         BigDecimal quota = userFund.getQuota();
@@ -230,7 +231,7 @@ public class VendorRequestApi {
             });
             closeObject(witAmount, accountBalance, quota, amount1, userFund, amount1, switchs, key, paramMap, userId, userInfo);
             return Result.buildFailMessage("当前账户金额不足");
-        }
+        }*/
         BigDecimal money = new BigDecimal(userRate.getRetain2());
         if (!(money.compareTo(witAmount) == -1)) {
             log.info("【当前代付最低金额为+" + userRate.getRetain2() + "】");
@@ -239,7 +240,7 @@ public class VendorRequestApi {
             ThreadUtil.execute(() -> {
                 exceptionOrderServiceImpl.addWitEx(userId, finalWitAmount.toString(), "商户相应提示：当前代付最低金额为；" + finalUserRate.getRetain2() + "处理方法：金额限制为" + finalUserRate.getRetain2(), HttpUtil.getClientIP(request), paramMap.get("apporderid").toString());
             });
-            closeObject(witAmount, money, accountBalance, quota, amount1, userFund, amount1, switchs, key, paramMap, userId, userInfo, finalWitAmount, finalUserRate);
+            closeObject(witAmount, money, amount1, amount1, switchs, key, paramMap, userId, userInfo, finalWitAmount, finalUserRate);
             return Result.buildFailMessage("当前代付最低金额为300");
         }
         if (!(higMoney.compareTo(witAmount) > -1)) {
@@ -248,18 +249,17 @@ public class VendorRequestApi {
             ThreadUtil.execute(() -> {
                 exceptionOrderServiceImpl.addWitEx(userId, finalWitAmount1.toString(), "商户相应提示：当前代付最高金额为50000；" + "处理方法：金额限制为300-49999", HttpUtil.getClientIP(request), paramMap.get("apporderid").toString());
             });
-            closeObject(witAmount, money, accountBalance, quota, amount1, userFund, amount1, switchs, key, paramMap, userId, userInfo);
+            closeObject(witAmount, money, amount1, amount1, switchs, key, paramMap, userId, userInfo);
             return Result.buildFailMessage("金额限制为300-49999");
         }
         if (CheckUtils.isNumber(witAmount)) {
             ThreadUtil.execute(() -> {
                 exceptionOrderServiceImpl.addWitEx(userId, paramMap.get("amount").toString(), "商户相应提示：代付金额不能存在小数；" + "处理方法：提醒商户更换代付金额", HttpUtil.getClientIP(request), paramMap.get("apporderid").toString());
             });
-            closeObject(witAmount, money, accountBalance, quota, amount1, userFund, amount1, switchs, key, paramMap, userId, userInfo);
+            closeObject(witAmount, money, amount1, amount1, switchs, key, paramMap, userId, userInfo);
             return Result.buildFailMessage("代付金额不能存在小数");
         }
         witAmount = null;
-        userFund = null;
         userInfo = null;
         userRate = null;
         return Result.buildSuccessResult(paramMap);

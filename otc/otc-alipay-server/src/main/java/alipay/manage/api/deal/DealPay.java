@@ -4,10 +4,7 @@ import alipay.config.redis.RedisUtil;
 import alipay.manage.api.AccountApiService;
 import alipay.manage.api.VendorRequestApi;
 import alipay.manage.api.config.FactoryForStrategy;
-import alipay.manage.bean.ChannelFee;
-import alipay.manage.bean.DealOrderApp;
-import alipay.manage.bean.UserFund;
-import alipay.manage.bean.UserRate;
+import alipay.manage.bean.*;
 import alipay.manage.bean.util.DealBean;
 import alipay.manage.mapper.ChannelFeeMapper;
 import alipay.manage.service.ExceptionOrderService;
@@ -90,7 +87,12 @@ public class DealPay {
             exceptionOrderServiceImpl.addDealOrder(mapToBean, "用户报错：通道实体不存在；处理方法：渠道费率未设置", clientIP);
             return Result.buildFailMessage("通道实体不存在，费率配置错误");
         }
-
+        UserInfo userInfoByUserId = userInfoServiceImpl.findUserInfoByUserId(userRate.getChannelId());
+        if (Common.Order.DEAL_OFF.equals(userInfoByUserId.getReceiveOrderState())) {
+            log.info("【渠道关闭】");
+            exceptionOrderServiceImpl.addDealOrder(mapToBean, "用户报错：渠道关闭，联系运营处理；处理方法：开启渠道代付状态", HttpUtil.getClientIP(request));
+            return Result.buildFailMessage("渠道关闭，联系运营处理");
+        }
         Object o = redis.get(mapToBean.getOrderId() + userRate.getUserId());
         if (null != o) {
             if (o.toString().equals(mapToBean.getOrderId() + userRate.getUserId())) {

@@ -2,7 +2,6 @@ package alipay.manage.api.config;
 
 import alipay.config.redis.RedisLockUtil;
 import alipay.manage.bean.DealOrder;
-import alipay.manage.bean.UserFund;
 import alipay.manage.bean.UserInfo;
 import alipay.manage.service.OrderService;
 import alipay.manage.service.UserInfoService;
@@ -83,14 +82,7 @@ public abstract class NotfiyChannel {
         if (withrawOrderSu.isSuccess()) {
                 notifyUtil.wit(orderId);
         }
-        try {
-            UserFund userFund = new UserFund();
-            userFund.setUserId(wit.getWitChannel());
-            orderUtilImpl.channelWitSu(orderId, wit, ip, userFund);
-            Result result = orderUtilImpl.agentDpayChannel(wit, ip, true);
-        } finally {
-            redisLockUtil.unLock(RedisLockUtil.AMOUNT_USER_KEY + wit.getUserId());
-        }
+         redisLockUtil.unLock(RedisLockUtil.AMOUNT_USER_KEY + wit.getUserId());
         return withrawOrderSu;
     }
 

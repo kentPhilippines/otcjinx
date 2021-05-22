@@ -469,22 +469,29 @@ public class AmountPrivate extends Util {
 	 * @return
 	 */
 	protected Result clickUserFund(UserFund userFund) {
-		log.info("进入当前账户金额检查方法");
-		BigDecimal accountBalance = userFund.getAccountBalance();//当前账户可操作余额【当前现金账户 +当前冻结账户+当前充值点数】
-		BigDecimal cashBalance = userFund.getCashBalance();//当前现金账户
-		BigDecimal freezeBalance = userFund.getFreezeBalance();//当前冻结账户
-		BigDecimal rechargeNumber = userFund.getRechargeNumber();//当前充值点数
-		if (cashBalance.add(rechargeNumber).subtract(freezeBalance).compareTo(accountBalance) != 0) { //关闭资金流动的功能
-			log.info("【===========【经过系统核对后，当前用户账户存在问题，请重点关照该用户的账号，检查问题出现原因】===========】");
-			ThreadUtil.execute(() -> {
-				//TODO 新建线程提交，该线程不受主线程事务控制
-				updateAccountEr(userFund.getUserId());
-			});
-			return Result.buildFail();
-		}
-		log.info("【===========【经过系统核对后，当前用户账户不存在问题，请放心交易】===========】");
-		return Result.buildSuccess();
-	}
+        log.info("进入当前账户金额检查方法");
+        BigDecimal accountBalance = userFund.getAccountBalance();//当前账户可操作余额【当前现金账户 +当前冻结账户+当前充值点数】
+        BigDecimal cashBalance = userFund.getCashBalance();//当前现金账户
+        BigDecimal freezeBalance = userFund.getFreezeBalance();//当前冻结账户
+        BigDecimal rechargeNumber = userFund.getRechargeNumber();//当前充值点数
+        BigDecimal add = cashBalance.add(rechargeNumber).subtract(freezeBalance);
+        BigDecimal subtract = add.subtract(accountBalance);
+        if (subtract.compareTo(new BigDecimal("0")) == -1) {
+            subtract = subtract.multiply(new BigDecimal("-1"));
+        }
+        ;
+        int i = subtract.subtract(new BigDecimal("1")).compareTo(new BigDecimal("0"));
+        if (i == 1) {
+            log.info("【===========【经过系统核对后，当前用户账户存在问题，请重点关照该用户的账号，检查问题出现原因】===========】");
+            ThreadUtil.execute(() -> {
+                //TODO 新建线程提交，该线程不受主线程事务控制
+                updateAccountEr(userFund.getUserId());
+            });
+            return Result.buildFail();
+        }
+        log.info("【===========【经过系统核对后，当前用户账户不存在问题，请放心交易】===========】");
+        return Result.buildSuccess();
+    }
 
 	/**
 	 * <p>增加金额【充值】</p>

@@ -58,12 +58,12 @@ public interface AccountApiService {
     UserRate findUserRateByUserId(String userId, String passCode, String amount);
 
     /**
-     * <p>查询当前用户的代付费率</p>
-     *
-     * @param userId <p>当前用户只可以查询到唯一一个 可以正常使用的代付费率  【本地代付处理】【代付通道代付处理】</p>
-     * @return
-     */
-    UserRate findUserRateWitByUserId(String userId);
+	 * <p>查询当前用户的代付费率</p>
+	 *
+	 * @param userId <p>当前用户只可以查询到  可以正常使用的代付费率  【本地代付处理】【代付通道代付处理】</p>
+	 * @return
+	 */
+	UserRate findUserRateWitByUserId(String userId, String amount);
 
 	/**
 	 * 根据商户号查询资金账户
@@ -105,4 +105,5 @@ public interface AccountApiService {
 	 * @return
 	 */
 	UserInfo findautoWit(String appid);
+
 }

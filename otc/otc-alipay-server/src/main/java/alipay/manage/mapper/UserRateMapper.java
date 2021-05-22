@@ -37,12 +37,13 @@ public interface UserRateMapper {
     int updateByPrimaryKey(UserRate record);
 
     /**
-     * <p>查询当前用户唯一可用的代付费率</p>
+     * <p>查询当前用户开启的代付费率</p>
+     *
      * @param userId
      * @return
      */
     @Select("select * from alipay_user_rate where feeType = 2 and `switchs` = 1 and userId = #{userId} ")
-    UserRate findUserRateWitByUserId(@Param("userId") String userId );
+    List<UserRate> findUserRateWitByUserId(@Param("userId") String userId);
 
     @Select("select * from alipay_user_rate where feeType = 1 and userId = #{userId} and `switchs` = 1 and payTypr = #{productAlipayScan} and status  = 1")
     UserRate findUserRate(@Param("userId")String userId,@Param("productAlipayScan") String productAlipayScan);

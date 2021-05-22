@@ -231,8 +231,19 @@ public class AccountApiSericeImpl implements AccountApiService {
     }
 
     @Override
-    public UserRate findUserRateWitByUserId(String userId ) {
-        return userRateDao.findUserRateWitByUserId(userId );
+    public UserRate findUserRateWitByUserId(String userId, String amount) {
+        List<UserRate> userRate = userRateDao.findUserRateWitByUserId(userId);
+        CollUtil.sortByProperty(userRate, "retain1");
+        for (UserRate rate : userRate) {
+            BigDecimal systemAmount = new BigDecimal(rate.getRetain2());//金额限制
+            BigDecimal bigDecimal = new BigDecimal(amount);
+            if (bigDecimal.compareTo(systemAmount) >= 0) {
+                return rate;
+            } else {
+                continue;
+            }
+        }
+        return null;
     }
 
     @Override

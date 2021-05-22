@@ -814,9 +814,22 @@ public class OrderUtil {
         if (!result1.isSuccess()) {
             return result1;
         }
-            notifyUtil.wit(wit.getOrderId());
+        notifyUtil.wit(wit.getOrderId());
         return Result.buildSuccessMessage("代付金额解冻成功");
     }
+
+
+    public Result settlementWit(Withdraw wit) {
+        UserFund userFund = new UserFund();
+        userFund.setUserId(wit.getWitChannel());
+        Result result1 = channelWitSu(wit.getOrderId(), wit, wit.getRetain2(), userFund);
+        if (result1.isSuccess()) {
+            Result result = agentDpayChannel(wit, wit.getRetain2(), true);
+            return result;
+        }
+        return result1;
+    }
+
 
     /**
      * <p>代付成功渠道结算</p>

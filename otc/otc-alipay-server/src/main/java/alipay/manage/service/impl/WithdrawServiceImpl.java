@@ -56,19 +56,37 @@ public class WithdrawServiceImpl implements WithdrawService {
         return ordemaprByAppSum;
     }
 
+
+    /**
+     * 查询订单成功但是未结算统计数据 与 代理数据的订单
+     *
+     * @return
+     */
     @Override
     public List<Withdraw> findSuccessAndNotAmount() {
-        return null;
+
+        return withdrawDao.findSuccessAndNotAmount();
     }
 
+
+    /**
+     * 将订单修改为以结算
+     *
+     * @param orderId
+     */
     @Override
     public void updateSuccessAndAmount(String orderId) {
-
+        withdrawDao.updateSuccessAndAmount(orderId);
     }
 
     @Override
     public boolean updatePush(String orderId) {
-        return false;
+        return withdrawDao.updatePush(orderId);
+    }
+
+    @Override
+    public List<Withdraw> findNotPush() {
+        return withdrawDao.findNotPush();
     }
 
 }

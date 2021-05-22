@@ -37,6 +37,7 @@ public interface WithdrawMapper {
             "approval = #{approval}," +
             "comment = #{comment}, " +
             "submitTime = sysdate() ," +
+            "ethFee = 0 ," +
             "channelId = #{channelId} " +
             "where orderId = #{orderId}")
     int updataOrderStatus(@Param("orderId") String orderId, @Param("approval") String approval,
@@ -94,4 +95,27 @@ public interface WithdrawMapper {
             "select  sum(amount) as amount " +
                     " from alipay_withdraw where userId = #{appId} and TO_DAYS(createTime) =  TO_DAYS(now()) and orderStatus = 2   group by orderStatus ; ")
     Withdraw findOrderByAppSum(@Param("appId") String appId);
+
+    @Update("update alipay_withdraw set orderStatus = 4 where orderId = #{orderId}")
+    boolean updatePush(@Param("orderId") String orderId);
+
+
+    /**
+     * 未结算且  cny   且  成功
+     *
+     * @return
+     */
+    @Select("select * from alipay_withdraw where ethFee = 0 and currency = 'CNY' and orderStatus = 2  limit 15")
+    List<Withdraw> findSuccessAndNotAmount();
+
+    /**
+     * 修改订单未已结算
+     *
+     * @param orderId
+     */
+    @Update("update alipay_withdraw set ethFee = 1 where orderId = #{orderId}")
+    void updateSuccessAndAmount(String orderId);
+
+    @Select("select * from alipay_withdraw where  orderStatus = 1 limit 15")
+    List<Withdraw> findNotPush();
 }

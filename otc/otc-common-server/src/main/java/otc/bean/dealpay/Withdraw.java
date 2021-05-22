@@ -42,6 +42,15 @@ public class Withdraw implements Serializable {
     private String chennelId;
     private String currency;
     private Integer ethFee;  //eth手续费   1 已结算    0 未结算
+    private Integer pushOrder;  //1 已推送   0 未推送  默认为已推送
+
+    public Integer getPushOrder() {
+        return pushOrder;
+    }
+
+    public void setPushOrder(Integer pushOrder) {
+        this.pushOrder = pushOrder;
+    }
 
     public Integer getEthFee() {
         return ethFee;

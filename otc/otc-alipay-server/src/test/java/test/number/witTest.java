@@ -1,6 +1,7 @@
 
 package test.number;
 
+import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.RandomUtil;
@@ -20,7 +21,7 @@ import java.util.Map;
 
 public class witTest {
 	public static void main(String[] args) {
-		for (int a = 0; a <= 19; a++) {
+		for (int a = 0; a <= 2; a++) {
 			new witTest().deal();
 		}
 		//find();
@@ -46,21 +47,21 @@ public class witTest {
 		//    String key2 = "F71915AEE539D5B34EC913E9DA124821";
 		//    String publickey2 = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCqDnm1INpS68yAZ7l/Bx/7axG8qWWcwlGaDOaxXCHa8jCsjlmEcekLU/62rfH+iOAtb3z2ZcVT0AiBSpLn/dJe/9+UmP64o7EvzLPoFZPfCNMeIELbP7QGTBmqSaqXZ3TR/DyCbG0rdcBAR1wwam6NfIckNfGw72sPTQNE70wo+wIDAQAB";
 
-	  /*  	String userid3 = "632QP888";
+		String userid3 = "632QP888";
 		String key3 = "004475525F277F44BA4CDE4670B8E727";
 		String publickey3 = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCZhADxkdiJFcFaqamlhcxE+bzekfJJFH/qm6sSXg88J+L5q1uboF7LVhtx7t0oz855PED77GsuVbwYhx42ztr4DsU4+5YJEJ/OQL0In3zOkU58mCeTGBbdeoR3DxjBBIkrmC8p6FjdeGw75Gf2YAnImYji+OOv9SX7+kWYBm/yZwIDAQAB";
-	 	for (int a = 0; a <= 1; a++) {
+		for (int a = 0; a <= 1; a++) {
 			ThreadUtil.execute(() -> {
 				new witTest().wit(userid1, key1, publickey1);
 			});
-			ThreadUtil.execute(() -> {
+		/*	ThreadUtil.execute(() -> {
 				new witTest().wit(userid2, key2, publickey2);
 			});
           ThreadUtil.execute(() -> {
-                new witTest().wit(userid3, key3, publickey3);
-            });*/
+                new witTest().wit(userid3, key3, publickey3);*/
+			// });
+		}
 	}
-
 
 		//相应结果集：{"success":true,"message":"支付处理中","result":{"sussess":true,"cod":0,"openType":1,"returnUrl":"http://api.tjzfcy.com/gateway/bankgateway/payorder/order/60326816340490956.html"},"code":null}
 		//相应结果集：{"success":true,"message":"支付处理中","result":{"sussess":true,"cod":0,"openType":1,"returnUrl":"http://api.tjzfcy.com/gateway/bankgateway/payorder/order/60326822046537022.html"},"code":1}
@@ -107,7 +108,6 @@ public class witTest {
 	}
 
 	static void find() {
-
 		String userid2 = "facai123";
 		String key2 = "52148D59F72532316ED398A1F3281D73";//交易密钥
 		Map<String, Object> map = new HashMap<>();
@@ -131,7 +131,7 @@ public class witTest {
 		objectToMap.put("apporderid", StrUtil.uuid());
 		objectToMap.put("ordertime", d.format(new Date()) + "");
 		objectToMap.put("amount", 600);
-		objectToMap.put("acctno", "test123123123123");
+		objectToMap.put("acctno", "63398293847548938" + RandomUtil.randomLong(1, 10));
 		objectToMap.put("acctname", "张三");
 		objectToMap.put("bankcode", "ICBC");
 		objectToMap.put("notifyurl", "http://www.baodu.com");
