@@ -487,7 +487,7 @@ public class OrderUtil {
         if (order == null) {
             return Result.buildFailMessage("平台订单号不存在");
         }
-        if (!Common.Order.Wit.ORDER_STATUS_YU.equals(order.getOrderStatus())) {
+        if (!Common.Order.Wit.ORDER_STATUS_PUSH.equals(order.getOrderStatus())) {
             return Result.buildFailMessage("订单已被处理，不允许操作");
         }
         order.setApproval(approval);
@@ -540,7 +540,7 @@ public class OrderUtil {
         }
         UserFund userfund = new UserFund();
         userfund.setUserId(wit.getUserId());
-        amountPublic.witStatis(userfund, wit.getAmount(), wit.getOrderId());
+        //  amountPublic.witStatis(userfund, wit.getAmount(), wit.getOrderId());
         return Result.buildSuccessMessage("代付成功");
     }
 
@@ -722,7 +722,7 @@ public class OrderUtil {
         if (order == null) {
             return Result.buildFailMessage("平台订单号不存在");
         }
-        if (!Common.Order.Wit.ORDER_STATUS_YU.equals(order.getOrderStatus())) {
+        if (!Common.Order.Wit.ORDER_STATUS_PUSH.equals(order.getOrderStatus())) {
             return Result.buildFailMessage("订单已被处理，不允许操作");
         }
         return withrawOrderErBySystem(order, ip, msg);
@@ -827,6 +827,9 @@ public class OrderUtil {
             Result result = agentDpayChannel(wit, wit.getRetain2(), true);
             return result;
         }
+        UserFund userFundApp = new UserFund();
+        userFundApp.setUserId(wit.getUserId());
+        //    amountPublic.witStatis(userFundApp, wit.getAmount(), wit.getOrderId());
         return result1;
     }
 

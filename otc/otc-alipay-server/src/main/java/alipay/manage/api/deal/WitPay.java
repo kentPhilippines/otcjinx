@@ -64,7 +64,14 @@ public class WitPay extends PayOrderService {
 
     static final String COMMENT = "等待推送中";
 
-    public Result wit(HttpServletRequest request) {
+    /**
+     * 代付接口
+     *
+     * @param request
+     * @param amount  true   检查余额   false  不检查余额
+     * @return
+     */
+    public Result wit(HttpServletRequest request, boolean amount) {
         String userId = request.getParameter("userId");
         if (ObjectUtil.isNull(userId)) {
             return Result.buildFailMessage("当前传参，参数格式错误，请使用[application/x-www-form-urlencoded]表单格式传参");
@@ -83,6 +90,16 @@ public class WitPay extends PayOrderService {
         WithdrawalBean wit = MapUtil.mapToBean((Map<String, Object>) result, WithdrawalBean.class);
         wit.setIp(VendorRequestApi.getIpAddress(request, wit.getAppid()));
         UserRate userRate = accountApiServiceImpl.findUserRateWitByUserId(wit.getAppid(), wit.getAmount());
+        if (amount) {
+            UserFund userFund = userInfoServiceImpl.fundUserFundAccounrBalace(userId);
+            BigDecimal accountBalance = userFund.getAccountBalance();
+            BigDecimal quota = userFund.getQuota();
+            accountBalance = accountBalance.add(quota);
+            if (accountBalance.compareTo(new BigDecimal(wit.getAmount()).add(userRate.getFee())) == -1) {
+                exceptionOrderServiceImpl.addWitEx(userId, wit.getAmount(), "商户相应提示：当前账户金额不足；" + "处理方法：请检查商户金额是否足够，或者要求商户更换金额提交", HttpUtil.getClientIP(request), wit.getApporderid());
+                return Result.buildFailMessage("当前账户金额不足");
+            }
+        }
         UserInfo userInfoByUserId = userInfoServiceImpl.findUserInfoByUserId(userRate.getChannelId());
         if (Common.Order.DAPY_OFF.equals(userInfoByUserId.getRemitOrderState())) {
             log.info("【渠道关闭】");
@@ -243,16 +260,15 @@ public class WitPay extends PayOrderService {
             if (1 == userInfo.getAutoWit()) {
                 deal = super.withdraw(order);
                 if (deal.isSuccess()) {
-                    ThreadUtil.execAsync(() -> {
+                    ThreadUtil.execute(() -> {
                         ChannelFee channelFee = channelFeeDao.findImpl(order.getWitChannel(), order.getWitType());//缓存已加
                         Result withdraw = Result.buildFail();
                         try {
                             withdraw = factoryForStrategy.getStrategy(channelFee.getImpl()).withdraw(order);
                         } catch (Exception e) {
                             push("当前订单推送异常，请及时检查异常情况，当前订单号：" + order.getOrderId() + "，当前程序堆栈数据：" + printStackTrace(e.getStackTrace()));
-                            return Result.buildFailMessage("推送异常");
+                            //  return Result.buildFailMessage("推送异常");
                         }
-                        return withdraw;
                     });
                     //修改订单为已推送 不管当前订单是否推送成功
                     boolean b = withdrawServiceImpl.updatePush(order.getOrderId());

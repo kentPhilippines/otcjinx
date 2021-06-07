@@ -1,33 +1,35 @@
 var auditOrderVM = new Vue({
-	el : '#auditOrder',
-	data : {
-		receiveOrderTime : dayjs().format('YYYY-MM-DD'),
-		appealTypeDictItems : [],
-		showWaitConfirmOrderFlag : true,
-		waitConfirmOrders : [],
-		selectedOrder : {},
-		appealType : '',
-		actualPayAmount : '',
-		pageNum : 1,
-		totalPage : 1,
-		pageNum1 : 1,
-		totalPage1 : 1,
-		enterStatus : '',
-		userSreenshotIds : '',
-		isLoggedInFlag : true,
-		orderType : 'bank_deal_r',
-		showTodayReceiveOrderSituationFlag : false
+	el: '#auditOrder',
+	data: {
+		receiveOrderTime: dayjs().format('YYYY-MM-DD'),
+		appealTypeDictItems: [],
+		showWaitConfirmOrderFlag: true,
+		waitConfirmOrders: [],
+		selectedOrder: {},
+		appealType: '',
+		actualPayAmount: '',
+		orderStatus: '',
+		bankCard: '',
+		pageNum: 1,
+		totalPage: 1,
+		pageNum1: 1,
+		totalPage1: 1,
+		enterStatus: '',
+		userSreenshotIds: '',
+		isLoggedInFlag: true,
+		orderType: 'bank_deal_r',
+		showTodayReceiveOrderSituationFlag: false
 	},
-	 filters: {
-		 dateFilter: function (data, format = "") {
-             var dt = new Date(data);
-             var y = dt.getFullYear();
-             var m = (dt.getMonth()+1).toString().padStart(2,"0");
-             var d = dt.getDate().toString().padStart(2,"0");
-             var h = dt.getHours().toString().padStart(2,"0");
-             var mm = dt.getMinutes().toString().padStart(2,"0");
-             var s = dt.getSeconds().toString().padStart(2,"0");
-             if (format.toLocaleLowerCase() === "yyyy-mm-dd" ||
+	filters: {
+		dateFilter: function (data, format = "") {
+			var dt = new Date(data);
+			var y = dt.getFullYear();
+			var m = (dt.getMonth() + 1).toString().padStart(2, "0");
+			var d = dt.getDate().toString().padStart(2, "0");
+			var h = dt.getHours().toString().padStart(2, "0");
+			var mm = dt.getMinutes().toString().padStart(2, "0");
+			var s = dt.getSeconds().toString().padStart(2, "0");
+			if (format.toLocaleLowerCase() === "yyyy-mm-dd" ||
                  format.toLocaleLowerCase() === "") {
                  return `${y}-${m}-${d}`;
              } else if (format.toLocaleLowerCase() === "yyyy/mm/dd") {

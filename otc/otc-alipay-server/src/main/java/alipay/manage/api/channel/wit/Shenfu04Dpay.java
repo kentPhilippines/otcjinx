@@ -109,7 +109,7 @@ public class Shenfu04Dpay extends PayOrderService {
             String md5 = PayUtil.md5(createParam + channelInfo.getChannelPassword());
             map.put("sign", md5);
             log.info("【当前绅付代付请求参数为：" + map.toString() + "】");
-            String post = HttpUtil.post(channelInfo.getWitUrl(), map);
+            String post = HttpUtil.post(channelInfo.getWitUrl(), map, 2000);
             log.info("【绅付代付响应参数为：" + post + "】");
 
             /**

@@ -84,9 +84,6 @@ public class AmountPrivate extends Util {
 	static List accountList = new LinkedList();//迸发过高不关闭账户的例外
 
 	static {
-		accountList.add("QF168");
-		accountList.add("XPJ168");
-		accountList.add("HY888");
 	}
 
 	protected Result addFreezeAmount(UserFund userFund, BigDecimal amount) {

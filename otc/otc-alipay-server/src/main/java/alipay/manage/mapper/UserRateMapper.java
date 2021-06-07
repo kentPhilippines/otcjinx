@@ -100,4 +100,7 @@ public interface UserRateMapper {
      */
     @Select("select * from alipay_user_rate where userId = #{userId} and userType = #{userType} and payTypr = #{payTypr} and feeType  = #{feeType}")
     UserRate findAgentChannelFee(@Param("userId") String userId, @Param("userType") Integer userType, @Param("payTypr") String payTypr, @Param("feeType") Integer feeType);
+
+    @Select("select * from alipay_user_rate where feeType = 2 and `switchs` = 1 and userId = #{userId} limint 1 ")
+    UserRate findUserRateWitByUserIdApp(String userId);
 }

@@ -106,7 +106,7 @@ public class HuiTongFUDpay extends PayOrderService {
             map.put("sign", md5);
             map.put("url", channelInfo.getWitUrl());
             log.info("【当前汇通付代付请求参数为：" + map.toString() + "】");
-            String post = HttpUtil.post(PayApiConstant.Notfiy.OTHER_URL + "/forwordSendShenFuWit", map);
+            String post = HttpUtil.post(PayApiConstant.Notfiy.OTHER_URL + "/forwordSendShenFuWit", map, 2000);
             log.info("【汇通付代付响应参数为：" + post + "】");
 
             /**

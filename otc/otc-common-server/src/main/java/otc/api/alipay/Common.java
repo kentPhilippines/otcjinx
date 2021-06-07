@@ -56,19 +56,21 @@ public class Common {
 	}
 
 
-	public static class Order{
-		public static class Recharge{
+	public static class Order {
+		public static class Recharge {
 			public static final String ORDER_STATUS_SU = "2";//订单成功
 			public static final String ORDER_STATUS_ER = "3";//订单失败
 			public static final String ORDER_STATUS_YU = "1";//订单处理中
 		}
-		public static class Wit{
+
+		public static class Wit {
 			public static final String ORDER_STATUS_SU = "2";//订单成功
 			public static final String ORDER_STATUS_ER = "3";//订单失败
+			public static final String ORDER_STATUS_PUSH = "4";//订单已推送
 			public static final String ORDER_STATUS_YU = "1";//订单处理中
-			
-			public static final String WIT_QR = "2";				//码商提现
-			public static final String WIT_ACC = "1";				//商户提现
+
+			public static final String WIT_QR = "2";                //码商提现
+			public static final String WIT_ACC = "1";                //商户提现
 
 
 			public static final String WIT_TYPE_API = "1";                //API代付

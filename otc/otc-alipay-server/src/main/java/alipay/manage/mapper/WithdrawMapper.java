@@ -105,7 +105,7 @@ public interface WithdrawMapper {
      *
      * @return
      */
-    @Select("select * from alipay_withdraw where ethFee = 0 and currency = 'CNY' and orderStatus = 2  limit 15")
+    @Select("select * from alipay_withdraw where ethFee = 0 and currency = 'CNY' and orderStatus = 2  and submitTime >= CURRENT_TIMESTAMP - INTERVAL 10 MINUTE    limit 15")
     List<Withdraw> findSuccessAndNotAmount();
 
     /**

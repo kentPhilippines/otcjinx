@@ -90,7 +90,7 @@ public class DealPay {
         UserInfo userInfoByUserId = userInfoServiceImpl.findUserInfoByUserId(userRate.getChannelId());
         if (Common.Order.DEAL_OFF.equals(userInfoByUserId.getReceiveOrderState())) {
             log.info("【渠道关闭】");
-            exceptionOrderServiceImpl.addDealOrder(mapToBean, "用户报错：渠道关闭，联系运营处理；处理方法：开启渠道代付状态", HttpUtil.getClientIP(request));
+            exceptionOrderServiceImpl.addDealOrder(mapToBean, "用户报错：渠道关闭，联系运营处理；处理方法：开启渠道充值状态", HttpUtil.getClientIP(request));
             return Result.buildFailMessage("渠道关闭，联系运营处理");
         }
         Object o = redis.get(mapToBean.getOrderId() + userRate.getUserId());

@@ -85,7 +85,7 @@ public class CreateOrder {
         Integer userFeeId = null;
         String bc = GenerateOrderNo.Generate("BW");
         UserInfo accountInfo = userInfoServiceImpl.findUserInfoByUserId(wit.getUserId());//这里有为商户配置的 供应队列属性
-        UserRate rateFee = userRateServiceImpl.findUserRateWitByUserId(accountInfo.getUserId());
+        UserRate rateFee = userRateServiceImpl.findUserRateWitByUserIdApp(accountInfo.getUserId());
         userFeeId = rateFee.getId();
 
         //出款选卡算法
@@ -94,7 +94,7 @@ public class CreateOrder {
             return Result.buildFailMessage("暂无出款渠道");
         }
         channnelId = bankInfoUser;
-        UserRate channnelFee = userRateServiceImpl.findUserRateWitByUserId(channnelId);
+        UserRate channnelFee = userRateServiceImpl.findUserRateWitByUserIdApp(channnelId);
         if (null == channnelFee) {
             return Result.buildFailMessage("暂无出款渠道");
         }

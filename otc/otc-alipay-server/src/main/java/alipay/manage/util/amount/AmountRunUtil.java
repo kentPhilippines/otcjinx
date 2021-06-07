@@ -162,7 +162,7 @@ public class AmountRunUtil {
      * @return
      */
     public Result addAmountChannelWitEr(Withdraw withdraw, String generationIp, BigDecimal bigDecimal) {
-        return add(WITHDRAY_AMOUNT_OPEN, withdraw.getUserId(), withdraw.getOrderId(), bigDecimal, generationIp, "商户成功代付订单置为失败", RUNTYPE_ARTIFICIAL);
+        return delete(WITHDRAY_AMOUNT_OPEN, withdraw.getUserId(), withdraw.getOrderId(), bigDecimal, generationIp, "代付订单失败", RUNTYPE_ARTIFICIAL);
     }
 
     /**

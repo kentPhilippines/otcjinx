@@ -48,12 +48,13 @@ public class UserRateServiceImpl implements UserRateService {
 	}
 
 	@Override
-	public UserRate findUserRateWitByUserId(String userId) {
-		return userRateMapper.findUserRateWitByUserId(userId);
+	public UserRate findUserRateWitByUserIdApp(String userId) {
+		return userRateMapper.findUserRateWitByUserIdApp(userId);
 	}
 
 	@Override
 	public UserRate findAgentChannelFee(String agent, Integer userType, String payTypr, Integer feeType) {
 		return userRateMapper.findAgentChannelFee(agent, userType, payTypr, feeType);
 	}
+
 }
