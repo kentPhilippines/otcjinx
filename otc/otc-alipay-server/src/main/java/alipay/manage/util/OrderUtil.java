@@ -825,11 +825,13 @@ public class OrderUtil {
         Result result1 = channelWitSu(wit.getOrderId(), wit, wit.getRetain2(), userFund);
         if (result1.isSuccess()) {
             Result result = agentDpayChannel(wit, wit.getRetain2(), true);
+            if (result.isSuccess()) {
+                UserFund userFundApp = new UserFund();
+                userFundApp.setUserId(wit.getUserId());
+                amountPublic.witStatis(userFundApp, wit.getAmount(), wit.getOrderId());
+            }
             return result;
         }
-        UserFund userFundApp = new UserFund();
-        userFundApp.setUserId(wit.getUserId());
-        //    amountPublic.witStatis(userFundApp, wit.getAmount(), wit.getOrderId());
         return result1;
     }
 

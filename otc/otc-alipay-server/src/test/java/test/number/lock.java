@@ -1,28 +1,59 @@
 package test.number;
 
+import cn.hutool.core.thread.ThreadUtil;
+
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class lock {
 
-    private Lock lock = new ReentrantLock();
+    private static Lock lock = new ReentrantLock();
 
     public static void main(String[] args) {
-        lock myTask = new lock();
-        MyThread mt1 = new MyThread(myTask);
-        mt1.setName("mt1");
-        MyThread mt2 = new MyThread(myTask);
-        mt2.setName("mt2");
-        mt1.start();
-        mt2.start();
+        for (int a = 1; a <= 5; a++) {
+            ThreadUtil.execute(() -> {
+                ThreadUtil.execute(() -> {
+                    execute();
+                });
+                ThreadUtil.execute(() -> {
+                    execute2();
+                });
+            });
+        }
     }
 
-    public void execute() {
-        lock.lock();
-        for (int i = 0; i < 10; i++) {
-            System.out.println(Thread.currentThread().getName() + " " + i + "--" + System.currentTimeMillis());
+    public static void execute() {
+        try {
+            int i = 0;
+            do {
+                i++;
+                systenprint(i);
+            } while (i < 10);
+        } finally {
         }
-        lock.unlock();
+    }
+
+    public static void execute2() {
+
+        try {
+            int i = 0;
+            do {
+                i++;
+                systenprint(i);
+            } while (i < 10);
+        } finally {
+        }
+    }
+
+
+    static void systenprint(int i) {
+        lock.lock();
+        try {
+            System.out.println(Thread.currentThread().getName() + " " + i + "--" + System.currentTimeMillis());
+        } finally {
+            lock.unlock();
+        }
+
     }
 }
 

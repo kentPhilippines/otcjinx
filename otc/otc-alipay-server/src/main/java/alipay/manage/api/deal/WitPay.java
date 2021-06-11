@@ -270,13 +270,15 @@ public class WitPay extends PayOrderService {
                             //  return Result.buildFailMessage("推送异常");
                         }
                     });
-                    //修改订单为已推送 不管当前订单是否推送成功
-                    boolean b = withdrawServiceImpl.updatePush(order.getOrderId());
-                    if (b) {
-                        log.info("【当前订单已推送，状态已修改，当前订单号：" + order.getOrderId() + "】");
-                    } else {
-                        log.info("【当前订单已推送，状态未修改，当前订单号：" + order.getOrderId() + "】");
-                    }
+                    ThreadUtil.execute(() -> {
+                        //修改订单为已推送 不管当前订单是否推送成功
+                        boolean b = withdrawServiceImpl.updatePush(order.getOrderId());
+                        if (b) {
+                            log.info("【当前订单已推送，状态已修改，当前订单号：" + order.getOrderId() + "】");
+                        } else {
+                            log.info("【当前订单已推送，状态未修改，当前订单号：" + order.getOrderId() + "】");
+                        }
+                    });
                 } else {
                     throw new OrderException("代付订单结算失败", null);
                 }
