@@ -6,6 +6,7 @@ import alipay.manage.service.UserRateService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @Service
 public class UserRateServiceImpl implements UserRateService {
@@ -13,9 +14,9 @@ public class UserRateServiceImpl implements UserRateService {
 	UserRateMapper userRateMapper;
 
 	@Override
-	public UserRate findUserRateInfoByUserId(String userId) {
+	public List<UserRate> findUserRateInfoByUserId(String userId) {
 		// 查询当前用户的费率值
-		UserRate userRate = userRateMapper.findUserRateInfoByUserId(userId);
+		List<UserRate> userRate = userRateMapper.findUserRateInfoByUserId(userId);
 		return userRate;
 	}
 	@Override

@@ -88,7 +88,7 @@ public class UserContorller {
 		if (ObjectUtil.isNull(user)) {
 			return Result.buildFailMessage("当前用户未登陆");
 		}
-		UserRate userRate = userRateService.findUserRateInfoByUserId(user.getUserId());
+		List<UserRate> userRate = userRateService.findUserRateInfoByUserId(user.getUserId());
 		return Result.buildSuccessResult(userRate);
 	}
 	/**
@@ -155,7 +155,17 @@ public class UserContorller {
         boolean flag = false;
         if (openAgentAccount.isSuccess()) {
             flag = inviteCodeServiceImpl.updataInviteCode(user.getInviteCode(), user.getUserId());
-        }
+			List<UserRate> userFeeList = userRateService.findUserRateInfoByUserId(code.getBelongUser());
+			for( UserRate rate : userFeeList){
+				BigDecimal fee = rate.getFee();
+				String rebate = code.getRebate();
+				BigDecimal myselfFee = new BigDecimal(rebate);
+				BigDecimal subtract = fee.subtract(myselfFee);
+				rate.setFee(subtract);
+				rate.setUserId(user.getUserId());
+				userRateService.add(rate);
+			}
+		}
         if (openAgentAccount.isSuccess() && flag) {
             return Result.buildSuccessResult();
         }

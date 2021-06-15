@@ -63,11 +63,22 @@ public class AgentContorller {
 			user.setAgent(user2.getUserId());
 			user.setUserType(Integer.valueOf(Common.User.USER_TYPE_QR));
 			user.setIsAgent(Common.User.USER_IS_MEMBER);
-			UserRate rateR = userRateService.findUserRateR(user2.getUserId());
-			user.setFee(rateR.getFee() + "");
+		//	UserRate rateR = userRateService.findUserRateR(user2.getUserId());
+		//	user.setFee(rateR.getFee() + "");
 			Result addAccount = accountApiService.addAccount(user);
 			if (addAccount.isSuccess()) {
-				UserRate rate = new UserRate();
+				List<UserRate> userFeeList = userRateService.findUserRateInfoByUserId(user2.getUserId());
+				for( UserRate rate : userFeeList){
+					BigDecimal fee = rate.getFee();
+					String rebate = user.getFee();
+					BigDecimal myselfFee = new BigDecimal(rebate);
+					BigDecimal subtract = fee.subtract(myselfFee);
+					rate.setFee(subtract);
+					rate.setUserId(user.getUserId());
+					userRateService.add(rate);
+				}
+				return Result.buildSuccessMessage("开户成功");
+				/*UserRate rate = new UserRate();
 				rate.setUserId(user.getUserId());
 				rate.setFee(new BigDecimal(user.getFee()));
 				rate.setFeeType(Integer.valueOf(Common.User.ALIPAY_FEE));
@@ -76,7 +87,7 @@ public class AgentContorller {
 				boolean add = userRateService.add(rate);
 				if (add) {
 					return Result.buildSuccessMessage("开户成功");
-				}
+				}*/
 			}
 			 return Result.buildFailMessage("开户失败");
 			}
@@ -203,7 +214,7 @@ public class AgentContorller {
 				throw new OtherErrors("当前用户未登录");
 			}
 			UserFund findUserByAccount = userInfoService.findUserFundByAccount(user2.getUserId());
-			UserCountBean findMoreCount = findMyDate(findUserByAccount.getId());
+			UserCountBean findMoreCount = findMyDate(findUserByAccount.getUserId());
 			findMoreCount.setMoreDealProfit(findUserByAccount.getTodayAgentProfit().toString());
 			return Result.buildSuccessResult(findMoreCount);
 		}
@@ -211,9 +222,9 @@ public class AgentContorller {
 	     * <p>根据我的账户id，查询我的个人数据情况</p>
 	     * @param id
 	     */
-	    private UserCountBean findMyDate(@NotNull Integer id) {
-	    	UserCountBean bean = correlationServiceImpl.findMyDateAgen(id);
-	    	UserCountBean bean1 = correlationServiceImpl.findDealDate(id);
+	    private UserCountBean findMyDate(@NotNull String userId) {
+	    	UserCountBean bean = correlationServiceImpl.findMyDateAgen(userId);
+	    	UserCountBean bean1 = correlationServiceImpl.findDealDate(userId);
 	    	if(ObjectUtil.isNotNull(bean1)) {
 	    		bean.setMoreAmountRun(ObjectUtil.isNull(bean1.getMoreAmountRun())?new BigDecimal("0") :  bean1.getMoreAmountRun() );
 	    		bean.setMoreDealCount(ObjectUtil.isNull(bean1.getMoreDealCount())? 0 :  bean1.getMoreDealCount());
@@ -225,7 +236,7 @@ public class AgentContorller {
 		}
 	    UserInfo findOnline(UserInfo user) {
 	        if (Common.User.USER_IS_AGENT.toString().equals(user.getIsAgent())) {
-	           int[][] dataArray = correlationServiceImpl.findOnline(user.getId());
+	           int[][] dataArray = correlationServiceImpl.findOnline(user.getUserId());
 	           user.setOnline(dataArray[1][0]+"");
 	           user.setToDayOrderCount(dataArray[0][0]);
 	           user.setAgentCount(dataArray[2][0]+"");

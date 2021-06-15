@@ -55,9 +55,7 @@ public class AccountApi {
         }
         user.setIsAgent(Common.User.USER_IS_AGENT);
         Result addAccount = accountApiServiceImpl.addAccount(user);
-        if (addAccount.isSuccess()) {
-            userUtil.openAccountCorrlation(user.getUserId());
-        }
+
         return addAccount;
     }
 

@@ -62,7 +62,7 @@ public interface UserRateMapper {
     UserRate findFeeById(@Param("id")Integer id);
 
     @Select("select * from alipay_user_rate where userId = #{userId}")
-    UserRate findUserRateInfoByUserId(@Param("userId") String userId);
+    List<UserRate> findUserRateInfoByUserId(@Param("userId") String userId);
 
     /**
      * 查询码商入款费率

@@ -1,5 +1,7 @@
 package otc.result;
 
+import cn.hutool.json.JSONUtil;
+
 /**
  * <p>全局返回值类</p>
  * @author K
@@ -139,5 +141,8 @@ public class Result {
 	@Override
 	public String toString() {
 		return "Result [success=" + success + ", message=" + message + ", result=" + result + ", code=" + code + "]";
+	}
+	public  String toJson(){
+		return JSONUtil.parse(this).toString();
 	}
 }

@@ -716,7 +716,6 @@ public class OrderUtil {
         return Result.buildSuccessMessage("结算成功");
     }
 
-    @Transactional
     public Result withrawOrderErBySystem(String orderId, String ip, String msg) {
         Withdraw order = withdrawDao.findWitOrder(orderId);
         if (order == null) {
@@ -734,7 +733,6 @@ public class OrderUtil {
      * @param ip
      * @return
      */
-    @Transactional
     public Result withrawOrderErBySystem(Withdraw wit, String ip, String msg) {
         /*
          * ###########################
@@ -747,22 +745,34 @@ public class OrderUtil {
         }
         UserFund userFund = new UserFund();
         userFund.setUserId(wit.getUserId());
-        Result addAmountAdd = amountPublic.addAmountAdd(userFund, wit.getAmount(), wit.getOrderId());
-        if (!addAmountAdd.isSuccess()) {
-            return addAmountAdd;
+        Result addTransaction =   transactionTemplate.execute((Result) -> {
+                    Result addAmountAdd = amountPublic.addAmountAdd(userFund, wit.getAmount(), wit.getOrderId());
+                    if (!addAmountAdd.isSuccess()) {
+                        return addAmountAdd;
+                    }
+                    Result addAmountW = amountRunUtil.addAmountW(wit, ip);
+                    if (!addAmountW.isSuccess()) {
+                        return addAmountW;
+                    }
+                    return addAmountW;
+                });
+        if(!addTransaction.isSuccess()){
+            return addTransaction;
         }
-        Result addAmountW = amountRunUtil.addAmountW(wit, ip);
-        if (!addAmountW.isSuccess()) {
-            return addAmountW;
-        }
-        Result addFee = amountPublic.addAmountAdd(userFund, wit.getFee(), wit.getOrderId());
-        if (!addFee.isSuccess()) {
-            return addFee;
-        }
-        Result addAmountWFee = amountRunUtil.addAmountWFee(wit, ip);
-        if (!addAmountWFee.isSuccess()) {
-            return addAmountWFee;
-        }
+        Result addFeeTransaction =   transactionTemplate.execute((Result) -> {
+                    Result addFee = amountPublic.addAmountAdd(userFund, wit.getFee(), wit.getOrderId());
+                    if (!addFee.isSuccess()) {
+                        return addFee;
+                    }
+                    Result addAmountWFee = amountRunUtil.addAmountWFee(wit, ip);
+                    if (!addAmountWFee.isSuccess()) {
+                        return addAmountWFee;
+                    }
+                    return addAmountWFee;
+                });
+            if(!addFeeTransaction.isSuccess()){
+                return addFeeTransaction;
+            }
             notifyUtil.wit(wit.getOrderId());
         return Result.buildSuccessMessage("代付金额解冻成功");
     }
@@ -772,7 +782,6 @@ public class OrderUtil {
      *
      * @return
      */
-    @Transactional
     public Result withrawOrderEr(Withdraw wit, String ip) {
         /**
          * ###########################
@@ -798,21 +807,33 @@ public class OrderUtil {
         witd.setUserId(userId);
         UserFund userFund = new UserFund();
         userFund.setUserId(wit.getUserId());
-        Result addAmountAdd = amountPublic.addAmountAdd(userFund, wit.getAmount(), wit.getOrderId());
-        if (!addAmountAdd.isSuccess()) {
-            return addAmountAdd;
+        Result addTransaction =   transactionTemplate.execute((Result) -> {
+                    Result addAmountAdd = amountPublic.addAmountAdd(userFund, wit.getAmount(), wit.getOrderId());
+                    if (!addAmountAdd.isSuccess()) {
+                        return addAmountAdd;
+                    }
+                    Result addAmountW = amountRunUtil.addAmountW(wit, ip);
+                    if (!addAmountW.isSuccess()) {
+                        return addAmountW;
+                    }
+                    return addAmountW;
+                });
+        if(!addTransaction.isSuccess()){
+            return  addTransaction;
         }
-        Result addAmountW = amountRunUtil.addAmountW(wit, ip);
-        if (!addAmountW.isSuccess()) {
-            return addAmountW;
-        }
-        Result result = amountPublic.addAmountAdd(userFund, wit.getFee(), wit.getOrderId());
-        if (!result.isSuccess()) {
-            return result;
-        }
-        Result result1 = amountRunUtil.addAmountWFee(wit, ip);
-        if (!result1.isSuccess()) {
-            return result1;
+        Result addFeeTransaction =   transactionTemplate.execute((Result) -> {
+                    Result result = amountPublic.addAmountAdd(userFund, wit.getFee(), wit.getOrderId());
+                    if (!result.isSuccess()) {
+                        return result;
+                    }
+                    Result result1 = amountRunUtil.addAmountWFee(wit, ip);
+                    if (!result1.isSuccess()) {
+                        return result1;
+                    }
+                    return result1;
+                });
+        if(!addFeeTransaction.isSuccess()){
+            return  addFeeTransaction;
         }
         notifyUtil.wit(wit.getOrderId());
         return Result.buildSuccessMessage("代付金额解冻成功");
@@ -846,36 +867,55 @@ public class OrderUtil {
      * @return
      */
     public Result channelWitSu(String orderId, Withdraw wit, String ip, UserFund channel) {
-        log.info("【当前代付订单成功，代付订单号为：" + orderId + "，对代付渠道进行加款操作】");
-        Result addAmountAdd = amountPublic.addAmountAdd(channel, wit.getAmount(), wit.getOrderId());
-        if (addAmountAdd.isSuccess()) {
-            log.info("【当前代付渠道账户加款成功，代付订单号为：" + orderId + "，生成渠道加款流水】");
-        } else {
-            log.info("【当前代付渠道账户加款【失败】，代付订单号为：" + orderId + "，加款渠道为：" + wit.getOrderId() + "】");
-        }
-        Result addChannelWit = amountRunUtil.addChannelWit(wit, ip);
-        if (addChannelWit.isSuccess()) {
-            log.info("【当前代付渠道账户加款流水成功，代付订单号为：" + orderId + "，生成渠道加款流水】");
-        } else {
-            log.info("【当前代付渠道账户加款流水【失败】，代付订单号为：" + orderId + "，加款渠道为：" + wit.getOrderId() + "】");
+        Result addTransaction =   transactionTemplate.execute((Result) -> {
+                    log.info("【当前代付订单成功，代付订单号为：" + orderId + "，对代付渠道进行加款操作】");
+                    Result addAmountAdd = amountPublic.addAmountAdd(channel, wit.getAmount(), wit.getOrderId());
+                    if (addAmountAdd.isSuccess()) {
+                        log.info("【当前代付渠道账户加款成功，代付订单号为：" + orderId + "，生成渠道加款流水】");
+                    } else {
+                        log.info("【当前代付渠道账户加款【失败】，代付订单号为：" + orderId + "，加款渠道为：" + wit.getOrderId() + "】");
+                    }
+                    if(!addAmountAdd.isSuccess()){
+                        return addAmountAdd;
+                    }
+                    Result addChannelWit = amountRunUtil.addChannelWit(wit, ip);
+                    if (addChannelWit.isSuccess()) {
+                        log.info("【当前代付渠道账户加款流水成功，代付订单号为：" + orderId + "，生成渠道加款流水】");
+                    } else {
+                        log.info("【当前代付渠道账户加款流水【失败】，代付订单号为：" + orderId + "，加款渠道为：" + wit.getOrderId() + "】");
+                    }
+                    return addChannelWit;
+
+                });
+        if(!addTransaction.isSuccess()){
+            return addTransaction;
         }
         ChannelFee findChannelFee = channelFeeDao.findChannelFee(wit.getWitChannel(), wit.getWitType());
-        String channelDFee = findChannelFee.getChannelDFee();
-        log.info("【当前渠道代付手续费为：" + channelDFee + " 】");
-        Result add = amountPublic.addAmountAdd(channel, new BigDecimal(channelDFee), wit.getOrderId());
-        log.info("【渠道账户记录代付手续费为：" + channelDFee + " 】");
-        if (add.isSuccess()) {
-            log.info("【当前代付渠道账户取款手续费加款成功，代付订单号为：" + orderId + "，生成渠道加款手续费流水】");
-        } else {
-            log.info("【当前代付渠道账户取款手续费加款【失败】，代付订单号为：" + orderId + "，加款渠道为：" + wit.getOrderId() + "】");
-        }
-        Result addChannelWitFee = amountRunUtil.addChannelWitFee(wit, ip, new BigDecimal(channelDFee));
-        if (addChannelWitFee.isSuccess()) {
-            log.info("【当前代付渠道账户取款手续费加款流水成功，代付订单号为：" + orderId + "，生成渠道加款流水】");
-        } else {
-            log.info("【当前代付渠道账户取款手续费加款流水【失败】，代付订单号为：" + orderId + "，加款渠道为：" + wit.getOrderId() + "】");
-        }
-        if (addAmountAdd.isSuccess() && addChannelWit.isSuccess() && add.isSuccess() && addChannelWitFee.isSuccess()) {
+        Result addChanenlTransaction =   transactionTemplate.execute((Result) -> {
+            String channelDFee = findChannelFee.getChannelDFee();
+            log.info("【当前渠道代付手续费为：" + channelDFee + " 】");
+            Result add = amountPublic.addAmountAdd(channel, new BigDecimal(channelDFee), wit.getOrderId());
+            log.info("【渠道账户记录代付手续费为：" + channelDFee + " 】");
+            if (add.isSuccess()) {
+                log.info("【当前代付渠道账户取款手续费加款成功，代付订单号为：" + orderId + "，生成渠道加款手续费流水】");
+            } else {
+                log.info("【当前代付渠道账户取款手续费加款【失败】，代付订单号为：" + orderId + "，加款渠道为：" + wit.getOrderId() + "】");
+            }
+            if(!add.isSuccess()){
+                return  add;
+            }
+            Result addChannelWitFee = amountRunUtil.addChannelWitFee(wit, ip, new BigDecimal(channelDFee));
+            if (addChannelWitFee.isSuccess()) {
+                log.info("【当前代付渠道账户取款手续费加款流水成功，代付订单号为：" + orderId + "，生成渠道加款流水】");
+            } else {
+                log.info("【当前代付渠道账户取款手续费加款流水【失败】，代付订单号为：" + orderId + "，加款渠道为：" + wit.getOrderId() + "】");
+            }
+            if(!addChannelWitFee.isSuccess()){
+                return  addChannelWitFee;
+            }
+            return  addChannelWitFee;
+        });
+        if (addChanenlTransaction.isSuccess() && addTransaction.isSuccess()) {
             return Result.buildSuccess();
         } else {
             return Result.buildFail();
@@ -971,30 +1011,40 @@ public class OrderUtil {
     Result channelWitEr(Withdraw wit, String userId) {
         UserFund userFund = new UserFund();
         userFund.setUserId(userId);
-        Result result1 = amountPublic.addAmountAdd(userFund, wit.getActualAmount(), wit.getOrderId());
-        if (!result1.isSuccess()) {
-            log.info("【代付订单置为失败渠道账户加减款异常，请详细查看原因，当前代付订单号：" + wit.getOrderId() + "】");
-            return result1;
-        }
-        wit.setUserId(userId);
-        Result addAmountW = amountRunUtil.addAmountW(wit, wit.getRetain2());
-        if (!addAmountW.isSuccess()) {
-            log.info("【代付订单置为失败渠道账户加减款流水生成异常，请详细查看原因，当前代付订单号：" + wit.getOrderId() + "】");
-            return addAmountW;
+        Result add =   transactionTemplate.execute((Result) -> {
+           Result result1 = amountPublic.addAmountAdd(userFund, wit.getActualAmount(), wit.getOrderId());
+           if (!result1.isSuccess()) {
+               log.info("【代付订单置为失败渠道账户加减款异常，请详细查看原因，当前代付订单号：" + wit.getOrderId() + "】");
+               return result1;
+           }
+           wit.setUserId(userId);
+           Result addAmountW = amountRunUtil.addAmountW(wit, wit.getRetain2());
+           if (!addAmountW.isSuccess()) {
+               log.info("【代付订单置为失败渠道账户加减款流水生成异常，请详细查看原因，当前代付订单号：" + wit.getOrderId() + "】");
+               return addAmountW;
+           }
+           return addAmountW;
+       });
+        if(!add.isSuccess()){
+            return  add;
         }
         ChannelFee findChannelFee = channelFeeDao.findChannelFee(userId, wit.getWitType());
-
-        Result result = amountPublic.addAmountAdd(userFund, new BigDecimal(findChannelFee.getChannelDFee()), wit.getOrderId());
-        if (!result.isSuccess()) {
-            log.info("【代付订单置为失败渠道账户手续费加减款生成异常，请详细查看原因，当前代付订单号：" + wit.getOrderId() + "】");
-            return result;
-        }
-        Result result2 = amountRunUtil.addAmountChannelWitEr(wit, wit.getRetain2(), new BigDecimal(findChannelFee.getChannelDFee()));
-        if (!result2.isSuccess()) {
-            log.info("【代付订单置为失败渠道账户手续费加减款流水生成异常，请详细查看原因，当前代付订单号：" + wit.getOrderId() + "】");
+        Result execute = transactionTemplate.execute((Result) -> {
+            Result result = amountPublic.addAmountAdd(userFund, new BigDecimal(findChannelFee.getChannelDFee()), wit.getOrderId());
+            if (!result.isSuccess()) {
+                log.info("【代付订单置为失败渠道账户手续费加减款生成异常，请详细查看原因，当前代付订单号：" + wit.getOrderId() + "】");
+                return result;
+            }
+            Result result2 = amountRunUtil.addAmountChannelWitEr(wit, wit.getRetain2(), new BigDecimal(findChannelFee.getChannelDFee()));
+            if (!result2.isSuccess()) {
+                log.info("【代付订单置为失败渠道账户手续费加减款流水生成异常，请详细查看原因，当前代付订单号：" + wit.getOrderId() + "】");
+                return result2;
+            }
             return result2;
+        });
+        if(!execute.isSuccess()){
+            return  execute;
         }
-
         return Result.buildSuccessMessage("渠道退款成功");
     }
 }

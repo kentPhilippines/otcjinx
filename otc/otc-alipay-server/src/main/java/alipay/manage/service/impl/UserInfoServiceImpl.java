@@ -26,6 +26,8 @@ import otc.result.Result;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 @Component
 public class UserInfoServiceImpl implements UserInfoService {
@@ -47,7 +49,7 @@ public class UserInfoServiceImpl implements UserInfoService {
     private UserInfoMapper userInfoDao;
     @Resource
     private AttributeUtil attributeUtil;
-
+    static Lock lock = new ReentrantLock();
     /**
      * <p>查询自己的子账户</p>
      *
@@ -121,7 +123,13 @@ public class UserInfoServiceImpl implements UserInfoService {
         userFund.setUserType(null);
         userFund.setIsAgent(null);
         userFund.setCreateTime(null);
-        int updateByExampleSelective = userFundDao.updateByExampleSelective(userFund, example);
+        int updateByExampleSelective = 0 ;
+        lock.lock();
+        try {
+            updateByExampleSelective   = userFundDao.updateByExampleSelective(userFund, example);
+        }finally {
+            lock.unlock();
+        }
         return updateByExampleSelective > 0 && updateByExampleSelective < 2;
     }
 

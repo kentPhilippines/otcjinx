@@ -34,6 +34,9 @@
 			<div class="container login-container">
 				<form>
 					<div class="form-group">
+						<label>返点</label> <input type="text" class="form-control" placeholder="请设置返点" v-model="rebate">
+					</div>
+					<div class="form-group">
 						<label>用户名</label> <input type="text" class="form-control" placeholder="请输入账号" v-model="userName">
 					</div>
 					<div class="form-group">
@@ -69,6 +72,7 @@
 				securityPassword : '',
 				NewSecurityPassword : '',
 				accountName : '',
+				rebate : '',
 				fee:'',
 				rebateDictItems : []
 			},
@@ -113,6 +117,14 @@
 						return;
 					}
 					if (that.accountName == null || that.accountName == '') {
+						layer.alert('请输入用户昵称', {
+							title : '提示',
+							icon : 7,
+							time : 3000
+						});
+						return;
+					}
+					if (that.rebate == null || that.rebate == '') {
 						layer.alert('请输入用户昵称', {
 							title : '提示',
 							icon : 7,
@@ -170,6 +182,7 @@
 						userId : that.userName,
 						userName : that.accountName,
 						password : that.password,
+						fee : that.rebate,
 						payPasword : that.securityPassword
 					}).then(function(res) {
 						if(res.body.success){

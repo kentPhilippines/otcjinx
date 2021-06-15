@@ -160,22 +160,22 @@ public class CorrelationServiceImpl implements CorrelationService {
     }
 
     @Override
-    public UserCountBean findMyDateAgen(Integer id) {
-        UserCountBean bean = correlationDao.findMyDateAgen(id);
+    public UserCountBean findMyDateAgen(String userId) {
+        UserCountBean bean = correlationDao.findMyDateAgen(userId);
         return bean;
     }
 
     @Override
-    public UserCountBean findDealDate(@NotNull Integer id) {
-        UserCountBean bean = correlationDataDao.findDealDate(id);
+    public UserCountBean findDealDate(@NotNull String userId) {
+        UserCountBean bean = correlationDataDao.findDealDate(userId);
         return bean;
     }
 
     @Override
-    public int[][] findOnline(Integer id) {
+    public int[][] findOnline(String userId) {
         int[][] a = new int[3][1];
-        List<DataArray> dataArray = correlationDataDao.findOnline(id);
-        int count = correlationDao.findMyUserCount(id);
+        List<DataArray> dataArray = correlationDataDao.findOnline(userId);
+        int count = correlationDao.findMyUserCount(userId);
         if (dataArray.size() != 0) {
             for (DataArray array : dataArray) {
                 a[0][0] = array.getDataArray() + a[0][0];

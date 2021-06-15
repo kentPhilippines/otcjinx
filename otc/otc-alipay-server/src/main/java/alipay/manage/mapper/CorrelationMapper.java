@@ -70,13 +70,13 @@ public interface CorrelationMapper {
 			" COUNT(CASE WHEN  distance >1 THEN 1 END) AS agentCount,   " + 					//多级总下线
 			" COUNT(CASE WHEN  distance = 1 AND childrenType = 2 THEN 1 END) AS userAgent,   " +  //直接会员
 			" COUNT(CASE WHEN  childrenType = 2 AND distance >1 THEN 1 END) AS userCount   " + //多级会员
-			" FROM alipay_correlation  WHERE parentId  = #{id} AND distance > 0 ")			
-	UserCountBean findMyDateAgen(@Param("id")Integer id);
+			" FROM alipay_correlation  WHERE parentName  = #{userId} AND distance > 0 ")
+	UserCountBean findMyDateAgen(@Param("userId")String userId);
 	@Select("  SELECT COUNT(1) FROM "
 			+ "alipay_correlation WHERE"
-			+ " parentId  = #{id} AND distance > 0  " + 
+			+ " parentName  = #{userId} AND distance > 0  " +
 			"  ")
-	int findMyUserCount(@Param("id")Integer id);
+	int findMyUserCount(@Param("userId")String userId);
 	@Select("select parentName from alipay_correlation WHERE childrenName = #{qrcodeId}  ORDER BY distance DESC LIMIT 1")
 	String findAgent(@Param("qrcodeId")String qrcodeId);
 

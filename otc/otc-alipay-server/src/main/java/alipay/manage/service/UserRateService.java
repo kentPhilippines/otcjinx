@@ -2,13 +2,15 @@ package alipay.manage.service;
 
 import alipay.manage.bean.UserRate;
 
+import java.util.List;
+
 public interface UserRateService {
      /**
       * 查询当前用户费率值
       * @param userId
       * @return
       */
-	UserRate findUserRateInfoByUserId(String userId);
+	List<UserRate> findUserRateInfoByUserId(String userId);
 	/**
 	 * <p>码商入款费率</p>
 	 * @param account

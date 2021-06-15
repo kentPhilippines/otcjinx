@@ -12,6 +12,7 @@
     <result column="isDeal" property="isDeal" jdbcType="VARCHAR" />
     <result column="userType" property="userType" jdbcType="VARCHAR" />
     <result column="use" property="use" jdbcType="VARCHAR" />
+    <result column="rebate" property="rebate" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -72,7 +73,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, inviteCode, belongUser, count, createTime, submitTime, status, isDeal, userType,
+    id, inviteCode, belongUser, count, createTime, submitTime, status, isDeal, userType,`rebate` ,
     `use`
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="alipay.manage.bean.InviteCodeExample" >
@@ -121,6 +122,8 @@
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="inviteCode != null" >
         inviteCode,
+      </if><if test="rebate != null" >
+      rebate,
       </if>
       <if test="belongUser != null" >
         belongUser,
@@ -150,6 +153,8 @@
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="inviteCode != null" >
         #{inviteCode,jdbcType=VARCHAR},
+      </if> <if test="rebate != null" >
+        #{rebate,jdbcType=VARCHAR},
       </if>
       <if test="belongUser != null" >
         #{belongUser,jdbcType=VARCHAR},
@@ -188,6 +193,8 @@
     <set >
       <if test="record.id != null" >
         id = #{record.id,jdbcType=INTEGER},
+      </if> <if test="record.rebate != null" >
+      rebate = #{record.rebate,jdbcType=VARCHAR},
       </if>
       <if test="record.inviteCode != null" >
         inviteCode = #{record.inviteCode,jdbcType=VARCHAR},
@@ -233,6 +240,7 @@
       isDeal = #{record.isDeal,jdbcType=VARCHAR},
       userType = #{record.userType,jdbcType=VARCHAR},
       use = #{record.use,jdbcType=VARCHAR}
+    rebate = #{record.rebate,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -242,6 +250,8 @@
     <set >
       <if test="inviteCode != null" >
         inviteCode = #{inviteCode,jdbcType=VARCHAR},
+      </if><if test="rebate != null" >
+      rebate = #{rebate,jdbcType=VARCHAR},
       </if>
       <if test="belongUser != null" >
         belongUser = #{belongUser,jdbcType=VARCHAR},
@@ -281,6 +291,7 @@
       isDeal = #{isDeal,jdbcType=VARCHAR},
       userType = #{userType,jdbcType=VARCHAR},
       use = #{use,jdbcType=VARCHAR}
+      rebate = #{rebate,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

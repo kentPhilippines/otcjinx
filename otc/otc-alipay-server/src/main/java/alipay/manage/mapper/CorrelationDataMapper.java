@@ -26,15 +26,15 @@ public interface CorrelationDataMapper {
     		"  SUM(CASE WHEN  orderStatus = 2  THEN amount END) AS moreAmountRun," + 
     		"  SUM(CASE WHEN  orderStatus = 2  THEN 1 END) AS moreDealCount" + 
     		"  FROM alipay_correlation_data WHERE userId IN (" + 
-    		"  SELECT childrenName FROM alipay_correlation WHERE parentId  = #{id} )  AND  TO_DAYS(createTime) = TO_DAYS(now())" 
+    		"  SELECT childrenName FROM alipay_correlation WHERE parentName  = #{userId} )  AND  TO_DAYS(createTime) = TO_DAYS(now())"
     		 )
-	UserCountBean findDealDate(@Param("id") Integer id );
+	UserCountBean findDealDate(@Param("userId") String userId );
     @Select("select  count(1) as  dataArray " + 
     		" from `alipay_correlation_data`"
     		+ " where  userId in "
     		+ "( select childrenName from "
-    		+ "alipay_correlation WHERE parentId  = #{id}"
+    		+ "alipay_correlation WHERE parentName  = #{userId}"
     		+ " AND distance > 0  ) and orderStatus = 2  AND  TO_DAYS(createTime) = TO_DAYS(NOW())"
     		+ "group by userId")
-    List<DataArray> findOnline(@Param("id")Integer id);
+    List<DataArray> findOnline(@Param("userId")String userId);
 }

@@ -28,7 +28,7 @@ public class UserUtil {
 		 String parentName = null;
 		 UserInfo user3 = userInfoServiceImpl.findUserAgent(userId);
 		 if (StrUtil.isNotBlank(user3.getAgent())) {
-			 user4 = userInfoServiceImpl.findUserAgent(user3.getUserId());
+			 user4 = userInfoServiceImpl.findUserAgent(user3.getAgent());
 		 }
 		 String isAgentAgent = Common.User.USER_IS_AGENT;
 		 if (user3.getIsAgent().equals(isAgentAgent.toString())) {

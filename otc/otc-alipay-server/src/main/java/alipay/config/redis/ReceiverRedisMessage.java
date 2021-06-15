@@ -1,5 +1,6 @@
 package alipay.config.redis;
 
+import alipay.config.task.OrderTask;
 import alipay.manage.bean.UserFund;
 import alipay.manage.service.WithdrawService;
 import alipay.manage.util.NotifyUtil;
@@ -44,6 +45,20 @@ public class ReceiverRedisMessage {
         }
         latch.countDown();
     }
+    @Autowired
+    OrderTask orderTask;
+     public void taskOrder(String jsonMsg) {
+            log.info("【开始消费REDIS消息队列Task数据...】");
+            try {
+             /*   log.info("【开始进行每秒订单清算】");
+                orderTask.orderTask();
+                log.info("【开始进行10秒代付订单推送】");
+                orderTask.orderWitTask();*/
+            } catch (Exception e) {
+                log.error("[消费REDIS消息队列Task数据失败，失败信息:{}]", e.getMessage());
+            }
+            latch.countDown();
+        }
 
     /**
      * 队列消息接收方法

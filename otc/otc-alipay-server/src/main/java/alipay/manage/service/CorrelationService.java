@@ -82,14 +82,14 @@ public interface CorrelationService {
 	 * @param id
 	 * @return
 	 */
-	UserCountBean findMyDateAgen(Integer id);
+	UserCountBean findMyDateAgen(String id);
 
 	/**
 	 * <p>多级交易流水，多级交易笔数</p>
 	 * @param id	账户id
 	 * @return
 	 */
-	UserCountBean findDealDate(@NotNull Integer id);
+	UserCountBean findDealDate(@NotNull String id);
 
 	/**
 	 * <p>元素1为交易情况</p>
@@ -97,7 +97,7 @@ public interface CorrelationService {
 	 * @param id
 	 * @return
 	 */
-	int[][] findOnline(Integer id);
+	int[][] findOnline(String id);
 
 	/**
 	 * <p>根据账号查询自己顶代账号</p>

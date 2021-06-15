@@ -12,6 +12,16 @@ public class InviteCode implements Serializable{
     private String inviteCode;
 
     private String belongUser;
+    private String rebate;
+
+    public String getRebate() {
+
+        return rebate;
+    }
+
+    public void setRebate(String rebate) {
+        this.rebate = rebate;
+    }
 
     private Integer count;
 

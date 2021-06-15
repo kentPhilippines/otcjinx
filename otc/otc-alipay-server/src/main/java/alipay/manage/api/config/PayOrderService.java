@@ -15,6 +15,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.support.TransactionTemplate;
 import otc.api.alipay.Common;
 import otc.bean.dealpay.Withdraw;
 import otc.common.SystemConstants;
@@ -151,6 +152,8 @@ public abstract class PayOrderService implements PayService {
 		 */
 		return null;
 	}
+	@Autowired
+	private TransactionTemplate transactionTemplate;
 	/**
 	 * <p>代付</p>
 	 */
@@ -164,20 +167,32 @@ public abstract class PayOrderService implements PayService {
 		try {
 			UserFund userFund = new UserFund();// userInfoServiceImpl.findUserFundByAccount(wit.getUserId());
 			userFund.setUserId(wit.getUserId());
-			Result deleteWithdraw = amountPublic.deleteWithdraw(userFund, wit.getActualAmount(), wit.getOrderId());
-			if (!deleteWithdraw.isSuccess()) {
+			Result deleteTransaction = transactionTemplate.execute((Result) -> {
+				Result deleteWithdraw = amountPublic.deleteWithdraw(userFund, wit.getActualAmount(), wit.getOrderId());
+				if (!deleteWithdraw.isSuccess()) {
+					return deleteWithdraw;
+				}
+				Result deleteAmount = amountRunUtil.deleteAmount(wit, wit.getRetain2(), false);
+				if (!deleteAmount.isSuccess()) {
+					return deleteAmount;
+				}
+				return deleteAmount;
+			});
+			if (!deleteTransaction.isSuccess()) {
 				return Result.buildFailMessage("账户扣减失败,请联系技术人员处理");
 			}
-			Result deleteAmount = amountRunUtil.deleteAmount(wit, wit.getRetain2(), false);
-			if (!deleteAmount.isSuccess()) {
-				return Result.buildFailMessage("账户扣减失败,请联系技术人员处理");
-			}
+			Result deleteFeeTransaction = transactionTemplate.execute((Result) -> {
 			Result deleteWithdraw2 = amountPublic.deleteWithdraw(userFund, wit.getFee(), wit.getOrderId());
 			if (!deleteWithdraw2.isSuccess()) {
-				return Result.buildFailMessage("账户扣减失败,请联系技术人员处理");
+				return deleteWithdraw2;
 			}
 			Result deleteAmountFee = amountRunUtil.deleteAmountFee(wit, wit.getRetain2(), false);
 			if (!deleteAmountFee.isSuccess()) {
+				return deleteAmountFee;
+			}
+			return deleteAmountFee;
+			});
+			if (!deleteFeeTransaction.isSuccess()) {
 				return Result.buildFailMessage("账户扣减失败,请联系技术人员处理");
 			}
 		}  finally {

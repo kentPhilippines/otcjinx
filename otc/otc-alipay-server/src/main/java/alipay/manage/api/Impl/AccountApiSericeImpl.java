@@ -10,6 +10,7 @@ import alipay.manage.mapper.UserFundMapper;
 import alipay.manage.mapper.UserInfoMapper;
 import alipay.manage.mapper.UserRateMapper;
 import alipay.manage.service.UserInfoService;
+import alipay.manage.util.UserUtil;
 import alipay.manage.util.amount.AmountPublic;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
@@ -43,7 +44,8 @@ public class AccountApiSericeImpl implements AccountApiService {
     UserInfoService userInfoService;
     @Autowired
     AmountPublic amountPublic;
-
+    @Autowired
+    UserUtil userUtil;
     @Override
     public Result addAccount(UserInfo user) {
         if (ObjectUtil.isNull(user)) {
@@ -76,6 +78,7 @@ public class AccountApiSericeImpl implements AccountApiService {
         int insertSelective = userInfoDao.insertSelective(user);
         boolean addUserFund = addUserFund(user);
         if (insertSelective > 0 && insertSelective < 2 && addUserFund) {
+            userUtil.openAccountCorrlation(user.getUserId());
             return Result.buildSuccess();
         }
         return Result.buildFailMessage("新增用户失败，联系技术人员处理");

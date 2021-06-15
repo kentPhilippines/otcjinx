@@ -21,13 +21,15 @@ public class RedisMessageListener {
     @Bean
     public RedisMessageListenerContainer container(RedisConnectionFactory connectionFactory,
                                                    MessageListenerAdapter listenerAdapter,
-                                                   MessageListenerAdapter listenerAdapterTest2
+                                                   MessageListenerAdapter listenerAdapterTest2,
+                                                   MessageListenerAdapter listenerTaskOrder
     ) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
         //接受消息的key
         container.addMessageListener(listenerAdapter, new PatternTopic("order-deal"));
         container.addMessageListener(listenerAdapterTest2, new PatternTopic("order-wit"));
+      //  container.addMessageListener(listenerTaskOrder, new PatternTopic("task-order"));
         return container;
     }
 
@@ -52,6 +54,16 @@ public class RedisMessageListener {
     @Bean
     public MessageListenerAdapter listenerAdapterTest2(ReceiverRedisMessage receiver) {
         return new MessageListenerAdapter(receiver, "receiveMessage2");
+    }
+    /**
+     * 本意作为当前结算队列,但是现在时间不够,目前先不做优化
+     *
+     * @param receiver
+     * @return
+     */
+    @Bean
+    public MessageListenerAdapter listenerTaskOrder(ReceiverRedisMessage receiver) {
+        return new MessageListenerAdapter(receiver, "taskOrder");
     }
 
     /**
