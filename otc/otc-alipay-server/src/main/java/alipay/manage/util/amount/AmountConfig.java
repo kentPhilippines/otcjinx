@@ -39,7 +39,7 @@ public class AmountConfig extends Util {
      */
     protected Result addAmountBalance(UserFund userFund1, final BigDecimal balance,
                                       final String addType, final BigDecimal dealAmount, String orderId) {
-        synchronized (userFund1.getUserId()) {
+        lock.lock();
             try {
                 boolean flag = true;
                 int lockMsg = 1;
@@ -157,16 +157,14 @@ public class AmountConfig extends Util {
             } catch (TimeoutException e) {
                 e.printStackTrace();
             } finally {
-
-            }
+                lock.unlock();
         }
         return Result.buildFailMessage("传参异常");
     }
 
 
-    @Transactional
     protected Result deleteAmountBalance(UserFund userFund, final BigDecimal balance, final String addType, String orderId) {
-        synchronized (userFund.getUserId()) {
+        lock.lock();
             try {
                 boolean flag = true;
                 Integer lockMsg = 1;
@@ -251,7 +249,7 @@ public class AmountConfig extends Util {
             } catch (TimeoutException e) {
                 e.printStackTrace();
             } finally {
-            }
+                lock.unlock();
         }
         return Result.buildFailMessage("传参异常");
     }

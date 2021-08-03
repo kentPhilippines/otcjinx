@@ -124,11 +124,10 @@ public class UserInfoServiceImpl implements UserInfoService {
         userFund.setIsAgent(null);
         userFund.setCreateTime(null);
         int updateByExampleSelective = 0 ;
-        lock.lock();
         try {
             updateByExampleSelective   = userFundDao.updateByExampleSelective(userFund, example);
         }finally {
-            lock.unlock();
+
         }
         return updateByExampleSelective > 0 && updateByExampleSelective < 2;
     }

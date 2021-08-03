@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import otc.bean.alipay.Medium;
+import otc.bean.dealpay.Withdraw;
 import otc.common.PayApiConstant;
 import otc.result.Result;
 
@@ -36,6 +37,7 @@ public class QrcodeContorller {
     private SessionUtil sessionUtil;
     @Autowired
     private MediumService mediumServiceImpl;
+    @Autowired WithdrawService withdrawServiceImpl;
 
     @GetMapping("/findIsMyQrcodePage")
     @ResponseBody
@@ -142,10 +144,12 @@ public class QrcodeContorller {
             account = split[0];//开户行
             mediumPhone = split[3];
         }
+        Withdraw wit = withdrawServiceImpl.findOrderId(order.getAssociatedId());
+
         Map cardmap = new HashMap();
-        cardmap.put("bank_name", account);
-        cardmap.put("card_no", mediumHolder);
-        cardmap.put("card_user", mediumNumber);
+        cardmap.put("bank_name", wit.getAccname());
+        cardmap.put("card_no", wit.getBankNo());
+        cardmap.put("card_user", wit.getAccname());
         cardmap.put("money_order", order.getDealAmount());
         cardmap.put("no_order", orderId);
         cardmap.put("oid_partner", orderId);

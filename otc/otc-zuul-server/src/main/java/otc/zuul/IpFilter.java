@@ -5,9 +5,7 @@ import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
-import io.micrometer.core.instrument.util.StringUtils;
 import org.springframework.stereotype.Component;
-import otc.result.Result;
 
 import java.util.Arrays;
 import java.util.List;

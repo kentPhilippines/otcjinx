@@ -118,4 +118,8 @@ public interface WithdrawMapper {
 
     @Select("select * from alipay_withdraw where  orderStatus = 1 limit 15")
     List<Withdraw> findNotPush();
+
+
+    @Update("update alipay_withdraw set    comment = #{msg}  where orderId  = #{orderId} ")
+    void updateMsg(@Param("orderId")String orderId, @Param("msg")String msg);
 }

@@ -73,7 +73,6 @@ public class Api {
 	 * @param request
 	 * @return
 	 */
-	@Transactional
 	@PostMapping(PayApiConstant.Dealpay.ACCOUNT_API+PayApiConstant.Dealpay.WIT_ORDER+"/{param:.+}")
 	public Result witOrder(@PathVariable("param") String param, HttpServletRequest request) {
 		log.info("【后台人员请求代付订单修改方法：" + param + "】");

@@ -1,9 +1,13 @@
 package alipay;
 
+import alipay.manage.bean.DealOrder;
 import cn.hutool.core.convert.Convert;
+import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.NetUtil;
 import cn.hutool.core.util.NumberUtil;
+import cn.hutool.cron.CronUtil;
+import cn.hutool.cron.task.Task;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.ServletComponentScan;
@@ -14,13 +18,15 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Date;
 import java.util.Scanner;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.Timer;
+import java.util.concurrent.*;
+
 /**
  * <p>宝转宝支付接口服务</p>
  * @author K
@@ -34,7 +40,7 @@ import java.util.concurrent.TimeoutException;
 @EnableRedisHttpSession //redis   session 共享
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public class AlipayApplication {
-	public static void main(String[] args) throws NoSuchAlgorithmException, KeyManagementException {
+	public static void main(String[] args) throws UnknownHostException {
 		int port = 0;
 		int defaultPort = 9010;
 		Future<Integer> future = ThreadUtil.execAsync(() -> {
@@ -62,7 +68,6 @@ public class AlipayApplication {
 			System.err.print("端口%d被占用了，无法启动%n");
 			port = ++defaultPort;
 		}
-
 		new SpringApplicationBuilder(AlipayApplication.class).properties("server.port=" + port).run(args);
 	}
 }

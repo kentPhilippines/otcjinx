@@ -1,11 +1,8 @@
 ## db.setting文件
-
-#url = jdbc:mysql://rm-3ns0wdzxpkyk00409qo.mysql.rds.aliyuncs.com:3306/otc_alipay?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
-#user = kent
-#pass = 9asdasd7dwgdo7$as8d)asd
-url: jdbc:mysql://35.220.155.53:3306/otc_alipay?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
-username: kent_admin
-password: L!f2e#e_h3CNgVD
+url =  jdbc:mysql://35.220.155.53:3306/otc_alipay?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+username = kent_admin
+password =  L!f2e#e_h3CNgVD
+driver = com.mysql.jdbc.Driver
 ## 可选配置
 # 是否在日志中显示执行的SQL
 showSql = true

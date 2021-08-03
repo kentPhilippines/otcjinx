@@ -55,6 +55,8 @@ public abstract class PayOrderService implements PayService {
 	private ChannelFeeMapper channelFeeDao;
     @Autowired
     private OrderUtil orderUtilImpl;
+  @Autowired
+    private WithdrawService withdrawServiceImpl;
 
     @Override
     public Result deal(DealOrderApp dealOrderApp, String channel) throws Exception {
@@ -214,6 +216,12 @@ public abstract class PayOrderService implements PayService {
 				notifyUtil.wit(wit.getOrderId());
 		}
 		return withrawOrderErBySystem;
+	}
+	public Result withdrawErMsg(Withdraw wit, String msg, String ip) {
+
+
+		withdrawServiceImpl.updateMsg(wit.getOrderId(),msg);
+			return  Result.buildSuccess();
 	}
 
 	@Resource

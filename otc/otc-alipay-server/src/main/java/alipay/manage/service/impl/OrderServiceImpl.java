@@ -341,7 +341,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<DealOrder> findExternalOrderId(String externalOrderId) {
-        return null;
+        return dealOrderMapper.findExternalOrderId(externalOrderId);
     }
 
     @Override

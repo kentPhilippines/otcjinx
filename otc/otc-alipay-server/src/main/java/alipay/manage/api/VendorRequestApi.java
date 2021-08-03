@@ -1,5 +1,6 @@
 package alipay.manage.api;
 
+import alipay.config.redis.RedisUtil;
 import alipay.manage.bean.UserFund;
 import alipay.manage.bean.UserInfo;
 import alipay.manage.bean.UserRate;
@@ -135,7 +136,7 @@ public class VendorRequestApi {
         userFund = null;
         return Result.buildSuccessResult(paramMap);
     }
-
+    @Autowired  private RedisUtil redis;
     public Result withdrawal(HttpServletRequest request, boolean flag) {
         String userId = request.getParameter("userId");//商户号
         UserInfo userInfo = accountApiServiceImpl.findClick(userId);
@@ -180,6 +181,15 @@ public class VendorRequestApi {
             return Result.buildFailMessage("当前账户代付权限未开通");
         }
         if (!flag) {
+
+            String acctno = paramMap.get("acctno").toString();//银行卡号
+            String appid = paramMap.get("appid").toString();//商户号
+            Object wi = redis.get(acctno + appid + paramMap.get("amount").toString());
+            if(null != wi){
+                log.info("当值当前商户重复提交，限制key = "+acctno + appid + paramMap.get("amount").toString());
+                return Result.buildFailMessage("限制提交");
+            }
+             redis.set(acctno + appid + paramMap.get("amount").toString(),acctno + appid + paramMap.get("amount").toString(),300);
             String clientIP = getIpAddress(request, userInfo.getUserId());
             if (StrUtil.isBlank(clientIP)) {
                 clientIP = HttpUtil.getClientIP(request);
@@ -217,6 +227,14 @@ public class VendorRequestApi {
                 }
             }
         } else {
+            String acctno = paramMap.get("acctno").toString();//银行卡号
+            String appid = paramMap.get("appid").toString();//商户号
+            Object wi = redis.get(acctno + appid + paramMap.get("amount").toString());
+            if(null != wi){
+                log.info("当值当前商户重复提交，限制key = "+acctno + appid + paramMap.get("amount").toString());
+                return Result.buildFailMessage("限制提交");
+            }
+            redis.set(acctno + appid + paramMap.get("amount").toString(),acctno + appid + paramMap.get("amount").toString(),300);
         }
         String amount1 = paramMap.get("amount").toString();
         BigDecimal witAmount = new BigDecimal(amount1);

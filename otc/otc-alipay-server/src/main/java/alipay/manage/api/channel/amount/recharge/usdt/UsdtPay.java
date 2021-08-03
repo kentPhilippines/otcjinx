@@ -3,10 +3,12 @@ package alipay.manage.api.channel.amount.recharge.usdt;
 import alipay.config.redis.RedisUtil;
 import alipay.manage.api.config.PayOrderService;
 import alipay.manage.bean.BankList;
+import alipay.manage.bean.DealOrder;
 import alipay.manage.bean.DealOrderApp;
 import alipay.manage.bean.util.ResultDeal;
 import alipay.manage.service.BankListService;
 import alipay.manage.service.OrderService;
+import cn.hutool.core.thread.ThreadUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import otc.result.Result;
@@ -34,7 +36,8 @@ public class UsdtPay extends PayOrderService implements USDT {
         Result result = createOrder(
                 dealOrderApp.getOrderAmount(),
                 orderId, dealOrderApp.getRetain1(),
-                bankListServiceIMpl.findBankByAccount("UsdtPay")
+                bankListServiceIMpl.findBankByAccount("UsdtPay"),
+                dealOrderApp.getAppOrderId()
         );
         if (result.isSuccess()) {
             return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(result.getResult()));
@@ -45,17 +48,16 @@ public class UsdtPay extends PayOrderService implements USDT {
     }
 
 
-    private Result createOrder(BigDecimal orderAmount, String orderId, String type, List<BankList> usdtInfo) throws Exception {
-        BigInteger bigInteger = new BigDecimal("1000000").toBigInteger();//虚拟币单位放大1000000比对
-        BigInteger bigInteger1 = orderAmount.toBigInteger();
-        BigInteger money = bigInteger1.multiply(bigInteger);
+    private Result createOrder(BigDecimal orderAmount, String orderId, String type, List<BankList> usdtInfo, String appOrderId) throws Exception {
+        BigDecimal bigInteger = new BigDecimal("1000000");//虚拟币单位放大1000000比对
+        BigInteger money = orderAmount.multiply(bigInteger).toBigInteger();
         for (BankList bank : usdtInfo) {
-            String bankinfo = MARS + money + bank.getBankcardAccount();
+            String bankinfo = MARS + money + bank.getBankcardAccount().toUpperCase();
             Object o = redis.get(bankinfo);
             if (null != o) {
                 continue;
             }
-            log.info("【缓存支付数据为：" + bankinfo + "】");
+            log.info("【缓存支付数据为：" + bankinfo + ",当前订单号为："+orderId+"】");
             redis.set(bankinfo, orderId, TIME);//当前地址正在使用标记， 当前正在使用唯一标记为： 金额 + 钱包地址
             Object k = redis.get(bankinfo);
             Map cardmap = new HashMap();
@@ -71,6 +73,19 @@ public class UsdtPay extends PayOrderService implements USDT {
              * ##################
              */
             orderServiceImpl.updateBankInfoByOrderId(bank.getBankcardAccount(), orderId);
+            ThreadUtil.execute(()->{
+                List<DealOrder> orderList = orderServiceImpl.findExternalOrderId(appOrderId);
+                for(DealOrder order : orderList ){
+                    boolean kentusdtmanage = order.getOrderAccount().equals("KENTUSDTMANAGE");//内充 usdt 转 cny 专用账号
+                    if (!kentusdtmanage) {//内充原订单
+                        String rate = order.getNotify();
+
+                        BigDecimal bg = new BigDecimal(rate);
+                        double f1 = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+                        orderServiceImpl.updateBankInfoByOrderId(bank.getBankcardAccount() +":汇率:"+f1 + ": 数量:"+orderAmount,order.getOrderId());
+                    }
+                }
+            });
             //   USDTQrcodeUtil.encode("ethereum:"+bank.getBankcardAccount()+"?decimal=6&value=0",bank.getBankcardAccount());
             return Result.buildSuccessResult(PAY_URL + "47.242.50.29:32437/pay-usdt?orderId=" + orderId + "&type=" + type);
         }

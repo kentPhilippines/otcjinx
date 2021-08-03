@@ -126,7 +126,6 @@ public class OrderUtil {
      * @param ip      操作 ip
      * @return
      */
-    @Transactional
     public Result withrawOrderEr(String orderId, String approval, String comment, String ip) {
         Withdraw order = withdrawDao.findWitOrder(orderId);
         if (order == null) {
@@ -479,7 +478,6 @@ public class OrderUtil {
      * @param orderId
      * @return
      */
-    @Transactional
     public Result withrawOrderSu(String orderId, String approval,
                                  String comment,
                                  String channelId, String witType) {
@@ -502,7 +500,6 @@ public class OrderUtil {
      *
      * @return
      */
-    @Transactional
     public Result withrawOrderSu(Withdraw wit) {
         /**
          * #########################

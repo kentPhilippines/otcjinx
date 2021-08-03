@@ -37,7 +37,6 @@ public class QueueUtil {
 				String mediumNo = mediumId.getMediumId();
 				log.info("【当前操作的媒介id为："+mediumNo+"】");
 				addNode = queueServiceClienImpl.addNode(mediumId);	// addNode - queue
-				if(addNode.isSuccess()) {
 					if (redisUtil.hasKey(MEDIUM_QUEUE + mediumNo)) {
 						return Result.buildFailMessage("本地标记已存在");
 					}
@@ -46,7 +45,6 @@ public class QueueUtil {
 					if (!flag) {
 						return Result.buildFail();
 					}
-				}
 			return addNode;
 	}
 	/**
@@ -60,14 +58,12 @@ public class QueueUtil {
 			Medium mediumId = mediumServiceImpl.findMediumId(medium.getId().toString());
 			String mediumNo = mediumId.getMediumId();
 			deleteNode = queueServiceClienImpl.deleteNode(mediumId);   // delete medium  -  queue
-			if(deleteNode.isSuccess()) {
 				log.info("【当前操作的媒介id为：" + mediumNo + "】");
 				redisUtil.del(MEDIUM_QUEUE + mediumNo);
 				boolean flag = mediumServiceImpl.updataMediumStatusEr(medium.getId().toString());   // off medium
 				if (!flag) {
 					return Result.buildFail();
 				}
-			}
 		return deleteNode;
 	}
 }

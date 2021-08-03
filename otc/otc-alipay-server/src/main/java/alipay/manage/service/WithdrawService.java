@@ -70,4 +70,8 @@ public interface WithdrawService {
      * @return
      */
     List<Withdraw> findNotPush();
+
+
+
+    void updateMsg(String orderId, String msg);
 }

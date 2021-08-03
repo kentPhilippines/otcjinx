@@ -103,7 +103,7 @@ public class UsdtPayOut extends NotfiyChannel implements USDT {
             log.info("【当前缓存中不存在 USDT 支付数据】");
             return;
         }
-        for (Object account : orderList) {
+        for (Object account : orderList) {//待支付数据    钱包地址  +  订单号
             log.info("【缓存数据为:" + account.toString() + "】");
             String[] split = account.toString().split("_");
             String address = split[0];//待支付成功地址
@@ -149,21 +149,23 @@ public class UsdtPayOut extends NotfiyChannel implements USDT {
                         int i = 0;
                         try {
                             log.info("【保存本地usdt数据为：" + usdt.toString() + "】");
-                            i = insterU(usdt);
-                        } catch (Exception e) {
+                            i =  insterU(usdt);
+                        } catch(Throwable t) {
+                            log.error(t);
+                            log.info("【新增usdt 数据异常，当前hash值为："+usdt.getHash()+"】");
                             i = 0;
                         }
                         if (i > 0) {
                             log.info("【数据标记成功，当前标记数据hash为：" + usdt.getHash() + "】");
-                            redis.set(MARS + usdt.getHash(), usdt.getHash() + "-" + orderId, 60 * 60 * 24 * 30);//缓存一个余额， 减少数据库压力
+                            redis.set(MARS + usdt.getHash(), usdt.getHash() , 60 * 60 * 24 * 30);//缓存一个余额， 减少数据库压力
                         }
                         //验证是否有支付成功
-                        String bankinfo = MARS + usdt.getValue() + usdt.getTo();   //支付成功标识
+                        String bankinfo = MARS + usdt.getValue() + usdt.getTo().toUpperCase();   //支付成功标识
                         log.info("【支付标记数据为：" + bankinfo + "】");
                         Object o1 = redis.get(bankinfo);//支付成功订单号  ，  如果不为空  则为支付成功
                         if (null != o1 && usdt.getTo().toUpperCase().equals(address.toUpperCase())) {
-                            log.info("【判定支付成功，当前订单号：" + orderId + "，当前支付地址：" + address + "】");
-                            DealOrder order = orderServiceImpl.findOrderByOrderId(orderId);
+                            log.info("【判定支付成功，当前订单号：" + o1.toString() + "，当前支付地址：" + address + "】");
+                            DealOrder order = orderServiceImpl.findOrderByOrderId(o1.toString());
                             if (order.getStatus().toString().equals(OrderDealStatus.成功.getIndex().toString())) {
                                 continue;
                             }
@@ -172,25 +174,32 @@ public class UsdtPayOut extends NotfiyChannel implements USDT {
                             DateTime parse = DateUtil.parse(usdt.getTimeStamp());
                             long usdtTime = parse.getTime();
                             log.info("【支付时间和订单时间比较，是否符合支付成功判定】");
-                            if (((usdtTime - time) < TIME) && i > 1) {
-                                DealOrder orderByOrderId = orderServiceImpl.findOrderByOrderId(orderId);
+                            log.info("usdt支付时间："+usdtTime);
+                            log.info("订单时间："+time);
+                            long a =    usdtTime - time;
+                            log.info("时间差："+a);
+                            log.info("判断时间："+TIME * 1000);
+                            log.info("是否插入成功："+ i);
+                            if (((usdtTime - time) < TIME * 1000 ) && i > 1) {
+                                log.info("判定成功" + o1.toString());
+                                DealOrder orderByOrderId = orderServiceImpl.findOrderByOrderId(o1.toString());
                                 String externalOrderId = orderByOrderId.getExternalOrderId();
                                 List<DealOrder> orderList1 = orderServiceImpl.findExternalOrderId(externalOrderId);
                                 for (DealOrder exOrder : orderList1) {
                                     boolean kentusdtmanage = exOrder.getOrderAccount().equals("KENTUSDTMANAGE");//内充 usdt 转 cny 专用账号
-                                    if (kentusdtmanage) {
+                                    if (!kentusdtmanage) {
                                         Result result1 = dealpayNotfiy(exOrder.getOrderId(), "127.0.0.1", "USDT转CNY，USDT到账成功");
                                         if (result1.isSuccess()) {
-                                            orderServiceImpl.updateUsdtTxHash(orderId, hash);
+                                            orderServiceImpl.updateUsdtTxHash(o1.toString(), hash);
                                         }
                                     }
                                 }
-                                Result result1 = dealpayNotfiy(orderId, "127.0.0.1", "主动查询USDT订单交易成功");
+                                Result result1 = dealpayNotfiy(o1.toString(), "127.0.0.1", "主动查询USDT订单交易成功");
                                 if (result1.isSuccess()) {//支付成功， 删除缓存标记
-                                    orderServiceImpl.updateUsdtTxHash(orderId, hash);
+                                    orderServiceImpl.updateUsdtTxHash(o1.toString(), hash);
                                     redis.del(bankinfo);   //支付成功唯一标识
-                                    redis.del(MARS + orderId);//终端用户获取支付地址信息
-                                    redis.setRemove(MARS, address + "_" + orderId);//当前该地址和订单信息
+                                    redis.del(MARS + o1.toString());//终端用户获取支付地址信息
+                                    redis.setRemove(MARS, address + "_" + o1.toString());//当前该地址和订单信息
                                 }
                             }
                         }

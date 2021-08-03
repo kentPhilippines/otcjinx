@@ -6,7 +6,7 @@ public interface USDT {
     public static final String MONEY = "USDT:MONEY";
     public static final String USDTSCAN = "USDT:SCAN";
     public static final String BIGU = "1000000";
-    public static Long TIME = Long.valueOf(60 * 10);
+    public static Long TIME = Long.valueOf(60 * 30);
 
 
 }

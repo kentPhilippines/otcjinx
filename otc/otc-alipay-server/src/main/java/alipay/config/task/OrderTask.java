@@ -146,9 +146,9 @@ public class OrderTask {
 					continue;
 				}
 				Result settlement = WitPayImpl.witAutoPush(order);
-			} catch (Exception e) {
-				log.info("【推送代付订单异常：" + order.getOrderId() + "】");
-				log.info("【推送代付订单异常：" + e.getMessage() + "】");
+			} catch (Throwable e) {
+				log.error("【推送代付订单异常：" + order.getOrderId() + "】",e);
+				log.error("【推送代付订单异常：" + e.getMessage() + "】",e);
 			} finally {
 				RedisLockUtil.unLock(KEY_WIT_PUSH + "lock");
 			}

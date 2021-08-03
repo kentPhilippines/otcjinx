@@ -49,7 +49,7 @@ public class HuiTongFuSourcePay extends PayOrderService {
                 orderId,
                 getChannelInfo(channel, dealOrderApp.getRetain1()));
         if (result.isSuccess()) {
-            return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(result.getResult()));
+            return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrlAndPayInfo(result.getResult(),result.getMessage()));
         } else {
             orderEr(dealOrderApp, "错误消息：" + result.getMessage());
             return result;
@@ -100,7 +100,7 @@ public class HuiTongFuSourcePay extends PayOrderService {
                 cardmap.put("oid_partner", jsonObject.getStr("oid_partner"));
                 orderServiceImpl.updateBankInfoByOrderId(jsonObject.getStr("card_user") + ":" + jsonObject.getStr("bank_name") + ":" + jsonObject.getStr("card_no"), orderId);
                 redis.hmset(MARS + orderId, cardmap, 600000);
-                return Result.buildSuccessResult(PayApiConstant.Notfiy.OTHER_URL + "/pay?orderId=" + orderId + "&type=" + channelInfo.getChannelType());
+                return Result.buildSuccessResult(jsonObject.getStr("card_user") + ":" + jsonObject.getStr("bank_name") + ":" + jsonObject.getStr("card_no"), PayApiConstant.Notfiy.OTHER_URL + "/pay?orderId=" + orderId + "&type=" + channelInfo.getChannelType());
             } else {
                 return Result.buildFailMessage(jsonObject.getStr("ret_msg"));
             }

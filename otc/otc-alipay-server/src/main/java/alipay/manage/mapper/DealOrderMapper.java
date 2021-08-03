@@ -144,4 +144,7 @@ public interface DealOrderMapper {
      */
     @Update(" update alipay_deal_order set retain4 = 0  where orderId = #{orderId}")
     void updateSuccessAndAmount(@Param("orderId") String orderId);
+
+    @Select("select id, orderId, associatedId, orderStatus, dealAmount ,orderAccount, orderQrUser,externalOrderId , notify  FROM alipay_deal_order  where  externalOrderId = #{externalOrderId}")
+    List<DealOrder> findExternalOrderId(@Param("externalOrderId")String externalOrderId);
 }

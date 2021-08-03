@@ -89,4 +89,9 @@ public class WithdrawServiceImpl implements WithdrawService {
         return withdrawDao.findNotPush();
     }
 
+    @Override
+    public void updateMsg(String orderId, String msg) {
+        withdrawDao.updateMsg(orderId,msg);
+    }
+
 }

@@ -233,7 +233,13 @@ public class AmountRunUtil {
      * @return
      */
     public Result addDealAmountApp(alipay.manage.bean.DealOrderApp order, String generationIp, Boolean flag) {
-        Result add = add(ADD_DEAL_AMOUNT_APP, order.getOrderAccount(), order.getOrderId(), order.getOrderAmount(), generationIp, "下游商户交易加款", flag ? RUNTYPE_ARTIFICIAL : RUNTYPE_NATURAL);
+
+        String dealcr = "下游商户交易加款";
+        String orderAccount = order.getOrderAccount();
+        if("KENTUSDTMANAGE".equals(orderAccount)){
+            dealcr  +=  "当前转换汇率为："+order.getNotify();
+        }
+        Result add = add(ADD_DEAL_AMOUNT_APP, order.getOrderAccount(), order.getOrderId(), order.getOrderAmount(), generationIp, dealcr, flag ? RUNTYPE_ARTIFICIAL : RUNTYPE_NATURAL);
         if (add.isSuccess()) {
             return add;
         }
@@ -406,6 +412,7 @@ public class AmountRunUtil {
         acountR = SYSTEM_APP;
         accountW = orderAccount;
         runOrderType = getRunOrderType(orderType);
+        amount =  new BigDecimal("-1").multiply(amount);//如果是扣款则为 负数显示
         Result amountRun = amountRun(associatedId, orderAccount, runOrderType, amount, generationIp, acountR, accountW, runType, amountType, dealDescribe);
         if (amountRun.isSuccess()) {
             return amountRun;

@@ -50,14 +50,8 @@ public class RedisConfig extends CachingConfigurerSupport {
 
     @Value("${spring.redis.pool.max-idle}")
     private int maxIdle;
-
-
-
     @Value("${spring.redis.password}")
     private String pasword;
-
-
-
     @Value("${spring.redis.pool.max-wait}")
     private long maxWaitMillis;
 

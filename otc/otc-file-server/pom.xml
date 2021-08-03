@@ -45,11 +45,11 @@
 	        <version>3.3.0</version>
 	    </dependency>
 				<!--maven引入外部jar包QRCode -->
-		<dependency>
+		<!--<dependency>
 			<groupId>qr.qrcode</groupId>
 			<artifactId>qrcode</artifactId>
 			<version>1.0.0</version>
-		</dependency>
+		</dependency>-->
   </dependencies>
 <build>
     <plugins>

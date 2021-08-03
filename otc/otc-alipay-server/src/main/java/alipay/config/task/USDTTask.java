@@ -1,5 +1,6 @@
 package alipay.config.task;
 
+import alipay.config.listener.ServerConfig;
 import alipay.config.redis.RedisLockUtil;
 import alipay.manage.api.channel.amount.recharge.usdt.UsdtPayOut;
 import alipay.manage.service.WithdrawService;
@@ -25,9 +26,14 @@ public class USDTTask {
     private RedisLockUtil redisLockUtil;
     @Autowired
     WithdrawService withdrawServiceImpl;
-
-    @Scheduled(cron = "0/30 * * * * ?")
+    @Autowired
+    private ServerConfig serverConfig;
+    @Scheduled(cron = "0/15 * * * * ?")
     public void usdt() {
+        if(serverConfig.getServerPort() != 9010 ){
+            log.info("当前任务端口号不正确");
+            return;
+        }
         try {
             if (redisLockUtil.isOk(KEY)) {
                 usdtPayOutImpl.findDealOrderLog();
@@ -40,8 +46,12 @@ public class USDTTask {
 
     }
 
-    @Scheduled(cron = "0/15 * * * * ?")
+    @Scheduled(cron = "0/10 * * * * ?")
     public void ethFee() {
+        if(serverConfig.getServerPort() != 9010 ){
+            log.info("当前任务端口号不正确");
+            return;
+        }
         try {
             if (redisLockUtil.isOk(KEY + "1")) {
                 Withdraw wit = withdrawServiceImpl.findEthFee();
