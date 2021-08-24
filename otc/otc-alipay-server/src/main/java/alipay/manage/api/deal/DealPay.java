@@ -76,9 +76,9 @@ public class DealPay {
         try {
             userRate = accountApiServiceImpl.findUserRateByUserId(mapToBean.getAppId(), passcode, mapToBean.getAmount());
             channelFee = channelFeeDao.findImpl(userRate.getChannelId(), userRate.getPayTypr());
-        } catch (Exception e) {
+        } catch (Throwable e) {
             exceptionOrderServiceImpl.addDealOrder(mapToBean, "用户报错：当前通道编码有误，产品类型设置重复；处理方法：当前配置用户产品的时候配置用户产品重复", clientIP);
-            log.info("【当前通道编码设置有误，产品类型设置重复：" + e.getMessage() + "】");
+            log.error("【当前通道编码设置有误，产品类型设置重复：" + e.getMessage() + "】",e);
             return Result.buildFailMessage("当前通道编码设置有误，产品类型设置重复");
         }
         if (ObjectUtil.isNull(channelFee)) {
@@ -109,8 +109,8 @@ public class DealPay {
         Result deal = null;
         try {
             deal = factoryForStrategy.getStrategy(channelFee.getImpl()).deal(dealBean, channelFee.getChannelId());
-        } catch (Exception e) {
-            log.info("【当前通道编码对于的实体类不存在：" + e.getMessage() + "】", e);
+        } catch (Throwable e) {
+            log.error("【当前通道编码对于的实体类不存在：" + e.getMessage() + "】", e);
             exceptionOrderServiceImpl.addDealOrder(mapToBean, "用户报错：当前通道编码不存在；处理方法：生成交易订单时候出现错误，或者请求三方渠道支付请求的时候出现异常返回，或联系技术人员处理," +
                     "三方渠道报错信息：" + e.getMessage(), clientIP);
             return Result.buildFailMessage("当前通道编码不存在");

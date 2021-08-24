@@ -3,6 +3,7 @@ package alipay.manage.api.channel.deal.shenfu;
 import alipay.manage.api.channel.util.ChannelInfo;
 import alipay.manage.api.channel.util.shenfu.PayUtil;
 import alipay.manage.api.config.PayOrderService;
+import alipay.manage.bean.UserInfo;
 import alipay.manage.service.UserInfoService;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
@@ -23,8 +24,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-@Component("HuiTongFuDpay")
-public class HuiTongFUDpay extends PayOrderService {
+@Component("ZhongBangDpay")
+public class ZhongBangDpay extends PayOrderService {
     private static final Log log = LogFactory.get();
     private static final String SIGN_TYPE = "MD5";
     private static final String WIT_RESULT = "SUCCESS";
@@ -48,26 +49,24 @@ public class HuiTongFUDpay extends PayOrderService {
 
     @Override
     public Result withdraw(Withdraw wit) {
-        log.info("【进入申付代付】");
+        log.info("【进入众邦代付】");
         try {
             log.info("【本地订单创建成功，开始请求远程三方代付接口】");
-            String url = "http://47.243.66.246:23762";
-
             String channel = "";
             if (StrUtil.isNotBlank(wit.getChennelId())) {//支持运营手动推送出款
                 channel = wit.getChennelId();
             } else {
                 channel = wit.getWitChannel();
             }
-
-            if (isNumber(wit.getAmount().toString())) {
-                Result result = withdrawEr(wit, "代付订单不支持小数提交", wit.getRetain2());
-                if (result.isSuccess()) {
-                    return Result.buildFailMessage("代付订单不支持小数提交");
-                }
+            log.info("【本地订单创建成功，开始请求远程三方代付接口】");
+            UserInfo userInfo = userInfoServiceImpl.findDealUrl(wit.getUserId());
+            if (StrUtil.isBlank(userInfo.getDealUrl())) {
+                withdrawEr(wit, "当前商户交易url未设置", wit.getRetain2());
+                return Result.buildFailMessage("请联系运营为您的商户好设置交易url");
             }
-            String createDpay = createDpay(url.toString() +
-                            PayApiConstant.Notfiy.NOTFIY_API_WAI + "/huitongfuwit-noyfit",
+            log.info("【回调地址ip为：" + userInfo.getDealUrl() + "】");
+            String createDpay = createDpay(userInfo.getDealUrl() +  PayApiConstant.Notfiy.NOTFIY_API_WAI +
+                             "/huitongfuwit-noyfit",
                     wit, getChannelInfo(channel, wit.getWitType()));
             if (StrUtil.isNotBlank(createDpay) && createDpay.equals(WIT_RESULT)) {
                 return Result.buildSuccessMessage("代付成功等待处理");
@@ -94,6 +93,7 @@ public class HuiTongFUDpay extends PayOrderService {
             map.put("oid_partner", oid_partner);
             map.put("notify_url", notify_url);
             map.put("no_order", no_order);
+            map.put("channel", "4");
             map.put("money_order", money_order);
             map.put("acct_name", acct_name);
             map.put("card_no", card_no);
@@ -101,13 +101,12 @@ public class HuiTongFUDpay extends PayOrderService {
             map.put("time_order", time_order);
             map.put("sign_type", SIGN_TYPE);
             String createParam = PayUtil.createParam(map);
-            log.info("【汇通付代付签名前参数：" + createParam + "】");
+            log.info("【众邦代付签名前参数：" + createParam + "】");
             String md5 = PayUtil.md5(createParam + channelInfo.getChannelPassword());
             map.put("sign", md5);
-            map.put("url", channelInfo.getWitUrl());
-            log.info("【当前汇通付代付请求参数为：" + map.toString() + "】");
-            String post = HttpUtil.post(PayApiConstant.Notfiy.OTHER_URL + "/forwordSendShenFuWit", map, 2000);
-            log.info("【汇通付代付响应参数为：" + post + "】");
+            log.info("【当前众邦代付请求参数为：" + map.toString() + "】");
+            String post = HttpUtil.post( channelInfo.getWitUrl(), map, 2000);
+            log.info("【众邦代付响应参数为：" + post + "】");
 
             /**
              * oid_partner			String(18)	√	商家号 商户签约时，分配给商家的唯一身份标识 例如：201411171645530813
@@ -127,10 +126,9 @@ public class HuiTongFUDpay extends PayOrderService {
                 withdrawEr(wit, parseObj.getStr("ret_msg"), wit.getRetain2());
             }
             return "";
-        } catch (Throwable e) {
-            log.error("请求汇通付代付异常", e);
-            withdrawErMsg(wit, "代付异常,网络异常", wit.getRetain2());
-         //   withdrawEr(wit, "代付异常", wit.getRetain2());
+        } catch (Exception e) {
+            log.error("请求众邦代付异常", e);
+            withdrawEr(wit, "代付异常", wit.getRetain2());
             return "";
         }
     }

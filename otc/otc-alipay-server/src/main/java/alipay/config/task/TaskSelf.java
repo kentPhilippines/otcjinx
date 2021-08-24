@@ -29,11 +29,13 @@ public class TaskSelf {
         }
         log.info("【开始进行每10秒订单清算】");
         orderTask.orderTask();
-        log.info("【开始进行10秒代付订单推送】");
-        orderTask.orderWitTask();
     }
     @Scheduled(cron = "0/5 * * * * ?")
     public void orderWitTask() {
+        if(serverConfig.getServerPort() != 9010 ){
+            log.info("当前任务端口号不正确");
+            return;
+        }
         log.info("【开始进行10秒代付订单推送】");
         orderTask.orderWitTask();
     }

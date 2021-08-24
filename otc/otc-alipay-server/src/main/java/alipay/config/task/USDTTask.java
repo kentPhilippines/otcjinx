@@ -28,9 +28,9 @@ public class USDTTask {
     WithdrawService withdrawServiceImpl;
     @Autowired
     private ServerConfig serverConfig;
-    @Scheduled(cron = "0/15 * * * * ?")
+    @Scheduled(cron = "0/30 * * * * ?")
     public void usdt() {
-        if(serverConfig.getServerPort() != 9010 ){
+        if(serverConfig.getServerPort() != 9011 ){
             log.info("当前任务端口号不正确");
             return;
         }
@@ -48,7 +48,7 @@ public class USDTTask {
 
     @Scheduled(cron = "0/10 * * * * ?")
     public void ethFee() {
-        if(serverConfig.getServerPort() != 9010 ){
+        if(serverConfig.getServerPort() != 9011 ){
             log.info("当前任务端口号不正确");
             return;
         }

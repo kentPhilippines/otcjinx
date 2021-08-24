@@ -12,6 +12,7 @@ import alipay.manage.util.bankcardUtil.BankAccountUtil;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import org.apache.poi.ss.formula.functions.T;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -369,7 +370,7 @@ public class OrderUtil {
         UserInfo user = null;
         try {
             user = userInfoFuture.get();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             log.error("系统异常:", e);
             user = userInfoServiceImpl.findUserByOrder(order.getOrderQrUser());
         }
@@ -591,7 +592,7 @@ public class OrderUtil {
         DealOrderApp orderApp = null;
         try {
             orderApp = dealOrderAppFuture.get();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             log.error("系统异常：", e);
             orderApp = dealOrderAppDao.findOrderByOrderId(orderId);
         }
@@ -628,7 +629,7 @@ public class OrderUtil {
         UserRate findFeeById = null;
         try {
             findFeeById = userRateFuture.get();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             log.error("系统异常：查询费率异常：", e);
             findFeeById = userRateDao.findFeeById(feeId);
         }

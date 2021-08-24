@@ -25,6 +25,11 @@ eureka:
     hostname: ${spring.cloud.client.ip-address}:${server.port}
    # status-page-url : c.biancheng.net
 spring:
+  task:
+    scheduling:
+      pool:
+        size: 20
+      #spring 定时任务 线程个数
   main:
     allow-bean-definition-overriding: true
   application:

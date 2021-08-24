@@ -325,7 +325,7 @@
   <update id="updateByExampleSelective" parameterType="map" >
       update alipay_user_fund
       <set >
-     version = version+1,
+      version = version+1,
       <if test="record.id != null" >
         id = #{record.id,jdbcType=INTEGER},
       </if>

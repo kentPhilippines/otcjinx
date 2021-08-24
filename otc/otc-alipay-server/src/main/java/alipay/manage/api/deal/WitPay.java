@@ -150,7 +150,7 @@ public class WitPay extends PayOrderService {
                 deal = super.withdraw(bean);
             }
 */
-        } catch (Exception e) {
+        } catch (Throwable e) {
             log.error("[代码执行时候出现错误]", e);
             //		super.withdrawEr(bean, "系统异常，请联系技术人员处理", HttpUtil.getClientIP(request));
             exceptionOrderServiceImpl.addWitOrder(wit, "用户报错：当前通道编码不存在；处理方法：提交技术人员处理，报错信息：" + e.getMessage(), HttpUtil.getClientIP(request));

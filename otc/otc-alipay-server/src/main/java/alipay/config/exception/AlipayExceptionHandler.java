@@ -22,7 +22,7 @@ public class AlipayExceptionHandler {
 	 * 拦截未知的运行时异常
 	 */
 	@ExceptionHandler(RuntimeException.class)
-	public Result notFount(RuntimeException e) {
+	public Result notFount(Throwable e) {
 		log.error("运行时异常:", e.getMessage());
 		return Result.buildFailMessage("程序异常:" + e.getMessage());
 	}
@@ -30,7 +30,7 @@ public class AlipayExceptionHandler {
 	 * 系统异常
 	 */
 	@ExceptionHandler(Exception.class)
-	public Result handleException(Exception e) {
+	public Result handleException(Throwable e) {
 		log.error(e.getMessage(), e.getMessage());
 		return Result.buildFailMessage("服务器错误，请联系管理员");
 	}

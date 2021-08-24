@@ -2,9 +2,18 @@ package alipay.manage.bean.util;
 
 public class FundBean {
     private String orderId;
+    private String orderIdAno;
     private String orderStatus;
     private String amount;
     private String sign;
+
+    public String getOrderIdAno() {
+        return orderIdAno;
+    }
+
+    public void setOrderIdAno(String orderIdAno) {
+        this.orderIdAno = orderIdAno;
+    }
 
     public String getSign() {
         return sign;

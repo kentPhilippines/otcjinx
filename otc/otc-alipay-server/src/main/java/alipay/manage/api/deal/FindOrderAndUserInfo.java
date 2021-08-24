@@ -117,6 +117,9 @@ public class FindOrderAndUserInfo {
             fund.setOrderId(orderApp.getAppOrderId());
             fund.setOrderStatus(orderApp.getOrderStatus());
             fund.setSign(sign2);
+            if(appId.contains("BW999".toUpperCase())|| appId.contains("BW999".toLowerCase())) {//商户号单独添加 ANO开头单号
+                fund.setOrderIdAno(orderApp.getOrderId());
+            }
             orderApp = null;
             return Result.buildSuccessResult(fund);
         }

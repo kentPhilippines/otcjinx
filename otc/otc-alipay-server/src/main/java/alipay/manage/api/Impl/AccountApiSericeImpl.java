@@ -224,9 +224,15 @@ public class AccountApiSericeImpl implements AccountApiService {
         for (UserRate rate : userRate) {
             BigDecimal systemAmount = new BigDecimal(rate.getRetain2());//金额限制
             BigDecimal bigDecimal = new BigDecimal(amount);
-            if (bigDecimal.compareTo(systemAmount) >= 0) {
-                return rate;
-            } else {
+            try {
+                UserInfo channel = userInfoDao.findUserByUserId(rate.getChannelId());
+                if (bigDecimal.compareTo(systemAmount) >= 0  && bigDecimal.compareTo(new BigDecimal(channel.getMaxAmount())) > -1 ) {
+                    return rate;
+                } else {
+                    continue;
+                }
+            }catch (Throwable e ){
+                log.error("费率路由出错",e);
                 continue;
             }
         }
@@ -240,11 +246,19 @@ public class AccountApiSericeImpl implements AccountApiService {
         for (UserRate rate : userRate) {
             BigDecimal systemAmount = new BigDecimal(rate.getRetain2());//金额限制
             BigDecimal bigDecimal = new BigDecimal(amount);
-            if (bigDecimal.compareTo(systemAmount) >= 0) {
-                return rate;
-            } else {
+            try {
+                UserInfo channel = userInfoDao.findUserByUserId(rate.getChannelId());
+                if (bigDecimal.compareTo(systemAmount) >= 0 && bigDecimal.compareTo(new BigDecimal(channel.getMinAmount())) > -1) {
+                    return rate;
+                } else {
+                    continue;
+                }
+            }catch (Throwable e ){
+                log.error("费率路由出错",e);
                 continue;
             }
+
+
         }
         return null;
     }

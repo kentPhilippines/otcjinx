@@ -45,76 +45,76 @@ public class AmountConfig extends Util {
                 int lockMsg = 1;
                 do {
                     if (lockMsg != 1) {
-                        log.info("【当前账户乐观锁发生作用，再次执行，当前账户：" + userFund1.getUserId() + "，金额："
-                                + dealAmount + "，方法：addAmountBalance，类型：" + addType + "】");
-                        final UserFund finalUserFund = userFund1;
-                        ThreadUtil.execute(() -> {
-                            amountPrivate.addExcption(finalUserFund, addType, balance, orderId);
-                        });
-                    }
-                    /*防止不同的事物隔离级别导致的  数据事物问题*/
-                    Future<UserFund> future = ThreadUtil.execAsync(() -> {
-                        log.info("子线程访问-add");
-                        return userInfoServiceImpl.findUserFundByAccount(userFund1.getUserId());
-                    });
-                    UserFund userFund = future.get(2, TimeUnit.SECONDS);
-                    if (!amountPrivate.clickUserFund(userFund).isSuccess()) {
-                        return Result.buildFailMessage("【资金账户存在问题】");
-                    }
-                    if (ADD_AMOUNT_RECHARGE.equals(addType)) {//资金充值【加充值点数】
-                        Result addAmountRecharge = amountPrivate.addAmountRecharge(userFund, balance);
-                        if (addAmountRecharge.isSuccess()) {
-                            flag = false;
-                            return addAmountRecharge;
-                        }
-                        lockMsg++;
-                        log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
-                    } else if (ADD_AMOUNT_RECHARGE_WIT.equals(addType)) {
-                        Result addAmountRecharge = amountPrivate.addAmountRechargeWit(userFund, balance);
-                        if (addAmountRecharge.isSuccess()) {
-                            flag = false;
-                            return addAmountRecharge;
-                        }
-                        lockMsg++;
-                        log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
-                    } else if (ADD_AMOUNT_DEAL_WIT.equals(addType)) {
-                        Result addAmountRecharge = amountPrivate.addAmountDealWit(userFund, balance);
-                        if (addAmountRecharge.isSuccess()) {
-                            flag = false;
-                            return addAmountRecharge;
-                        }
-                        lockMsg++;
-                        log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
-                    } else if (WIT_SUCCESSS_STS.equals(addType)) {
-                        log.info("【统计代付成功数据】");
-                        Result addAmountRecharge = amountPrivate.witSuccessStatis(userFund, balance);
-                        if (addAmountRecharge.isSuccess()) {
-                            flag = false;
-                            return addAmountRecharge;
-                        }
-                        lockMsg++;
-                        log.info("【统计代付成功数据失败，请查询当前时间范围内的异常情况】");
+                                log.info("【当前账户乐观锁发生作用，再次执行，当前账户：" + userFund1.getUserId() + "，金额："
+                                        + dealAmount + "，方法：addAmountBalance，类型：" + addType + "】");
+                                final UserFund finalUserFund = userFund1;
+                                ThreadUtil.execute(() -> {
+                                    amountPrivate.addExcption(finalUserFund, addType, balance, orderId);
+                                });
+                            }
+                            /*防止不同的事物隔离级别导致的  数据事物问题*/
+                            Future<UserFund> future = ThreadUtil.execAsync(() -> {
+                                log.info("子线程访问-add");
+                                return userInfoServiceImpl.findUserFundByAccount(userFund1.getUserId());
+                            });
+                            UserFund userFund = future.get(2, TimeUnit.SECONDS);
+                            if (!amountPrivate.clickUserFund(userFund).isSuccess()) {
+                                return Result.buildFailMessage("【资金账户存在问题】");
+                            }
+                            if (ADD_AMOUNT_RECHARGE.equals(addType)) {//资金充值【加充值点数】
+                                Result addAmountRecharge = amountPrivate.addAmountRecharge(userFund, balance);
+                                if (addAmountRecharge.isSuccess()) {
+                                    flag = false;
+                                    return addAmountRecharge;
+                                }
+                                lockMsg++;
+                                log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
+                            } else if (ADD_AMOUNT_RECHARGE_WIT.equals(addType)) {
+                                Result addAmountRecharge = amountPrivate.addAmountRechargeWit(userFund, balance);
+                                if (addAmountRecharge.isSuccess()) {
+                                    flag = false;
+                                    return addAmountRecharge;
+                                }
+                                lockMsg++;
+                                log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
+                            } else if (ADD_AMOUNT_DEAL_WIT.equals(addType)) {
+                                Result addAmountRecharge = amountPrivate.addAmountDealWit(userFund, balance);
+                                if (addAmountRecharge.isSuccess()) {
+                                    flag = false;
+                                    return addAmountRecharge;
+                                }
+                                lockMsg++;
+                                log.info("【账户余额添加失败，请查询当前时间范围内的异常情况】");
+                            } else if (WIT_SUCCESSS_STS.equals(addType)) {
+                                log.info("【统计代付成功数据】");
+                                Result addAmountRecharge = amountPrivate.witSuccessStatis(userFund, balance);
+                                if (addAmountRecharge.isSuccess()) {
+                                    flag = false;
+                                    return addAmountRecharge;
+                                }
+                                lockMsg++;
+                                log.info("【统计代付成功数据失败，请查询当前时间范围内的异常情况】");
 
-                    } else if (ADD_AMOUNT_PROFIT.equals(addType)) {//代理利润分成
-                        Result profit = amountPrivate.addAmountAgentProfit(userFund, balance);
-                        if (profit.isSuccess()) {
-                            flag = false;
-                            return profit;
-                        }
-                        lockMsg++;
-                        log.info("【账户代理商分润增加失败，请查询当前时间范围内的异常情况】");
-                    } else if (ADD_AMOUNT.equals(addType)) {//手动加钱
-                        Result addAmountRecharge = amountPrivate.addAmountRecharge(userFund, balance);
-                        if (addAmountRecharge.isSuccess()) {
-                            flag = false;
-                            return addAmountRecharge;
-                        }
-                        lockMsg++;
-                        log.info("【手动加钱失败，请联系技术人员处理,请查询当前时间范围内的异常情况");
-                    } else if (ADD_AMOUNT_DEAL.equals(addType)) {//交易利润分成 ,统计交易笔数
-                        Result addAmountDeal = amountPrivate.addAmountDeal(userFund, balance, dealAmount);
-                        if (addAmountDeal.isSuccess()) {
-                            flag = false;
+                            } else if (ADD_AMOUNT_PROFIT.equals(addType)) {//代理利润分成
+                                Result profit = amountPrivate.addAmountAgentProfit(userFund, balance);
+                                if (profit.isSuccess()) {
+                                    flag = false;
+                                    return profit;
+                                }
+                                lockMsg++;
+                                log.info("【账户代理商分润增加失败，请查询当前时间范围内的异常情况】");
+                            } else if (ADD_AMOUNT.equals(addType)) {//手动加钱
+                                Result addAmountRecharge = amountPrivate.addAmountRecharge(userFund, balance);
+                                if (addAmountRecharge.isSuccess()) {
+                                    flag = false;
+                                    return addAmountRecharge;
+                                }
+                                lockMsg++;
+                                log.info("【手动加钱失败，请联系技术人员处理,请查询当前时间范围内的异常情况");
+                            } else if (ADD_AMOUNT_DEAL.equals(addType)) {//交易利润分成 ,统计交易笔数
+                                Result addAmountDeal = amountPrivate.addAmountDeal(userFund, balance, dealAmount);
+                                if (addAmountDeal.isSuccess()) {
+                                    flag = false;
                             return addAmountDeal;
                         }
                         lockMsg++;
