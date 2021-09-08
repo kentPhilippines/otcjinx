@@ -64,11 +64,8 @@ public class WithdrawServiceImpl implements WithdrawService {
      */
     @Override
     public List<Withdraw> findSuccessAndNotAmount() {
-
         return withdrawDao.findSuccessAndNotAmount();
     }
-
-
     /**
      * 将订单修改为以结算
      *
@@ -88,10 +85,15 @@ public class WithdrawServiceImpl implements WithdrawService {
     public List<Withdraw> findNotPush() {
         return withdrawDao.findNotPush();
     }
-
     @Override
     public void updateMsg(String orderId, String msg) {
         withdrawDao.updateMsg(orderId,msg);
+    }
+
+    @Override
+    public boolean updatePushAgent(String orderId) {
+
+        return withdrawDao.updatePushAgent(orderId) > 0  ;
     }
 
 }

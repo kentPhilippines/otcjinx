@@ -16,11 +16,12 @@ public class rsa {
 
 //获得私钥
         PrivateKey privateKey = rsa.getPrivateKey();
-        rsa.getPrivateKeyBase64();
+        String privateKeyBase64 = rsa.getPrivateKeyBase64();
+        System.out.println(privateKeyBase64);
 //获得公钥
         rsa.getPublicKey();
-        rsa.getPublicKeyBase64();
-
+        String publicKeyBase64 = rsa.getPublicKeyBase64();
+        System.out.println(publicKeyBase64);
 //公钥加密，私钥解密
         byte[] encrypt = rsa.encrypt(StrUtil.bytes("我是一段测试aaaa", CharsetUtil.CHARSET_UTF_8), KeyType.PublicKey);
         byte[] decrypt = rsa.decrypt(encrypt, KeyType.PrivateKey);

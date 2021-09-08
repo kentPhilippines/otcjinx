@@ -14,6 +14,8 @@ import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
+import cn.hutool.log.StaticLog;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import otc.bean.dealpay.Withdraw;
@@ -79,9 +81,9 @@ public class OrderTask {
 						dealOrderDao.updateSuccessAndAmount(order.getOrderId());
 					});
 				}
-			} catch (Exception e) {
+			} catch (Throwable e) {
 				log.info("【异步结算发生异常：" + order.getOrderId() + "】");
-				log.info("【异步结算发生异常：" + e.getMessage() + "】");
+				log.error("【异步结算发生异常：" + e.getMessage() + "】",e);
 				push("【异步结算发生异常：" + order.getOrderId() + "】");
 			} finally {
 				RedisLockUtil.unLock(KEY + "lock");
@@ -111,9 +113,9 @@ public class OrderTask {
 					});
 
 				}
-			} catch (Exception e) {
+			} catch (Throwable e) {
 				log.info("【异步结算发生异常：" + order.getOrderId() + "】");
-				log.info("【异步结算发生异常：" + e.getMessage() + "】");
+				log.error("【异步结算发生异常：" + e.getMessage() + "】",e);
 				push("【异步结算发生异常：" + order.getOrderId() + "】");
 			} finally {
 				RedisLockUtil.unLock(KEY_WIT + "lock");
@@ -169,5 +171,6 @@ public class OrderTask {
 			HttpUtil.get(s, 1000);
 		});
 	}
+
 
 }

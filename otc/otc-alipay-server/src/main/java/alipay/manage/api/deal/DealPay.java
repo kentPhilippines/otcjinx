@@ -144,11 +144,17 @@ public class DealPay {
         dealApp.setBack(dealBean.getPageUrl());
         dealApp.setOrderStatus(Common.Order.DealOrder.ORDER_STATUS_DISPOSE.toString());
         dealApp.setOrderType(Common.Order.ORDER_TYPE_DEAL);
-        dealApp.setDealDescribe("下游商户发起充值交易");
+        String dealDescribe  = "充值交易";
+        if(StrUtil.isNotEmpty(dealBean.getUserid())){
+            dealDescribe = "付款人："+ dealBean.getUserid();
+        }
+        dealApp.setDealDescribe(dealDescribe);
         dealApp.setRetain1(userRate.getPayTypr());
         dealApp.setRetain3(userRate.getFee().multiply(new BigDecimal(dealBean.getAmount())).toString());
         UserFund userFund = userInfoServiceImpl.findCurrency(userId);//缓存以加
         dealApp.setCurrency(userFund.getCurrency());
+
+        dealApp.setPayName(dealBean.getUserid());
         boolean add = false;
         try {
             add = orderAppServiceImpl.add(dealApp);

@@ -72,7 +72,7 @@ public abstract class NotfiyChannel {
     public Result witNotfy(String orderId, String ip) {
         log.info("【进入代付回调抽象类，当前代付成功订单号：" + orderId + "】");
         Withdraw wit = withdrawServiceImpl.findOrderId(orderId);
-        if (!wit.getStatus().toString().equals(Common.Order.Wit.ORDER_STATUS_YU)) {
+        if (!wit.getOrderStatus().toString().equals(Common.Order.Wit.ORDER_STATUS_PUSH)) {
             log.info("【 当前代付回调重复，当前代付订单号：" + orderId + "】");
             return Result.buildFailMessage("当前代付回调重复");
         }
@@ -85,6 +85,22 @@ public abstract class NotfiyChannel {
          redisLockUtil.unLock(RedisLockUtil.AMOUNT_USER_KEY + wit.getUserId());
         return withrawOrderSu;
     }
+    public Result  witNotSuccess(String orderId){
+        log.info("【进入代付回调抽象类，当前代付成功订单号：" + orderId + "】");
+        log.info("【当前订单上游无法处理，驳回：" + orderId + "】");
+        Withdraw wit = withdrawServiceImpl.findOrderId(orderId);
+        if (!wit.getOrderStatus().toString().equals(Common.Order.Wit.ORDER_STATUS_PUSH)) {
+            log.info("【 当前代付回调重复，当前代付订单号：" + orderId + "】");
+            return Result.buildFailMessage("当前代付回调重复");
+        }
+        boolean flag = withdrawServiceImpl.updatePushAgent(orderId);//修改为订单可以再次推送
+        if(flag){
+            return Result.buildSuccess();
+        }
+        return Result.buildFail();
+    }
+
+
 
     public Result dealpayNotfiy(String orderId, String ip, String msg) {
         log.info("【进入支付成功回调处理类：" + orderId + "】");

@@ -103,9 +103,14 @@ public class FinanceApi {
                 }
                 logUtil.addLog(request, "后台人员确认代付订单，当前代付订单号：" + orderId, apply);
                 Withdraw witOrder = withdrawServiceImpl.findOrderId(orderId);
-                String channnel = witOrder.getWitChannel();
                 String witType = witOrder.getWitType();
-                ChannelFee channelFee = channelFeeDao.findChannelFee(channnel, witType);
+                String channel = "";
+                if (StrUtil.isNotBlank(witOrder.getChennelId())) {//支持运营手动推送出款
+                    channel = witOrder.getChennelId();
+                } else {
+                    channel = witOrder.getWitChannel();
+                }
+                ChannelFee channelFee = channelFeeDao.findChannelFee(channel, witType);
                 Result withdraw = Result.buildFail();
                 try {
                     withdraw = factoryForStrategy.getStrategy(channelFee.getImpl()).withdraw(witOrder);

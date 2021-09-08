@@ -77,9 +77,8 @@ public class ShenFuDpay extends NotfiyChannel {
                 if (result.isSuccess()) {
                     return "success";
                 }
-            } else if ("FAILURE".equals(result_pay)) {
-                witNotfyEr(no_order, clientIP, "代付失败");
-                return "success";
+            } else    {
+                witNotSuccess(no_order);
             }
         } else {
             return "error";

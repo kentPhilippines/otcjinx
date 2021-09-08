@@ -23,8 +23,13 @@ public class MD5 {
 
 		String m  = "acct_name=李瑞雨&bank_name=中国邮政储蓄银行&card_no=6217991270025039243&channel=4&money_order=2952&no_order=W20210812172548700952368&notify_url=http://starpay888.net:17628/huitongfuwit-noyfit&oid_partner=202108120244595539&sign_type=MD5&time_order=20210812172550";
 
+		String name = "付款人：唐晓君";
+		String[] split = name.split("付款人：");
+		String a = split[1];
+		System.out.println(a);
 
-			}
+
+	}
 
 	private static final String UTF_8 = "utf-8";
 	private static final String ENCODE_TYPE = "md5";

@@ -25,12 +25,28 @@ public class DealBean {
 	private String amount;
 	private String passCode;
 	private String rsasign;
-	private String userId;
+	private String userid;
 	private String bankCode;
 	private String subject;
 	private String applyDate;
-	
-	
+	private String payName;
+
+	public String getUserid() {
+		return userid;
+	}
+
+	public void setUserid(String userid) {
+		this.userid = userid;
+	}
+
+	public String getPayName() {
+		return payName;
+	}
+
+	public void setPayName(String payName) {
+		this.payName = payName;
+	}
+
 	private String ip;
 	
 	public String getIp() {
@@ -93,12 +109,6 @@ public class DealBean {
 	public void setPassCode(String passCode) {
 		this.passCode = passCode;
 	}
-	public String getUserId() {
-		return userId;
-	}
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
 	public String getApplyDate() {
 		return applyDate;
 	}
@@ -108,7 +118,7 @@ public class DealBean {
 	@Override
 	public String toString() {
 		return "DealBean [appId=" + appId + ", orderId=" + orderId + ", notifyUrl=" + notifyUrl + ", pageUrl=" + pageUrl
-				+ ", amount=" + amount + ", passCode=" + passCode + ", rsasign=" + rsasign + ", userId=" + userId
+				+ ", amount=" + amount + ", passCode=" + passCode + ", rsasign=" + rsasign + ", userId=" + userid
 				+ ", bankCode=" + bankCode + ", subject=" + subject + ", applyDate=" + applyDate + ", ip=" + ip + "]";
 	}
 }

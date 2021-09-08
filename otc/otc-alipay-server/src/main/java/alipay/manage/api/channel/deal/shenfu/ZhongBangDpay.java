@@ -36,16 +36,6 @@ public class ZhongBangDpay extends PayOrderService {
         return DateUtil.format(new Date(), DatePattern.PURE_DATETIME_FORMAT);
     }
 
-    private static boolean isNumber(String str) {
-        BigDecimal a = new BigDecimal(str);
-        double dInput = a.doubleValue();
-        long longPart = (long) dInput;
-        BigDecimal bigDecimal = new BigDecimal(Double.toString(dInput));
-        BigDecimal bigDecimalLongPart = new BigDecimal(Double.toString(longPart));
-        double dPoint = bigDecimal.subtract(bigDecimalLongPart).doubleValue();
-        System.out.println("整数部分为:" + longPart + "\n" + "小数部分为: " + dPoint);
-        return dPoint > 0;
-    }
 
     @Override
     public Result withdraw(Withdraw wit) {
@@ -100,6 +90,7 @@ public class ZhongBangDpay extends PayOrderService {
             map.put("bank_name", bank_name);
             map.put("time_order", time_order);
             map.put("sign_type", SIGN_TYPE);
+
             String createParam = PayUtil.createParam(map);
             log.info("【众邦代付签名前参数：" + createParam + "】");
             String md5 = PayUtil.md5(createParam + channelInfo.getChannelPassword());

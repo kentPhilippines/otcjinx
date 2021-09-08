@@ -74,4 +74,12 @@ public interface WithdrawService {
 
 
     void updateMsg(String orderId, String msg);
+
+
+	/**
+	 * 修改订单为【可再次推送】
+	 * @param orderId
+	 * @return
+	 */
+	boolean updatePushAgent(String orderId);
 }

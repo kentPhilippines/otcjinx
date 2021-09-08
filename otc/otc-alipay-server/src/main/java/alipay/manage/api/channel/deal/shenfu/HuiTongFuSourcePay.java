@@ -10,6 +10,7 @@ import alipay.manage.service.OrderService;
 import alipay.manage.service.UserInfoService;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
@@ -36,18 +37,24 @@ public class HuiTongFuSourcePay extends PayOrderService {
     private UserInfoService userInfoServiceImpl;
     @Autowired
     private OrderService orderServiceImpl;
-
+    private String name = "付款人：";
     @Override
     public Result deal(DealOrderApp dealOrderApp, String channel) throws Exception {
         log.info("【进入申付支付，当前请求产品：" + dealOrderApp.getRetain1() + "，当前请求渠道：" + channel + "】");
         String orderId = create(dealOrderApp, channel);
         String url = "http://47.243.66.246:23762";
+        String payInfo = "";
+
+       if(dealOrderApp.getDealDescribe().contains("付款人")){
+           payInfo = dealOrderApp.getDealDescribe();
+       }
         Result result = createOrder(
                 url +
                         PayApiConstant.Notfiy.NOTFIY_API_WAI + "/huiutongfu-notify",
                 dealOrderApp.getOrderAmount(),
                 orderId,
-                getChannelInfo(channel, dealOrderApp.getRetain1()));
+                getChannelInfo(channel, dealOrderApp.getRetain1()),
+                payInfo);
         if (result.isSuccess()) {
             return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrlAndPayInfo(result.getResult(),result.getMessage()));
         } else {
@@ -56,7 +63,7 @@ public class HuiTongFuSourcePay extends PayOrderService {
         }
     }
 
-    private Result createOrder(String notify, BigDecimal orderAmount, String orderId, ChannelInfo channelInfo) {
+    private Result createOrder(String notify, BigDecimal orderAmount, String orderId, ChannelInfo channelInfo , String payInfo) {
         Map<String, Object> map = new HashMap();
         map.put("oid_partner", channelInfo.getChannelAppId());
         map.put("notify_url", notify);
@@ -68,12 +75,19 @@ public class HuiTongFuSourcePay extends PayOrderService {
         map.put("name_goods", "huafei");
         map.put("pay_type", channelInfo.getChannelType());//PDD PDD 插件通道
         map.put("info_order", "info_order");
+        if(StrUtil.isNotEmpty(payInfo)) {
+            String[] split = payInfo.split(name);
+            String payName = split[1];
+            map.put("pay_name",StrUtil.trim(payName));
+        }
         String createParam = PayUtil.createParam(map);
-        log.info("【绅付请求参数：" + createParam + "】");
+        log.info("【惠付通加签参数：" + createParam + "】");
         String md5 = PayUtil.md5(createParam + channelInfo.getChannelPassword());
         map.put("sign", md5);
-        map.put("url", channelInfo.getDealurl());
-        String post = HttpUtil.post(PayApiConstant.Notfiy.OTHER_URL + "/forwordSendShenFu", map);
+     //   map.put("url", channelInfo.getDealurl());
+     //   String post = HttpUtil.post(PayApiConstant.Notfiy.OTHER_URL + "/forwordSendShenFu", map);
+        log.info("【惠付通请求参数：" + map.toString() + "】");
+        String post = HttpUtil.post(channelInfo.getDealurl(), map);
         log.info("【绅付返回数据：" + post + "】");
         log.info(post);////{
         // "bank_name":"建设银行",
@@ -98,7 +112,7 @@ public class HuiTongFuSourcePay extends PayOrderService {
                 cardmap.put("money_order", jsonObject.getStr("money_order"));
                 cardmap.put("no_order", jsonObject.getStr("no_order"));
                 cardmap.put("oid_partner", jsonObject.getStr("oid_partner"));
-                orderServiceImpl.updateBankInfoByOrderId(jsonObject.getStr("card_user") + ":" + jsonObject.getStr("bank_name") + ":" + jsonObject.getStr("card_no"), orderId);
+                orderServiceImpl.updateBankInfoByOrderId(payInfo+" 收款信息："+jsonObject.getStr("card_user") + ":" + jsonObject.getStr("bank_name") + ":" + jsonObject.getStr("card_no"), orderId);
                 redis.hmset(MARS + orderId, cardmap, 600000);
                 return Result.buildSuccessResult(jsonObject.getStr("card_user") + ":" + jsonObject.getStr("bank_name") + ":" + jsonObject.getStr("card_no"), PayApiConstant.Notfiy.OTHER_URL + "/pay?orderId=" + orderId + "&type=" + channelInfo.getChannelType());
             } else {

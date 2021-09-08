@@ -37,8 +37,7 @@ public class USDTTask {
         try {
             if (redisLockUtil.isOk(KEY)) {
                 usdtPayOutImpl.findDealOrderLog();
-            }
-            ;
+            };
         } catch (Exception e) {
         } finally {
             redisLockUtil.unLock(KEY);
@@ -60,8 +59,7 @@ public class USDTTask {
                 } else {
                     log.info("【当前不存在未结算订单】");
                 }
-            }
-            ;
+            };
         } catch (Exception e) {
         } finally {
             redisLockUtil.unLock(KEY);

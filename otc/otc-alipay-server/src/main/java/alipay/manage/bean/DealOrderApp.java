@@ -31,6 +31,16 @@ public class DealOrderApp implements Serializable {
     private String dealDescribe;                    //交易备注
     private String currency;  ///货币类型
 
+    private String payName;
+
+    public String getPayName() {
+        return payName;
+    }
+
+    public void setPayName(String payName) {
+        this.payName = payName;
+    }
+
     public BigDecimal getOrderAmount_orderAmount() {
         return orderAmount_orderAmount;
     }

@@ -40,4 +40,17 @@ public class TaskSelf {
         orderTask.orderWitTask();
     }
 
+
+    @Scheduled(cron = "0/10 * * * * ?")
+    public void  WitTask() {
+        if(serverConfig.getServerPort() != 9011 ){
+            log.info("当前任务端口号不正确");
+            return;
+        }
+        log.info("【开始进行10秒代付订单推送】");
+    }
+
+
+
+
 }

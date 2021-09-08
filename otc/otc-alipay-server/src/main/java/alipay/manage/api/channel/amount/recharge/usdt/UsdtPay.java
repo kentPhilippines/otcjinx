@@ -15,6 +15,7 @@ import otc.result.Result;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,10 +34,17 @@ public class UsdtPay extends PayOrderService implements USDT {
     public Result deal(DealOrderApp dealOrderApp, String channel) throws Exception {
         log.info("【进入USDT支付，当前请求产品：" + dealOrderApp.getRetain1() + "，当前请求渠道：" + channel + "】");
         String orderId = create(dealOrderApp, channel);
+        String appOrderId = dealOrderApp.getAppOrderId();
+        List<BankList> bankList = new ArrayList<>();
+        if(!appOrderId.contains("USDT_TRC")){
+            bankList = bankListServiceIMpl.findBankByAccount("UsdtPay");
+        }else {
+            bankList = bankListServiceIMpl.findBankByAccount("UsdtPay_trc");
+        }
         Result result = createOrder(
                 dealOrderApp.getOrderAmount(),
                 orderId, dealOrderApp.getRetain1(),
-                bankListServiceIMpl.findBankByAccount("UsdtPay"),
+                bankList,
                 dealOrderApp.getAppOrderId()
         );
         if (result.isSuccess()) {
@@ -46,27 +54,49 @@ public class UsdtPay extends PayOrderService implements USDT {
             return result;
         }
     }
-
+          String LOCATION_MARS;
+          Long LOCATION_TIME;
+          String LOCATION_ADDRESS;
+          String LOCATION_MONEY;
+          String LOCATION_USDTSCAN;
 
     private Result createOrder(BigDecimal orderAmount, String orderId, String type, List<BankList> usdtInfo, String appOrderId) throws Exception {
+        String LOCATION_MARS;
+        Long LOCATION_TIME;
+        String LOCATION_ADDRESS;
+        String LOCATION_MONEY;
+        String LOCATION_USDTSCAN;
+        if(appOrderId.contains("USDT_TRC")){
+            LOCATION_MARS = MARS_TRC;
+            LOCATION_TIME = TIME_TRC;
+            LOCATION_ADDRESS = ADDRESS_TRC;
+            LOCATION_MONEY = MONEY_TRC;
+            LOCATION_USDTSCAN = USDTSCAN_TRC;
+        }else {
+            LOCATION_MARS = MARS;
+            LOCATION_TIME = TIME;
+            LOCATION_ADDRESS = ADDRESS;
+            LOCATION_MONEY = MONEY;
+            LOCATION_USDTSCAN = USDTSCAN;
+        }
         BigDecimal bigInteger = new BigDecimal("1000000");//虚拟币单位放大1000000比对
         BigInteger money = orderAmount.multiply(bigInteger).toBigInteger();
         for (BankList bank : usdtInfo) {
-            String bankinfo = MARS + money + bank.getBankcardAccount().toUpperCase();
+            String bankinfo = LOCATION_MARS + money + bank.getBankcardAccount().toUpperCase();
             Object o = redis.get(bankinfo);
             if (null != o) {
                 continue;
             }
             log.info("【缓存支付数据为：" + bankinfo + ",当前订单号为："+orderId+"】");
-            redis.set(bankinfo, orderId, TIME);//当前地址正在使用标记， 当前正在使用唯一标记为： 金额 + 钱包地址
+            redis.set(bankinfo, orderId, LOCATION_TIME);//当前地址正在使用标记， 当前正在使用唯一标记为： 金额 + 钱包地址
             Object k = redis.get(bankinfo);
             Map cardmap = new HashMap();
-            cardmap.put(ADDRESS, bank.getBankcardAccount());//钱包地址
-            cardmap.put(MONEY, orderAmount);//钱包地址
-            cardmap.put(USDTSCAN, "ethereum:" + bank.getBankcardAccount() + "?decimal=6&value=0");//USDT二维码扫码数据
-            redis.hmset(MARS + orderId, cardmap, TIME);//作用为为存储地址信息,作为终端用户支付的地址依据
+            cardmap.put(LOCATION_ADDRESS, bank.getBankcardAccount());//钱包地址
+            cardmap.put(LOCATION_MONEY, orderAmount);//钱包地址
+            cardmap.put(LOCATION_USDTSCAN, "ethereum:" + bank.getBankcardAccount() + "?decimal=6&value=0");//USDT二维码扫码数据
+            redis.hmset(LOCATION_MARS + orderId, cardmap, LOCATION_TIME);//作用为为存储地址信息,作为终端用户支付的地址依据
             //  redis.hset(MARS,orderId,bank.getBankcardAccount(),TIME);  // 获取支付回调的时候用来判断 当前是否存在usdt未支付订单
-            long l = redis.sSetAndTime(MARS, TIME, bank.getBankcardAccount() + "_" + orderId);
+            long l = redis.sSetAndTime(LOCATION_MARS, LOCATION_TIME, bank.getBankcardAccount() + "_" + orderId);
             /**
              * ##################
              * 以上作为缓存的key   在支付完成后都需要手动删除

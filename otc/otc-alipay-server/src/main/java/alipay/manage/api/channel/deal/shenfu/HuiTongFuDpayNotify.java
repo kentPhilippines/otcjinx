@@ -76,6 +76,8 @@ public class HuiTongFuDpayNotify extends NotfiyChannel {
                 if (result.isSuccess()) {
                     return "success";
                 }
+            }else{
+                witNotSuccess(no_order);
             }
         } else {
             return "error";
