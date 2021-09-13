@@ -280,4 +280,14 @@ public abstract class PayOrderService implements PayService {
 		System.out.println("整数部分为:" + longPart + "\n" + "小数部分为: " + dPoint);
 		return dPoint > 0;
 	}
+
+	/**
+	 * 各渠道检测代付银行是否支持的方法，默认为支持
+	 * @param bankCode
+	 * @return
+	 */
+	@Override
+	public boolean witCheckBank(String bankCode) {
+		return Boolean.TRUE;
+	}
 }

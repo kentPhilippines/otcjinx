@@ -37,4 +37,5 @@ public interface BankListMapper {
 
     @Select("select * from alipay_bank_list where account = #{account}")
     List<BankList> findBankByAccount(@Param("account") String account);
+
 }

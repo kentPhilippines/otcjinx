@@ -97,9 +97,28 @@ public class UsdtPayOut extends NotfiyChannel implements USDT {
             JSONArray trc20TransferInfo = jsonObject.getJSONArray("trc20TransferInfo");
             if(null != trc20TransferInfo && trc20TransferInfo.size() != 0 && trc20TransferInfo.size() == 1 ){
                 for (Iterator iterator = trc20TransferInfo.iterator(); iterator.hasNext();){
+
+
+                    /**
+                     *  "icon_url": "https://coin.top/production/logo/usdtlogo.png",
+                     *     "symbol": "USDT",
+                     *     "level": "2",
+                     *     "decimals": 6,
+                     *     "name": "Tether USD",
+                     *     "to_address": "TYseS4Tq5uhTEzuCYMNNi1Nm72ErC3J2in",
+                     *     "contract_address": "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+                     *     "type": "Transfer",
+                     *     "vip": true,
+                     *     "from_address": "TTq5uo7dSC2hfGKEJP6ze259ZX8z7rRfZQ",
+                     *     "amount_str": "46511630000"
+                     */
+
+
+
+
                     JSONObject next = (JSONObject)iterator.next();
-                  //  String amount_str = next.getStr("amount_str");
-                 //   String to = jsonObject1.getStr("to");
+                    amount_str = next.getStr("amount_str");
+                    String to = next.getStr("to_address");
                     name =  next.getStr("name");
 
               //      return amount_str;
@@ -112,7 +131,7 @@ public class UsdtPayOut extends NotfiyChannel implements USDT {
                 String timeStamp = jsonObject.getStr("timestamp");
            //     String blockHash = jsonObject1.getStr("blockHash");
              //   String from = jsonObject1.getStr("from");
-           //     String contractAddress = jsonObject1.getStr("contractAddress");
+           //     String contractAddress = jsonObject1.getStr("contract_address");
                 String value = amount_str;
                 String tokenName = jsonObject.getStr("contract_type") + "- " + name;
            //     String tokenSymbol = jsonObject1.getStr("tokenSymbol");

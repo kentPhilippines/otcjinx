@@ -101,6 +101,7 @@ public class FinanceApi {
                 if (StrUtil.isBlank(apply)) {
                     return Result.buildFailMessage("操作人为空");
                 }
+                String channelId = paramMap.get("channelId").toString();
                 logUtil.addLog(request, "后台人员确认代付订单，当前代付订单号：" + orderId, apply);
                 Withdraw witOrder = withdrawServiceImpl.findOrderId(orderId);
                 String witType = witOrder.getWitType();
@@ -110,10 +111,13 @@ public class FinanceApi {
                 } else {
                     channel = witOrder.getWitChannel();
                 }
+                if(StrUtil.isNotEmpty(channelId)){
+                    channel = channelId;
+                }
                 ChannelFee channelFee = channelFeeDao.findChannelFee(channel, witType);
                 Result withdraw = Result.buildFail();
                 try {
-                    withdraw = factoryForStrategy.getStrategy(channelFee.getImpl()).withdraw(witOrder);
+                   withdraw = factoryForStrategy.getStrategy(channelFee.getImpl()).withdraw(witOrder);
                 } catch (Exception e) {
                     return Result.buildFailMessage("代付渠道未接通或渠道配置错误，请联系技术人员处理");
                 }

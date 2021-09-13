@@ -13,13 +13,28 @@ public class RsaTet {
     private static final String ENCODE_TYPE = "md5";
 
     public static void main(String[] args) {
-        //test1();
-        // 	test();
-        //appId=Well001&appOrderId=GMW21030916310159139
 
-        String s = md5("amount=100&appId=Well001&orderId=GMW21030916310159139&success=true7378A36802E35F1EF0D387EA445A8429");
-        System.out.println(s);//51ec6af980b5e6c8060e4b00cddcf437
+        XRsa rsa = new XRsa(" MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC5mV07mTwh3PViM+UxBInwaORI\n" +
+                "IHlufTmaipgxJoQyQksHKpi9yABbBO2hLqjfdNLM/jNG0iRMYnkM699iRrCph3qG\n" +
+                "ut5xut1hVaBl1ohQPZBHYaKFX+YCYCgcUxK3mAOv5kIM2THHR10MH2nH52DV2GPW\n" +
+                "NFg2bqmbJdU7XqIoFQIDAQAB\n","MIICdAIBADALBgkqhkiG9w0BAQEEggJgMIICXAIBAAKBgQC5mV07mTwh3PViM+Ux\n" +
+                "BInwaORIIHlufTmaipgxJoQyQksHKpi9yABbBO2hLqjfdNLM/jNG0iRMYnkM699i\n" +
+                "RrCph3qGut5xut1hVaBl1ohQPZBHYaKFX+YCYCgcUxK3mAOv5kIM2THHR10MH2nH\n" +
+                "52DV2GPWNFg2bqmbJdU7XqIoFQIDAQABAoGALAxsBjMOBHNugYoTgRi0rCwY0c1z\n" +
+                "RHfP7g+qoy+i/FKjf+XqLlCDVRbMVw694ZrWVPSXst045DASzrBEagyg7JOcDR11\n" +
+                "0Jqf0YhO4tl0/rDLkIC3wVYRGmnGj2N1nYqwwf8+PYIr3G6LzlaRmALP17GmOSu9\n" +
+                "63b51N1pntF/x4ECQQDMGZV3RcBZsmD7Ch1fwLtTa+S5hne3+eMBx+uJvPAUxjqp\n" +
+                "kxurMD375mQ6Bahj7pmmLCXvNkGaRVfVdjrJhrpxAkEA6MtrO1GfbqhADBrKSQbY\n" +
+                "y0tONdDFG8j1as11MFm+8vUYA7L6hYLkeEKqGGoaxENrA2j8T2r7CU1BlO4wn6nx\n" +
+                "5QJAY4qavggTzutTpzwApYGfGwmFDQLLArxp/aVed9fhE5C2bZvko7IsmN19xlqa\n" +
+                "DNsCruvbOHayuiXVt7Mo6r690QJAUUeE3yc2hUpVYmSQMEMluoVGf1+vEm5t0aZ+\n" +
+                "viz3kJimk9QPyEHVR2/vN6sEQXZQjNZBEfGGSM8ikL9BVt3dSQJBAMfsJQzJXDfo\n" +
+                "XKLQ/cAnkXTWyCsk1clZ6x096hjgumBV/HoGr1fdQZMBVT1Avw36jPzhyMK1PfLi\n" +
+                "cD75Ri+n9Nk=\n" );
 
+
+        String publicEncrypt = rsa.publicEncrypt("111111112211111111222222211111111222222211111111222222211111111222222211111111222222211111111222222211111111222222211111111222222211111111222222211111111222222211111111222222211111111222222211111111222222211111111222222211111111222222211111111222222211111111222222222222");
+        System.out.println(publicEncrypt);
 
     }
 

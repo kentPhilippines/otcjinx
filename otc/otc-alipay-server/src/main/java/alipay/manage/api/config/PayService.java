@@ -19,4 +19,9 @@ public interface PayService {
 
 
 
+
+	boolean witCheckBank(String bankCode);
+
+
+
 }

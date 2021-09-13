@@ -96,4 +96,9 @@ public class WithdrawServiceImpl implements WithdrawService {
         return withdrawDao.updatePushAgent(orderId) > 0  ;
     }
 
+    @Override
+    public List<Withdraw> findChannelAndType(String channel, String type) {
+        return withdrawDao.findChannelAndType(channel,type);
+    }
+
 }

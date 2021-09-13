@@ -15,12 +15,10 @@ import otc.result.Result;
 @EnableScheduling
 public class TaskSelf {
     private static final Log log = LogFactory.get();
-    @Autowired
-    private ServerConfig serverConfig;
-    @Autowired
-    UserTask userTaskImpl;
-    @Autowired
-    OrderTask orderTask;
+    @Autowired private ServerConfig serverConfig;
+    @Autowired private ChannelQueryOrder channelQueryOrder;
+    @Autowired private UserTask userTaskImpl;
+    @Autowired private OrderTask orderTask;
     @Scheduled(cron = "0/20 * * * * ?")
     public void orderTask() {
         if(serverConfig.getServerPort() != 9010 ){
@@ -43,11 +41,12 @@ public class TaskSelf {
 
     @Scheduled(cron = "0/10 * * * * ?")
     public void  WitTask() {
-        if(serverConfig.getServerPort() != 9011 ){
+        if(serverConfig.getServerPort() != 9010 ){
             log.info("当前任务端口号不正确");
             return;
         }
-        log.info("【开始进行10秒代付订单推送】");
+        log.info("【开始查询渠道代付数据】");
+        channelQueryOrder.query();
     }
 
 

@@ -124,4 +124,11 @@ public interface WithdrawMapper {
     void updateMsg(@Param("orderId")String orderId, @Param("msg")String msg);
     @Update("update alipay_withdraw set    comment =  '无法处理当前订单,请再次推送' ,pushOrder = 3   where orderId  = #{orderId} ")
     int updatePushAgent(String orderId);
+
+
+
+
+
+    @Select("select * from alipay_withdraw where  orderStatus = 4   and ( witChannel = #{channel} or chennelId = #{channel} ) and witType = #{type}  and submitTime >= CURRENT_TIMESTAMP - INTERVAL 20 MINUTE      ")
+    List<Withdraw> findChannelAndType(@Param("channel") String channel,@Param("witType")   String type);
 }

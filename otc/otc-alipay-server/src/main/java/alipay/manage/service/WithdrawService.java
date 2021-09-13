@@ -82,4 +82,6 @@ public interface WithdrawService {
 	 * @return
 	 */
 	boolean updatePushAgent(String orderId);
+
+	List<Withdraw> findChannelAndType(String channel, String s);
 }
