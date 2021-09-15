@@ -57,7 +57,7 @@ public class ShenfuHuafeiDPay extends PayOrderService   {
             }
             mapChannel.put(channel,wit.getWitType());//做查询回调使用
             boolean b = witCheckBank(wit.getBankcode());
-            if(b){
+            if(!b){
                 withdrawErMsg(wit,"银行卡不支持代付，请重新提交",wit.getRetain2());
             }
             mapChannel.put(channel,wit.getWitType());

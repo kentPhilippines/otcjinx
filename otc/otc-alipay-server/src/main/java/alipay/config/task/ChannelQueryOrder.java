@@ -27,6 +27,24 @@ public class ChannelQueryOrder extends NotfiyChannel {
   }
 
 
+    public void  accountPush(){
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }
+
 
 
 
