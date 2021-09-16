@@ -4,6 +4,7 @@ import alipay.config.listener.ServerConfig;
 import alipay.config.redis.RedisLockUtil;
 import alipay.manage.api.channel.amount.recharge.usdt.UsdtPayOut;
 import alipay.manage.service.WithdrawService;
+import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
@@ -36,7 +37,9 @@ public class USDTTask {
         }
         try {
             if (redisLockUtil.isOk(KEY)) {
-                usdtPayOutImpl.findDealOrderLog();
+                ThreadUtil.execute(()->{
+                    usdtPayOutImpl.findDealOrderLog();
+                });
                 usdtPayOutImpl.findTRCUsdt();
             };
         } catch (Exception e) {
