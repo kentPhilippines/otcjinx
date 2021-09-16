@@ -22,7 +22,7 @@ import java.util.Map;
 public class witTest {
 	public static void main(String[] args) {
 		for (int a = 0; a <= 0; a++) {
-		 	//new witTest().deal();
+		   new witTest().deal();
 		}
 		//find();
 /*
@@ -53,10 +53,10 @@ public class witTest {
 		String userid3 = "632QP888";
 		String key3 = "004475525F277F44BA4CDE4670B8E727";
 		String publickey3 = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCZhADxkdiJFcFaqamlhcxE+bzekfJJFH/qm6sSXg88J+L5q1uboF7LVhtx7t0oz855PED77GsuVbwYhx42ztr4DsU4+5YJEJ/OQL0In3zOkU58mCeTGBbdeoR3DxjBBIkrmC8p6FjdeGw75Gf2YAnImYji+OOv9SX7+kWYBm/yZwIDAQAB";
-		for (int a = 0; a <= 0; a++) {
+		/*for (int a = 0; a <= 0; a++) {
 			ThreadUtil.execute(() -> {
 			 	new witTest().wit(userid1, key1, publickey1);
-			});
+			});*/
 		/*	ThreadUtil.execute(() -> {
 				new witTest().wit(userid2, key2, publickey2);
 			});
@@ -64,7 +64,7 @@ public class witTest {
                 new witTest().wit(userid3, key3, publickey3);*/
 			// });
 		}
-	}
+
 
 		//相应结果集：{"success":true,"message":"支付处理中","result":{"sussess":true,"cod":0,"openType":1,"returnUrl":"http://api.tjzfcy.com/gateway/bankgateway/payorder/order/60326816340490956.html"},"code":null}
 		//相应结果集：{"success":true,"message":"支付处理中","result":{"sussess":true,"cod":0,"openType":1,"returnUrl":"http://api.tjzfcy.com/gateway/bankgateway/payorder/order/60326822046537022.html"},"code":1}
@@ -189,16 +189,18 @@ public class witTest {
 */
 
 
-/*
-		String userid = "ASD123456TEST";
-		String key = "8C88F4EE6A324386AA3B4709D4EE2919";
-		String publickey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC7PMszfWq3eM5F9od7faHp1QJ6a3ud0KD97+7bMjXCDyF3A/KfMdY5wnxrD0B3H5Ep0m0LqlZ5n5YnBxjkOTeFXn+osqJFgbyRV1bwxT31ssJx7VBvh+eMtS2BiOEu47qX7J42qD+VA5h7rjI4WkjId2OoQ+OExUnTUqQfDrnYZwIDAQAB";
-		*/
 
+		String userid = "MM123";
+		String key = "A418C4502CDE4D39AB6BAD80FDB384FD";
+		String publickey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCqqiLOdtVMwiDr28O4Te6DagU1SCZEE/6qMwp8gG2KpmMnznLynUe9xP/ineXgsb4LzO1DMXlUfwxpHHka3TEEDnL51jxhJktbkgSiEngbg+avjXUoPXeZ1YuRFA+KEfHAU/rlBWZQt/jzcSRkiJdR6fqcSMRZljWnoYBLMWg/5QIDAQAB";
+
+
+/*
 
 		String userid = "sx978";
 		String key = "D0FBE6229950990760223703DEEEC4F1";
 		String publickey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCLIjBF1o1rJECZyD8a5qr+vwcdd1EPl+zCpZqhXV8Vn/zNNbAYguIKPkuCIIdp6bG2knsO0qjVJ0kaVRFoa72Vztku8zSQP+4huijDIBofX5FtXgjS91OMx5tNV9f3FaHd9X9BoVvUp8/BiPIYuD231s8F5PcpGHBP0fRdLI7HmwIDAQAB";
+*/
 
 		long l = RandomUtil.randomLong(700, 800);
 
@@ -229,7 +231,7 @@ public class witTest {
 		postMap.put("cipherText", publicEncrypt);
 		postMap.put("userId", userid);
 		System.out.println("请求参数：" + postMap.toString());
-		String post = HttpUtil.post("http://127.0.0.1:9010/deal/pay", postMap);
+		String post = HttpUtil.post("http://47.243.66.246:23762/deal/pay", postMap);
 		System.out.println("相应结果集：" + post);
 	}
 

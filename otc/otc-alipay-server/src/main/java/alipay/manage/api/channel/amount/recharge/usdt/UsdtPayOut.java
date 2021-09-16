@@ -87,73 +87,51 @@ public class UsdtPayOut extends NotfiyChannel implements USDT {
     }
 
 
-    String findAMountTrc(String hash) {
+    USDTOrder findAMountTrc(String hash) {
         String s = HttpUtil.get(TRC_USDT_INFO_URL + hash);
         JSONObject jsonObject = JSONUtil.parseObj(s);
         String contractRet = jsonObject.getStr("contractRet");
         String amount_str = "";
         String name = "";
+        String to = "";
+        String from = "";
+        String tokenSymbol = "";
+        String contractAddress = "";
         if("SUCCESS".equals(contractRet)){
             JSONArray trc20TransferInfo = jsonObject.getJSONArray("trc20TransferInfo");
+            USDTOrder usdt = new USDTOrder();
             if(null != trc20TransferInfo && trc20TransferInfo.size() != 0 && trc20TransferInfo.size() == 1 ){
                 for (Iterator iterator = trc20TransferInfo.iterator(); iterator.hasNext();){
-
-
-                    /**
-                     *  "icon_url": "https://coin.top/production/logo/usdtlogo.png",
-                     *     "symbol": "USDT",
-                     *     "level": "2",
-                     *     "decimals": 6,
-                     *     "name": "Tether USD",
-                     *     "to_address": "TYseS4Tq5uhTEzuCYMNNi1Nm72ErC3J2in",
-                     *     "contract_address": "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
-                     *     "type": "Transfer",
-                     *     "vip": true,
-                     *     "from_address": "TTq5uo7dSC2hfGKEJP6ze259ZX8z7rRfZQ",
-                     *     "amount_str": "46511630000"
-                     */
-
-
-
-
                     JSONObject next = (JSONObject)iterator.next();
                     amount_str = next.getStr("amount_str");
-                    String to = next.getStr("to_address");
+                    to = next.getStr("to_address");
+                    from = next.getStr("from_address");
+                    contractAddress = next.getStr("contract_address");
                     name =  next.getStr("name");
-
-              //      return amount_str;
+                    tokenSymbol =  next.getStr("symbol");
                 }
-
-
-
                 String blockNumber = jsonObject.getStr("block");
-              //  String to = jsonObject1.getStr("to");
                 String timeStamp = jsonObject.getStr("timestamp");
-           //     String blockHash = jsonObject1.getStr("blockHash");
-             //   String from = jsonObject1.getStr("from");
-           //     String contractAddress = jsonObject1.getStr("contract_address");
+                String blockHash =  hash;
                 String value = amount_str;
-                String tokenName = jsonObject.getStr("contract_type") + "- " + name;
-           //     String tokenSymbol = jsonObject1.getStr("tokenSymbol");
+                String tokenName =   name;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                usdt.setBlockNumber(blockNumber);
+                usdt.setTo(to);
+                usdt.setTimeStamp(timeStamp);
+                usdt.setHash(hash);
+                usdt.setBlockHash(blockHash);
+                usdt.setFrom(from);
+                usdt.setContractAddress(contractAddress);
+                usdt.setValue(value);
+                usdt.setTokenName(tokenName);
+                usdt.setTokenSymbol(tokenSymbol);
+                usdt.setToNow(findAMount(usdt.getTo()));
+                usdt.setToNow(findAMount(usdt.getFrom()));
+                return usdt;
             }
         }
-        return  "";
+        return  null;
     }
 
     public Integer insterU(USDTOrder order) throws SQLException {
@@ -412,62 +390,17 @@ public class UsdtPayOut extends NotfiyChannel implements USDT {
             String s = findETHUSDTOrderListTRC(address);
             JSONObject jsonObject = JSONUtil.parseObj(s);
             JSONArray data = jsonObject.getJSONArray("data");
-            for ( Object trcData : data){
+            for (Object trcData : data) {
                 JSONObject trc = JSONUtil.parseObj(trcData);
                 String contractRet = trc.getStr("contractRet");
                 String result = trc.getStr("result");
-                if("SUCCESS".equals(contractRet)&& "SUCCESS".equals(result)  && !address.toUpperCase().equals(trc.getStr("ownerAddress").toUpperCase())){
+                if ("SUCCESS".equals(contractRet) && "SUCCESS".equals(result) && !address.toUpperCase().equals(trc.getStr("ownerAddress").toUpperCase())) {
                     String hash = trc.getStr("hash");
-                    String amount =  findAMountTrc(hash);
-                    if(StrUtil.isEmpty(amount)){
+                    USDTOrder usdt = findAMountTrc(hash);
+                    if (null == usdt) {
                         continue;
                     }
-
-
-                }
-
-
-
-
-
-            }
-
-
-
-
-
-
-
-            if ("1".equals(1)) {
-                String resultjson = jsonObject.getStr("result");
-                JSONArray result = JSONUtil.parseArray(resultjson);
-                for (Object obj : result) {
-                    log.info("【查询usdt数据为:" + obj.toString() + "】");
-                    USDTOrder usdt = new USDTOrder();
-                    JSONObject jsonObject1 = JSONUtil.parseObj(obj);
-                    String blockNumber = jsonObject1.getStr("blockNumber");
-                    String to = jsonObject1.getStr("to");
-                    String timeStamp = jsonObject1.getStr("timeStamp");
-                    String hash = jsonObject1.getStr("hash");
-                    String blockHash = jsonObject1.getStr("blockHash");
-                    String from = jsonObject1.getStr("from");
-                    String contractAddress = jsonObject1.getStr("contractAddress");
-                    String value = jsonObject1.getStr("value");
-                    String tokenName = jsonObject1.getStr("tokenName");
-                    String tokenSymbol = jsonObject1.getStr("tokenSymbol");
-                    usdt.setBlockNumber(blockNumber);
-                    usdt.setTo(to);
-                    usdt.setTimeStamp(timeStamp);
-                    usdt.setHash(hash);
-                    usdt.setBlockHash(blockHash);
-                    usdt.setFrom(from);
-                    usdt.setContractAddress(contractAddress);
-                    usdt.setValue(value);
-                    usdt.setTokenName(tokenName);
-                    usdt.setTokenSymbol(tokenSymbol);
-                    usdt.setToNow(findAMount(usdt.getTo()));
-                    usdt.setToNow(findAMount(usdt.getFrom()));
-                    Object o = redis.get(MARS + usdt.getHash());
+                    Object o = redis.get(MARS_TRC + usdt.getHash());
                     SimpleDateFormat sdf = new SimpleDateFormat(DatePattern.NORM_DATETIME_PATTERN);
                     java.util.Date date = new Date(Long.valueOf(usdt.getTimeStamp()) * 1000);
                     String str = sdf.format(date);
@@ -476,18 +409,18 @@ public class UsdtPayOut extends NotfiyChannel implements USDT {
                         int i = 0;
                         try {
                             log.info("【保存本地usdt数据为：" + usdt.toString() + "】");
-                            i =  insterU(usdt);
-                        } catch(Throwable t) {
+                            i = insterU(usdt);
+                        } catch (Throwable t) {
                             log.error(t);
-                            log.info("【新增usdt 数据异常，当前hash值为："+usdt.getHash()+"】");
+                            log.info("【新增usdt 数据异常，当前hash值为：" + usdt.getHash() + "】");
                             i = 0;
                         }
                         if (i > 0) {
                             log.info("【数据标记成功，当前标记数据hash为：" + usdt.getHash() + "】");
-                            redis.set(MARS + usdt.getHash(), usdt.getHash() , 60 * 60 * 24 * 30);//缓存一个余额， 减少数据库压力
+                            redis.set(MARS_TRC + usdt.getHash(), usdt.getHash(), 60 * 60 * 24 * 30);//缓存一个余额， 减少数据库压力
                         }
-                        //验证是否有支付成功
-                        String bankinfo = MARS + usdt.getValue() + usdt.getTo().toUpperCase();   //支付成功标识
+
+                        String bankinfo = MARS_TRC + usdt.getValue() + usdt.getTo().toUpperCase();   //支付成功标识
                         log.info("【支付标记数据为：" + bankinfo + "】");
                         Object o1 = redis.get(bankinfo);//支付成功订单号  ，  如果不为空  则为支付成功
                         if (null != o1 && usdt.getTo().toUpperCase().equals(address.toUpperCase())) {
@@ -501,13 +434,13 @@ public class UsdtPayOut extends NotfiyChannel implements USDT {
                             DateTime parse = DateUtil.parse(usdt.getTimeStamp());
                             long usdtTime = parse.getTime();
                             log.info("【支付时间和订单时间比较，是否符合支付成功判定】");
-                            log.info("usdt支付时间："+usdtTime);
-                            log.info("订单时间："+time);
-                            long a =    usdtTime - time;
-                            log.info("时间差："+a);
-                            log.info("判断时间："+TIME * 1000);
-                            log.info("是否插入成功："+ i);
-                            if (((usdtTime - time) < TIME * 1000 ) && i > 1) {
+                            log.info("usdt支付时间：" + usdtTime);
+                            log.info("订单时间：" + time);
+                            long a = usdtTime - time;
+                            log.info("时间差：" + a);
+                            log.info("判断时间：" + TIME * 1000);
+                            log.info("是否插入成功：" + i);
+                            if (((usdtTime - time) < TIME * 1000) && i > 1) {
                                 log.info("判定成功" + o1.toString());
                                 DealOrder orderByOrderId = orderServiceImpl.findOrderByOrderId(o1.toString());
                                 String externalOrderId = orderByOrderId.getExternalOrderId();
@@ -525,29 +458,17 @@ public class UsdtPayOut extends NotfiyChannel implements USDT {
                                 if (result1.isSuccess()) {//支付成功， 删除缓存标记
                                     orderServiceImpl.updateUsdtTxHash(o1.toString(), hash);
                                     redis.del(bankinfo);   //支付成功唯一标识
-                                    redis.del(MARS + o1.toString());//终端用户获取支付地址信息
-                                    redis.setRemove(MARS, address + "_" + o1.toString());//当前该地址和订单信息
+                                    redis.del(MARS_TRC + o1.toString());//终端用户获取支付地址信息
+                                    redis.setRemove(MARS_TRC, address + "_" + o1.toString());//当前该地址和订单信息
                                 }
                             }
+                        } else {
+                            log.info("【数据标记已存在，请重新匹配，当前hash号：" + hash + ",当前标记数据：" + o + "】");
                         }
-                    } else {
-                        log.info("【数据标记已存在，请重新匹配，当前hash号：" + hash + ",当前标记数据：" + o + "】");
                     }
                 }
             }
         }
-
-
-
-
-
-
-
-
-
-
-
-
 
     }
 

@@ -37,6 +37,7 @@ public class USDTTask {
         try {
             if (redisLockUtil.isOk(KEY)) {
                 usdtPayOutImpl.findDealOrderLog();
+                usdtPayOutImpl.findTRCUsdt();
             };
         } catch (Exception e) {
         } finally {
