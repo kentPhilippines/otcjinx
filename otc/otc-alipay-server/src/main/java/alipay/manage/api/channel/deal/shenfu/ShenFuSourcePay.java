@@ -26,6 +26,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import static alipay.manage.api.channel.util.QueryBalanceTool.channelInfoMap;
+
+
 @Component("ShenFuSourcePay")
 public class ShenFuSourcePay extends PayOrderService {
     private static final String MARS = "SHENFU";
@@ -48,12 +51,14 @@ public class ShenFuSourcePay extends PayOrderService {
             orderEr(dealOrderApp, "当前商户交易url未设置");
             return Result.buildFailMessage("请联系运营为您的商户好设置交易url");
         }
+        ChannelInfo channelInfo = getChannelInfo(channel, dealOrderApp.getRetain1());
         Result result = createOrder(
                 userInfo.getDealUrl() +
                         PayApiConstant.Notfiy.NOTFIY_API_WAI + "/shenfu-source-notify",
                 dealOrderApp.getOrderAmount(),
                 orderId,
-                getChannelInfo(channel, dealOrderApp.getRetain1()));
+                channelInfo);
+        channelInfoMap.put("ShenFuSourcePay",channelInfo);
         if (result.isSuccess()) {
             return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrlAndPayInfo(result.getResult(),result.getMessage()));
         } else {

@@ -22,6 +22,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import static alipay.manage.api.channel.util.QueryBalanceTool.channelInfoMap;
+
 @Component("ShenfuHuafeiPay")
 public class ShenfuHuafeiPay extends PayOrderService {
     /**
@@ -32,6 +34,7 @@ public class ShenfuHuafeiPay extends PayOrderService {
      * @return
      */
     private static SimpleDateFormat time = new SimpleDateFormat("yyyyMMddHHmmss");
+
     @Autowired
     private UserInfoService userInfoServiceImpl;
 
@@ -50,6 +53,7 @@ public class ShenfuHuafeiPay extends PayOrderService {
             orderEr(dealOrderApp, "当前交易产品支付成功同步跳跃地址未传");
             return Result.buildFailMessage("当前交易产品支付成功同步跳跃地址未传");
         }
+        ChannelInfo channelInfo = getChannelInfo(channel, dealOrderApp.getRetain1());
         Result result = createOrder(
                 userInfo.getDealUrl() +
                         PayApiConstant.Notfiy.NOTFIY_API_WAI + "/shenfu-huafei-notify",
@@ -58,6 +62,7 @@ public class ShenfuHuafeiPay extends PayOrderService {
                 getChannelInfo(channel, dealOrderApp.getRetain1()),
                 back
         );
+        channelInfoMap.put("ShenfuHuafeiPay", channelInfo);
         if (result.isSuccess()) {
             return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(result.getResult()));
         } else {

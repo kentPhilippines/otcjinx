@@ -22,6 +22,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import static alipay.manage.api.channel.util.QueryBalanceTool.channelInfoMap;
+
 @Component("Shenfu02Dpay")
 public class ShenfuDpay extends PayOrderService {
     private static final Log log = LogFactory.get();
@@ -30,6 +32,7 @@ public class ShenfuDpay extends PayOrderService {
 
     @Autowired
     private UserInfoService userInfoServiceImpl;
+
     private static String getNowDateStr() {
         return DateUtil.format(new Date(), DatePattern.PURE_DATETIME_FORMAT);
     }
@@ -45,6 +48,13 @@ public class ShenfuDpay extends PayOrderService {
                 return Result.buildFailMessage("请联系运营为您的商户好设置交易url");
             }
             log.info("【回调地址ip为：" + userInfo.getDealUrl() + "】");
+            String channel = "";
+            if (StrUtil.isNotBlank(wit.getChennelId())) {//支持运营手动推送出款
+                channel = wit.getChennelId();
+            } else {
+                channel = wit.getWitChannel();
+            }
+            channelInfoMap.put("ShenFuSourcePay", getChannelInfo(channel, wit.getWitType()));
             String createDpay = createDpay(userInfo.getDealUrl().toString() + PayApiConstant.Notfiy.NOTFIY_API_WAI + "/ShenFuDpay-noyfit", wit);
             if (StrUtil.isNotBlank(createDpay) && createDpay.equals(WIT_RESULT)) {
                 return Result.buildSuccessMessage("代付成功等待处理");
