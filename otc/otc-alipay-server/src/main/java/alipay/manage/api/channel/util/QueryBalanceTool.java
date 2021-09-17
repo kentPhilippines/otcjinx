@@ -39,7 +39,7 @@ public class QueryBalanceTool {
         try {
             if (CollectionUtil.isEmpty(channelInfoMap)) {
                 log.info("查询余额无初始化数据");
-                return null;
+                return list;
             }
             String amount = null;
             for (String s : channelInfoMap.keySet()) {
@@ -50,14 +50,16 @@ public class QueryBalanceTool {
                 } else if ("ShenFuSourcePay".equals(s)) {
                     amount = requestQueryBalance(channelInfo, "/gateway/pay/queryAmount", s);
                 }
-                balanceInfo.setChannel(s);
-                balanceInfo.setBalance(amount);
-                balanceInfo.setTime(d.format(new Date()));
-                list.add(balanceInfo);
+                if (StringUtils.isNotBlank(amount)) {
+                    balanceInfo.setChannel(channelInfo.getChannelAppId());
+                    balanceInfo.setBalance(amount);
+                    balanceInfo.setTime(d.format(new Date()));
+                    list.add(balanceInfo);
+                }
             }
         } catch (Exception e) {
             log.warn("数据不存在");
-            return null;
+            return list;
         }
         return list;
     }
