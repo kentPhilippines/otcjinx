@@ -1,6 +1,11 @@
 package alipay.config.task;
 
 import alipay.config.listener.ServerConfig;
+import alipay.manage.api.channel.amount.BalanceInfo;
+import alipay.manage.api.channel.util.QueryBalanceTool;
+import cn.hutool.core.date.DatePattern;
+import cn.hutool.core.thread.ThreadUtil;
+import cn.hutool.http.HttpUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +14,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import otc.result.Result;
+
+import java.util.Date;
+import java.util.List;
 
 @Component
 @Configuration
@@ -49,7 +57,34 @@ public class TaskSelf {
         channelQueryOrder.query();
     }
 
+ //   @Scheduled(cron = "* */50 * * * ?")
+    public void  pushChannelAmount() {
+        if(serverConfig.getServerPort() != 9012 ){
+            log.info("当前任务端口号不正确");
+            return;
+        }
+        List<BalanceInfo> balance = QueryBalanceTool.findBalance();
+        for (BalanceInfo info : balance){
+            String msg = "";
+            msg = "当前渠道为："+ info.getChannel() + " ，当前余额为："+info.getBalance() +"， 当前时间为："+info.getTime();
+            push(msg);
+        }
+
+    }
 
 
 
+
+    void push(String msg) {
+        ThreadUtil.execute(() -> {
+            String url = "http://172.29.17.156:8889/api/send?text=";
+            String test = msg + "，触发时间：" + DatePattern.NORM_DATETIME_FORMAT.format(new Date());
+            test = HttpUtil.encode(test, "UTF-8");
+            String id = "&id=";
+            String ids = "-1001464340513,480024035";
+            id += ids;
+            String s = url + test + id;
+            HttpUtil.get(s, 1000);
+        });
+    }
 }

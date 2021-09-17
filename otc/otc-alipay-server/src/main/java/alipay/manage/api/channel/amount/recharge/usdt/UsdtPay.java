@@ -93,7 +93,11 @@ public class UsdtPay extends PayOrderService implements USDT {
             Map cardmap = new HashMap();
             cardmap.put(LOCATION_ADDRESS, bank.getBankcardAccount());//钱包地址
             cardmap.put(LOCATION_MONEY, orderAmount);//钱包地址
-            cardmap.put(LOCATION_USDTSCAN, "ethereum:" + bank.getBankcardAccount() + "?decimal=6&value=0");//USDT二维码扫码数据
+            if(appOrderId.contains("USDT_TRC")){
+                cardmap.put(LOCATION_USDTSCAN,   bank.getBankcardAccount()  );//USDT_TRC二维码扫码数据
+            }else {
+                cardmap.put(LOCATION_USDTSCAN, "ethereum:" + bank.getBankcardAccount() + "?decimal=6&value=0");//USDT二维码扫码数据
+            }
             redis.hmset(LOCATION_MARS + orderId, cardmap, LOCATION_TIME);//作用为为存储地址信息,作为终端用户支付的地址依据
             //  redis.hset(MARS,orderId,bank.getBankcardAccount(),TIME);  // 获取支付回调的时候用来判断 当前是否存在usdt未支付订单
             long l = redis.sSetAndTime(LOCATION_MARS, LOCATION_TIME, bank.getBankcardAccount() + "_" + orderId);

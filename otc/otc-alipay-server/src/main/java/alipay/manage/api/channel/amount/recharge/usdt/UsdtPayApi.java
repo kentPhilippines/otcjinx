@@ -24,6 +24,13 @@ public class UsdtPayApi implements USDT {
         log.info("【收到用户请求USDT钱包地址参数，当前请求订单号为：" + orderId + "】");
         try {
             Map<Object, Object> hmget = redis.hmget(MARS + orderId);
+            if(null == hmget || hmget.size() ==  0 ){
+                hmget = redis.hmget(MARS_TRC + orderId);
+                info.setAddress(hmget.get(ADDRESS_TRC).toString());
+                info.setMoney(hmget.get(MONEY_TRC).toString());
+                info.setScan(hmget.get(USDTSCAN_TRC).toString());
+                return info;
+            }
             info.setAddress(hmget.get(ADDRESS).toString());
             info.setMoney(hmget.get(MONEY).toString());
             info.setScan(hmget.get(USDTSCAN).toString());
