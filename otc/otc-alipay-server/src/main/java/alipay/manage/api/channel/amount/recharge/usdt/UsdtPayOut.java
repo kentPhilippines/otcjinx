@@ -14,6 +14,7 @@ import alipay.manage.util.amount.AmountRunUtil;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.db.Db;
 import cn.hutool.db.Entity;
@@ -88,6 +89,11 @@ public class UsdtPayOut extends NotfiyChannel implements USDT {
 
 
     USDTOrder findAMountTrc(String hash) {
+        log.info("当前查询hash 为："+hash);
+        if(StrUtil.isBlank(hash)){
+            log.info("当前查询hash 为null<>");
+            return  null;
+        }
         String s = HttpUtil.get(TRC_USDT_INFO_URL + hash);
         JSONObject jsonObject = JSONUtil.parseObj(s);
         String contractRet = jsonObject.getStr("contractRet");
@@ -128,6 +134,11 @@ public class UsdtPayOut extends NotfiyChannel implements USDT {
                 usdt.setTokenSymbol(tokenSymbol);
                 usdt.setToNow(findAMount(usdt.getTo()));
                 usdt.setToNow(findAMount(usdt.getFrom()));
+                SimpleDateFormat sdf = new SimpleDateFormat(DatePattern.NORM_DATETIME_PATTERN);
+                java.util.Date date = new Date(Long.valueOf(usdt.getTimeStamp()));
+                String str = sdf.format(date);
+                usdt.setTimeStamp(str);
+                log.info("当前返回trc实体为:"+usdt.toString()+"");
                 return usdt;
             }
         }
@@ -383,6 +394,9 @@ public class UsdtPayOut extends NotfiyChannel implements USDT {
             log.info("【当前缓存中不存在 USDT 支付数据TRC】");
             return;
         }
+        try {
+
+
         for (Object account : orderList) {//待支付数据    钱包地址  +  订单号
             log.info("【缓存数据为:" + account.toString() + "】");
             String[] split = account.toString().split("_");
@@ -391,86 +405,92 @@ public class UsdtPayOut extends NotfiyChannel implements USDT {
             JSONObject jsonObject = JSONUtil.parseObj(s);
             JSONArray data = jsonObject.getJSONArray("data");
             for (Object trcData : data) {
-                JSONObject trc = JSONUtil.parseObj(trcData);
-                String contractRet = trc.getStr("contractRet");
-                String result = trc.getStr("result");
-                if ("SUCCESS".equals(contractRet) && "SUCCESS".equals(result) && !address.toUpperCase().equals(trc.getStr("ownerAddress").toUpperCase())) {
-                    String hash = trc.getStr("hash");
-                    USDTOrder usdt = findAMountTrc(hash);
-                    if (null == usdt) {
-                        continue;
-                    }
-                    Object o = redis.get(MARS_TRC + usdt.getHash());
-                    SimpleDateFormat sdf = new SimpleDateFormat(DatePattern.NORM_DATETIME_PATTERN);
-                    java.util.Date date = new Date(Long.valueOf(usdt.getTimeStamp()) * 1000);
-                    String str = sdf.format(date);
-                    usdt.setTimeStamp(str);
-                    if (null == o) {
-                        int i = 0;
-                        try {
-                            log.info("【保存本地usdt数据为：" + usdt.toString() + "】");
-                            i = insterU(usdt);
-                        } catch (Throwable t) {
-                            log.error(t);
-                            log.info("【新增usdt 数据异常，当前hash值为：" + usdt.getHash() + "】");
-                            i = 0;
-                        }
-                        if (i > 0) {
-                            log.info("【数据标记成功，当前标记数据hash为：" + usdt.getHash() + "】");
-                            redis.set(MARS_TRC + usdt.getHash(), usdt.getHash(), 60 * 60 * 24 * 30);//缓存一个余额， 减少数据库压力
-                        }
 
-                        String bankinfo = MARS_TRC + usdt.getValue() + usdt.getTo().toUpperCase();   //支付成功标识
-                        log.info("【支付标记数据为：" + bankinfo + "】");
-                        Object o1 = redis.get(bankinfo);//支付成功订单号  ，  如果不为空  则为支付成功
-                        if (null != o1 && usdt.getTo().toUpperCase().equals(address.toUpperCase())) {
-                            log.info("【判定支付成功，当前订单号：" + o1.toString() + "，当前支付地址：" + address + "】");
-                            DealOrder order = orderServiceImpl.findOrderByOrderId(o1.toString());
-                            if (order.getStatus().toString().equals(OrderDealStatus.成功.getIndex().toString())) {
-                                continue;
-                            }
-                            Date createTime = order.getCreateTime();
-                            long time = createTime.getTime();
-                            DateTime parse = DateUtil.parse(usdt.getTimeStamp());
-                            long usdtTime = parse.getTime();
-                            log.info("【支付时间和订单时间比较，是否符合支付成功判定】");
-                            log.info("usdt支付时间：" + usdtTime);
-                            log.info("订单时间：" + time);
-                            long a = usdtTime - time;
-                            log.info("时间差：" + a);
-                            log.info("判断时间：" + TIME * 1000);
-                            log.info("是否插入成功：" + i);
-                            if (((usdtTime - time) < TIME * 1000) && i > 1) {
-                                log.info("判定成功" + o1.toString());
-                                DealOrder orderByOrderId = orderServiceImpl.findOrderByOrderId(o1.toString());
-                                String externalOrderId = orderByOrderId.getExternalOrderId();
-                                List<DealOrder> orderList1 = orderServiceImpl.findExternalOrderId(externalOrderId);
-                                for (DealOrder exOrder : orderList1) {
-                                    boolean kentusdtmanage = exOrder.getOrderAccount().equals("KENTUSDTMANAGE");//内充 usdt 转 cny 专用账号
-                                    if (!kentusdtmanage) {
-                                        Result result1 = dealpayNotfiy(exOrder.getOrderId(), "127.0.0.1", "USDT转CNY，USDT到账成功");
-                                        if (result1.isSuccess()) {
-                                            orderServiceImpl.updateUsdtTxHash(o1.toString(), hash);
-                                        }
-                                    }
-                                }
-                                Result result1 = dealpayNotfiy(o1.toString(), "127.0.0.1", "主动查询USDT订单交易成功");
-                                if (result1.isSuccess()) {//支付成功， 删除缓存标记
-                                    orderServiceImpl.updateUsdtTxHash(o1.toString(), hash);
-                                    redis.del(bankinfo);   //支付成功唯一标识
-                                    redis.del(MARS_TRC + o1.toString());//终端用户获取支付地址信息
-                                    redis.setRemove(MARS_TRC, address + "_" + o1.toString());//当前该地址和订单信息
-                                }
-                            }
-                        } else {
-                            log.info("【数据标记已存在，请重新匹配，当前hash号：" + hash + ",当前标记数据：" + o + "】");
-                        }
-                    }
-                }
+                ThreadUtil.execute(()->{
+                    checkTrc(trcData, address);
+                });
             }
+        }
+        }catch (Throwable e){
+            log.error("trc 回调解析错误;",e);
         }
 
     }
 
+   void checkTrc(Object trcData ,String address){
+       JSONObject trc = JSONUtil.parseObj(trcData);
+       String contractRet = trc.getStr("contractRet");
+       String result = trc.getStr("result");
+       log.info("当前验证数据："+trc.toString());
+       if ("SUCCESS".equals(contractRet) && "SUCCESS".equals(result)  ) {
+           String hash = trc.getStr("hash");
+           USDTOrder usdt = findAMountTrc(hash);
+           if (null == usdt) {
+               return;
+           }
+           Object o = redis.get(MARS_TRC + usdt.getHash());
+           if (null == o) {
+               int i = 0;
+               try {
+                   log.info("【保存本地usdt数据为：" + usdt.toString() + "】");
+                   i = insterU(usdt);
+               } catch (Throwable t) {
+                   log.error(t);
+                   log.info("【新增usdt 数据异常，当前hash值为：" + usdt.getHash() + "】");
+                   i = 0;
+               }
+               if (i > 0) {
+                   log.info("【数据标记成功，当前标记数据hash为：" + usdt.getHash() + "】");
+                   redis.set(MARS_TRC + usdt.getHash(), usdt.getHash(), 60 * 60 * 24 * 30);//缓存一个余额， 减少数据库压力
+               }
 
+               String bankinfo = MARS_TRC + usdt.getValue() + usdt.getTo().toUpperCase();   //支付成功标识
+               log.info("【支付标记数据为：" + bankinfo + "】");
+               Object o1 = redis.get(bankinfo);//支付成功订单号  ，  如果不为空  则为支付成功
+               if (null != o1 && usdt.getTo().toUpperCase().equals(address.toUpperCase())) {
+                   log.info("【判定支付成功，当前订单号：" + o1.toString() + "，当前支付地址：" + address + "】");
+                   DealOrder order = orderServiceImpl.findOrderByOrderId(o1.toString());
+                   if (order.getStatus().toString().equals(OrderDealStatus.成功.getIndex().toString())) {
+                       return;
+                   }
+                   Date createTime = order.getCreateTime();
+                   long time = createTime.getTime();
+                   DateTime parse = DateUtil.parse(usdt.getTimeStamp());
+                   long usdtTime = parse.getTime();
+                   log.info("【支付时间和订单时间比较，是否符合支付成功判定】");
+                   log.info("usdt支付时间：" + usdtTime);
+                   log.info("订单时间：" + time);
+                   long a = usdtTime - time;
+                   log.info("时间差：" + a);
+                   log.info("判断时间：" + TIME * 1000);
+                   log.info("是否插入成功：" + i);
+                   if (((usdtTime - time) < TIME * 1000) && i > 1) {
+                       log.info("判定成功" + o1.toString());
+                       DealOrder orderByOrderId = orderServiceImpl.findOrderByOrderId(o1.toString());
+                       String externalOrderId = orderByOrderId.getExternalOrderId();
+                       List<DealOrder> orderList1 = orderServiceImpl.findExternalOrderId(externalOrderId);
+                       for (DealOrder exOrder : orderList1) {
+                           boolean kentusdtmanage = exOrder.getOrderAccount().equals("KENTUSDTMANAGE");//内充 usdt 转 cny 专用账号
+                           if (!kentusdtmanage) {
+                               Result result1 = dealpayNotfiy(exOrder.getOrderId(), "127.0.0.1", "USDT转CNY，USDT到账成功");
+                               if (result1.isSuccess()) {
+                                   orderServiceImpl.updateUsdtTxHash(o1.toString(), hash);
+                               }
+                           }
+                       }
+                       Result result1 = dealpayNotfiy(o1.toString(), "127.0.0.1", "主动查询USDT订单交易成功");
+                       if (result1.isSuccess()) {//支付成功， 删除缓存标记
+                           orderServiceImpl.updateUsdtTxHash(o1.toString(), hash);
+                           redis.del(bankinfo);   //支付成功唯一标识
+                           redis.del(MARS_TRC + o1.toString());//终端用户获取支付地址信息
+                           redis.setRemove(MARS_TRC, address + "_" + o1.toString());//当前该地址和订单信息
+                       }
+                   }
+               } else {
+                   log.info("【数据标记已存在，请重新匹配，当前hash号：" + hash + ",当前标记数据：" + o + "】");
+               }
+           }
+       }
+
+    }
 }

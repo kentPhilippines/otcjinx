@@ -82,6 +82,10 @@ public class WitPay extends PayOrderService {
         if (StrUtil.isNotBlank(manage)) {
             flag = true;
         }
+        if("xiangyun88".equals(userId) && StrUtil.isNotEmpty(manage)){
+            return Result.buildFailMessage("当前账户不支持后台代付");
+
+        }
         Result withdrawal = vendorRequestApi.withdrawal(request, flag);
         if (!withdrawal.isSuccess()) {
             return withdrawal;
