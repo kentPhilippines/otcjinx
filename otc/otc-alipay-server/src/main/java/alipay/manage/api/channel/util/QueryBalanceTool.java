@@ -3,16 +3,12 @@ package alipay.manage.api.channel.util;
 import alipay.manage.api.channel.amount.BalanceInfo;
 import alipay.manage.api.channel.util.shenfu.PayUtil;
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.date.DatePattern;
-import cn.hutool.core.date.DateUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
 import org.apache.commons.lang.StringUtils;
-import otc.bean.dealpay.Withdraw;
-import otc.result.Result;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -82,7 +78,7 @@ public class QueryBalanceTool {
                 String md5 = PayUtil.md5(createParam + "&key=" + channelInfo.getChannelPassword());
                 map.put("sign", md5.toUpperCase());
                 log.info("【申付话费查询余额请求参数为：" + map.toString() + "】");
-                String post = HttpUtil.post(channelInfo.getQueryBalanceUrl(), map, 2000);
+                String post = HttpUtil.post(channelInfo.getBalanceUrl(), map, 2000);
                 log.info("【绅付查询余额响应参数为：" + post + "】");
                 JSONObject parseObj = JSONUtil.parseObj(post);
                 String rspcode = parseObj.getStr("rspcode");
@@ -99,7 +95,7 @@ public class QueryBalanceTool {
                 String md5 = PayUtil.md5(createParam + channelInfo.getChannelPassword());
                 map.put("sign", md5.toUpperCase());
                 log.info("【绅付查询余额请求参数为：" + map.toString() + "】");
-                String post = HttpUtil.post(channelInfo.getQueryBalanceUrl(), map, 2000);
+                String post = HttpUtil.post(channelInfo.getBalanceUrl(), map, 2000);
                 log.info("【绅付查询余额响应参数为：" + post + "】");
                 JSONObject parseObj = JSONUtil.parseObj(post);
                 String oid_partner = parseObj.getStr("oid_partner");

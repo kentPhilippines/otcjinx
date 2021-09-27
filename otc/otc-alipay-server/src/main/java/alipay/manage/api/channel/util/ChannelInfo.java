@@ -6,7 +6,7 @@ public class ChannelInfo {
     private String channelPassword;
     private String channelType;
     private String witUrl;
-    private String queryBalanceUrl;
+    private String balanceUrl;
 
     public String getWitUrl() {
         return witUrl;
@@ -41,12 +41,12 @@ public class ChannelInfo {
     }
 
 
-    public String getQueryBalanceUrl() {
-        return queryBalanceUrl;
+    public String getBalanceUrl() {
+        return balanceUrl;
     }
 
-    public void setQueryBalanceUrl(String queryBalanceUrl) {
-        this.queryBalanceUrl = queryBalanceUrl;
+    public void setBalanceUrl(String balanceUrl) {
+        this.balanceUrl = balanceUrl;
     }
 
     public String getChannelAppId() {
