@@ -46,9 +46,9 @@ public class QueryBalanceTool {
                 ChannelInfo channelInfo = channelInfoMap.get(s);
                 BalanceInfo balanceInfo = new BalanceInfo();
                 if ("ShenfuHuafeiPay".equals(s)) {
-                    amount = requestQueryBalance(channelInfo, "/settlement/queryamount", s);
+                    amount = requestQueryBalance(channelInfo, s);
                 } else if ("ShenFuSourcePay".equals(s)) {
-                    amount = requestQueryBalance(channelInfo, "/gateway/pay/queryAmount", s);
+                    amount = requestQueryBalance(channelInfo, s);
                 }
                 if (StringUtils.isNotBlank(amount)) {
                     balanceInfo.setChannel(channelInfo.getChannelAppId());
@@ -71,7 +71,7 @@ public class QueryBalanceTool {
      * @param channelInfo
      * @return
      */
-    public static String requestQueryBalance(ChannelInfo channelInfo, String apiUrl, String pay) {
+    public static String requestQueryBalance(ChannelInfo channelInfo, String pay) {
         Map<String, Object> map = new HashMap<String, Object>();
         String amount = null;
         try {
@@ -82,7 +82,7 @@ public class QueryBalanceTool {
                 String md5 = PayUtil.md5(createParam + "&key=" + channelInfo.getChannelPassword());
                 map.put("sign", md5.toUpperCase());
                 log.info("【申付话费查询余额请求参数为：" + map.toString() + "】");
-                String post = HttpUtil.post(StringUtils.isBlank(channelInfo.getDealurl()) ? channelInfo.getWitUrl() : "" + apiUrl, map, 2000);
+                String post = HttpUtil.post(channelInfo.getQueryBalanceUrl(), map, 2000);
                 log.info("【绅付查询余额响应参数为：" + post + "】");
                 JSONObject parseObj = JSONUtil.parseObj(post);
                 String rspcode = parseObj.getStr("rspcode");
@@ -99,7 +99,7 @@ public class QueryBalanceTool {
                 String md5 = PayUtil.md5(createParam + channelInfo.getChannelPassword());
                 map.put("sign", md5.toUpperCase());
                 log.info("【绅付查询余额请求参数为：" + map.toString() + "】");
-                String post = HttpUtil.post(StringUtils.isBlank(channelInfo.getDealurl()) ? channelInfo.getWitUrl() : "" + apiUrl, map, 2000);
+                String post = HttpUtil.post(channelInfo.getQueryBalanceUrl(), map, 2000);
                 log.info("【绅付查询余额响应参数为：" + post + "】");
                 JSONObject parseObj = JSONUtil.parseObj(post);
                 String oid_partner = parseObj.getStr("oid_partner");

@@ -6,6 +6,7 @@ public class ChannelInfo {
     private String channelPassword;
     private String channelType;
     private String witUrl;
+    private String queryBalanceUrl;
 
     public String getWitUrl() {
         return witUrl;
@@ -37,6 +38,15 @@ public class ChannelInfo {
 
     public void setDealurl(String dealurl) {
         this.dealurl = dealurl;
+    }
+
+
+    public String getQueryBalanceUrl() {
+        return queryBalanceUrl;
+    }
+
+    public void setQueryBalanceUrl(String queryBalanceUrl) {
+        this.queryBalanceUrl = queryBalanceUrl;
     }
 
     public String getChannelAppId() {
