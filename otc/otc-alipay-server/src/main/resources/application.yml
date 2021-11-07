@@ -11,7 +11,7 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://172.29.17.156:8762/eureka/
-     # defaultZone: http://127.0.0.1:8762/eureka/
+      #defaultZone: http://127.0.0.1:8762/eureka/
   instance:
     # 是否使用ip注册
     prefer-ip-address: true
@@ -30,7 +30,7 @@ spring:
       pool:
         size: 20
       #spring 定时任务 线程个数
-  main:
+  main:      # 重复的 bean 注册名称允许覆盖
     allow-bean-definition-overriding: true
   application:
     name: otc-alipay-server
@@ -56,7 +56,7 @@ spring:
     #active: druid            #测试数据库
     #active: aliyun-online-data  # aliyun数据库      使用aliyun缓存服务
     active: google-online-data  #google云数据库       使用aliyun 缓存服务
-    #active: online-online-data   #google云数据库，但是使用服务器本地redis
+    #active: online-redis   #google云数据库，但是使用服务器本地redis
   servlet:
     multipart:
       max-file-size: 100MB

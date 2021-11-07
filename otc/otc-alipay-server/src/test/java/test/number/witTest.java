@@ -190,9 +190,11 @@ public class witTest {
 
 
 
+/*
 		String userid = "MM123";
 		String key = "A418C4502CDE4D39AB6BAD80FDB384FD";
 		String publickey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCqqiLOdtVMwiDr28O4Te6DagU1SCZEE/6qMwp8gG2KpmMnznLynUe9xP/ineXgsb4LzO1DMXlUfwxpHHka3TEEDnL51jxhJktbkgSiEngbg+avjXUoPXeZ1YuRFA+KEfHAU/rlBWZQt/jzcSRkiJdR6fqcSMRZljWnoYBLMWg/5QIDAQAB";
+*/
 
 
 /*
@@ -202,17 +204,22 @@ public class witTest {
 		String publickey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCLIjBF1o1rJECZyD8a5qr+vwcdd1EPl+zCpZqhXV8Vn/zNNbAYguIKPkuCIIdp6bG2knsO0qjVJ0kaVRFoa72Vztku8zSQP+4huijDIBofX5FtXgjS91OMx5tNV9f3FaHd9X9BoVvUp8/BiPIYuD231s8F5PcpGHBP0fRdLI7HmwIDAQAB";
 */
 
+
+		String userid = "2u7rMduh";
+		String key = "1CA9B6463CBE1809531432D0210D8346";
+		String publickey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCOUFLo5X4Iehvx6+8jfXnf6sGFaQhQoKZivhg5m47sFAVPORMeMOEtuOOBzgjYUAD4U1YAKIhHvZ9MBnMRJcz3ZvqIrTDdop1JQcP3C3lGj3sfDegHfW7yww3m3lRdQFsAGq/SUtOf+nUMkqrX+d4d+xEeQFthCD4d/w90RU56/wIDAQAB";
+
 		long l = RandomUtil.randomLong(700, 800);
 
 
 		Deal deal = new Deal();
-		deal.setAmount(""+l);//金额
+		deal.setAmount("100");//金额
 		deal.setAppId(userid);//商户号
 		deal.setApplyDate(d.format(new Date()));
 		deal.setNotifyUrl("http://starpay168.com:5055");
 		deal.setPageUrl("http://starpay168.com:5055");
 		deal.setOrderId(IdUtil.objectId());
-		deal.setPassCode("BANK_R");
+		deal.setPassCode("ALIPAY_SCAN");
 		deal.setSubject("订单交易");
 	//	deal.setUserid("USDT");  //to userid
 		Map<String, Object> objectToMap = MapUtil.objectToMap(deal);

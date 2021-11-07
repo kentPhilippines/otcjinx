@@ -84,6 +84,10 @@ public class AccountApi {
     @Transactional
     public Result auditStatus(HttpServletRequest request) {
         log.info("【远程调用修改商户状态的方法】");
+
+
+
+
         String params  = request.getQueryString();
         log.info("传入的参数："+ params);
 		Map<String, Object> paramMap = checkUtils.paramToMap(params);

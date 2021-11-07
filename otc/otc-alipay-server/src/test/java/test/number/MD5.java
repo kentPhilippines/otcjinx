@@ -1,9 +1,12 @@
 package test.number;
 
+import alipay.manage.api.channel.util.shenfu.PayUtil;
 import alipay.manage.bean.DealOrder;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.lang.UUID;
 import cn.hutool.core.thread.ThreadUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.poi.excel.BigExcelWriter;
 import cn.hutool.poi.excel.ExcelUtil;
@@ -16,19 +19,31 @@ import java.math.MathContext;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MD5 {
 	public static void main(String[] args) {
+		String pid = "ZRB615074FAB0D2A";
+		String amount =  "150.00";
+		String order_no = UUID.fastUUID().toString();
+		String pay_type = "603";
+		String notify_url = "www.beidu.com";
+		Map map = new HashMap();
+		map.put("pid", pid);
+		map.put("order_no", order_no);
+		map.put("amount", amount);
+		map.put("pay_type", pay_type);
+		map.put("notify_url", notify_url);
 
-		String m  = "acct_name=李瑞雨&bank_name=中国邮政储蓄银行&card_no=6217991270025039243&channel=4&money_order=2952&no_order=W20210812172548700952368&notify_url=http://starpay888.net:17628/huitongfuwit-noyfit&oid_partner=202108120244595539&sign_type=MD5&time_order=20210812172550";
-
-		String name = "付款人：唐晓君";
-		String[] split = name.split("付款人：");
-		String a = split[1];
-		System.out.println(a);
-
-
+		System.out.println("【新盛话费加签参数：" + map + "】");
+		String createParam = PayUtil.createParam(map);
+		String md5 = PayUtil.md5(createParam + "&key=" +  "317138754d41cee1325d30fcc4b18b7c");
+		map.put("sign", md5);
+		map.put("return_type", "json");
+		String post = HttpUtil.post( "https://pay.xshengs.com/pay/order", map);
+		System.out.println("【新盛话费返回数据：" + post + "】");
 	}
 
 	private static final String UTF_8 = "utf-8";

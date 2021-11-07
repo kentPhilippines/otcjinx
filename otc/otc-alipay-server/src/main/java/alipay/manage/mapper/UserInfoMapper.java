@@ -84,19 +84,19 @@ public interface UserInfoMapper {
             " from alipay_user_fund where userId = #{userId}")
     UserFund selectUsrFundByUserId(@Param("userId") String userId);
 
-    @CacheEvict(value = USER, allEntries = true)
+    @CacheEvict(value = USER_LONG, allEntries = true)
     @Update("update alipay_user_info set ${paramKey} = #{paramValue} where userId = #{userId} ")
     int updateMerchantStatusByUserId(@Param("userId") String userId, @Param("paramKey") String paramKey, @Param("paramValue") String paramValue);
 
-    @CacheEvict(value = USER, allEntries = true)
+    @CacheEvict(value = USER_LONG, allEntries = true)
     @Update("update alipay_user_info set receiveOrderState = #{status}, remitOrderState = #{status} where userId = #{userId}")
     void stopAllStatusByUserId(@Param("userId") String userId, @Param("status") Integer status);
 
-    @CacheEvict(value = USER, allEntries = true)
+    @CacheEvict(value = USER_LONG, allEntries = true)
     @Update("update alipay_user_rate set switchs = #{status} where userId = #{userId} and userType = 1 ")
     void closeMerchantRateChannel(@Param("userId") String userId, @Param("status") Integer status);
 
-    @CacheEvict(value = USER, allEntries = true)
+    @CacheEvict(value = USER_LONG, allEntries = true)
     @Update("update alipay_user_info set switchs = 0 where userId = #{userId}")
 	int updataStatusEr(@Param("userId")String userId);
     /**

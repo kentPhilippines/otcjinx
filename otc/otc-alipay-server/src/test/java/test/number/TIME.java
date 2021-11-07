@@ -4,6 +4,7 @@ import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.lang.Console;
 import cn.hutool.cron.CronUtil;
 import cn.hutool.cron.task.Task;
+import cn.hutool.http.HttpUtil;
 
 import java.util.Date;
 import java.util.Map;
@@ -21,16 +22,8 @@ public class TIME {
     static Map<Integer, Integer> map = new ConcurrentHashMap();
 
     public static void main(String[] args) {
-        CronUtil.setMatchSecond(true);
-        CronUtil.start();
-        for (int a = 1; a < 5; a++) {
-            int finalA = a;
-            new TIME().test(finalA);
-        }
-        for (int a = 6; a < 15; a++) {
-            int finalA = a;
-            new TIME().test(finalA);
-        }
+        String s = HttpUtil.get("https://www.douyin.com/aweme/v1/web/comment/list/?device_platform=webapp&aid=6383&channel=channel_pc_web&aweme_id=7025220358479318283&cursor=0&count=20&version_code=170400&version_name=17.4.0&cookie_enabled=true&screen_width=2048&screen_height=1280&browser_language=zh-CN&browser_platform=MacIntel&browser_name=Mozilla&browser_version=5.0+(Macintosh%3B+Intel+Mac+OS+X+10_15_7)+AppleWebKit%2F537.36+(KHTML,+like+Gecko)+Chrome%2F94.0.4606.81+Safari%2F537.36&browser_online=true&msToken=gbLXQR_dnKrn-RFmB_fVD4_bQTA1jPEudDj6smJ08oea8lRJhJkM6QBH0oKR_H4t4QZEm6wl0YQtVB_03IbsuRo6qvGerzT6JHs72MnTeU-vCUd9kG8QhB95mQ==&X-Bogus=DFSzsdVLB-sANnZPSuzg/37TlqCp&_signature=_02B4Z6wo00001A-S4xwAAIDDm0S4Ej1fYRgPlueAAGKhV3UzBMCIeoISau-hswePScGqeQP08.9Ey.xReipzX6MARk0C5XuzahFvfHKs3MTkH95uWOmMuN1VUcczne9T6.orB--.L7haJAmL9c");
+        System.out.println("【】"+s);
     }
 
     private void test(int a) {

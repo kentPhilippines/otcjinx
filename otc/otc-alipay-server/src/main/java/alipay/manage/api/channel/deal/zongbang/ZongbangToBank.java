@@ -1,5 +1,6 @@
-package alipay.manage.api.channel.deal.shenfu;
+package alipay.manage.api.channel.deal.zongbang;
 
+import alipay.config.redis.RedisUtil;
 import alipay.manage.api.channel.util.ChannelInfo;
 import alipay.manage.api.channel.util.shenfu.PayUtil;
 import alipay.manage.api.config.PayOrderService;
@@ -8,7 +9,6 @@ import alipay.manage.bean.UserInfo;
 import alipay.manage.bean.util.ResultDeal;
 import alipay.manage.service.OrderService;
 import alipay.manage.service.UserInfoService;
-import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
@@ -32,41 +32,48 @@ import java.util.Map;
 /**
  * 惠付通手动 入款
  */
-@Component("HuiTongFuSourcePayToBank")
-public class HuiTongFuSourcePayToBank extends PayOrderService {
+@Component("ZongbangToBank")
+public class ZongbangToBank extends PayOrderService {
+    private static final String MARS = "SHENFU";
     private static SimpleDateFormat d = new SimpleDateFormat("yyyyMMddHHmmss");
     @Autowired
     private UserInfoService userInfoServiceImpl;
     @Autowired
+    private RedisUtil redis;
+    @Autowired
     private OrderService orderServiceImpl;
     @Override
     public Result deal(DealOrderApp dealOrderApp, String channel)  {
-        log.info("【进入惠付通支付，当前请求产品：" + dealOrderApp.getRetain1() + "，当前请求渠道：" + channel + "】");
+        log.info("【进入刚盾支付，当前请求产品：" + dealOrderApp.getRetain1() + "，当前请求渠道：" + channel + "】");
         String orderId = create(dealOrderApp, channel);
         UserInfo userInfo = userInfoServiceImpl.findDealUrl(dealOrderApp.getOrderAccount());
         if (StrUtil.isBlank(userInfo.getDealUrl())) {
             orderEr(dealOrderApp, "当前商户交易url未设置");
             return Result.buildFailMessage("请联系运营为您的商户好设置交易url");
         }
+        String payInfo = "";
+        if(dealOrderApp.getDealDescribe().contains("付款人")){
+            payInfo = dealOrderApp.getDealDescribe();
+        }
         Result result = createOrder(
                 userInfo.getDealUrl() +
-                        PayApiConstant.Notfiy.NOTFIY_API_WAI + "/huiutongfuToBanK-notify",
+                        PayApiConstant.Notfiy.NOTFIY_API_WAI + "/zongbang-bank-notify",
                 dealOrderApp.getOrderAmount(),
                 orderId,
-                getChannelInfo(channel, dealOrderApp.getRetain1()),dealOrderApp
+                getChannelInfo(channel, dealOrderApp.getRetain1()),dealOrderApp,payInfo
                 );
         if (result.isSuccess()) {
-            return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrlAndPayInfo(result.getResult(),result.getMessage()));
+            return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(result.getResult()));
         } else {
             orderEr(dealOrderApp, "错误消息：" + result.getMessage());
             return result;
         }
     }
 
-    static  final  String PUBLIC_KEY  = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCKOHJwxgtnVsqDL5d7vgXVxE1babwye/ijK9cJ8f/r0H3zDMCq2dC2NOiVCszDCdU8UCQn7zw1Nj7K8a4HMMHZCBfx84quS/MHuzVk9koGTKeks+0haTo4ViQGKd5nwG+PkgOgYLWEIFCAtCEvayWgUuUt4+VYxtdFnbz/n8zIPwIDAQAB";
+    static  final  String PUBLIC_KEY  = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCJA3kkGVMP3lTsWR6PtBSWFOtP+RmEEv4yWS3E4rIKG07rzX2f7sgQnm2CGld25s4lL9bWT8Hw9ulTpi1vNACHLXko0O/YyNuIfeUvfaXirBgWlErDlQ+hOFdhLle+vdITu+5JW08i+G9Z1gZkcdtk/UeomBuY0FNaLxx/dRCNyQIDAQAB";
 
 
-    private Result createOrder(String notify, BigDecimal orderAmount, String orderId, ChannelInfo channelInfo, DealOrderApp dealOrderApp) {
+    private Result createOrder(String notify, BigDecimal orderAmount, String orderId, ChannelInfo channelInfo, DealOrderApp dealOrderApp, String payInfo) {
         try {
             Deal deal = new Deal();
             deal.setAmount(""+orderAmount);//金额
@@ -77,6 +84,11 @@ public class HuiTongFuSourcePayToBank extends PayOrderService {
             deal.setOrderId(orderId);
             deal.setPassCode( channelInfo.getChannelType());
             deal.setSubject("deal_order");
+            if(StrUtil.isNotEmpty(payInfo)) {
+                String[] split = payInfo.split(payInfo);
+                String payName = split[1];
+                deal.setUserId(payName);
+            }
             Map<String, Object> objectToMap = MapUtil.objectToMap(deal);
             String createParam = createParam(objectToMap);
             log.info("签名前请求串：" + createParam);
@@ -96,6 +108,8 @@ public class HuiTongFuSourcePayToBank extends PayOrderService {
             String post = HttpUtil.post( channelInfo.getDealurl(), postMap);
             log.info("相应结果集：" + post);
          //   {"success":false,"message":"当前账户交易权限未开通","result":null,"code":null}
+            // "payInfo":"张三:兴业银行:34583174378286786"
+            //：{"success":true,"message":"支付处理中","result":{"sussess":true,"cod":1,"openType":1,"returnUrl":"https://fpay510.5ga.xyz/pay9.html?order_id=20211031133850000764785&t=1635658730&sign=958ede34e9efa8859f2ff1a5444919ec","payInfo":""},"code":1}
             JSONObject jsonObject = JSONUtil.parseObj(post);
             String success = jsonObject.getStr("success");
             if("true".equals(success)){//请求支付成功
@@ -103,13 +117,26 @@ public class HuiTongFuSourcePayToBank extends PayOrderService {
                 //{"sussess":true,"cod":0,"openType":1,"returnUrl":"http://api.tjzfcy.com/gateway/bankgateway/payorder/order/60326816340490956.html"}
                 JSONObject resultObject = JSONUtil.parseObj(result);
                 String returnUrl = resultObject.getStr("returnUrl");//支付链接
-                String payInfo = resultObject.getStr("payInfo");//银行详情
-                if(StrUtil.isNotEmpty(payInfo)){
-                    ThreadUtil.execute(()->{
-                        orderServiceImpl.updateBankInfoByOrderId( payInfo, orderId);
-                    });
+                String pay = resultObject.getStr("payInfo");//支付信息
+                try {
+                    String[] split = pay.split(":");
+                    String name =  split[0];
+                    String bankname =  split[1];
+                    String bankno =  split[2];
+                    Map cardmap = new HashMap();
+                    cardmap.put("bank_name",bankname);
+                    cardmap.put("card_no", bankno);
+                    cardmap.put("card_user", name);
+                    cardmap.put("money_order", orderAmount);
+                    cardmap.put("no_order", orderId);
+                    cardmap.put("oid_partner", orderId);
+                    orderServiceImpl.updateBankInfoByOrderId(payInfo+" 收款信息："+jsonObject.getStr("card_user") + ":" + jsonObject.getStr("bank_name") + ":" + jsonObject.getStr("card_no"), orderId);
+                    redis.hmset(MARS + orderId, cardmap, 600000);
+                } catch (Exception e ){
+                    log.error("众邦手动异常",e);
+                    return Result.buildSuccessResult(returnUrl);
                 }
-                return Result.buildSuccessResult(payInfo,returnUrl);
+                return Result.buildSuccessResult(pay,PayApiConstant.Notfiy.OTHER_URL + "/pay?orderId=" + orderId + "&type=" + channelInfo.getChannelType());
             } else {
                 orderAppEr(dealOrderApp,jsonObject.getStr("message"));
                 return Result.buildFailMessage("支付失败");
@@ -142,7 +169,6 @@ public class HuiTongFuSourcePayToBank extends PayOrderService {
 }
 
 
-
 class Deal {
     private String appId;
     private String orderId;
@@ -152,7 +178,7 @@ class Deal {
     private String sign;
     private String applyDate;
     private String subject;
-    private String userid;
+    private String userId;
     private String pageUrl;
 
     public String getAmount() {
@@ -187,12 +213,12 @@ class Deal {
         this.subject = subject;
     }
 
-    public String getUserid() {
-        return userid;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setUserid(String userid) {
-        this.userid = userid;
+    public void setUserId(String userid) {
+        this.userId = userid;
     }
 
     public String getPageUrl() {
@@ -247,7 +273,7 @@ class Deal {
                 ", sign='" + sign + '\'' +
                 ", applyDate='" + applyDate + '\'' +
                 ", subject='" + subject + '\'' +
-                ", userid='" + userid + '\'' +
+                ", userid='" + userId + '\'' +
                 '}';
     }
 }

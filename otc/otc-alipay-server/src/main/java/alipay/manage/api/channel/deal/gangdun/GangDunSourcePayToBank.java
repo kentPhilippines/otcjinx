@@ -1,4 +1,4 @@
-package alipay.manage.api.channel.deal.shenfu;
+package alipay.manage.api.channel.deal.gangdun;
 
 import alipay.manage.api.channel.util.ChannelInfo;
 import alipay.manage.api.channel.util.shenfu.PayUtil;
@@ -32,8 +32,8 @@ import java.util.Map;
 /**
  * 惠付通手动 入款
  */
-@Component("HuiTongFuSourcePayToBank")
-public class HuiTongFuSourcePayToBank extends PayOrderService {
+@Component("GangDunSourcePayToBank")
+public class GangDunSourcePayToBank extends PayOrderService {
     private static SimpleDateFormat d = new SimpleDateFormat("yyyyMMddHHmmss");
     @Autowired
     private UserInfoService userInfoServiceImpl;
@@ -41,7 +41,7 @@ public class HuiTongFuSourcePayToBank extends PayOrderService {
     private OrderService orderServiceImpl;
     @Override
     public Result deal(DealOrderApp dealOrderApp, String channel)  {
-        log.info("【进入惠付通支付，当前请求产品：" + dealOrderApp.getRetain1() + "，当前请求渠道：" + channel + "】");
+        log.info("【进入刚盾支付，当前请求产品：" + dealOrderApp.getRetain1() + "，当前请求渠道：" + channel + "】");
         String orderId = create(dealOrderApp, channel);
         UserInfo userInfo = userInfoServiceImpl.findDealUrl(dealOrderApp.getOrderAccount());
         if (StrUtil.isBlank(userInfo.getDealUrl())) {
@@ -50,13 +50,13 @@ public class HuiTongFuSourcePayToBank extends PayOrderService {
         }
         Result result = createOrder(
                 userInfo.getDealUrl() +
-                        PayApiConstant.Notfiy.NOTFIY_API_WAI + "/huiutongfuToBanK-notify",
+                        PayApiConstant.Notfiy.NOTFIY_API_WAI + "/gangdun-notify",
                 dealOrderApp.getOrderAmount(),
                 orderId,
                 getChannelInfo(channel, dealOrderApp.getRetain1()),dealOrderApp
                 );
         if (result.isSuccess()) {
-            return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrlAndPayInfo(result.getResult(),result.getMessage()));
+            return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(result.getResult()));
         } else {
             orderEr(dealOrderApp, "错误消息：" + result.getMessage());
             return result;
@@ -96,6 +96,9 @@ public class HuiTongFuSourcePayToBank extends PayOrderService {
             String post = HttpUtil.post( channelInfo.getDealurl(), postMap);
             log.info("相应结果集：" + post);
          //   {"success":false,"message":"当前账户交易权限未开通","result":null,"code":null}
+
+
+            //：{"success":true,"message":"支付处理中","result":{"sussess":true,"cod":1,"openType":1,"returnUrl":"https://fpay510.5ga.xyz/pay9.html?order_id=20211031133850000764785&t=1635658730&sign=958ede34e9efa8859f2ff1a5444919ec","payInfo":""},"code":1}
             JSONObject jsonObject = JSONUtil.parseObj(post);
             String success = jsonObject.getStr("success");
             if("true".equals(success)){//请求支付成功
@@ -103,13 +106,7 @@ public class HuiTongFuSourcePayToBank extends PayOrderService {
                 //{"sussess":true,"cod":0,"openType":1,"returnUrl":"http://api.tjzfcy.com/gateway/bankgateway/payorder/order/60326816340490956.html"}
                 JSONObject resultObject = JSONUtil.parseObj(result);
                 String returnUrl = resultObject.getStr("returnUrl");//支付链接
-                String payInfo = resultObject.getStr("payInfo");//银行详情
-                if(StrUtil.isNotEmpty(payInfo)){
-                    ThreadUtil.execute(()->{
-                        orderServiceImpl.updateBankInfoByOrderId( payInfo, orderId);
-                    });
-                }
-                return Result.buildSuccessResult(payInfo,returnUrl);
+                return Result.buildSuccessResult(returnUrl);
             } else {
                 orderAppEr(dealOrderApp,jsonObject.getStr("message"));
                 return Result.buildFailMessage("支付失败");
@@ -140,7 +137,6 @@ public class HuiTongFuSourcePayToBank extends PayOrderService {
         return null;
     }
 }
-
 
 
 class Deal {
