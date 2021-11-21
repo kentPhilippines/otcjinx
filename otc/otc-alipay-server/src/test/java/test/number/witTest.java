@@ -219,9 +219,9 @@ public class witTest {
 		deal.setNotifyUrl("http://starpay168.com:5055");
 		deal.setPageUrl("http://starpay168.com:5055");
 		deal.setOrderId(IdUtil.objectId());
-		deal.setPassCode("ALIPAY_SCAN");
+		deal.setPassCode("WECHARTOPHONEFEE");
 		deal.setSubject("订单交易");
-	//	deal.setUserid("USDT");  //to userid
+		deal.setUserid("张三");  //to userid
 		Map<String, Object> objectToMap = MapUtil.objectToMap(deal);
 		String createParam = createParam(objectToMap);
 		System.out.println("签名前请求串：" + createParam);
@@ -238,7 +238,7 @@ public class witTest {
 		postMap.put("cipherText", publicEncrypt);
 		postMap.put("userId", userid);
 		System.out.println("请求参数：" + postMap.toString());
-		String post = HttpUtil.post("http://47.243.66.246:23762/deal/pay", postMap);
+		String post = HttpUtil.post("http://bestpays456.com:24536/deal/pay", postMap);
 		System.out.println("相应结果集：" + post);
 	}
 

@@ -72,7 +72,7 @@ public class ZongbangToBank extends PayOrderService {
 
     static  final  String PUBLIC_KEY  = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCJA3kkGVMP3lTsWR6PtBSWFOtP+RmEEv4yWS3E4rIKG07rzX2f7sgQnm2CGld25s4lL9bWT8Hw9ulTpi1vNACHLXko0O/YyNuIfeUvfaXirBgWlErDlQ+hOFdhLle+vdITu+5JW08i+G9Z1gZkcdtk/UeomBuY0FNaLxx/dRCNyQIDAQAB";
 
-
+    private String name = "付款人：";
     private Result createOrder(String notify, BigDecimal orderAmount, String orderId, ChannelInfo channelInfo, DealOrderApp dealOrderApp, String payInfo) {
         try {
             Deal deal = new Deal();
@@ -85,7 +85,7 @@ public class ZongbangToBank extends PayOrderService {
             deal.setPassCode( channelInfo.getChannelType());
             deal.setSubject("deal_order");
             if(StrUtil.isNotEmpty(payInfo)) {
-                String[] split = payInfo.split(payInfo);
+                String[] split = payInfo.split(name);
                 String payName = split[1];
                 deal.setUserId(payName);
             }
@@ -130,7 +130,7 @@ public class ZongbangToBank extends PayOrderService {
                     cardmap.put("money_order", orderAmount);
                     cardmap.put("no_order", orderId);
                     cardmap.put("oid_partner", orderId);
-                    orderServiceImpl.updateBankInfoByOrderId(payInfo+" 收款信息："+jsonObject.getStr("card_user") + ":" + jsonObject.getStr("bank_name") + ":" + jsonObject.getStr("card_no"), orderId);
+                    orderServiceImpl.updateBankInfoByOrderId(payInfo+" 收款信息："+name + ":" + bankname+ ":" + bankno, orderId);
                     redis.hmset(MARS + orderId, cardmap, 600000);
                 } catch (Exception e ){
                     log.error("众邦手动异常",e);
@@ -139,7 +139,7 @@ public class ZongbangToBank extends PayOrderService {
                 return Result.buildSuccessResult(pay,PayApiConstant.Notfiy.OTHER_URL + "/pay?orderId=" + orderId + "&type=" + channelInfo.getChannelType());
             } else {
                 orderAppEr(dealOrderApp,jsonObject.getStr("message"));
-                return Result.buildFailMessage("支付失败");
+                return Result.buildFailMessage(jsonObject.getStr("message"));
             }
         } catch (Exception e){
             orderAppEr(dealOrderApp,"请求异常,联系技术处理");

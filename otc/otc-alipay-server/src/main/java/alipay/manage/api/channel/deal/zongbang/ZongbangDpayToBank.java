@@ -83,7 +83,7 @@ public class ZongbangDpayToBank extends PayOrderService {
         }
     }
 
-    static  final  String PUBLIC_KEY  = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCKOHJwxgtnVsqDL5d7vgXVxE1babwye/ijK9cJ8f/r0H3zDMCq2dC2NOiVCszDCdU8UCQn7zw1Nj7K8a4HMMHZCBfx84quS/MHuzVk9koGTKeks+0haTo4ViQGKd5nwG+PkgOgYLWEIFCAtCEvayWgUuUt4+VYxtdFnbz/n8zIPwIDAQAB";
+    static  final  String PUBLIC_KEY  = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCJA3kkGVMP3lTsWR6PtBSWFOtP+RmEEv4yWS3E4rIKG07rzX2f7sgQnm2CGld25s4lL9bWT8Hw9ulTpi1vNACHLXko0O/YyNuIfeUvfaXirBgWlErDlQ+hOFdhLle+vdITu+5JW08i+G9Z1gZkcdtk/UeomBuY0FNaLxx/dRCNyQIDAQAB";
     SimpleDateFormat d = new SimpleDateFormat("yyyyMMddHHmmss");
     String createDpay(String notify, Withdraw wit, ChannelInfo channelInfo) {
         try {
