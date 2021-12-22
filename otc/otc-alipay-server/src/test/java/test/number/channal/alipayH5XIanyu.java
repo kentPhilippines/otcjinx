@@ -2,24 +2,28 @@ package test.number.channal;
 
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.http.HttpUtil;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class alipayH5XIanyu {
 	public static void main(String[] args) { 
-		/**
-		fxid			商务号				是	唯一号，由穿山甲支付-csjPAY提供
+
+		/*fxid			商务号				是	唯一号，由穿山甲支付-csjPAY提供
 		fxddh			商户订单号				是	平台返回商户提交的订单号
 		fxaction		商户查询动作			是	商户查询动作，这里填写【orderquery】
 		fxsign			签名【md5(商务号+商户订单号+商户查询动作+商户秘钥)】	是	通过签名算法计算得出的签名值。
-	
-		String key = "AHFuoYCUgZcOdpectBxYiPElWMVGljbc";
-		Map<String, Object>  map = new HashMap<String, Object>();
+	*/
+	/*	String key = "AHFuoYCUgZcOdpectBxYiPElWMVGljbc";
+		Map<String, Object>  map;
+		map = new HashMap<String, Object>();
 		String fxid = "2020177";
 		String fxddh = "1261883409429565440";
 		String fxaction = "orderquery";
@@ -31,8 +35,8 @@ public class alipayH5XIanyu {
 		JSONObject parseObj = JSONUtil.parseObj(post);
 		XianYu bean = JSONUtil.toBean(parseObj, XianYu.class);
 		System.out.println(bean.toString());
-		
-		
+		*/
+		/*
 		 - 【当前回调ip为：202.79.174.113】
 		 2020-05-21 15:53:37.168 [http-nio-9010-exec-8] INFO  a.manage.api.channel.notfiy.YouShuAlipayNotfiy - order_id=175061&out_order_id=9fe76c15-038a-4950-aa2d-3e3a58876ef1&paytime=1590027003&price=300.0000&realprice=300.0000&type=alipay&key=zfZ2BTd6PHKvwCxU
 		 2020-05-21 15:53:37.168 [http-nio-9010-exec-8] INFO  a.manage.api.channel.notfiy.YouShuAlipayNotfiy - 【加密前参数：order_id=175061&out_order_id=9fe76c15-038a-4950-aa2d-3e3a58876ef1&paytime=1590027003&price=300.0000&realprice=300.0000&type=alipay&key=zfZ2BTd6PHKvwCxU】
@@ -40,13 +44,13 @@ public class alipayH5XIanyu {
 		 2020-05-21 15:53:37.168 [http-nio-9010-exec-8] INFO  a.manage.api.channel.notfiy.YouShuAlipayNotfiy - 【我方验签参数为：8F48C696A8E41A917AAA9C58AAD93114，请求方签名参数为：B0447E1EE6A254808FD710B9B06FE2A9】
 		 2020-05-21 15:53:37.168 [http-nio-9010-exec-8] INFO  a.manage.api.channel.notfiy.YouShuAlipayNotfiy - 【验签失败】
 		 2020-05-21 15:53:42.557 [http-nio-9010-exec-10] INFO  alipay.manage.api.Api - 【当前远程调用，查询所有未剪裁二维码】
+*/
 
-			*/
 	//	String extend = "312|xxx";
 	//	String ss = "extend="+extend+"&order_id=175061&out_order_id=9fe76c15-038a-4950-aa2d-3e3a58876ef1&paytime=1590027003&price=300.0000&realprice=300.0000&type=alipay&key=zfZ2BTd6PHKvwCxU";
 	//	String upperCase = md5(ss).toUpperCase();
 	//	System.out.println(upperCase);
-		/**
+		/*
 		 * 	money			是		订单金额
 			part_sn			是		商家平台订单号
 			notify			是		异步回调地址
@@ -55,7 +59,7 @@ public class alipayH5XIanyu {
 				下单请求地址：http://xianyu.tbuoljh.cn/api/order
 				商户key：  8ff661281faf68288666c7fdef535a74
 				商户ID：31
-				回调ip：110.42.1.189
+				回调ip：110.42.1.189*/
 		String key = "8ff661281faf68288666c7fdef535a74";
 		Map<String, Object>  map = new HashMap<String, Object>();
 		map.put("money", "2000");
@@ -68,20 +72,15 @@ public class alipayH5XIanyu {
 		String md5 = md5(key+createParam+key);
 		System.out.println(md5);
 		map.put("sign", md5);
-		beanss ben = new beanss();
-		ben.setId("31");
-		ben.setMoney("2000");
-		ben.setNotify("http://182.16.89.146:9010/notfiy-api-pay/xianyu-notfiy");
-		ben.setPart_sn("222222224422");
-		ben.setSign(md5);
-		 JSONObject parseObj = JSONUtil.parseObj(ben);
-		 System.out.println(parseObj.toString());
-
 		 String post = HttpUtil.post("http://xianyu.tbuoljh.cn/api/order", map);
 		 System.out.println(post);
-		 */
 
 
+
+
+
+
+/*
 		//	1267136389196156928
 		String KEY = "gCwqqQSkBGKAYHKFOHdToMSLAErLVmeQ";
 		String FX_ID = "2020183";
@@ -97,25 +96,7 @@ public class alipayH5XIanyu {
 		map.put("fxsign", md5(FX_ID + fxddh + fxaction + KEY));
 		String post = HttpUtil.post("https://csj.fenvun.com/Pay"  , map);
 		System.out.println("【当前返回数据为：】"+post.toString());
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+		*/
 	}
 	 public static String md5(String a) {
 	    	String c = "";

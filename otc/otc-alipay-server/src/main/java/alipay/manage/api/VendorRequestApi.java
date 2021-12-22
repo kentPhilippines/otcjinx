@@ -45,7 +45,7 @@ public class VendorRequestApi {
      * @return
      */
 
-    static BigDecimal higMoney = new BigDecimal("49999");
+    static BigDecimal higMoney = new BigDecimal("10000000");
 
     public static String getIpAddress(HttpServletRequest request, String userId) {
         String Xip = request.getHeader("X-Real-IP");

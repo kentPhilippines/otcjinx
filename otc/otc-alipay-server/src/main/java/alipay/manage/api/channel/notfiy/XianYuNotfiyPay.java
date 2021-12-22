@@ -1,11 +1,13 @@
 package alipay.manage.api.channel.notfiy;
 
+import alipay.manage.api.channel.util.shenfu.PayUtil;
 import alipay.manage.api.config.NotfiyChannel;
 import alipay.manage.bean.DealOrder;
 import alipay.manage.mapper.DealOrderMapper;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
+import cn.hutool.json.JSON;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import cn.hutool.log.Log;
@@ -18,24 +20,18 @@ import otc.result.Result;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @RequestMapping(PayApiConstant.Notfiy.NOTFIY_API_WAI)
 @RestController
 public class XianYuNotfiyPay extends NotfiyChannel {
-    private static final String KEY = "AHFuoYCUgZcOdpectBxYiPElWMVGljbc";
-    private static final String FX_ID = "2020177";
-    private static final String ORDER_QUERY = "orderquery";
     private static final Log log = LogFactory.get();
-    @Autowired
-    DealOrderMapper dealOrderDao;
-
     public static String md5(String a) {
         String c = "";
         MessageDigest md5;
@@ -70,16 +66,56 @@ public class XianYuNotfiyPay extends NotfiyChannel {
         log.info("进入咸鱼支付宝H5 回调处理");
         String clientIP = HttpUtil.getClientIP(request);
         log.info("【当前回调ip为：" + clientIP + "】");
-        if (!"103.84.90.39".equals(clientIP)) {
-            log.info("【当前回调ip为：" + clientIP + "，固定IP登记为：" + "103.84.90.39" + "】");
+		InputStream inputStream = request.getInputStream();
+		String body;
+		StringBuilder stringBuilder = new StringBuilder();
+		BufferedReader bufferedReader = null;
+		try {
+			if (inputStream != null) {
+				bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+				char[] charBuffer = new char[128];
+				int bytesRead = -1;
+				while ((bytesRead = bufferedReader.read(charBuffer)) > 0) {
+					stringBuilder.append(charBuffer, 0, bytesRead);
+				}
+			} else {
+				stringBuilder.append("");
+			}
+		} catch (IOException ex) {
+			throw ex;
+		} finally {
+			if (bufferedReader != null) {
+				try {
+					bufferedReader.close();
+				} catch (IOException ex) {
+					throw ex;
+				}
+			}
+		}
+		body = stringBuilder.toString();
+		JSON parse = JSONUtil.parse(body);
+		JSONObject parseObj = JSONUtil.parseObj(parse);
+
+		Set<String> keySet = parseObj.keySet();
+		log.info("【收到趣支付支付成功请求，当前请求参数为：" + parseObj + "】");
+		Map<String, Object> decodeParamMap = new ConcurrentHashMap();
+		for (String key : keySet) {
+			decodeParamMap.put(key, parseObj.getObj(key));
+		}
+        String s = PayUtil.ipMap.get(clientIP);
+        if (StrUtil.isEmpty(s)) {
+            log.info("【当前回调ip为：" + clientIP + "，固定IP登记为：" + "18.162.225.144，52.192.227.76" + "】");
             log.info("【当前回调ip不匹配】");
             response.getWriter().write("ip错误");
             return;
         }
-        List<DealOrder> findXianYuOrder = dealOrderDao.findXianYuOrder();
-        for (DealOrder order : findXianYuOrder) {
-            ThreadUtil.execute(() -> {
-                log.info("【进入咸鱼订单查询处理】 ");
+
+		String orderId = (String)decodeParamMap.get("fxddh");
+
+
+
+
+		log.info("【进入趣支付订单查询处理】 ");
                 log.info("【当前咸鱼订单号：" + order.getRetain2() + "】 ");
                 String fxddh = order.getRetain2();//咸鱼订单号
                 String fxaction = ORDER_QUERY;
@@ -103,9 +139,7 @@ public class XianYuNotfiyPay extends NotfiyChannel {
                         }
                     }
                 }
-            });
-        }
-    }
+                }
 }
 class XianYu {
 	//{"fxid":"2020177","fxstatus":"1","fxddh":"12365441234","fxorder":"qzf20200516171826589638709215147","fxdesc":"000000","fxfee":"2000.00","fxattch":"test","fxtime":"1589620706","fxsign":"8f31d1ccd2ffeae15885c4e33b08c01c"}
@@ -173,5 +207,34 @@ class XianYu {
 	public String toString() {
 		return "XianYu [fxid=" + fxid + ", fxstatus=" + fxstatus + ", fxddh=" + fxddh + ", fxorder=" + fxorder
 				+ ", fxdesc=" + fxdesc + ", fxattch=" + fxattch + ", fxtime=" + fxtime + ", fxsign=" + fxsign + "]";
+	}
+	void param(HttpServletRequest req) throws IOException {
+		InputStream inputStream = req.getInputStream();
+		String body;
+		StringBuilder stringBuilder = new StringBuilder();
+		BufferedReader bufferedReader = null;
+		try {
+			if (inputStream != null) {
+				bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+				char[] charBuffer = new char[128];
+				int bytesRead = -1;
+				while ((bytesRead = bufferedReader.read(charBuffer)) > 0) {
+					stringBuilder.append(charBuffer, 0, bytesRead);
+				}
+			} else {
+				stringBuilder.append("");
+			}
+		} catch (IOException ex) {
+			throw ex;
+		} finally {
+			if (bufferedReader != null) {
+				try {
+					bufferedReader.close();
+				} catch (IOException ex) {
+					throw ex;
+				}
+			}
+		}
+
 	}
 }

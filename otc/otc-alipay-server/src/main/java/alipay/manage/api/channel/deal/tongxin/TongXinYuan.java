@@ -73,7 +73,6 @@ public class TongXinYuan extends NotfiyChannel {
             log.info("同心话费回调参数："+stringStringHashMap.toString());
         }
         try {
-
             JSONObject parseObj = JSONUtil.parseObj(json);
              sign = parseObj.getStr("sign");
              RSPCOD = parseObj.getStr("RSPCOD");
@@ -97,13 +96,12 @@ public class TongXinYuan extends NotfiyChannel {
             porderno = stringStringHashMap.get("porderno");
             extraData = stringStringHashMap.get("extraData");
         }
-        String dpAyChannelKey = getDPAyChannelKey(orderno);
         Map<String,Object> query = new HashMap<>();
         String orderId = orderno;
         query.put("agtorg","JX199");
         query.put("mercid","484584045119506");
-        query.put("ordernumber",orderId);
-        String sg = "agtorg=JX199&mercid=484584045119506&ordernumber="+orderId+"&key="+dpAyChannelKey;
+        query.put("ordernumber",orderno);
+        String sg = "agtorg=JX199&mercid=484584045119506&ordernumber="+orderId+"&key=F7A9BCB6E0C07708";
         query.put("sign",PayUtil.md5(sg).toUpperCase());
         String post = HttpUtil.post( "http://mng.yuegepay.com/709105.tran9",query);
         System.out.println(post);
@@ -117,6 +115,7 @@ public class TongXinYuan extends NotfiyChannel {
                 return  "success";
             }
         }
+
         return "error";
     }
 

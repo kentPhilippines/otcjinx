@@ -27,8 +27,8 @@ eureka:
 spring:
   datasource:
     url: jdbc:mysql://35.220.155.53:3306/otc_alipay?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
-    username: kent_admin
-    password: L!f2e#e_h3CNgVD
+    username: sdasdad1dxx
+    password: 231skajhsbxsad1x&
     driverClassName: com.mysql.jdbc.Driver
     hikari:
       connection-test-query: SELECT 1 FROM DUAL
@@ -43,6 +43,7 @@ spring:
     port: 6379
     host: r-3nsnbeyh1ym8vjo2vf.redis.rds.aliyuncs.com
     timeout: 5000
+    database : 5
     password: kentredis:Bffdasdsdada9ijnasd6
     pool:
       max-idle: 200
@@ -85,7 +86,7 @@ spring:
       store-type: redis
       timeout: 7200s
   #断路器开启
-  feign.hystrix.enabled: true
-  logging:
+feign.hystrix.enabled: true
+logging:
     level:
       alipay.*: debug

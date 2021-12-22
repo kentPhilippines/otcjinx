@@ -11,7 +11,9 @@ import alipay.manage.service.OrderService;
 import alipay.manage.service.UserInfoService;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpConnection;
 import cn.hutool.http.HttpUtil;
+import cn.hutool.http.Method;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +23,16 @@ import otc.result.Result;
 import otc.util.MapUtil;
 import otc.util.encode.XRsa;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocketFactory;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -42,8 +53,9 @@ public class ZongbangToBank extends PayOrderService {
     private RedisUtil redis;
     @Autowired
     private OrderService orderServiceImpl;
+
     @Override
-    public Result deal(DealOrderApp dealOrderApp, String channel)  {
+    public Result deal(DealOrderApp dealOrderApp, String channel) {
         log.info("【进入刚盾支付，当前请求产品：" + dealOrderApp.getRetain1() + "，当前请求渠道：" + channel + "】");
         String orderId = create(dealOrderApp, channel);
         UserInfo userInfo = userInfoServiceImpl.findDealUrl(dealOrderApp.getOrderAccount());
@@ -52,7 +64,7 @@ public class ZongbangToBank extends PayOrderService {
             return Result.buildFailMessage("请联系运营为您的商户好设置交易url");
         }
         String payInfo = "";
-        if(dealOrderApp.getDealDescribe().contains("付款人")){
+        if (dealOrderApp.getDealDescribe().contains("付款人")) {
             payInfo = dealOrderApp.getDealDescribe();
         }
         Result result = createOrder(
@@ -60,8 +72,8 @@ public class ZongbangToBank extends PayOrderService {
                         PayApiConstant.Notfiy.NOTFIY_API_WAI + "/zongbang-bank-notify",
                 dealOrderApp.getOrderAmount(),
                 orderId,
-                getChannelInfo(channel, dealOrderApp.getRetain1()),dealOrderApp,payInfo
-                );
+                getChannelInfo(channel, dealOrderApp.getRetain1()), dealOrderApp, payInfo
+        );
         if (result.isSuccess()) {
             return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(result.getResult()));
         } else {
@@ -70,21 +82,22 @@ public class ZongbangToBank extends PayOrderService {
         }
     }
 
-    static  final  String PUBLIC_KEY  = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCJA3kkGVMP3lTsWR6PtBSWFOtP+RmEEv4yWS3E4rIKG07rzX2f7sgQnm2CGld25s4lL9bWT8Hw9ulTpi1vNACHLXko0O/YyNuIfeUvfaXirBgWlErDlQ+hOFdhLle+vdITu+5JW08i+G9Z1gZkcdtk/UeomBuY0FNaLxx/dRCNyQIDAQAB";
+    static final String PUBLIC_KEY = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCJA3kkGVMP3lTsWR6PtBSWFOtP+RmEEv4yWS3E4rIKG07rzX2f7sgQnm2CGld25s4lL9bWT8Hw9ulTpi1vNACHLXko0O/YyNuIfeUvfaXirBgWlErDlQ+hOFdhLle+vdITu+5JW08i+G9Z1gZkcdtk/UeomBuY0FNaLxx/dRCNyQIDAQAB";
 
     private String name = "付款人：";
+
     private Result createOrder(String notify, BigDecimal orderAmount, String orderId, ChannelInfo channelInfo, DealOrderApp dealOrderApp, String payInfo) {
         try {
             Deal deal = new Deal();
-            deal.setAmount(""+orderAmount);//金额
+            deal.setAmount("" + orderAmount);//金额
             deal.setAppId(channelInfo.getChannelAppId());//商户号
             deal.setApplyDate(d.format(new Date()));
             deal.setNotifyUrl(notify);
             deal.setPageUrl(dealOrderApp.getBack());
             deal.setOrderId(orderId);
-            deal.setPassCode( channelInfo.getChannelType());
+            deal.setPassCode(channelInfo.getChannelType());
             deal.setSubject("deal_order");
-            if(StrUtil.isNotEmpty(payInfo)) {
+            if (StrUtil.isNotEmpty(payInfo)) {
                 String[] split = payInfo.split(name);
                 String payName = split[1];
                 deal.setUserId(payName);
@@ -107,12 +120,12 @@ public class ZongbangToBank extends PayOrderService {
             log.info("请求参数：" + postMap.toString());
             String post = HttpUtil.post( channelInfo.getDealurl(), postMap);
             log.info("相应结果集：" + post);
-         //   {"success":false,"message":"当前账户交易权限未开通","result":null,"code":null}
+            //   {"success":false,"message":"当前账户交易权限未开通","result":null,"code":null}
             // "payInfo":"张三:兴业银行:34583174378286786"
             //：{"success":true,"message":"支付处理中","result":{"sussess":true,"cod":1,"openType":1,"returnUrl":"https://fpay510.5ga.xyz/pay9.html?order_id=20211031133850000764785&t=1635658730&sign=958ede34e9efa8859f2ff1a5444919ec","payInfo":""},"code":1}
             JSONObject jsonObject = JSONUtil.parseObj(post);
             String success = jsonObject.getStr("success");
-            if("true".equals(success)){//请求支付成功
+            if ("true".equals(success)) {//请求支付成功
                 String result = jsonObject.getStr("result");
                 //{"sussess":true,"cod":0,"openType":1,"returnUrl":"http://api.tjzfcy.com/gateway/bankgateway/payorder/order/60326816340490956.html"}
                 JSONObject resultObject = JSONUtil.parseObj(result);
@@ -120,32 +133,33 @@ public class ZongbangToBank extends PayOrderService {
                 String pay = resultObject.getStr("payInfo");//支付信息
                 try {
                     String[] split = pay.split(":");
-                    String name =  split[0];
-                    String bankname =  split[1];
-                    String bankno =  split[2];
+                    String name = split[0];
+                    String bankname = split[1];
+                    String bankno = split[2];
                     Map cardmap = new HashMap();
-                    cardmap.put("bank_name",bankname);
+                    cardmap.put("bank_name", bankname);
                     cardmap.put("card_no", bankno);
                     cardmap.put("card_user", name);
                     cardmap.put("money_order", orderAmount);
                     cardmap.put("no_order", orderId);
                     cardmap.put("oid_partner", orderId);
-                    orderServiceImpl.updateBankInfoByOrderId(payInfo+" 收款信息："+name + ":" + bankname+ ":" + bankno, orderId);
+                    orderServiceImpl.updateBankInfoByOrderId(payInfo + " 收款信息：" + name + ":" + bankname + ":" + bankno, orderId);
                     redis.hmset(MARS + orderId, cardmap, 600000);
-                } catch (Exception e ){
-                    log.error("众邦手动异常",e);
+                } catch (Exception e) {
+                    log.error("众邦手动异常", e);
                     return Result.buildSuccessResult(returnUrl);
                 }
-                return Result.buildSuccessResult(pay,PayApiConstant.Notfiy.OTHER_URL + "/pay?orderId=" + orderId + "&type=" + channelInfo.getChannelType());
+                return Result.buildSuccessResult(pay, PayApiConstant.Notfiy.OTHER_URL + "/pay?orderId=" + orderId + "&type=" + channelInfo.getChannelType());
             } else {
-                orderAppEr(dealOrderApp,jsonObject.getStr("message"));
+                orderAppEr(dealOrderApp, jsonObject.getStr("message"));
                 return Result.buildFailMessage(jsonObject.getStr("message"));
             }
-        } catch (Exception e){
-            orderAppEr(dealOrderApp,"请求异常,联系技术处理");
+        } catch (Exception e) {
+            orderAppEr(dealOrderApp, "请求异常,联系技术处理");
             return Result.buildFailMessage("支付失败");
         }
     }
+
     public static String createParam(Map<String, Object> map) {
         try {
             if (map == null || map.isEmpty()) {

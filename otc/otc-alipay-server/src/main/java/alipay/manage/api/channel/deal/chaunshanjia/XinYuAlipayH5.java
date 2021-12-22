@@ -1,5 +1,6 @@
 package alipay.manage.api.channel.deal.chaunshanjia;
 
+import alipay.manage.api.channel.util.ChannelInfo;
 import alipay.manage.api.config.PayOrderService;
 import alipay.manage.bean.DealOrder;
 import alipay.manage.bean.DealOrderApp;
@@ -55,9 +56,8 @@ public class XinYuAlipayH5 extends PayOrderService {
 
     @Override
     public Result deal(DealOrderApp dealOrderApp, String payType) {
-        String channelId = "XianYuZhifubao";
-        log.info("【进入咸鱼支付宝H5】");
-        String create = create(dealOrderApp, channelId);
+        log.info("【进入趣支付支付宝H5】");
+        String create = create(dealOrderApp, payType);
         if (StrUtil.isNotBlank(create)) {
             log.info("【本地订单创建成功，开始请求远程三方支付】");
             UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(dealOrderApp.getOrderAccount());
@@ -65,7 +65,11 @@ public class XinYuAlipayH5 extends PayOrderService {
 				orderEr(dealOrderApp, "当前商户交易url未设置");
 				return Result.buildFailMessage("请联系运营为您的商户好设置交易url");
 			}
-			XianYu xianyu = createOrder(userInfo.getDealUrl() + PayApiConstant.Notfiy.NOTFIY_API_WAI + "/xianyu-notfiy", dealOrderApp.getOrderAmount(), create);
+			XianYu xianyu = createOrder(
+			        userInfo.getDealUrl() + PayApiConstant.Notfiy.NOTFIY_API_WAI + "/xianyu-notfiy",
+                    dealOrderApp.getOrderAmount(), create,
+                    getChannelInfo(payType, dealOrderApp.getRetain1())
+                    );
 			if (ObjectUtil.isNull(xianyu)) {
                 boolean orderEr = orderEr(dealOrderApp);
                 if (orderEr) {
@@ -83,20 +87,16 @@ public class XinYuAlipayH5 extends PayOrderService {
 		return Result.buildFailMessage("支付失败");
 	}
 
-	private XianYu createOrder(String notfiy, BigDecimal orderAmount, String orderId) {
-        DealOrder order = orderServiceImpl.findOrderByOrderId(orderId);
-        Snowflake snowflake = IdUtil.createSnowflake(1, 1);
-        String id = snowflake.nextId() + "";
-        orderServiceImpl.updataXianyYu(order.getOrderId(), id);
+	private XianYu createOrder(String notfiy, BigDecimal orderAmount, String orderId, ChannelInfo channelInfo) {
         String fxnotifyurl = notfiy;
-        String fxbackurl = order.getBack();
+        String fxbackurl =notfiy;
         String fxattch = "test";
         String fxdesc = "desc";
         String fxfee = orderAmount.toString();
-        String fxpay = "zfbh5";
-        String fxddh = id; //订单号
-        String fxid = "2020177";
-        String key = "AHFuoYCUgZcOdpectBxYiPElWMVGljbc";
+        String fxpay = channelInfo.getChannelType();
+        String fxddh = orderId; //订单号
+        String fxid = channelInfo.getChannelAppId();
+        String key =  channelInfo.getChannelPassword();
         //订单签名
         String fxsign = md5(fxid + fxddh + fxfee + fxnotifyurl + key);
         fxsign = fxsign.toLowerCase();
@@ -115,15 +115,13 @@ public class XinYuAlipayH5 extends PayOrderService {
         log.info("【咸鱼H5请求参数：" + reqMap.toString() + "】");
         // 支付请求返回结果
         String result = null;
-        result = HttpUtil.post("https://csj.fenvun.com/Pay", reqMap);
+        result = HttpUtil.post(channelInfo.getDealurl(), reqMap);
         JSONObject parseObj = JSONUtil.parseObj(result);
         log.info("【咸鱼H5返回：" + parseObj.toString() + "】");
         Object object = parseObj.get("status");
 	    XianYu bean = new XianYu();
         if ("1".equals(object.toString())) {
             bean = JSONUtil.toBean(parseObj, XianYu.class);
-
-
         } else {
             bean.setPayurl(parseObj.get("error").toString());
             bean.setStatus("0");

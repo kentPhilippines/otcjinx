@@ -51,20 +51,7 @@ public class youkuaitongNotify extends NotfiyChannel {
          * WithdrawOrderId	string	平台方系统代付订单号	是
          * Sign	string	平台方计算出的签名
          */
-        String FinishTime = req.getParameter("FinishTime");
-        String MerchantId = req.getParameter("MerchantId");
         String MerchantUniqueOrderId = req.getParameter("MerchantUniqueOrderId");
-        String Solt = req.getParameter("Solt");
-        String Status = req.getParameter("Status");
-        String WithdrawOrderId = req.getParameter("WithdrawOrderId");
-        String sign = req.getParameter("Sign");
-        Map<String, Object> map = new HashMap<>();
-        map.put("FinishTime", FinishTime);
-        map.put("MerchantId", MerchantId);
-        map.put("MerchantUniqueOrderId", MerchantUniqueOrderId);
-        map.put("Solt", Solt);
-        map.put("Status", Status);
-        map.put("WithdrawOrderId", WithdrawOrderId);
         String Timestamp = DateUtil.format(new Date(), DatePattern.PURE_DATETIME_MS_PATTERN);
         Map<String,Object> query1 = new HashMap<>();
         query1.put("MerchantId","63290");
@@ -86,8 +73,8 @@ public class youkuaitongNotify extends NotfiyChannel {
             if (result.isSuccess()) {
                 return "success";
             }else {
-                witNotSuccess(MerchantUniqueOrderId);
             }
+
         }
         return "end errer";
     }

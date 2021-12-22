@@ -92,6 +92,8 @@ public class NotifyUtil {
      * @param msg     发送通知的内容
      */
     private void send(String url, String orderId, Map<String, Object> msg) {
+        log.info("URL:"+url);
+        log.info("msg:"+msg.toString());
         String result = "";
         if (url.contains("https")) {
             msg.put("url", url);

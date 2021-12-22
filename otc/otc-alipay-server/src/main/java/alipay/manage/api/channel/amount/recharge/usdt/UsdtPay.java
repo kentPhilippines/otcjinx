@@ -11,6 +11,7 @@ import alipay.manage.service.OrderService;
 import cn.hutool.core.thread.ThreadUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import otc.exception.BusinessException;
 import otc.result.Result;
 
 import java.math.BigDecimal;
@@ -37,9 +38,23 @@ public class UsdtPay extends PayOrderService implements USDT {
         String appOrderId = dealOrderApp.getAppOrderId();
         List<BankList> bankList = new ArrayList<>();
         if(!appOrderId.contains("USDT_TRC")){
-            bankList = bankListServiceIMpl.findBankByAccount("UsdtPay");
+            bankList =  bankListServiceIMpl.findBankByAccount("UsdtPay");
+            for ( BankList bank : bankList){
+                if(!bank.getBankcardAccount().equalsIgnoreCase("0xfaaaf2673d5117d05656b244578ac7c74026c5b1")){
+                    log.info("当前地址可疑，请查询");
+                    System.exit(1);//服务直接死机
+                      return  Result.buildFailMessage("当前地址可疑，请查询");
+                }
+            }
         }else {
             bankList = bankListServiceIMpl.findBankByAccount("UsdtPay_trc");
+            for ( BankList bank : bankList){
+                if(!bank.getBankcardAccount().equalsIgnoreCase("TYseS4Tq5uhTEzuCYMNNi1Nm72ErC3J2in")){
+                    log.info("当前地址可疑，请查询");
+                    System.exit(1);//服务直接死机
+                    return  Result.buildFailMessage("当前地址可疑，请查询");
+                }
+            }
         }
         Result result = createOrder(
                 dealOrderApp.getOrderAmount(),
@@ -82,6 +97,19 @@ public class UsdtPay extends PayOrderService implements USDT {
         BigDecimal bigInteger = new BigDecimal("1000000");//虚拟币单位放大1000000比对
         BigInteger money = orderAmount.multiply(bigInteger).toBigInteger();
         for (BankList bank : usdtInfo) {
+            if(!bank.getBankcardAccount().equals("0xfAAAf2673D5117d05656b244578Ac7c74026C5b1")){
+
+            }
+
+
+
+
+
+
+
+
+
+
             String bankinfo = LOCATION_MARS + money + bank.getBankcardAccount().toUpperCase();
             Object o = redis.get(bankinfo);
             if (null != o) {
