@@ -55,9 +55,9 @@ public class XinYuAlipayH5 extends PayOrderService {
     }
 
     @Override
-    public Result deal(DealOrderApp dealOrderApp, String payType) {
+    public Result deal(DealOrderApp dealOrderApp, String channelId) {
         log.info("【进入趣支付支付宝H5】");
-        String create = create(dealOrderApp, payType);
+        String create = create(dealOrderApp, channelId);
         if (StrUtil.isNotBlank(create)) {
             log.info("【本地订单创建成功，开始请求远程三方支付】");
             UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(dealOrderApp.getOrderAccount());
@@ -68,7 +68,7 @@ public class XinYuAlipayH5 extends PayOrderService {
 			XianYu xianyu = createOrder(
 			        userInfo.getDealUrl() + PayApiConstant.Notfiy.NOTFIY_API_WAI + "/xianyu-notfiy",
                     dealOrderApp.getOrderAmount(), create,
-                    getChannelInfo(payType, dealOrderApp.getRetain1())
+                    getChannelInfo(channelId, dealOrderApp.getRetain1())
                     );
 			if (ObjectUtil.isNull(xianyu)) {
                 boolean orderEr = orderEr(dealOrderApp);
