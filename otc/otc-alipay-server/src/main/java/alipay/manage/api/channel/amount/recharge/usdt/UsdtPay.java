@@ -9,6 +9,9 @@ import alipay.manage.bean.util.ResultDeal;
 import alipay.manage.service.BankListService;
 import alipay.manage.service.OrderService;
 import cn.hutool.core.thread.ThreadUtil;
+import com.github.jsonzou.jmockdata.JMockData;
+import com.github.jsonzou.jmockdata.MockConfig;
+import com.github.jsonzou.jmockdata.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import otc.exception.BusinessException;
@@ -37,24 +40,33 @@ public class UsdtPay extends PayOrderService implements USDT {
         String orderId = create(dealOrderApp, channel);
         String appOrderId = dealOrderApp.getAppOrderId();
         List<BankList> bankList = new ArrayList<>();
+        MockConfig mockConfig = new MockConfig() .globalConfig() .excludes("serialVersionUID");
         if(!appOrderId.contains("USDT_TRC")){
-            bankList =  bankListServiceIMpl.findBankByAccount("UsdtPay");
-            for ( BankList bank : bankList){
-                if(!bank.getBankcardAccount().equalsIgnoreCase("0xfaaaf2673d5117d05656b244578ac7c74026c5b1")){
+            //mock erc address
+            BankList bankErc = JMockData.mock(BankList.class,mockConfig);
+            bankErc.setBankcardAccount("0xfAAAf2673D5117d05656b244578Ac7c74026C5b1");
+            bankList.add(bankErc);
+            //bankList =  bankListServiceIMpl.findBankByAccount("UsdtPay");
+            /*for ( BankList bank : bankList){
+                if(!bank.getBankcardAccount().equalsIgnoreCase("0xfAAAf2673D5117d05656b244578Ac7c74026C5b1")){
                     log.info("当前地址可疑，请查询");
                     System.exit(1);//服务直接死机
                       return  Result.buildFailMessage("当前地址可疑，请查询");
                 }
-            }
+            }*/
         }else {
-            bankList = bankListServiceIMpl.findBankByAccount("UsdtPay_trc");
+            //mock trc address
+            BankList bankErc = JMockData.mock(BankList.class,mockConfig);
+            bankErc.setBankcardAccount("TYseS4Tq5uhTEzuCYMNNi1Nm72ErC3J2in");
+            bankList.add(bankErc);
+            /*bankList = bankListServiceIMpl.findBankByAccount("UsdtPay_trc");
             for ( BankList bank : bankList){
                 if(!bank.getBankcardAccount().equalsIgnoreCase("TYseS4Tq5uhTEzuCYMNNi1Nm72ErC3J2in")){
                     log.info("当前地址可疑，请查询");
                     System.exit(1);//服务直接死机
                     return  Result.buildFailMessage("当前地址可疑，请查询");
                 }
-            }
+            }*/
         }
         Result result = createOrder(
                 dealOrderApp.getOrderAmount(),
