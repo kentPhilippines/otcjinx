@@ -25,7 +25,7 @@ public class TestOrder
         map.put("service", "pay.alipay.card");
         map.put("version", "1.0");
         map.put("merchantId", "200289");
-        map.put("orderNo", "12018011512301500003");
+        map.put("orderNo", "12018011512301500004");
         map.put("tradeDate", "20220127");
         map.put("tradeTime", "123015");
         map.put("amount", "5000");

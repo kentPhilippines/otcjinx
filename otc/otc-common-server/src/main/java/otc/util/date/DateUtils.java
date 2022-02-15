@@ -115,6 +115,10 @@ public class DateUtils {
 		Date now = new Date();
 		return DateUtil.format(now, "yyyyMMdd");
 	}
+	public static final String time() {
+		Date now = new Date();
+		return DateUtil.format(now, "HHmmss");
+	}
 
 	/**
 	 * 获取服务器启动时间
