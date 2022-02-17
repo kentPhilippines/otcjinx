@@ -218,9 +218,7 @@ public abstract class PayOrderService implements PayService {
 		return withrawOrderErBySystem;
 	}
 	public Result withdrawErMsg(Withdraw wit, String msg, String ip) {
-
-
-		withdrawServiceImpl.updateMsg(wit.getOrderId(),msg);
+			withdrawServiceImpl.updateMsg(wit.getOrderId(),msg);
 			return  Result.buildSuccess();
 	}
 
