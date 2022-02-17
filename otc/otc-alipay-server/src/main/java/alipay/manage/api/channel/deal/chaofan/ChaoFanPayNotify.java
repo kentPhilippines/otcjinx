@@ -33,8 +33,9 @@ public class ChaoFanPayNotify extends NotfiyChannel {
     @RequestMapping(value = "/chaofanPayNotify",method = RequestMethod.POST)
     @ResponseBody
     public String chaofanPayNotify( HttpServletRequest request,@RequestBody Map<String,String> params) {
+        log.info("test111111111:{}", JSONUtil.toJsonStr(params));
         String clientIP = HttpUtil.getClientIP(request);
-        Map<String,String> ipmap = new HashMap<>();
+        /*Map<String,String> ipmap = new HashMap<>();
         ipmap.put("47.75.96.143","47.75.96.143");
         ipmap.put("47.56.118.34","47.56.118.34");
         String s = ipmap.get(clientIP);
@@ -42,11 +43,11 @@ public class ChaoFanPayNotify extends NotfiyChannel {
             log.info("【当前回调ip为：" + clientIP + "，固定IP登记为：" + ipmap.toString()+ "】");
             log.info("【当前回调ip不匹配】");
             return "ip is error";
-        }
+        }*/
         log.info("test111111111:{}", JSONUtil.toJsonStr(params));
         String password = getChannelKey(params.get("orderNo"));
         String sign = createSign(params, password);
-        if(params.get("sign").toString().equalsIgnoreCase(sign) && "2".equals(params.get("resultCode")+"")) {
+        if(params.get("sign").toString().equalsIgnoreCase(sign) && "0".equals(params.get("resultCode")+"")) {
             Result result = dealpayNotfiy(params.get("orderNo")+"", params.get("clientIp")+"", "chaofan回调成功");
             //todo 这里处理业务
             return "success";
