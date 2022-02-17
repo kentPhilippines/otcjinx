@@ -25,7 +25,7 @@ import java.util.Map;
 public class ChaoFanPayNotify extends NotfiyChannel {
 
     /**
-     * 测试报文：{"service":"pay.alipay.card","version":"1.0","amount":"5000","clientIp":"127.0.0.1","notifyUrl":"http://localhost/response.html","merchantId":"200289","orderNo":"12018011512301500002","tradeDate":"20220127","tradeTime":"123015","sign":"578E3D3C792E17502CC0E51294930138"}
+     * 测试报文：{"merchantId":"200289","version":"1.0","orderNo":"J20220217182526265927355","amount":"5000","tradeDate":"20220217","tradeTime":"183528","resultCode":"0","sign":"d1487a8740f16b44ba3d0e1d42ff68a4"}
      * @param request
      * @param params
      * @return

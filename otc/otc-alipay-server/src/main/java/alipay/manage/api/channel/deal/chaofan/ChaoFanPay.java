@@ -7,6 +7,7 @@ import alipay.manage.bean.UserInfo;
 import alipay.manage.bean.util.ResultDeal;
 import alipay.manage.service.UserInfoService;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -62,7 +63,7 @@ public class ChaoFanPay extends PayOrderService {
     private Result createOrder(String notify, BigDecimal orderAmount,
                                String orderId,
                                ChannelInfo channelInfo) throws IOException {
-        String amount = orderAmount.intValue() + ".00";
+        String amount = orderAmount.multiply(new BigDecimal("100")).intValue()+"";
         String channel = channelInfo.getChannelType();
         String url = channelInfo.getDealurl();
         String merchantTradeNo = orderId;
@@ -101,21 +102,26 @@ public class ChaoFanPay extends PayOrderService {
             response = client.execute(httpPost);
             if (response != null && response.getEntity() != null) {
                 String content = EntityUtils.toString(response.getEntity(), "UTF-8");
-                Map<String, String> resultMap = SignUtils.parseQuery(content);
+                Map<String, String> resultMap = JSONUtil.toBean(content,Map.class);
                 log.info("请求结果：" + content);
+                if (resultMap.get("repCode").toString().equals("0001")) {
+                    // 扫码使用此网址显示二维码
+                    // 其他直接跳转至该网址
+                    String resultUrl = resultMap.get("resultUrl");
+                    return Result.buildSuccessResult("支付处理中", resultUrl);
+                }else if(resultMap.containsKey("repMsg"))
+                {
+                    res=resultMap.get("repMsg");
+                }
 
-                if (resultMap.containsKey("sign")) {
+
+               /* if (resultMap.containsKey("sign")) {
                     if (!SignUtils.checkParam(resultMap, key)) {
                         res = "验证签名不通过";
                     } else {
-                        if (resultMap.get("repCode").equals("0001")) {
-                            // 扫码使用此网址显示二维码
-                            // 其他直接跳转至该网址
-                            String resultUrl = resultMap.get("resultUrl");
-                            return Result.buildSuccessResult("支付处理中", resultUrl);
-                        }
+
                     }
-                }
+                }*/
             } else {
                 res = "操作失败";
             }
@@ -130,7 +136,7 @@ public class ChaoFanPay extends PayOrderService {
                 client.close();
             }
         }
-        return Result.buildFailMessage("订单失败");
+        return Result.buildFailMessage(res);
         //return Result.buildSuccessResult("支付处理中", "payUrl");
     }
 
