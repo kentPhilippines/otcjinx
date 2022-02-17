@@ -74,7 +74,7 @@ public interface DealOrderAppMapper {
 
     @Cacheable(cacheNames = {ORDER_APP_INFO}, unless = "#result == null")
     @Select("select *  from alipay_deal_order_app where appOrderId = #{appOrderId} and  orderAccount = #{appId}")
-    DealOrderApp findOrderByApp(@Param("appId") String appId, @Param("appOrderId") String appOrderId);
+    List<DealOrderApp> findOrderByApp(@Param("appId") String appId, @Param("appOrderId") String appOrderId);
 
 
     @Update("update alipay_deal_order_app  set txhash =  #{hash} where orderId = #{orderId} ")

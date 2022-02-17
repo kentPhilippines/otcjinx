@@ -62,4 +62,8 @@ public interface UserRateService {
 	UserRate findAgentChannelFee(String agent, Integer userType, String payTypr, Integer feeType);
 
 	UserRate findUserRateWitByUserIdApp(String userId);
+
+    List<UserRate> findOpenFeeR(String appId, String passCode);
+
+
 }

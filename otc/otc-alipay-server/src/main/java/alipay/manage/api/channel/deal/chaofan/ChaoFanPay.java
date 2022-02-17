@@ -68,9 +68,9 @@ public class ChaoFanPay extends PayOrderService {
         String merchantTradeNo = orderId;
         String key = "acd01a514ea08f30e4b38c131bf921bf";
         Map<String, String> map = new TreeMap();
-        map.put("service", "pay.alipay.card");
+        map.put("service", channel);
         map.put("version", "1.0");
-        map.put("merchantId", "200289");
+        map.put("merchantId",channelInfo.getChannelAppId());
         map.put("orderNo", merchantTradeNo);
 
 //        map.put("tradeDate", "20220127");
@@ -81,10 +81,10 @@ public class ChaoFanPay extends PayOrderService {
         map.put("clientIp", "127.0.0.1");
         map.put("notifyUrl", notify);
         map.put("resultType", "json");
-        map.put("sign", createSign(map, key));
+        map.put("sign", createSign(map, channelInfo.getChannelPassword()));
 
-        String reqUrl = "http://47.56.118.34:9100/gateway";
-        System.out.println("reqUrl：" + reqUrl);
+        String reqUrl = url;
+        log.info("reqUrl：" + reqUrl);
 
         CloseableHttpResponse response = null;
         CloseableHttpClient client = null;
@@ -102,7 +102,7 @@ public class ChaoFanPay extends PayOrderService {
             if (response != null && response.getEntity() != null) {
                 String content = EntityUtils.toString(response.getEntity(), "UTF-8");
                 Map<String, String> resultMap = SignUtils.parseQuery(content);
-                System.out.println("请求结果：" + content);
+                log.info("请求结果：" + content);
 
                 if (resultMap.containsKey("sign")) {
                     if (!SignUtils.checkParam(resultMap, key)) {

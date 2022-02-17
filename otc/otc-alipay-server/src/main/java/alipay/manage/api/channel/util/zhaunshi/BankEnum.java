@@ -8,6 +8,7 @@ public enum BankEnum {
 
     ABC("BK0002", "中国农业银行"),
     USDT("USDT", "USDT"),
+    ALIPAY("ALIPAY", "ALIPAY"),
 
     ICBC("BK0003", "中国工商银行"),
 

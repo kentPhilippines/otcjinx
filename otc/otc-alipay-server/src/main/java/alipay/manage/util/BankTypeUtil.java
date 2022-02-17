@@ -309,6 +309,7 @@ public class BankTypeUtil {
 		BANK_MAP_NAME.put("ZYCBANK", BankEnum.ZYCBANK.getBankNameCn());
 		BANK_MAP_NAME.put("ZZBANK", BankEnum.ZZBANK.getBankNameCn());
 		BANK_MAP_NAME.put("HXBANK", BankEnum.HXBANK.getBankNameCn());
+		BANK_MAP_NAME.put("ALIPAY", BankEnum.ALIPAY.getBankNameCn());
 	}
 
 

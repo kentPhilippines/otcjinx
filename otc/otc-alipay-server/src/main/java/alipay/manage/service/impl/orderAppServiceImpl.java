@@ -3,10 +3,13 @@ package alipay.manage.service.impl;
 import alipay.manage.bean.DealOrderApp;
 import alipay.manage.mapper.DealOrderAppMapper;
 import alipay.manage.service.OrderAppService;
+import cn.hutool.core.collection.CollUtil;
 import org.springframework.stereotype.Component;
+import otc.api.alipay.Common;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Component
 public class orderAppServiceImpl implements OrderAppService {
@@ -42,7 +45,16 @@ public class orderAppServiceImpl implements OrderAppService {
 
 	@Override
 	public DealOrderApp findOrderByApp(String appId, String appOrderId) {
-		return dealOrderAppDao.findOrderByApp(appId, appOrderId);
+		List<DealOrderApp> orderByApp = dealOrderAppDao.findOrderByApp(appId, appOrderId);
+		for ( DealOrderApp app  : orderByApp){
+			if(app.getOrderStatus().toString().equals(Common.Order.DealOrder.ORDER_STATUS_SU.toString())){
+				return app;
+			}
+		}
+		if(CollUtil.isNotEmpty(orderByApp)){
+			return CollUtil.getFirst(orderByApp);
+		}
+		return new DealOrderApp();
 	}
 
 	@Override

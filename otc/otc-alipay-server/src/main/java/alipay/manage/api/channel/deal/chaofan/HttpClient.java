@@ -5,7 +5,6 @@
  */
 package alipay.manage.api.channel.deal.chaofan;
 
-import com.sun.net.ssl.internal.ssl.X509ExtendedTrustManager;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.X509HostnameVerifier;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -13,84 +12,85 @@ import org.apache.http.impl.client.HttpClients;
 
 import javax.net.ssl.*;
 import java.io.IOException;
+import java.net.Socket;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
 /**
-
- @author PROSYS
+ * @author PROSYS
  */
-public class HttpClient
-{
+public class HttpClient {
 
-    public static CloseableHttpClient createHttpClient()
-    {
+    public static CloseableHttpClient createHttpClient() {
         CloseableHttpClient httpclient = HttpClients.custom().setSSLSocketFactory(createSSLConnSocketFactory()).build();
 
         return httpclient;
     }
 
     // 创建SSL安全连接
-    private static SSLConnectionSocketFactory createSSLConnSocketFactory()
-    {
+    private static SSLConnectionSocketFactory createSSLConnSocketFactory() {
         SSLConnectionSocketFactory sslsf = null;
         try {
             SSLContext sslContext = SSLContext.getInstance("SSL");
             sslContext.init(null, new TrustManager[]{new TrustAnyTrustManager()}, new SecureRandom());
-            sslsf = new SSLConnectionSocketFactory(sslContext, new X509HostnameVerifier()
-            {
-                public boolean verify(String arg0, SSLSession arg1)
-                {
+            sslsf = new SSLConnectionSocketFactory(sslContext, new X509HostnameVerifier() {
+                public boolean verify(String arg0, SSLSession arg1) {
                     return true;
                 }
 
-                public void verify(String host, SSLSocket ssl) throws IOException
-                {
+                public void verify(String host, SSLSocket ssl) throws IOException {
                 }
 
-                public void verify(String host, X509Certificate cert) throws SSLException
-                {
+                public void verify(String host, X509Certificate cert) throws SSLException {
                 }
 
-                public void verify(String host, String[] cns, String[] subjectAlts) throws SSLException
-                {
+                public void verify(String host, String[] cns, String[] subjectAlts) throws SSLException {
                 }
             });
-        }
-        catch (GeneralSecurityException e) {
+        } catch (GeneralSecurityException e) {
             e.printStackTrace();
         }
         return sslsf;
     }
 
-    private static class TrustAnyTrustManager extends X509ExtendedTrustManager
-    {
+    private static class TrustAnyTrustManager extends X509ExtendedTrustManager {
+
 
         @Override
-        public void checkClientTrusted(X509Certificate[] xcs, String string, String string1, String string2) throws CertificateException
-        {
+        public void checkClientTrusted(X509Certificate[] chain, String authType, Socket socket) throws CertificateException {
+
         }
 
         @Override
-        public void checkServerTrusted(X509Certificate[] xcs, String string, String string1, String string2) throws CertificateException
-        {
+        public void checkServerTrusted(X509Certificate[] chain, String authType, Socket socket) throws CertificateException {
+
         }
 
         @Override
-        public void checkClientTrusted(X509Certificate[] xcs, String string) throws CertificateException
-        {
+        public void checkClientTrusted(X509Certificate[] chain, String authType, SSLEngine engine) throws CertificateException {
+
         }
 
         @Override
-        public void checkServerTrusted(X509Certificate[] xcs, String string) throws CertificateException
-        {
+        public void checkServerTrusted(X509Certificate[] chain, String authType, SSLEngine engine) throws CertificateException {
+
         }
 
-        public X509Certificate[] getAcceptedIssuers()
-        {
-            return new X509Certificate[]{};
+        @Override
+        public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+
+        }
+
+        @Override
+        public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+
+        }
+
+        @Override
+        public X509Certificate[] getAcceptedIssuers() {
+            return new X509Certificate[0];
         }
     }
 }
