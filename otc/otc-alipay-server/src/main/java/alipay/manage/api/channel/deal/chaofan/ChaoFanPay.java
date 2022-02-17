@@ -140,8 +140,12 @@ public class ChaoFanPay extends PayOrderService {
         StringBuilder buf = new StringBuilder((params.size() + 1) * 10);
         SignUtils.buildPayParams(buf, params, false);
         String preStr = buf.toString();
+        log.info("original:{}",preStr);
         String sign = MD5.sign(preStr, "UTF-8");
+        log.info("sign:{}",sign);
 
         return sign;
     }
+    //amount=1000.00&appId=jinsha888&applyDate=20220217152028&notifyUrl=http://34.96.135.66:5055/api-alipay&orderId=c4866ce376424932ae049ee3e8c2388b&pageUrl=http://34.96.135.66:5055/api-alipay&passCode=ALIPAYTOBANK&subject=1000.00&userid=王富贵
+
 }
