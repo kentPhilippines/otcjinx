@@ -10,13 +10,14 @@ import cn.hutool.json.JSONUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import otc.bean.dealpay.Withdraw;
 import otc.common.PayApiConstant;
 import otc.result.Result;
-
+@Component("YouKuaiTongDPayNew")
 public class YouKuaiTongDPayNew extends PayOrderService {
     private static final String WIT_RESULT = "SUCCESS";
     private static final Log log = LogFactory.get();
@@ -79,7 +80,9 @@ public class YouKuaiTongDPayNew extends PayOrderService {
                 return Result.buildFailMessage(createDpay);
             }
         } catch (Exception e) {
-            log.error("【错误信息打印】" + e.getMessage());
+
+            log.error("【错误信息打印" +
+                    "】" + e.getMessage());
             return Result.buildFailMessage("代付失败");
         }
     }

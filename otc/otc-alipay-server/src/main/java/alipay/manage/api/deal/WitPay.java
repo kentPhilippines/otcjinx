@@ -175,7 +175,7 @@ public class WitPay extends PayOrderService {
         log.info("【当前转换参数 代付实体类为：" + wit.toString() + "】");
         String type = "";
         String bankName = "";
-        if (fla) {
+        if (fla ||  wit.getBankcode().equals("ALIPAY")) {//后台提现
             type = Common.Order.Wit.WIT_TYPE_API;
         } else {
             type = Common.Order.Wit.WIT_TYPE_MANAGE;
@@ -259,6 +259,10 @@ public class WitPay extends PayOrderService {
             }
             if (1 == userInfo.getAutoWit()) {
                 deal = super.withdraw(order);
+                // 扣减完成，如果是 后台提现，或者支付宝提现卡住在这里，等待推送
+                if(deal.isSuccess() && order.getRetain1().equals("1")){//后台提现的，直接不推送
+                    return  Result.buildFailMessage("不对后台提现的订单金额自动推送");
+                }
                 if (deal.isSuccess()) {
                     ThreadUtil.execute(() -> {
                         ChannelFee channelFee = channelFeeDao.findImpl(order.getWitChannel(), order.getWitType());//缓存已加

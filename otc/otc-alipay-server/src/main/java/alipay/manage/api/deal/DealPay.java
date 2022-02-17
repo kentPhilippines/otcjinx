@@ -7,9 +7,12 @@ import alipay.manage.api.config.FactoryForStrategy;
 import alipay.manage.bean.*;
 import alipay.manage.bean.util.DealBean;
 import alipay.manage.mapper.ChannelFeeMapper;
+import alipay.manage.mapper.UserInfoMapper;
 import alipay.manage.service.ExceptionOrderService;
 import alipay.manage.service.OrderAppService;
 import alipay.manage.service.UserInfoService;
+import alipay.manage.service.UserRateService;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
@@ -25,10 +28,13 @@ import otc.util.number.Number;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 
 @Component
 public class DealPay {
+    @Resource
+    private UserInfoMapper userInfoMapper;
     @Autowired
     VendorRequestApi vendorRequestApi;
     Logger log = LoggerFactory.getLogger(DealPay.class);
@@ -47,6 +53,7 @@ public class DealPay {
     @Autowired
     private RedisUtil redis;
 
+    @Autowired private UserRateService userRateService;
     public Result deal(HttpServletRequest request) {
         if (ObjectUtil.isNull(request.getParameter("userId"))) {
             log.info("当前传参，参数格式错误");
@@ -56,6 +63,7 @@ public class DealPay {
         if (!pay.isSuccess()) {
             return pay;
         }
+
         Object result = pay.getResult();
         DealBean mapToBean = MapUtil.mapToBean((Map<String, Object>) result, DealBean.class);
         if (ObjectUtil.isNull(mapToBean)) {
@@ -65,68 +73,40 @@ public class DealPay {
         if (StrUtil.isNotBlank(clientIP)) {
             mapToBean.setIp(clientIP);
         }
-        log.info("【当前请求交易实体类：" + mapToBean.toString() + "】");
-        String passcode = mapToBean.getPassCode(); //通道支付编码
-        if (StrUtil.isBlank(passcode)) {
-            return Result.buildFailMessage("通道编码为空");
-        }
-        log.info("【当前通道编码：" + passcode + "】");
-        UserRate userRate = null;
-        ChannelFee channelFee = null;
-        try {
-            userRate = accountApiServiceImpl.findUserRateByUserId(mapToBean.getAppId(), passcode, mapToBean.getAmount());
-            channelFee = channelFeeDao.findImpl(userRate.getChannelId(), userRate.getPayTypr());
-        } catch (Throwable e) {
-            exceptionOrderServiceImpl.addDealOrder(mapToBean, "用户报错：当前通道编码有误，产品类型设置重复；处理方法：当前配置用户产品的时候配置用户产品重复", clientIP);
-            log.error("【当前通道编码设置有误，产品类型设置重复：" + e.getMessage() + "】",e);
-            return Result.buildFailMessage("当前通道编码设置有误，产品类型设置重复");
-        }
-        if (ObjectUtil.isNull(channelFee)) {
-            log.info("【通道实体不存在，当前商户订单号：" + mapToBean.getOrderId() + "】");
-            log.info("【通道实体不存在，费率配置错误】");
-            exceptionOrderServiceImpl.addDealOrder(mapToBean, "用户报错：通道实体不存在；处理方法：渠道费率未设置", clientIP);
-            return Result.buildFailMessage("通道实体不存在，费率配置错误");
-        }
-        UserInfo userInfoByUserId = userInfoServiceImpl.findUserInfoByUserId(userRate.getChannelId());
-        if (Common.Order.DEAL_OFF.equals(userInfoByUserId.getReceiveOrderState())) {
-            log.info("【渠道关闭】");
-            exceptionOrderServiceImpl.addDealOrder(mapToBean, "用户报错：渠道关闭，联系运营处理；处理方法：开启渠道充值状态", HttpUtil.getClientIP(request));
-            return Result.buildFailMessage("渠道关闭，联系运营处理");
-        }
-        Object o = redis.get(mapToBean.getOrderId() + userRate.getUserId());
+
+        Object o = redis.get(mapToBean.getOrderId() + mapToBean.getAppId());
         if (null != o) {
-            if (o.toString().equals(mapToBean.getOrderId() + userRate.getUserId())) {
+            if (o.toString().equals(mapToBean.getOrderId() + mapToBean.getAppId())) {
                 log.info("【当前商户订单号重复：" + mapToBean.getOrderId() + "】");
                 exceptionOrderServiceImpl.addDealOrder(mapToBean, "用户报错：商户订单号重复；处理方法：提醒用户换一个订单号提交支付请求", clientIP);
                 return Result.buildFailMessage("商户订单号重复");
             }
         }
-        DealOrderApp dealBean = createDealAppOrder(mapToBean, userRate);
-        if (ObjectUtil.isNull(dealBean)) {
-            exceptionOrderServiceImpl.addDealOrder(mapToBean, "用户报错：交易预订单生成出错；处理方法：让商户重新发起支付提交请求，或联系技术人员处理", clientIP);
-            return Result.buildFailMessage("交易预订单生成出错");
+        String passCode = mapToBean.getPassCode();//产品类型
+        String appId = mapToBean.getAppId();
+        List<UserRate> rateList =  userRateService.findOpenFeeR(appId,passCode);//  所有该产品类型下 开启的充值费率类型
+        CollUtil.sortByProperty(rateList, "retain1");
+        for(UserRate rate : rateList ){
+            BigDecimal systemAmount = new BigDecimal(rate.getRetain2());//金额限制
+            BigDecimal bigDecimal = new BigDecimal(mapToBean.getAmount());
+            UserInfo channel = userInfoMapper.findUserByUserId(rate.getChannelId());
+            if (Common.Order.DEAL_OFF.equals(channel.getReceiveOrderState())) {
+                log.info("渠道关闭，当前订单:"+mapToBean.getOrderId()+"，当前渠道："+channel.getUserName()+"，拉单支付金额："+bigDecimal);
+                exceptionOrderServiceImpl.addDealOrder(mapToBean, "用户报错：渠道关闭，联系运营处理；处理方法：开启渠道充值状态", clientIP);
+               continue;
+            }
+            if (bigDecimal.compareTo(systemAmount) >= 0 && bigDecimal.compareTo(new BigDecimal(channel.getMaxAmount())) > -1) {
+                Result result1 = forQueryOrder(mapToBean, clientIP, rate);
+                if(!result1.isSuccess()){
+                    continue;
+                }
+                return result1;
+            } else {
+                log.info("通道金额限制，当前订单:"+mapToBean.getOrderId()+"，当前通道限额："+systemAmount+"，拉单支付金额："+bigDecimal);
+                continue;
+            }
         }
-        Result deal = null;
-        try {
-            deal = factoryForStrategy.getStrategy(channelFee.getImpl()).deal(dealBean, channelFee.getChannelId());
-        } catch (Throwable e) {
-            log.error("【当前通道编码对于的实体类不存在：" + e.getMessage() + "】", e);
-            exceptionOrderServiceImpl.addDealOrder(mapToBean, "用户报错：当前通道编码不存在；处理方法：生成交易订单时候出现错误，或者请求三方渠道支付请求的时候出现异常返回，或联系技术人员处理," +
-                    "三方渠道报错信息：" + e.getMessage(), clientIP);
-            return Result.buildFailMessage("当前通道编码不存在");
-        } finally {
-            userRate = null;
-            channelFee = null;
-            mapToBean = null;
-            clientIP = null;
-            pay = null;
-            result = null;
-            o = null;
-            dealBean = null;
-        }
-		/*if (deal.isSuccess())
-			deal.setResult(new ResultDeal(true, 0, deal.getCode(), deal.getResult()));*/
-        return deal;
+        return Result.buildFailMessage("请求支付失败");
     }
 
     DealOrderApp createDealAppOrder(DealBean dealBean, UserRate userRate) {
@@ -170,4 +150,55 @@ public class DealPay {
         }
         return null;
     }
+
+   Result forQueryOrder( DealBean mapToBean , String clientIP ,  UserRate userRate){
+       log.info("【当前请求交易实体类：" + mapToBean.toString() + "】");
+       String passcode = mapToBean.getPassCode(); //通道支付编码
+       if (StrUtil.isBlank(passcode)) {
+           return Result.buildFailMessage("通道编码为空");
+       }
+       log.info("【当前通道编码：" + passcode + "】");
+       ChannelFee channelFee = null;
+       try {
+           channelFee = channelFeeDao.findImpl(userRate.getChannelId(), userRate.getPayTypr());
+       } catch (Throwable e) {
+           exceptionOrderServiceImpl.addDealOrder(mapToBean, "用户报错：当前通道编码有误，产品类型设置重复；处理方法：当前配置用户产品的时候配置用户产品重复", clientIP);
+           log.error("【当前通道编码设置有误，产品类型设置重复：" + e.getMessage() + "】",e);
+           return Result.buildFailMessage("当前通道编码设置有误，产品类型设置重复");
+       }
+       if (ObjectUtil.isNull(channelFee)) {
+           log.info("【通道实体不存在，当前商户订单号：" + mapToBean.getOrderId() + "】");
+           log.info("【通道实体不存在，费率配置错误】");
+           exceptionOrderServiceImpl.addDealOrder(mapToBean, "用户报错：通道实体不存在；处理方法：渠道费率未设置", clientIP);
+           return Result.buildFailMessage("通道实体不存在，费率配置错误");
+       }
+
+       DealOrderApp dealBean = createDealAppOrder(mapToBean, userRate);
+       if (ObjectUtil.isNull(dealBean)) {
+           exceptionOrderServiceImpl.addDealOrder(mapToBean, "用户报错：交易预订单生成出错；处理方法：让商户重新发起支付提交请求，或联系技术人员处理", clientIP);
+           return Result.buildFailMessage("交易预订单生成出错");
+       }
+       Result deal = null;
+       try {
+           deal = factoryForStrategy.getStrategy(channelFee.getImpl()).deal(dealBean, channelFee.getChannelId());
+       } catch (Throwable e) {
+           log.error("【当前通道编码对于的实体类不存在：" + e.getMessage() + "】", e);
+           exceptionOrderServiceImpl.addDealOrder(mapToBean, "用户报错：当前通道编码不存在；处理方法：生成交易订单时候出现错误，或者请求三方渠道支付请求的时候出现异常返回，或联系技术人员处理," +
+                   "三方渠道报错信息：" + e.getMessage(), clientIP);
+           return Result.buildFailMessage("当前通道编码不存在");
+       } finally {
+           userRate = null;
+           channelFee = null;
+           mapToBean = null;
+           clientIP = null;
+           dealBean = null;
+       }
+		/*if (deal.isSuccess())
+			deal.setResult(new ResultDeal(true, 0, deal.getCode(), deal.getResult()));*/
+       return deal;
+    }
+
+
+
+
 }

@@ -144,7 +144,7 @@ public class OrderTask {
 					log.info("当前订单已已经结算，且推送，存在异常，请核实");
 					String msg = "当前订单已已经结算，且推送，存在异常，请核实，当前订单号为：" + order.getOrderId();
 					push(msg);
-					withdrawServiceImpl.updatePush(order.getOrderId());//修改为已推送
+					//withdrawServiceImpl.updatePush(order.getOrderId());//修改为已推送
 					continue;
 				}
 				Result settlement = WitPayImpl.witAutoPush(order);

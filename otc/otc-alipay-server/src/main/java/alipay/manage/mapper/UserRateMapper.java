@@ -103,4 +103,9 @@ public interface UserRateMapper {
 
     @Select("select * from alipay_user_rate where feeType = 2 and `switchs` = 1 and userId = #{userId} limint 1 ")
     UserRate findUserRateWitByUserIdApp(String userId);
+
+
+
+    @Select("select * from alipay_user_rate where userId = #{appId}  and payTypr = #{payTypr} and  `switchs` = 1  and feeType = 1 " )
+    List<UserRate> findOpenFeeR(@Param("appId")  String appId, @Param("payTypr") String payTypr);
 }

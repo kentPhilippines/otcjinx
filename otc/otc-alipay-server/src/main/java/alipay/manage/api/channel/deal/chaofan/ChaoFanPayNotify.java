@@ -3,6 +3,8 @@ package alipay.manage.api.channel.deal.chaofan;
 import alipay.manage.api.config.NotfiyChannel;
 import alipay.manage.util.chaofanpay.MD5;
 import alipay.manage.util.chaofanpay.SignUtils;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -14,11 +16,11 @@ import otc.common.PayApiConstant;
 import otc.result.Result;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
 @Controller
-//@RequestMapping("/chaofanPayNotify")
 @RequestMapping(PayApiConstant.Notfiy.NOTFIY_API_WAI)
 public class ChaoFanPayNotify extends NotfiyChannel {
 
@@ -30,19 +32,25 @@ public class ChaoFanPayNotify extends NotfiyChannel {
      */
     @RequestMapping(value = "/chaofanPayNotify",method = RequestMethod.POST)
     @ResponseBody
-    public String agentOpenAnAccount( HttpServletRequest request,@RequestBody Map<String,String> params) {
-        String key = "acd01a514ea08f30e4b38c131bf921bf";
+    public String chaofanPayNotify( HttpServletRequest request,@RequestBody Map<String,String> params) {
+        String clientIP = HttpUtil.getClientIP(request);
+        Map<String,String> ipmap = new HashMap<>();
+        ipmap.put("47.75.96.143","47.75.96.143");
+        ipmap.put("47.56.118.34","47.56.118.34");
+        String s = ipmap.get(clientIP);
+        if(StrUtil.isEmpty(s)){
+            log.info("【当前回调ip为：" + clientIP + "，固定IP登记为：" + ipmap.toString()+ "】");
+            log.info("【当前回调ip不匹配】");
+            return "ip is error";
+        }
         log.info("test111111111:{}", JSONUtil.toJsonStr(params));
-
-        String sign = createSign(params, key);
-        if(params.get("sign").toString().equalsIgnoreCase(sign) && "2".equals(params.get("resultCode")+""))
-        {
+        String password = getChannelKey(params.get("orderNo"));
+        String sign = createSign(params, password);
+        if(params.get("sign").toString().equalsIgnoreCase(sign) && "2".equals(params.get("resultCode")+"")) {
             Result result = dealpayNotfiy(params.get("orderNo")+"", params.get("clientIp")+"", "chaofan回调成功");
             //todo 这里处理业务
             return "success";
         }
-
-
         return "error";
     }
 

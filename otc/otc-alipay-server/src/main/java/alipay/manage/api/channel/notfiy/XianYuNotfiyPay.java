@@ -22,10 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @RequestMapping(PayApiConstant.Notfiy.NOTFIY_API_WAI)
@@ -67,42 +64,9 @@ public class XianYuNotfiyPay extends NotfiyChannel {
         log.info("进入咸鱼支付宝H5 回调处理");
         String clientIP = HttpUtil.getClientIP(request);
         log.info("【当前回调ip为：" + clientIP + "】");
-        InputStream inputStream = request.getInputStream();
-        String body;
-        StringBuilder stringBuilder = new StringBuilder();
-        BufferedReader bufferedReader = null;
-        try {
-            if (inputStream != null) {
-                bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                char[] charBuffer = new char[128];
-                int bytesRead = -1;
-                while ((bytesRead = bufferedReader.read(charBuffer)) > 0) {
-                    stringBuilder.append(charBuffer, 0, bytesRead);
-                }
-            } else {
-                stringBuilder.append("");
-            }
-        } catch (IOException ex) {
-            throw ex;
-        } finally {
-            if (bufferedReader != null) {
-                try {
-                    bufferedReader.close();
-                } catch (IOException ex) {
-                    throw ex;
-                }
-            }
-        }
-        body = stringBuilder.toString();
-        JSON parse = JSONUtil.parse(body);
-        JSONObject parseObj = JSONUtil.parseObj(parse);
+        Map<String, String> paramsFromFormDataByNames = getParamsFromFormDataByNames(request);
 
-        Set<String> keySet = parseObj.keySet();
-        log.info("【收到趣支付支付成功请求，当前请求参数为：" + parseObj.toString() + "】");
-        Map<String, Object> decodeParamMap = new ConcurrentHashMap();
-        for (String key : keySet) {
-            decodeParamMap.put(key, parseObj.getObj(key));
-        }
+        log.info("【收到趣支付支付成功请求，当前请求参数为：" + paramsFromFormDataByNames.toString() + "】");
         String s = PayUtil.ipMap.get(clientIP);
         if (StrUtil.isEmpty(s)) {
             log.info("【当前回调ip为：" + clientIP + "，固定IP登记为：" + "18.162.225.144，52.192.227.76" + "】");
@@ -110,15 +74,15 @@ public class XianYuNotfiyPay extends NotfiyChannel {
             response.getWriter().write("ip错误");
             return;
         }
-        String fxddh = (String) decodeParamMap.get("fxddh");
-        String fxid = (String) decodeParamMap.get("fxid");
-        String fxorder = (String) decodeParamMap.get("fxorder");
-        String fxdesc = (String) decodeParamMap.get("fxdesc");
-        String fxfee = (String) decodeParamMap.get("fxfee");
-        String fxattch = (String) decodeParamMap.get("fxattch");
-        String fxstatus = (String) decodeParamMap.get("fxstatus");
-        String fxtime = (String) decodeParamMap.get("fxtime");
-        String fxsign = (String) decodeParamMap.get("fxsign");
+        String fxddh = (String) paramsFromFormDataByNames.get("fxddh");
+        String fxid = (String) paramsFromFormDataByNames.get("fxid");
+        String fxorder = (String) paramsFromFormDataByNames.get("fxorder");
+        String fxdesc = (String) paramsFromFormDataByNames.get("fxdesc");
+        String fxfee = (String) paramsFromFormDataByNames.get("fxfee");
+        String fxattch = (String) paramsFromFormDataByNames.get("fxattch");
+        String fxstatus = (String) paramsFromFormDataByNames.get("fxstatus");
+        String fxtime = (String) paramsFromFormDataByNames.get("fxtime");
+        String fxsign = (String) paramsFromFormDataByNames.get("fxsign");
         String channelKey = getChannelKey(fxddh);
         String s1 = md5(fxstatus + fxid + fxddh + fxfee + channelKey);
         if (fxsign.equalsIgnoreCase(s1)) {
@@ -135,6 +99,17 @@ public class XianYuNotfiyPay extends NotfiyChannel {
         }else{
             response.getWriter().write("sgin is error");
         }
+    }
+    private static Map<String, String> getParamsFromFormDataByNames(HttpServletRequest request){
+        Map<String, String> map =new HashMap<>();
+        Enumeration<String> er = request.getParameterNames();
+        while (er.hasMoreElements()) {
+            String name = (String) er.nextElement();
+            String value = request.getParameter(name);
+            map.put(name, value);
+        }
+        log.info(map.toString());
+        return map;
     }
 }
 

@@ -3,9 +3,11 @@ package alipay.manage.service.impl;
 import alipay.manage.bean.UserRate;
 import alipay.manage.mapper.UserRateMapper;
 import alipay.manage.service.UserRateService;
+import cn.hutool.core.util.StrUtil;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -51,6 +53,14 @@ public class UserRateServiceImpl implements UserRateService {
 	@Override
 	public UserRate findUserRateWitByUserIdApp(String userId) {
 		return userRateMapper.findUserRateWitByUserIdApp(userId);
+	}
+
+	@Override
+	public List<UserRate> findOpenFeeR(String appId, String passCode) {
+		if(StrUtil.isEmpty(appId) || StrUtil.isEmpty(passCode)){
+			return new ArrayList<>();
+		}
+		return userRateMapper.findOpenFeeR(appId,passCode);
 	}
 
 	@Override
