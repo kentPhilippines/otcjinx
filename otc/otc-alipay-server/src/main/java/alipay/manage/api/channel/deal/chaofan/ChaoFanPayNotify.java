@@ -35,7 +35,7 @@ public class ChaoFanPayNotify extends NotfiyChannel {
     public String chaofanPayNotify( HttpServletRequest request,@RequestBody Map<String,String> params) {
         log.info("test111111111:{}", JSONUtil.toJsonStr(params));
         String clientIP = HttpUtil.getClientIP(request);
-        /*Map<String,String> ipmap = new HashMap<>();
+        Map<String,String> ipmap = new HashMap<>();
         ipmap.put("47.75.96.143","47.75.96.143");
         ipmap.put("47.56.118.34","47.56.118.34");
         String s = ipmap.get(clientIP);
@@ -43,7 +43,7 @@ public class ChaoFanPayNotify extends NotfiyChannel {
             log.info("【当前回调ip为：" + clientIP + "，固定IP登记为：" + ipmap.toString()+ "】");
             log.info("【当前回调ip不匹配】");
             return "ip is error";
-        }*/
+        }
         log.info("test111111111:{}", JSONUtil.toJsonStr(params));
         String password = getChannelKey(params.get("orderNo"));
         String sign = createSign(params, password);
