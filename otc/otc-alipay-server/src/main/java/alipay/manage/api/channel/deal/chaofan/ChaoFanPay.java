@@ -66,11 +66,11 @@ public class ChaoFanPay extends PayOrderService {
         String channel = channelInfo.getChannelType();
         String url = channelInfo.getDealurl();
         String merchantTradeNo = orderId;
-        String key = "acd01a514ea08f30e4b38c131bf921bf";
+        String key = channelInfo.getChannelPassword();
         Map<String, String> map = new TreeMap();
         map.put("service", "pay.alipay.card");
         map.put("version", "1.0");
-        map.put("merchantId", "200289");
+        map.put("merchantId", channelInfo.getChannelAppId());
         map.put("orderNo", merchantTradeNo);
 
 //        map.put("tradeDate", "20220127");
@@ -83,14 +83,14 @@ public class ChaoFanPay extends PayOrderService {
         map.put("resultType", "json");
         map.put("sign", createSign(map, key));
 
-        String reqUrl = "http://47.56.118.34:9100/gateway";
-        System.out.println("reqUrl：" + reqUrl);
+        //String reqUrl = "http://47.56.118.34:9100/gateway";
+        System.out.println("reqUrl：" + url);
 
         CloseableHttpResponse response = null;
         CloseableHttpClient client = null;
         String res = null;
         try {
-            HttpPost httpPost = new HttpPost(reqUrl);
+            HttpPost httpPost = new HttpPost(url);
             List<NameValuePair> nvps = new ArrayList();
             for (String k : map.keySet()) {
                 nvps.add(new BasicNameValuePair(k, map.get(k)));
