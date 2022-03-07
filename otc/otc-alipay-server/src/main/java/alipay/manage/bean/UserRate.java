@@ -24,8 +24,8 @@ public class UserRate implements Serializable{
     private Integer status;
     private String retain1;
     private String retain2;
-    private String retain3;
-    private String retain4;
+    private String retain3;   //    额外   抽点收费
+    private String retain4;   //    额外   单笔收费
     public String getChannelId() {
 		return channelId;
 	}

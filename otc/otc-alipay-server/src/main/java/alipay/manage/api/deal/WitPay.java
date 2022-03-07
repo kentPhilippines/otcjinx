@@ -183,7 +183,12 @@ public class WitPay extends PayOrderService {
         Withdraw witb = new Withdraw();
         witb.setUserId(wit.getAppid());
         witb.setAmount(new BigDecimal(wit.getAmount()));
-        witb.setFee(userRate.getFee());
+
+        //TODO 新增 代付取款抽点收费逻辑
+        BigDecimal psf = new BigDecimal(userRate.getRetain3()) ;//抽点收费比例
+        BigDecimal fee = userRate.getFee();//单笔收费
+        fee =   psf.multiply(new BigDecimal(wit.getAmount())).add(fee);
+        witb.setFee(fee);
         witb.setActualAmount(new BigDecimal(wit.getAmount()));
         witb.setMobile(wit.getMobile());
         witb.setBankNo(wit.getAcctno());

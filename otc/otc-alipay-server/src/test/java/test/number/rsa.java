@@ -11,6 +11,7 @@ import otc.util.RSAUtils;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -23,16 +24,12 @@ public class rsa {
 
     public static void main(String[] args) throws IOException {
 
+      String s = new BigDecimal(200).multiply(new BigDecimal(100)).setScale(0,BigDecimal.ROUND_UP).toString();
 
-        List<String> strings = RSAUtils.genKeyPair();
+     System.out.println(s);
 
 
 
-
-        for(String s  : strings
-        ){
-            System.out.println(s);
-        }
 
     }
 }

@@ -533,7 +533,6 @@ public class OrderUtil {
     public Result withrawOrderSu1(Withdraw wit) {
         int a = withdrawDao.updataOrderStatus(wit.getOrderId(), wit.getApproval(), wit.getComment(), Common.Order.Wit.ORDER_STATUS_SU, wit.getChennelId());
         if (a == 0 || a > 2) {
-
             return Result.buildFailMessage("订单状态修改失败");
         }
         UserFund userfund = new UserFund();
@@ -890,7 +889,9 @@ public class OrderUtil {
         }
         ChannelFee findChannelFee = channelFeeDao.findChannelFee(wit.getWitChannel(), wit.getWitType());
         Result addChanenlTransaction =   transactionTemplate.execute((Result) -> {
-            String channelDFee = findChannelFee.getChannelDFee();
+        //    String channelDFee =    findChannelFee.getChannelDFee();
+            String channelDFee =        new BigDecimal(findChannelFee.getChannelDFee()).add(new BigDecimal(findChannelFee.getChannelRFee()).multiply(wit.getActualAmount())).toString();
+
             log.info("【当前渠道代付手续费为：" + channelDFee + " 】");
             Result add = amountPublic.addAmountAdd(channel, new BigDecimal(channelDFee), wit.getOrderId());
             log.info("【渠道账户记录代付手续费为：" + channelDFee + " 】");
@@ -984,11 +985,11 @@ public class OrderUtil {
         UserRate userRate = userRateDao.findProductFeeByAll(username, product, channelId);//查询当前代理费率情况
         UserInfo userInfo = userInfoServiceImpl.findUserAgent(username);
         log.info("【当前代理商为：" + userRate.getUserId() + "】");
-        log.info("【当前代理商结算费率：" + userRate.getFee() + "】");
+        log.info("【当前代理商结算费率：" + userRate.getFee() + "，当前代理商抽点费率为："+userRate.getRetain3()+"】");
         log.info("【当前当前我方：" + rate.getUserId() + "】");
-        log.info("【当前我方结算费率：" + rate.getFee() + "】");
-        BigDecimal fee = userRate.getFee();//代理商的费率
-        BigDecimal fee2 = rate.getFee();//商户的费率
+        log.info("【当前我方结算费率：" + rate.getFee() + "，当前我方抽点费率为："+rate.getRetain3()+ "】");
+        BigDecimal fee = userRate.getFee().add(new BigDecimal(userRate.getRetain3())).multiply(wit.getAmount());//代理商的费率
+        BigDecimal fee2 = rate.getFee().add(new BigDecimal(rate.getRetain3())).multiply(wit.getAmount());//商户的费率
         BigDecimal subtract = fee2.subtract(fee);//
         log.info("【当前结算费率差为：" + subtract + "】");
         log.info("【当前结算费率差为代理商分润：" + subtract + "】");//这个钱要加给代理商
@@ -1028,12 +1029,13 @@ public class OrderUtil {
         }
         ChannelFee findChannelFee = channelFeeDao.findChannelFee(userId, wit.getWitType());
         Result execute = transactionTemplate.execute((Result) -> {
-            Result result = amountPublic.addAmountAdd(userFund, new BigDecimal(findChannelFee.getChannelDFee()), wit.getOrderId());
+            String channelDFee =   new BigDecimal(findChannelFee.getChannelDFee()).add(new BigDecimal(findChannelFee.getChannelRFee()).multiply(wit.getActualAmount())).toString();
+            Result result = amountPublic.addAmountAdd(userFund, new BigDecimal(channelDFee), wit.getOrderId());
             if (!result.isSuccess()) {
                 log.info("【代付订单置为失败渠道账户手续费加减款生成异常，请详细查看原因，当前代付订单号：" + wit.getOrderId() + "】");
                 return result;
             }
-            Result result2 = amountRunUtil.addAmountChannelWitEr(wit, wit.getRetain2(), new BigDecimal(findChannelFee.getChannelDFee()));
+            Result result2 = amountRunUtil.addAmountChannelWitEr(wit, wit.getRetain2(), new BigDecimal(channelDFee));
             if (!result2.isSuccess()) {
                 log.info("【代付订单置为失败渠道账户手续费加减款流水生成异常，请详细查看原因，当前代付订单号：" + wit.getOrderId() + "】");
                 return result2;
