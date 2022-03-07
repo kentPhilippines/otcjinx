@@ -18,7 +18,23 @@ public class SignUtils
         }
         return map;
     }
-
+    public static void buildPayParams1(StringBuilder sb, Map<String, String> payParams, boolean encoding)
+    {
+        List<String> keys = new ArrayList(payParams.keySet());
+        Collections.sort(keys);
+        for (String key : keys) {
+            sb.append(key);
+            if (encoding) {
+                sb.append(urlEncode(payParams.get(key)));
+            }
+            else {
+                sb.append(payParams.get(key));
+            }
+            //sb.append("&");
+        }
+        //payParams.get("")
+        //sb.setLength(sb.length() - 1);
+    }
     /**
      验证返回参数
 

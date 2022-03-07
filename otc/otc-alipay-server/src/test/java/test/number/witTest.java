@@ -205,9 +205,9 @@ public class witTest {
 */
 
 
-		String userid = "2u7rMduh";
-		String key = "1CA9B6463CBE1809531432D0210D8346";
-		String publickey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCOUFLo5X4Iehvx6+8jfXnf6sGFaQhQoKZivhg5m47sFAVPORMeMOEtuOOBzgjYUAD4U1YAKIhHvZ9MBnMRJcz3ZvqIrTDdop1JQcP3C3lGj3sfDegHfW7yww3m3lRdQFsAGq/SUtOf+nUMkqrX+d4d+xEeQFthCD4d/w90RU56/wIDAQAB";
+		String userid = "jinsha888";
+		String key = "3bf6bd911856b64ccc729d9e0400c5bb";
+		String publickey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDeniczDpiQLJmoV5L+LyHKRBTScGhpo+kF2vkaWjVepwbyrBbH7MNDWCl/7+yQFlMmNjzr5YoSxcpK1h4fNpfrZ0cx1+jbOkrsWMfangUBFO47M7VnowbohgrQrhj8Fgl5SIIh9kYXCuI8bHGR+VKBPnUdiD7h+UlqWAvZ1DzL2wIDAQAB";
 
 		long l = RandomUtil.randomLong(700, 800);
 
@@ -238,7 +238,7 @@ public class witTest {
 		postMap.put("cipherText", publicEncrypt);
 		postMap.put("userId", userid);
 		System.out.println("请求参数：" + postMap.toString());
-		String post = HttpUtil.post("http://bestpays456.com:24536/deal/pay", postMap);
+		String post = HttpUtil.post("http://localhost:9010/deal/pay", postMap);
 		System.out.println("相应结果集：" + post);
 	}
 
