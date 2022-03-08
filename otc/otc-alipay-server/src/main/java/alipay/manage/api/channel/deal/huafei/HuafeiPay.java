@@ -104,17 +104,17 @@ public class HuafeiPay extends PayOrderService {
             response = client.execute(httpPost);
             if (response != null && response.getEntity() != null) {
                 String content = EntityUtils.toString(response.getEntity(), "UTF-8");
-                Map<String, String> resultMap = JSONUtil.toBean(content,Map.class);
+                Map<String, Object> resultMap = JSONUtil.toBean(content,Map.class);
                 log.info("请求结果：" + content);
                 //{"code":"200","status":"10000","msg":"下单成功","data":{"mch_id":1105986,"out_trade_no":"12018011512301500007","total":100,"type":"9018","timestamp":1646580768,"qr_url":"http:\/\/47.104.134.244\/api\/Cashier?UserId=1005986&CustomerOrderId=G100226-2203067054025&PayType=unicomalipay&Parvalue=100&Sign=947f2eaf90f2bbb9c7caeb4751d7851d","h5_url":"http:\/\/47.104.134.244\/api\/Cashier?UserId=1005986&CustomerOrderId=G100226-2203067054025&PayType=unicomalipay&Parvalue=100&Sign=947f2eaf90f2bbb9c7caeb4751d7851d"}}
                 if ("200".equals(resultMap.get("code")+"")) {
                     // 扫码使用此网址显示二维码
                     // 其他直接跳转至该网址
-                    String resultUrl = JSONUtil.toBean(resultMap.get("data"),Map.class).get("qr_url")+"" ;
+                    String resultUrl = JSONUtil.toBean(resultMap.get("data")+"",Map.class).get("qr_url")+"" ;
                     return Result.buildSuccessResult("支付处理中", resultUrl);
                 }else if(resultMap.containsKey("error_msg"))
                 {
-                    res=resultMap.get("error_msg");
+                    res=resultMap.get("error_msg")+"";
                 }
             } else {
                 res = "操作失败";
@@ -148,7 +148,11 @@ public class HuafeiPay extends PayOrderService {
         return sign;
     }
 
-
+    public static void main(String[] args) {
+        String str="{\"code\":\"200\",\"status\":\"10000\",\"msg\":\"下单成功\",\"data\":{\"mch_id\":1105986,\"out_trade_no\":\"12018011512301500007\",\"total\":100,\"type\":\"9018\",\"timestamp\":1646580768,\"qr_url\":\"http:\\/\\/47.104.134.244\\/api\\/Cashier?UserId=1005986&CustomerOrderId=G100226-2203067054025&PayType=unicomalipay&Parvalue=100&Sign=947f2eaf90f2bbb9c7caeb4751d7851d\",\"h5_url\":\"http:\\/\\/47.104.134.244\\/api\\/Cashier?UserId=1005986&CustomerOrderId=G100226-2203067054025&PayType=unicomalipay&Parvalue=100&Sign=947f2eaf90f2bbb9c7caeb4751d7851d\"}}";
+        Map<String, Object> resultMap = JSONUtil.toBean(str,Map.class);
+        String resultUrl = JSONUtil.toBean(resultMap.get("data").toString(),Map.class).get("qr_url")+"" ;
+    }
     //amount=1000.00&appId=jinsha888&applyDate=20220217152028&notifyUrl=http://34.96.135.66:5055/api-alipay&orderId=c4866ce376424932ae049ee3e8c2388b&pageUrl=http://34.96.135.66:5055/api-alipay&passCode=ALIPAYTOBANK&subject=1000.00&userid=王富贵
 
 }
