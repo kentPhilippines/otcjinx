@@ -15,6 +15,7 @@ import otc.result.Result;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Stream;
 
 @Slf4j
 @Controller
@@ -53,11 +54,12 @@ public class HuafeiPayNotify extends NotfiyChannel {
     private static String createSign(Map map, String key,String token)
     {
         Map<String, String> params = alipay.manage.api.channel.deal.chaofan.SignUtils.paraFilter(map);
+
         //params.put("key", key);
         //params.put("token", token);
         StringBuilder buf = new StringBuilder((params.size() + 1) * 10);
         alipay.manage.api.channel.deal.chaofan.SignUtils.buildPayParams1(buf, params, false);
-        String preStr = buf.toString()+key+token;
+        String preStr = buf.toString()+key;
         log.info("notify preStr:{}",preStr);
         String sign = alipay.manage.api.channel.deal.chaofan.MD5.sign(preStr, "UTF-8");
 
