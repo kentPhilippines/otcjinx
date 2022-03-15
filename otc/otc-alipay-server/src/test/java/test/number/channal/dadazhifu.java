@@ -14,8 +14,8 @@ import java.util.*;
 public class dadazhifu {
 
     public static void main(String[] args) {
-        test();
-   //    test1();
+       test();
+    // test1();
 
 
     }
@@ -48,11 +48,10 @@ public class dadazhifu {
         String subject  =  "今晚打老虎";
         String body  =  "干就完了";
         String url = "http://42.157.129.22:3020";
-        String orderId = "123sdasdsas4513126";
+        String orderId = "123sdasds2222as4513126";
         Map<String,Object> map   = new HashMap<>();
         map.put("mchId",mchId);
         map.put("appId", appId);
-        map.put("productId",productId);
         map.put("mchOrderNo",orderId);
         map.put("currency","cny");
         map.put("amount",amount);
@@ -64,27 +63,7 @@ public class dadazhifu {
         String md5 = PayUtil.md5(createParam + "&key="+key).toUpperCase(Locale.ROOT);
         System.out.println(md5);
         map.put("sign",md5);
-        String post = HttpUtil.post(url+"/api/pay/create_order", map);
-        System.out.println(post);
-        JSONObject jsonObject = JSONUtil.parseObj(post);
-        Object retCode = jsonObject.get("retCode");
-        String payOrderId = "";
-        if(ObjectUtil.isNotNull(retCode) && "SUCCESS".equals(retCode.toString())){
-            payOrderId = jsonObject.get("payOrderId").toString();
-        }else{
-            System.out.println("支付失败");
-            return;
-        }
-        Map<String,Object> mapamount = new HashMap<>();
-        mapamount.put("mchId",mchId);
-        mapamount.put("appId",appId);
-        mapamount.put("mchOrderNo",orderId);
-        mapamount.put("payOrderId",payOrderId);
-        System.out.println(mapamount.toString());
-        String param = PayUtil.createParam(mapamount);
-        System.out.println(param);
-        String s = PayUtil.md5(param + "&key=" + key).toUpperCase(Locale.ROOT);
-        String payUrl = url+"/api/cashier/h5?mchId="+mchId+"&appId="+appId + "&mchOrderNo="+orderId+"&payOrderId="+payOrderId + "&sign="+s;
+        String payUrl = url+"/api/cashier/h5_recharge?"+createParam+"&sign="+md5;
         System.out.println(payUrl);
     }
 
@@ -105,6 +84,9 @@ public class dadazhifu {
      * 扩展域 extra 否 String(128) 扩展域
      * 请求时间 reqTime 是 String(20) 20181009171032 请求发起时间,时间格式:yyyyMMddHHmmss
      * 签名 sign 是 String(32) C380BEC2BFD727A4B6845133519F3AD6 签名值，详见签名算法
+     * 银行卡号：622908343055178618
+     * 开户人：曾黎
+     * 开户行：兴业银行 金额：500
      */
   static   SimpleDateFormat d = new SimpleDateFormat("yyyyMMddHHmmss");
     static void test1(){
@@ -112,11 +94,11 @@ public class dadazhifu {
         String amount  =  "1000";
         String appId  =  "72211da10c65477ba9c261d9f035f154";
         String mchId  =  "1804";
-        String accountName  =  "叶松海";
-        String orderId = "123sdasd12129999sssssas4513126";
-        String accountNo = "6227001593570051850";
-        String notifyUrl = "www.basdasdsa.com";
-        String remark = "代付10元";
+        String accountName  =  "吴东飞";
+        String orderId = "W20220218183222644719160502";
+        String accountNo = "6228481089392408573";
+        String notifyUrl = "http://47.243.33.146:17628/notfiy-api-pay/dadaWit-noyfit";
+        String remark = "代付";
         Map<String,Object> map   = new HashMap<>();
         map.put("mchId",mchId);
         map.put("mchOrderNo",orderId);

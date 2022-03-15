@@ -2,10 +2,12 @@ package alipay.manage.api.channel.deal.dadaPay;
 
 import alipay.manage.api.channel.util.shenfu.PayUtil;
 import alipay.manage.api.config.NotfiyChannel;
+import alipay.manage.service.OrderService;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import otc.common.PayApiConstant;
@@ -13,6 +15,7 @@ import otc.result.Result;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -21,6 +24,8 @@ import java.util.Map;
 @RestController
 public class DaDaNotify extends NotfiyChannel {
     private static final Log log = LogFactory.get();
+    @Autowired
+    private OrderService orderServiceImpl;
     @RequestMapping("/dadaPayNotify")
     public String notify(HttpServletRequest req, HttpServletResponse res ) {
         String clientIP = HttpUtil.getClientIP(req);
@@ -63,10 +68,15 @@ public class DaDaNotify extends NotfiyChannel {
         String md5 = PayUtil.md5(createParam + "&key="+dpAyChannelKey).toUpperCase(Locale.ROOT);
         if (sign.equals(md5)) {
             if ("2".equals(status)) {
-                Result dealpayNotfiy = dealpayNotfiy(mchOrderNo, clientIP);
-                if (dealpayNotfiy.isSuccess()) {
-                    return  "success";
+                BigDecimal divide = new BigDecimal(amount).divide(new BigDecimal(100));
+               Boolean flag =  orderServiceImpl.updateDealAmount(mchOrderNo,divide);
+                if(flag){
+                    Result dealpayNotfiy = dealpayNotfiy(mchOrderNo, clientIP);
+                    if (dealpayNotfiy.isSuccess()) {
+                        return  "success";
+                    }
                 }
+
             }
         } else {
             return "error";
