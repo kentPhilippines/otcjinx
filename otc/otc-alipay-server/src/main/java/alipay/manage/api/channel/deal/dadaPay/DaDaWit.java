@@ -16,6 +16,7 @@ import cn.hutool.json.JSONUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import otc.bean.dealpay.Withdraw;
 import otc.common.PayApiConstant;
 import otc.result.Result;
@@ -25,6 +26,7 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+@Component("DaDaWit")
 public class DaDaWit extends PayOrderService {
     private static final Log log = LogFactory.get();
     private static final String WIT_RESULT = "SUCCESS";
@@ -72,29 +74,12 @@ public class DaDaWit extends PayOrderService {
             return Result.buildFailMessage("代付失败");
         }
     }
-    static List<String> amountList = new ArrayList<>();
-    static {
-        amountList.add("10000");
-        amountList.add("30000");
-        amountList.add("50000");
-        amountList.add("20000");
-        amountList.add("80000");
-        amountList.add("100000");
-        amountList.add("150000");
-        amountList.add("200000");
-    }
     static SimpleDateFormat d = new SimpleDateFormat("yyyyMMddHHmmss");
     public DaDaWit(UserInfoService userInfoServiceImpl) {
         this.userInfoServiceImpl = userInfoServiceImpl;
     }
     private String createDpay(String s, Withdraw wit, ChannelInfo channelInfo) {
         String amount = wit.getAmount().multiply(new BigDecimal(100)).setScale(0, BigDecimal.ROUND_UP).toString();
-        boolean contains = amountList.contains(amount);
-        if(!contains){
-            log.error("请求代付异常");
-            withdrawErMsg(wit, "代付异常,金额不符合业务要求", wit.getRetain2());
-            return "";
-        }
         String key  = "RDBECCGUN2OQ6NMS8WUDOZGAXME9UYPA0RJPTR89COWMISQ2X2JWHRE4YHX2FMCUGOPVF5KGOIO7ZKWXOCNDIFKIWPDK9LGI4OWJCOTDWFTWU1KVZ3KLTDONCD364FC3";
         String mchId  =  channelInfo.getChannelAppId();
         String accountName  = wit.getAccname();
@@ -129,7 +114,10 @@ public class DaDaWit extends PayOrderService {
                 ThreadUtil.execute(()->{
                     withdrawDao.updateEthFee(orderId,agentpayOrderId);
                 });
+                witComment(wit.getOrderId());
                 return WIT_RESULT;
+            }else{
+                withdrawErMsg(wit, "三方异常", wit.getRetain2());
             }
         }catch (Exception e ){
             log.error("请求代付异常");

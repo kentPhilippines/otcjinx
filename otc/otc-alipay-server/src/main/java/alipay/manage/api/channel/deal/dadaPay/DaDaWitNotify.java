@@ -35,6 +35,12 @@ public class DaDaWitNotify  extends NotfiyChannel {
     private static final Log log = LogFactory.get();
     @Resource
     private WithdrawMapper withdrawDao;
+
+    public DaDaWitNotify(WithdrawMapper withdrawDao) {
+        this.withdrawDao = withdrawDao;
+    }
+    String key  = "RDBECCGUN2OQ6NMS8WUDOZGAXME9UYPA0RJPTR89COWMISQ2X2JWHRE4YHX2FMCUGOPVF5KGOIO7ZKWXOCNDIFKIWPDK9LGI4OWJCOTDWFTWU1KVZ3KLTDONCD364FC3";
+
     @RequestMapping("/dadaWit-noyfit")
     public String notify(HttpServletRequest req, HttpServletResponse res ) {
         String clientIP = HttpUtil.getClientIP(req);
@@ -51,23 +57,22 @@ public class DaDaWitNotify  extends NotfiyChannel {
         String fee = req.getParameter("fee");
         String sign = req.getParameter("sign");
         Map<String, Object> map = new HashMap<>();
-        map.put("agentpayOrderId", agentpayOrderId);
-        map.put("status", status);
+        map.put("agentpayOrderId",agentpayOrderId);
+        map.put("status",status );
         map.put("fee", fee);
         log.info("【dada付代付签名前参数：" + map + "】");
         Withdraw wit =      withdrawDao.findHash(agentpayOrderId);
-        String dpAyChannelKey = getDPAyChannelKey(wit.getOrderId());
         String createParam = PayUtil.createParam(map);
         log.info(createParam);
-        String md5 = PayUtil.md5(createParam + "&key="+dpAyChannelKey).toUpperCase(Locale.ROOT);
+        String md5 = PayUtil.md5(createParam + "&key="+key).toUpperCase(Locale.ROOT);
         if (sign.equals(md5)) {
             if ("2".equals(status)) {
                 Result result = witNotfy(wit.getOrderId(), clientIP);
                 if (result.isSuccess()) {
                     return "success";
-                }else {
-                    witNotSuccess(agentpayOrderId);
                 }
+            }else {
+                witNotSuccess(agentpayOrderId);
             }
         } else {
             return "error";

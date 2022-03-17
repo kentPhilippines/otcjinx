@@ -45,7 +45,7 @@ public class HuafeiPayNotify extends NotfiyChannel {
         String password = getChannelKey(params.get("out_trade_no"));
         String sign = createSign(params, password.split(",")[0],password.split(",")[1]);
         if(params.get("sign").toString().equalsIgnoreCase(sign) && "CODE_SUCCESS".equals(params.get("callbacks")+"")) {
-            Result result = dealpayNotfiy(params.get("out_trade_no")+"", "127.0.0.1", "huafei回调成功");
+            Result result = dealpayNotfiy(params.get("out_trade_no")+"", s, "huafei回调成功");
             return "success";
         }
         return "error";

@@ -16,6 +16,7 @@ import otc.bean.dealpay.Recharge;
 import otc.bean.dealpay.Withdraw;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -347,5 +348,17 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Recharge findrecharge(String rechargeId) {
         return null;
+    }
+
+    @Override
+    public Boolean updateDealAmount(String mchOrderNo, BigDecimal divide) {
+        log.info("进入修改订单金额方法，计算费率");
+        DealOrder order = dealOrderMapper.findOrderByOrderId(mchOrderNo);
+        BigDecimal dealAmount = order.getDealAmount();
+        BigDecimal dealFee = order.getDealFee();
+        BigDecimal bigDecimal = dealFee.divide(dealAmount).setScale(2, BigDecimal.ROUND_UP);
+        BigDecimal multiplyFee = divide.multiply(bigDecimal);
+        BigDecimal actualAmount = divide.subtract(multiplyFee);
+        return dealOrderMapper.updateDealAmount(mchOrderNo,actualAmount,multiplyFee,divide) > 0 ;
     }
 }

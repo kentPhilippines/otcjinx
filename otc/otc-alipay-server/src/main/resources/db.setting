@@ -1,7 +1,7 @@
 ## db.setting文件
 url =  jdbc:mysql://35.220.155.53:3306/otc_alipay?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
-username = kent_admin
-password =  L!f2e#e_h3CNgVD
+username = sdasdad1dxx
+password =  231skajhsbxsad1x&
 driver = com.mysql.jdbc.Driver
 ## 可选配置
 # 是否在日志中显示执行的SQL
