@@ -16,6 +16,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
+import cn.hutool.json.JSONUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,6 +86,7 @@ public class DealPay {
         String passCode = mapToBean.getPassCode();//产品类型
         String appId = mapToBean.getAppId();
         List<UserRate> rateList =  userRateService.findOpenFeeR(appId,passCode);//  所有该产品类型下 开启的充值费率类型
+        log.info("rateList：{}", JSONUtil.toJsonStr(rateList));
         CollUtil.sortByProperty(rateList, "retain1");
         for(UserRate rate : rateList ){
             BigDecimal systemAmount = new BigDecimal(rate.getRetain2());//金额限制

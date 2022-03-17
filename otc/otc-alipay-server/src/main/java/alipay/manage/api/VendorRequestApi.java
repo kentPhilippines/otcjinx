@@ -127,6 +127,7 @@ public class VendorRequestApi {
         }
         String passCode = paramMap.get("passCode").toString();
         UserFund userFund = accountApiServiceImpl.findUserFundByUserId(userId);
+        log.info("userFund:{}",JSONUtil.toJsonStr(userFund));
         BigDecimal totalAmount = userInfo.getTotalAmount();
         if (null != totalAmount) {
             if (userFund.getAccountBalance().compareTo(userInfo.getTotalAmount()) > -1) {
