@@ -90,12 +90,14 @@ public class DealPay {
             BigDecimal systemAmount = new BigDecimal(rate.getRetain2());//金额限制
             BigDecimal bigDecimal = new BigDecimal(mapToBean.getAmount());
             UserInfo channel = userInfoMapper.findUserByUserId(rate.getChannelId());
+
             if (Common.Order.DEAL_OFF.equals(channel.getReceiveOrderState())) {
                 log.info("渠道关闭，当前订单:"+mapToBean.getOrderId()+"，当前渠道："+channel.getUserName()+"，拉单支付金额："+bigDecimal);
                 exceptionOrderServiceImpl.addDealOrder(mapToBean, "用户报错：渠道关闭，联系运营处理；处理方法：开启渠道充值状态", clientIP);
                continue;
             }
             if (bigDecimal.compareTo(systemAmount) >= 0 && bigDecimal.compareTo(new BigDecimal(channel.getMaxAmount())) > -1) {
+                log.info("bigDecimal:{} systemAmount:{} channel.getMaxAmount：{}",bigDecimal,systemAmount,channel.getMaxAmount());
                 Result result1 = forQueryOrder(mapToBean, clientIP, rate);
                 if(!result1.isSuccess()){
                     continue;

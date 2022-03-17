@@ -40,7 +40,7 @@ public class CheckUtils {
         if (!flag) {
             return Result.buildFailMessage("字符编码错误");
         }
-        log.info("--------------【用户开始MD5验签】----------------");
+        log.info("--------------【用户开始MD5验签】----------------"+key);
         boolean vSign = verifySign(paramMap, key);
         if (!vSign) {
             return Result.buildFailMessage("签名验证失败");
@@ -362,5 +362,10 @@ public class CheckUtils {
         return Result.buildFailMessage("查询结果有误");
     }
 
-
+    public static void main(String[] args) {
+        String source="amount=50.00&appId=jinsha888&applyDate=20220316145438&notifyUrl=http://34.92.251.112:9010/&orderId=92f40f4c8f56453580e9b272ed0636eb&pageUrl=http://34.92.251.112:9010/&passCode=HuaFeiPay&subject=50.00&userid=王富贵";
+        String key = "94693b12da96013eb12e7c84aa110086";
+        String md5 = RSAUtils.md5(source + key);
+        System.out.println(md5);
+    }
 }

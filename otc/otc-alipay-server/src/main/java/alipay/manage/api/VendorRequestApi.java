@@ -12,6 +12,7 @@ import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
+import cn.hutool.json.JSONUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,10 +96,11 @@ public class VendorRequestApi {
      */
     public Result pay(HttpServletRequest request) {
         String userId = request.getParameter("userId");//商户号
+        log.info("reuserid:{}",userId);
         //根据商户号查询商户实体
         UserInfo userInfo = accountApiServiceImpl.findClick(userId);
         UserInfo key = accountApiServiceImpl.findPrivateKey(userId);
-
+        log.info("userinfo:{},key:{},",JSONUtil.toJsonStr(userInfo),JSONUtil.toJsonStr(key));
         if (null == userInfo || null == key) {
             return Result.buildFailMessage("商户不存在");
         }
@@ -107,13 +109,16 @@ public class VendorRequestApi {
         log.info("【报文：" + rsaSign + "】");
         Map<String, Object> paramMap = RSAUtils.getDecodePrivateKey(rsaSign, key.getPrivateKey());
         log.info("【商户RSA解密的参数：" + paramMap.toString() + "】 ");
+        log.info("keyobj:{}", JSONUtil.toJsonStr(key));
         //验证结果
         Result result = CheckUtils.requestVerify(request, paramMap, key.getPayPasword());
+        log.info("result:{}",result);
         if (!result.isSuccess()) {
             return result;
         }
         //验证商户是否配置费率
         Integer remitOrderState = userInfo.getReceiveOrderState();// 1 接单 2 暂停接单
+        log.info("remitOrderState:{}",remitOrderState);
         if (Common.Order.DEAL_OFF.equals(remitOrderState)) {
             ThreadUtil.execute(() -> {
                 exceptionOrderServiceImpl.addDealEx(paramMap.get("appId").toString(), paramMap.get("amount").toString(), "商户相应提示：当前账户交易权限未开通；处理方法：检查商户交易权限或商户状态是否开启,", HttpUtil.getClientIP(request), paramMap.get("orderId").toString());
