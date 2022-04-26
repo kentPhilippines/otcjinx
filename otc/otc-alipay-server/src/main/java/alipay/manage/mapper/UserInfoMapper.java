@@ -173,7 +173,7 @@ public interface UserInfoMapper {
      */
     @Cacheable(cacheNames = {USER_LONG}, unless = "#result == null")
     @Select("select id, userId, userName, password, payPasword," +
-            "    privateKey, publicKey" +
+            "    privateKey, publicKey,witip" +
             " from alipay_user_info where userId = #{userId}")
     UserInfo findPassword(@Param("userId") String userId);
 

@@ -134,6 +134,19 @@ public abstract class NotfiyChannel {
         return userInfoByUserId.getPayPasword();
     }
 
+    /**
+     * 获取渠道密钥
+     *
+     * @param orderId
+     * @return
+     */
+    public UserInfo getChannel(String orderId) {
+        DealOrder orderInfo = orderServiceImpl.findOrderByOrderId(orderId);
+        String orderQrUser = orderInfo.getOrderQrUser();
+        UserInfo userInfoByUserId = userInfoServiceImpl.findPassword(orderQrUser);
+        return userInfoByUserId;
+    }
+
     protected String getDPAyChannelKey(String orderId) {
         Withdraw wit = withdrawServiceImpl.findOrderId(orderId);
         String channel = "";
