@@ -14,9 +14,9 @@ public class thread {
 
 	public static void main(String[] args) {
         String pid = "ZRB615074FAB0D2A";
-        String amount = 150 + ".00";
+        String amount = 2000 + ".00";
         String order_no = "2121121211112121212121212122121212121";
-        String pay_type =  "603";
+        String pay_type =  "609";
         String notify_url = "notify";
         Map map = new HashMap();
         map.put("pid", pid);

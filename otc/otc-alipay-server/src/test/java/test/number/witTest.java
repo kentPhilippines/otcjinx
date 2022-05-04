@@ -153,7 +153,7 @@ public class witTest {
 		postMap.put("userId", userid);
 		System.out.println("请求参数：" + postMap.toString());
 		long l1 = System.currentTimeMillis();
-		String post = HttpUtil.post("http://47.243.66.246:23762/deal/wit", postMap);
+		String post = HttpUtil.post("http://starpay888.org:35426/deal/wit", postMap);
 		long l = System.currentTimeMillis();
 		long a = l - l1;
 		System.out.println("相应结果集：" + post + " 处理时间：" + a);
@@ -238,7 +238,7 @@ public class witTest {
 		postMap.put("cipherText", publicEncrypt);
 		postMap.put("userId", userid);
 		System.out.println("请求参数：" + postMap.toString());
-		String post = HttpUtil.post("http://localhost:9010/deal/pay", postMap);
+		String post = HttpUtil.post("http://starpay888.org:35426/deal/pay", postMap);
 		System.out.println("相应结果集：" + post);
 	}
 

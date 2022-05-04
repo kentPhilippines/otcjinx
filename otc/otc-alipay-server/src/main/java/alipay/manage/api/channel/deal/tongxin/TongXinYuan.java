@@ -99,9 +99,9 @@ public class TongXinYuan extends NotfiyChannel {
         Map<String,Object> query = new HashMap<>();
         String orderId = orderno;
         query.put("agtorg","JX199");
-        query.put("mercid","484584045119506");
+        query.put("mercid","484584045119529");
         query.put("ordernumber",orderno);
-        String sg = "agtorg=JX199&mercid=484584045119506&ordernumber="+orderId+"&key=F7A9BCB6E0C07708";
+        String sg = "agtorg=JX199&mercid=484584045119529&ordernumber="+orderId+"&key=F3B47EAE8E9C44B1";
         query.put("sign",PayUtil.md5(sg).toUpperCase());
         String post = HttpUtil.post( "http://mng.yuegepay.com/709105.tran9",query);
         System.out.println(post);
