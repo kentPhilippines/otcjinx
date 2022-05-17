@@ -1,8 +1,11 @@
 package alipay.manage.api.config;
 
 import alipay.config.redis.RedisLockUtil;
+import alipay.manage.api.channel.util.ChannelInfo;
+import alipay.manage.bean.ChannelFee;
 import alipay.manage.bean.DealOrder;
 import alipay.manage.bean.UserInfo;
+import alipay.manage.mapper.ChannelFeeMapper;
 import alipay.manage.service.OrderService;
 import alipay.manage.service.UserInfoService;
 import alipay.manage.service.WithdrawService;
@@ -18,6 +21,7 @@ import otc.api.alipay.Common;
 import otc.bean.dealpay.Withdraw;
 import otc.result.Result;
 
+import javax.annotation.Resource;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -31,6 +35,8 @@ public abstract class NotfiyChannel {
     private static final String WIT_LOCK = "witNotfy:";
     private static final String DEAL_LOCK = "dealpayNotfiy:";
     static Lock lock = new ReentrantLock();
+    @Resource
+    private ChannelFeeMapper channelFeeDao;
     @Autowired
     private UserInfoService userInfoServiceImpl;
     @Autowired
@@ -133,7 +139,26 @@ public abstract class NotfiyChannel {
         UserInfo userInfoByUserId = userInfoServiceImpl.findPassword(orderQrUser);
         return userInfoByUserId.getPayPasword();
     }
-
+    /**
+     * 请求渠道时,获取渠道详情
+     *
+     * @param channelId
+     * @param payType
+     * @return
+     */
+    protected ChannelInfo getChannelInfo(String channelId, String payType) {
+        ChannelInfo channelInfo = new ChannelInfo();
+        UserInfo userInfo = userInfoServiceImpl.findNotifyChannel(channelId);
+        channelInfo.setChannelAppId(userInfo.getUserNode());
+        channelInfo.setChannelPassword(userInfo.getPayPasword());
+        channelInfo.setDealurl(userInfo.getDealUrl());
+        ChannelFee channelFee = channelFeeDao.findChannelFee(channelId, payType);
+        channelInfo.setChannelType(channelFee.getChannelNo());
+        if (StrUtil.isNotBlank(userInfo.getWitip())) {
+            channelInfo.setWitUrl(userInfo.getWitip());
+        }
+        return channelInfo;
+    }
     /**
      * 获取渠道密钥
      *

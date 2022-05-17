@@ -21,16 +21,16 @@ import java.util.Map;
 
 public class witTest {
 	public static void main(String[] args) {
-		for (int a = 0; a <= 0; a++) {
+		/*for (int a = 0; a <= 0; a++) {
 		   new witTest().deal();
-		}
+		}*/
 		//find();
 /*
         String userid2 = "2u7rMduh";
         String key2 = "1CA9B6463CBE1809531432D0210D8346";
         String publickey2 = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCOUFLo5X4Iehvx6+8jfXnf6sGFaQhQoKZivhg5m47sFAVPORMeMOEtuOOBzgjYUAD4U1YAKIhHvZ9MBnMRJcz3ZvqIrTDdop1JQcP3C3lGj3sfDegHfW7yww3m3lRdQFsAGq/SUtOf+nUMkqrX+d4d+xEeQFthCD4d/w90RU56/wIDAQAB";
 
-		// new witTest().wit(userid2, key2, publickey2);
+		 new witTest().wit(userid2, key2, publickey2);
 		//  new witTest().deal();
 		String userid2 = "facai123";
 		String key2 = "52148D59F72532316ED398A1F3281D73";//交易密钥
@@ -38,10 +38,10 @@ public class witTest {
 		//	new witTest().wit(userid, key, publicKey);
 */
 
-		String userid = "ASD123456TEST";
-		String key = "8C88F4EE6A324386AA3B4709D4EE2919";
-		String publickey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC7PMszfWq3eM5F9od7faHp1QJ6a3ud0KD97+7bMjXCDyF3A/KfMdY5wnxrD0B3H5Ep0m0LqlZ5n5YnBxjkOTeFXn+osqJFgbyRV1bwxT31ssJx7VBvh+eMtS2BiOEu47qX7J42qD+VA5h7rjI4WkjId2OoQ+OExUnTUqQfDrnYZwIDAQAB";
-		//	new witTest().wit(userid1, key1, publickey1);
+		String userid = "jinsha888";
+		String key = "3bf6bd911856b64ccc729d9e0400c5bb";
+		String publickey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDeniczDpiQLJmoV5L+LyHKRBTScGhpo+kF2vkaWjVepwbyrBbH7MNDWCl/7+yQFlMmNjzr5YoSxcpK1h4fNpfrZ0cx1+jbOkrsWMfangUBFO47M7VnowbohgrQrhj8Fgl5SIIh9kYXCuI8bHGR+VKBPnUdiD7h+UlqWAvZ1DzL2wIDAQAB";
+			new witTest().wit(userid, key, publickey);
 		//USDT测试账号
 		//     String userid2 = "kentTest";
 		//    String key2 = "F71915AEE539D5B34EC913E9DA124821";
@@ -133,7 +133,7 @@ public class witTest {
 		objectToMap.put("appid", userid);
 		objectToMap.put("apporderid", StrUtil.uuid());
 		objectToMap.put("ordertime", d.format(new Date()) + "");
-		objectToMap.put("amount", 6000);
+		objectToMap.put("amount", 300);
 		objectToMap.put("acctno", "633982938475489382" + RandomUtil.randomLong(1, 10));
 		objectToMap.put("acctname", "张三");
 		objectToMap.put("bankcode", "ICBC");
@@ -153,7 +153,7 @@ public class witTest {
 		postMap.put("userId", userid);
 		System.out.println("请求参数：" + postMap.toString());
 		long l1 = System.currentTimeMillis();
-		String post = HttpUtil.post("http://starpay888.org:35426/deal/wit", postMap);
+		String post = HttpUtil.post("http://localhost:9010/deal/wit", postMap);
 		long l = System.currentTimeMillis();
 		long a = l - l1;
 		System.out.println("相应结果集：" + post + " 处理时间：" + a);

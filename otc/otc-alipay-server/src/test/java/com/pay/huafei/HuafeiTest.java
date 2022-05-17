@@ -1,8 +1,6 @@
 package com.pay.huafei;
 
 import com.pay.channel.HttpClient;
-import com.pay.channel.MD5;
-import com.pay.channel.SignUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -24,7 +22,7 @@ public class HuafeiTest {
      * @param args
      * @throws Exception
      */
-    public static void main(String[] args) throws Exception
+    /*public static void main(String[] args) throws Exception
     {
         String key = "SCSD7lwUYyv2xVCU9grlV2ByuRtJPmv3LbiGcEF6SLUWsao8k7rc8Y8HtWYgVgs3";
         String token = "P7q2kLuGb0K0QQu7LGSkds7XG5Q0772m";
@@ -103,7 +101,7 @@ public class HuafeiTest {
         String sign = MD5.sign(preStr, "UTF-8");
 
         return sign;
-    }
+    }*/
     //mch_id100005notify_urlwww.baidu.comout_trade_noE20201124162543244030return_urlwww.baidu.comtimestamp1606206344total99typealipay_wap + secret(秘钥) + request_token（请求Token）
     //mch_id100226notify_urlhttp://152.32.107.70:802/chaofanPayNotifyout_trade_no12018011512301500007request_tokenP7q2kLuGb0K0QQu7LGSkds7XG5Q0772mreturn_url127.0.0.1timestamp1646580672total100type9018SCSD7lwUYyv2xVCU9grlV2ByuRtJPmv3LbiGcEF6SLUWsao8k7rc8Y8HtWYgVgs3P7q2kLuGb0K0QQu7LGSkds7XG5Q0772m
 }
