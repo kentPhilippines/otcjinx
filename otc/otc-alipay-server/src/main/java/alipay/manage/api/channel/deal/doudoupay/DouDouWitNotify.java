@@ -55,7 +55,7 @@ public class DouDouWitNotify extends NotfiyChannel {
         String payAmount = req.getParameter("payAmount");
         String sign = req.getParameter("sign");
         String status = req.getParameter("status");
-        Withdraw wit =      withdrawDao.findHash(orderId);
+        Withdraw wit =      withdrawDao.findWitOrder(orderId);
         String channel = "";
         if (StrUtil.isNotBlank(wit.getChennelId())) {//支持运营手动推送出款
             channel = wit.getChennelId();
@@ -68,12 +68,12 @@ public class DouDouWitNotify extends NotfiyChannel {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("mchCode",mchCode);
         map.put("orderId",orderId );
-        map.put("amount", amount);
+        map.put("amount", Integer.valueOf(amount));
 
         String myMd5 = PayUtil.md5(JSONUtil.toJsonStr(map) + privateKey);
         log.info("【doudou付代付签名前参数：{},my:{},{}】",JSONUtil.toJsonStr(map),myMd5,sign);
         if (sign.equals(myMd5)) {
-            if ("1".equals(status) ) {
+            if ("0".equals(status) ) {
                 Result result = witNotfy(wit.getOrderId(), clientIP);
                 if (result.isSuccess()) {
                     return "{\"retcode\":0}";
