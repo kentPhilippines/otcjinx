@@ -361,4 +361,19 @@ public class OrderServiceImpl implements OrderService {
         BigDecimal actualAmount = divide.subtract(multiplyFee);
         return dealOrderMapper.updateDealAmount(mchOrderNo,actualAmount,multiplyFee,divide) > 0 ;
     }
+
+    @Override
+    public boolean setMacthOrderId(String orderId, String witOrder) {
+        return dealOrderMapper.setMacthOrderId(orderId,orderId);
+    }
+
+    @Override
+    public boolean macthMsg(String orderId, String macth) {
+        return dealOrderMapper.macthMsg(orderId,macth);
+    }
+
+    @Override
+    public boolean macthLock(String orderId, Integer macthStatus) {
+        return dealOrderMapper.macthLock(orderId,macthStatus);
+    }
 }

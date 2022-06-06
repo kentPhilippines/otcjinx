@@ -44,6 +44,8 @@ public class TaskSelf {
         }
         log.info("【开始进行10秒代付订单推送】");
         orderTask.orderWitTask();
+        log.info("【撮合订单解锁】");
+        orderTask.macthOrder();
     }
 
 

@@ -152,6 +152,13 @@ public interface DealOrderMapper {
     @Update(" update alipay_deal_order set actualAmount = #{actualAmount}  ,dealFee = #{dealFee}  ,  dealAmount  =  #{dealAmount}  where orderId = #{orderId}")
     int updateDealAmount(@Param("orderId") String orderId, @Param("actualAmount") BigDecimal actualAmount,@Param("dealFee")  BigDecimal dealFee, @Param("dealAmount")  BigDecimal dealAmount);
 
+    @Update(" update alipay_deal_order set witOrderId = #{witOrderId}  where orderId = #{orderId}")
+    boolean setMacthOrderId(@Param("orderId")String orderId, @Param("witOrderId")String witOrderId);
+
+    @Update(" update alipay_deal_order set macthMsg = #{macthMsg}  where orderId = #{orderId}")
+    boolean macthMsg(@Param("orderId")String orderId, @Param("macthMsg") String macth);
+    @Update(" update alipay_deal_order set macthStatus = #{macthStatus}  where orderId = #{orderId}")
+    boolean macthLock(@Param("orderId")String orderId,@Param("macthStatus") Integer macthStatus);
 
 
 }

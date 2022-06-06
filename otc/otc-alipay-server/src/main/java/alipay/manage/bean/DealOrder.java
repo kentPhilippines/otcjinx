@@ -45,6 +45,35 @@ public class DealOrder implements Serializable{
     private String currency;  ///货币类型
     private List orderQrUserList;
 
+
+    private String macthMsg;  ///撮合订单 解释
+    private Integer macthStatus;  ///撮合订单 状态   1已撮合 未支付     2 已撮合 已支付
+    private String witOrderId;  /// 撮合对应的代付订单
+
+    public String getWitOrderId() {
+        return witOrderId;
+    }
+
+    public void setWitOrderId(String witOrderId) {
+        this.witOrderId = witOrderId;
+    }
+
+    public Integer getMacthStatus() {
+        return macthStatus;
+    }
+
+    public void setMacthStatus(Integer macthStatus) {
+        this.macthStatus = macthStatus;
+    }
+
+    public String getMacthMsg() {
+        return macthMsg;
+    }
+
+    public void setMacthMsg(String macthMsg) {
+        this.macthMsg = macthMsg;
+    }
+
     public String getCurrency() {
         return currency;
     }

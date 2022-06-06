@@ -173,4 +173,31 @@ public interface OrderService {
 
 	Boolean updateDealAmount(String mchOrderNo, BigDecimal divide);
 
+
+	/**
+	 * 关联撮合订单和出款订单
+	 * @param macthWit
+	 * @param orderId
+	 * @return
+	 */
+	boolean setMacthOrderId(String macthWit, String orderId);
+
+	/**
+	 * 添加撮合订单描述
+	 * @param orderId
+	 * @param macth
+	 * @return
+	 */
+	boolean macthMsg(String orderId, String macth);
+
+
+	/**
+	 * 搓个订单状态
+	 *
+	 * @param macthWit
+	 * @param macthStatus        撮合未支付
+	 * @return
+	 */
+    boolean macthLock(String macthWit, Integer macthStatus);
+
 }

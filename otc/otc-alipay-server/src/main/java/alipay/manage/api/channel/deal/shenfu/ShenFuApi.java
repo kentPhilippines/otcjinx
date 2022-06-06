@@ -30,6 +30,7 @@ public class ShenFuApi {
             info.setCard_user(hmget.get("card_user").toString());
             info.setMoney_order(hmget.get("money_order").toString());
             info.setNo_order(hmget.get("no_order").toString());
+            info.setAddress(hmget.get("address").toString());
             info.setOid_partner(hmget.get("oid_partner").toString());
         } catch (Exception e) {
             log.info("【请求缓存银行卡数据失败，当前请求订单号：" + orderId + "】");
@@ -54,6 +55,7 @@ class ShenFuBankInfo {
     private String money_order;
     private String no_order;
     private String oid_partner;
+    private String address;
 
     public String getNo_order() {
         return no_order;
@@ -102,6 +104,14 @@ class ShenFuBankInfo {
 
     public void setBank_name(String bank_name) {
         this.bank_name = bank_name;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     @Override

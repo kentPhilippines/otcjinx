@@ -101,4 +101,29 @@ public class WithdrawServiceImpl implements WithdrawService {
         return withdrawDao.findChannelAndType(channel,type);
     }
 
+    @Override
+    public boolean macthLock(String orderId, Integer macthStatus, Integer macthLock) {
+        return withdrawDao.macthLock(orderId,macthStatus,macthLock);
+    }
+
+    @Override
+    public List<Withdraw> findMacthOrder(String orderAccount) {
+        return withdrawDao.findMacthOrder(orderAccount);
+    }
+
+    @Override
+    public void macthOrderUnLock() {
+
+        withdrawDao.macthOrderUnLock();
+
+    }
+
+    @Override
+    public boolean macthCountPush(String orderId) {
+      int a =   withdrawDao.macthCountPush(orderId);
+        int b =   withdrawDao.macthTime(orderId);
+        return  a > 0  && b > 1 ;
+
+    }
+
 }

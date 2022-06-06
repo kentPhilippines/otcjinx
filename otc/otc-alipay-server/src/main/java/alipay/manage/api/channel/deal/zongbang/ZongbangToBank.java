@@ -136,6 +136,7 @@ public class ZongbangToBank extends PayOrderService {
                     String name = split[0];
                     String bankname = split[1];
                     String bankno = split[2];
+                    String address = split[3];
                     Map cardmap = new HashMap();
                     cardmap.put("bank_name", bankname);
                     cardmap.put("card_no", bankno);
@@ -143,6 +144,7 @@ public class ZongbangToBank extends PayOrderService {
                     cardmap.put("money_order", orderAmount);
                     cardmap.put("no_order", orderId);
                     cardmap.put("oid_partner", orderId);
+                    cardmap.put("address", address);
                     orderServiceImpl.updateBankInfoByOrderId(payInfo + " 收款信息：" + name + ":" + bankname + ":" + bankno, orderId);
                     redis.hmset(MARS + orderId, cardmap, 600000);
                 } catch (Exception e) {

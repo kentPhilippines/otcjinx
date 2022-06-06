@@ -128,5 +128,39 @@ public interface WithdrawMapper {
     List<Withdraw> findChannelAndType(@Param("channel") String channel,@Param("witType")   String type);
     @Select("select * from alipay_withdraw  where txhash = #{txhash}   ")
     Withdraw findHash(@Param("txhash")  String txhash);
-    
+
+
+    @Update("update alipay_withdraw set    macthStatus = #{macthStatus} , macthLock = #{macthLock} where orderId  = #{orderId} ")
+    boolean macthLock(@Param("orderId")String orderId, @Param("macthStatus")Integer macthStatus, @Param("macthLock")Integer macthLock);
+
+
+
+    /**
+     * // 获取规则：
+     * 1 	不是当前 商户的，
+     * 2，  订单为非锁定状态，
+     * 3，	订单主状态为 审核中
+     * 4 ， 最后一次撮合时间已经过了10分钟 且 订单 为挂起状态
+     * @param
+     * @return
+     */
+
+
+
+    @Select(" ( select * from alipay_withdraw  where userId != #{userId} and  macthStatus = 1  and orderStatus = 1   and  macthCount = 0  ) " + //首次撮合
+            " union all " +
+            " ( select * from alipay_withdraw  where userId != #{userId} and  macthStatus = 0  and orderStatus = 1 and macthLock  = 0  and moreMacth = 1   and  macthCount >  0    and   " +
+            "    macthTime >= DATE_SUB(NOW(),INTERVAL 10 MINUTE)  ) ") //第二次撮合
+    List<Withdraw> findMacthOrder(@Param("userId") String userId);
+
+
+    @Update("update alipay_withdraw set    macthLock = 0   , macthStatus =  0  where  orderStatus = 1 and  macthStatus = 1 and  macthCount = 1  and    macthTime <= DATE_SUB(NOW(),INTERVAL 10 MINUTE)  ")
+    void macthOrderUnLock();
+
+
+    @Update("update alipay_withdraw set  macthCount = macthCount + 1     where orderId  = #{orderId} ")
+    int macthCountPush(@Param("orderId")  String orderId);
+    @Update("update alipay_withdraw set  macthTime =  now()    where orderId  = #{orderId} ")
+    int macthTime(@Param("orderId")  String orderId);
+
 }

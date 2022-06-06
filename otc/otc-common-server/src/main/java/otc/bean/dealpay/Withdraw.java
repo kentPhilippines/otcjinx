@@ -28,6 +28,7 @@ public class Withdraw implements Serializable {
     private String appOrderId;        //下游商户订单号【如果为后台代付 则该字段为空】
     private Date createTime;
     private Date submitTime;
+    private Date macthTime; //最后一次撮合订单时间
     private Integer status;
     private String retain1;    //1  api   代付   				2  后台代付
     private String retain2;        //代付 ip
@@ -43,6 +44,71 @@ public class Withdraw implements Serializable {
     private String currency;
     private Integer ethFee;  //eth手续费   1 已结算    0 未结算
     private Integer pushOrder;  //1 已推送   0 未推送  默认为已推送
+
+
+    private String macthMsg;  ///撮合订单 解释
+    private Integer macthStatus;  ///撮合订单 状态   1已撮合 未支付     2 已撮合 已支付
+    private Integer payStatus;  ///结算状态  1 已扣款结算   2 未扣款结算
+    private Integer macthLock;  /// 撮合锁定当前不可以进行任何操作，  默认不锁定 0    1 锁定
+    private Integer moreMacth;  /// 是否可以多次撮合[是否挂起]， 0 不可以  1 可以      可以就是挂起
+    private Integer macthCount;  ///  撮合次数
+
+
+    public Date getMacthTime() {
+        return macthTime;
+    }
+
+    public void setMacthTime(Date macthTime) {
+        this.macthTime = macthTime;
+    }
+
+    public Integer getMacthCount() {
+        return macthCount;
+    }
+
+    public void setMacthCount(Integer macthCount) {
+        this.macthCount = macthCount;
+    }
+
+    public Integer getMoreMacth() {
+        return moreMacth;
+    }
+
+    public void setMoreMacth(Integer moreMacth) {
+        this.moreMacth = moreMacth;
+    }
+
+    public Integer getMacthLock() {
+        return macthLock;
+    }
+
+    public void setMacthLock(Integer macthLock) {
+        this.macthLock = macthLock;
+    }
+
+    public Integer getPayStatus() {
+        return payStatus;
+    }
+
+    public void setPayStatus(Integer payStatus) {
+        this.payStatus = payStatus;
+    }
+
+    public Integer getMacthStatus() {
+        return macthStatus;
+    }
+
+    public void setMacthStatus(Integer macthStatus) {
+        this.macthStatus = macthStatus;
+    }
+
+    public String getMacthMsg() {
+        return macthMsg;
+    }
+
+    public void setMacthMsg(String macthMsg) {
+        this.macthMsg = macthMsg;
+    }
 
     public Integer getPushOrder() {
         return pushOrder;

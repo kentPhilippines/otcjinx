@@ -84,4 +84,42 @@ public interface WithdrawService {
 	boolean updatePushAgent(String orderId);
 
 	List<Withdraw> findChannelAndType(String channel, String s);
+
+
+	/**
+	 *  填充 代付订单状态
+	 * @param orderId				订单号
+	 * @param macthStatus			撮合状态  1撮合未支付
+	 * @param macthLock				撮合 订单锁定
+	 *                              	 添加当前撮合时间
+	 * @return
+	 */
+    boolean macthLock(String orderId, Integer macthStatus, Integer macthLock);
+
+
+	/**
+	 * // 获取规则：
+	 * 1 	不是当前 商户的，
+	 * 2，  订单为非锁定状态，
+	 * 3，	订单主状态为 审核中
+	 * 4 ， 最后一次撮合时间已经过了10分钟 且 订单 为挂起状态
+	 * @param orderAccount
+	 * @return
+	 */
+    List<Withdraw> findMacthOrder(String orderAccount);
+
+
+	/**
+	 * 撮合订单解锁
+	 *  撮合未支付 ， 且 审核中 且
+	 */
+    void macthOrderUnLock();
+
+	/**
+	 * 撮合订单次数加1
+	 *
+	 */
+	boolean macthCountPush(String orderId);
+
+
 }
