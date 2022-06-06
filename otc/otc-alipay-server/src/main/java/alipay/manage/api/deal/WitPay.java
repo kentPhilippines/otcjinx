@@ -269,7 +269,8 @@ public class WitPay extends PayOrderService {
                     return  Result.buildFailMessage("不对后台提现的订单金额自动推送");
                 }
                 if (deal.isSuccess()) {
-                    ThreadUtil.execute(() -> {
+                  boolean pay =   withdrawServiceImpl.isPayStatus(order.getOrderId());
+                   /* ThreadUtil.execute(() -> {
                         ChannelFee channelFee = channelFeeDao.findImpl(order.getWitChannel(), order.getWitType());//缓存已加
                         Result withdraw = Result.buildFail();
                         try {
@@ -278,8 +279,8 @@ public class WitPay extends PayOrderService {
                             push("当前订单推送异常，请及时检查异常情况，当前订单号：" + order.getOrderId() + "，当前程序堆栈数据：" + printStackTrace(e.getStackTrace()));
                             //  return Result.buildFailMessage("推送异常");
                         }
-                    });
-                    ThreadUtil.execute(() -> {
+                    });*/
+                  /*  ThreadUtil.execute(() -> {
                         //修改订单为已推送 不管当前订单是否推送成功
                         boolean b = withdrawServiceImpl.updatePush(order.getOrderId());
                         if (b) {
@@ -287,12 +288,14 @@ public class WitPay extends PayOrderService {
                         } else {
                             log.info("【当前订单已推送，状态未修改，当前订单号：" + order.getOrderId() + "】");
                         }
-                    });
+                    });*/
                 } else {
                     throw new OrderException("代付订单结算失败", null);
                 }
             } else {
                 deal = super.withdraw(order);
+                boolean pay =   withdrawServiceImpl.isPayStatus(order.getOrderId());
+
             }
         } catch (Exception e) {
             push("当前推送发生异常，修改订单为已推送状态， 请及时检查异常情况，当前订单号：" + order.getOrderId() + "，当前程序堆栈数据：" + printStackTrace(e.getStackTrace()));
@@ -305,6 +308,31 @@ public class WitPay extends PayOrderService {
         }
         return deal;
     }
+
+
+
+
+    public Result   witPush(Withdraw order ){
+        ChannelFee channelFee = channelFeeDao.findImpl(order.getWitChannel(), order.getWitType());//缓存已加
+        Result withdraw = Result.buildFail();
+        try {
+            withdraw = factoryForStrategy.getStrategy(channelFee.getImpl()).withdraw(order);
+        } catch (Exception e) {
+            boolean b = withdrawServiceImpl.updatePush(order.getOrderId());
+
+            push("当前订单推送异常，请及时检查异常情况，当前订单号：" + order.getOrderId() + "，当前程序堆栈数据：" + printStackTrace(e.getStackTrace()));
+            //  return Result.buildFailMessage("推送异常");
+        }
+        boolean b = withdrawServiceImpl.updatePush(order.getOrderId());
+        if(b){
+            return Result.buildSuccessResult();
+        }
+        return Result.buildFail();
+    }
+
+
+
+
 
     void push(String msg) {
         ThreadUtil.execute(() -> {

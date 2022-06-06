@@ -32,6 +32,7 @@ public class OrderTask {
 	static final String KEY = "TASK:ORDER:ST:";
 	static final String KEY_WIT = "TASK:ORDER:STWIT:";
 	static final String KEY_WIT_PUSH = "TASK:ORDER:PUSH:";
+	static final String KEY_WIT_PUSHWIT = "TASK:ORDER:PUSHWIT:";
 	/**
 	 * <p>定时任务修改订单状态</p>
 	 */
@@ -156,6 +157,18 @@ public class OrderTask {
 			}
 
 		}
+
+		List<Withdraw> witList = withdrawServiceImpl.findWaitPush();
+		for (Withdraw order : witList)  {
+			if (redis.hasKey(KEY_WIT_PUSHWIT + order.getOrderId())) {
+				log.info("当前订单已处理");
+				continue;
+			}
+			redis.set(KEY_WIT_PUSHWIT + order.getOrderId(), order.getOrderId(), 200); //防止多个任务同时获取一个订单发起结算
+			WitPayImpl.witPush(order);
+		}
+
+
 
 	}
 

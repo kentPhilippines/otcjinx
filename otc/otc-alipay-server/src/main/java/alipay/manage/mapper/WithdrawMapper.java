@@ -116,7 +116,7 @@ public interface WithdrawMapper {
     @Update("update alipay_withdraw set ethFee = 1 where orderId = #{orderId}")
     void updateSuccessAndAmount(String orderId);
 
-    @Select("select * from alipay_withdraw where  orderStatus = 1 limit 15")
+    @Select("select * from alipay_withdraw where  orderStatus = 1 and payStatus = 2  limit 15")
     List<Withdraw> findNotPush();
 
 
@@ -162,5 +162,15 @@ public interface WithdrawMapper {
     int macthCountPush(@Param("orderId")  String orderId);
     @Update("update alipay_withdraw set  macthTime =  now()    where orderId  = #{orderId} ")
     int macthTime(@Param("orderId")  String orderId);
+    @Update("update alipay_withdraw set  payStatus = 1    where orderId  = #{orderId} ")
+    int isPayStatus(@Param("orderId")String orderId);
+
+    @Select(" ( select * from alipay_withdraw  where   orderStatus = 1    and payStatus = 1 and      macthLock = 0  and  moreMacth = 0      createTime  <= DATE_SUB(NOW(),INTERVAL 10 MINUTE )  )  " + //首次撮合
+            " union all " +
+            " ( select * from alipay_withdraw  where  orderStatus = 1   and payStatus = 1 and macthLock  = 0  and moreMacth = 0    " +
+            "    macthTime <= DATE_SUB( NOW(),INTERVAL 10 MINUTE )  ) ") //第二次撮合
+    List<Withdraw> findWaitPush();
+
+
 
 }

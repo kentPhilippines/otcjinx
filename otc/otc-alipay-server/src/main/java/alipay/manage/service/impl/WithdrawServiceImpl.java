@@ -126,4 +126,20 @@ public class WithdrawServiceImpl implements WithdrawService {
 
     }
 
+    @Override
+    public boolean isPayStatus(String orderId) {
+       int a =  withdrawDao.isPayStatus(orderId);
+        return a>0;
+    }
+
+    @Override
+    public List<Withdraw> findWaitPush() {
+        /**
+         * 当前订单 未 挂起      未锁定    已结算  且超过10分分钟    ， 且 超过10分的撮合时间
+         */
+      return   withdrawDao.findWaitPush();
+
+
+    }
+
 }

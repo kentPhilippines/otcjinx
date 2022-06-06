@@ -122,4 +122,13 @@ public interface WithdrawService {
 	boolean macthCountPush(String orderId);
 
 
+	/**
+	 * 当前订单已结算
+	 * @param orderId
+	 * @return
+	 */
+    boolean isPayStatus(String orderId);
+
+    List<Withdraw> findWaitPush();
+
 }
