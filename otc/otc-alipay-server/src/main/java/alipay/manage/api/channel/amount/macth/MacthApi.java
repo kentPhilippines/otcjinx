@@ -10,6 +10,7 @@ import alipay.manage.service.WithdrawService;
 import alipay.manage.util.NotifyUtil;
 import alipay.manage.util.OrderUtil;
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
@@ -119,6 +120,16 @@ public class MacthApi extends PayOrderService {
         DealOrderApp orderApp = orderAppService.findOrderByOrderId(orderId);
         BigDecimal orderAmount = orderApp.getOrderAmount();
         String orderAccount = orderApp.getOrderAccount();
+        DealOrder order = orderServiceImpl.findAssOrder(orderId);
+        if(ObjectUtil.isNotNull(order)){
+            return Result.buildFailMessage("当前订单已匹配请重新拉单");
+        }
+        Date createTime = orderApp.getCreateTime();
+        boolean expired = DateUtil.isExpired(createTime , DateField.MINUTE, 10, new Date());
+        if(!expired){
+            return Result.buildFailMessage("当前订单已过期");
+        }
+
         //1，根据传入的订单号获取会员的支付订单数据
         List<Withdraw> witList = withdrawService.findMacthOrder(orderAccount); // 获取规则： 1 不是当前 商户的， 2，  订单为非锁定状态， 3，订单主状态为 审核中  4 ， 最后一次撮合时间已经过了10分钟 且 订单 为挂起状态
         if (CollUtil.isEmpty(witList)) {

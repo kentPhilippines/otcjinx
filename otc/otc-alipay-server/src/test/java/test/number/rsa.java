@@ -27,15 +27,10 @@ public class rsa {
     private static final String ENCODE_TYPE = "md5";
 
     public static void main(String[] args) throws IOException {
-        String key  = "RDBECCGUN2OQ6NMS8WUDOZGAXME9UYPA0RJPTR89COWMISQ2X2JWHRE4YHX2FMCUGOPVF5KGOIO7ZKWXOCNDIFKIWPDK9LGI4OWJCOTDWFTWU1KVZ3KLTDONCD364FC3";
 
-        String s = md5("agentpayOrderId=G01202202181914103240004&fee=1800&status=2&key="+key).toUpperCase();
-        String s1 = md5("6214680066592096") ;
-        BigDecimal divide = new BigDecimal(40000).divide(new BigDecimal(100));
+        String s = md5("6228480425808874779");
 
         System.out.println(s);
-        System.out.println(s1);
-        System.out.println(divide);
 
 
     }
