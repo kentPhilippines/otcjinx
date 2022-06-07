@@ -7,7 +7,7 @@ server:
       namespace: spring:session
   tomcat :
     url-encoding : UTF-8
-  port: 9010
+  port: 9033
 eureka:
   client:
     serviceUrl:
@@ -40,17 +40,17 @@ spring:
       idle-timeout: 60000
       connection-init-sql: SET NAMES utf8mb4
   redis:
+    host: 34.150.94.93
     port: 6379
-    host: 127.0.0.1
+    password: redis123456
     timeout: 5000
-    password: will1234
+    database: 1
     pool:
       max-idle: 100
       min-idle: 10
       max-active: 1000
       max-wait: -1
-    database: 0
-  #以上为本地测试配置文件
+#以上为本地测试配置文件
   task:
     scheduling:
       pool:

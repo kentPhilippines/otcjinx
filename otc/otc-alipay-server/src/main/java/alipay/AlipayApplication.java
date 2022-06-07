@@ -44,4 +44,5 @@ public class AlipayApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(AlipayApplication.class, args);
  	}
+
 }
