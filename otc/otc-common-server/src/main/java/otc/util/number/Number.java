@@ -101,6 +101,9 @@ public class Number {
     public static String getAppOreder() {
         return GenerateOrderNo.Generate(Common.Deals.YUCHUANG_FLOW);
     }
+    public static String getAppOredera() {
+        return GenerateOrderNo.Generate(Common.Deals.YUCHUANG_FLOW_A);
+    }
 
     public static String getWitOrder() {
         return GenerateOrderNo.Generate("W");

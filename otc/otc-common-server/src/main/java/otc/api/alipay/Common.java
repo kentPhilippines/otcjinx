@@ -143,6 +143,7 @@ public class Common {
 		public static final String ADD_MOUNT = "ADD";//系统加钱订单
 		public static final String DEL_MOUNT = "DEL";//系统减钱订单
 		public static final String YUCHUANG_FLOW = "ANO";//越创流水
+		public static final String YUCHUANG_FLOW_A = "ALI";//越创流水
 		public static final String WITDBR = "BDC";
 		public static final String RECHARGE = "RE-Q";//码商充值订单
 		public static final String RECHARGE_CARD = "RE-C";//码商充值订单

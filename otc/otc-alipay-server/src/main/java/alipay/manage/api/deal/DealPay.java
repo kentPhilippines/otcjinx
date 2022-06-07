@@ -116,7 +116,14 @@ public class DealPay {
     DealOrderApp createDealAppOrder(DealBean dealBean, UserRate userRate) {
         DealOrderApp dealApp = new DealOrderApp();
         dealApp.setAppOrderId(dealBean.getOrderId());
-        dealApp.setOrderId(Number.getAppOreder());
+        if(userRate.getPayTypr().equals("ALIPAY_H_B")){
+            dealApp.setOrderId(Number.getAppOredera());
+        }else{
+            dealApp.setOrderId(Number.getAppOreder());
+        }
+
+
+
         dealApp.setNotify(dealBean.getNotifyUrl());
         dealApp.setOrderAmount(new BigDecimal(dealBean.getAmount()));
         String userId = dealBean.getAppId();
