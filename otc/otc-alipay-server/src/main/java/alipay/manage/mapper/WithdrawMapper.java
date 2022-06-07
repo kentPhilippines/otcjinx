@@ -168,7 +168,7 @@ public interface WithdrawMapper {
     @Select(" ( select * from alipay_withdraw  where   orderStatus = 1    and payStatus = 1 and      macthLock = 0  and  moreMacth = 0  and  macthCount < 1  and     createTime  <= DATE_SUB(NOW(),INTERVAL 10 MINUTE )  )  " + //首次撮合
             " union all " +
             " ( select * from alipay_withdraw  where  orderStatus = 1   and payStatus = 1 and macthLock  = 0  and moreMacth = 0    " +
-            "    macthTime <= DATE_SUB( NOW(),INTERVAL 10 MINUTE )  ) ") //第二次撮合
+            "  and    macthTime <= DATE_SUB( NOW(),INTERVAL 10 MINUTE )  ) ") //第二次撮合
     List<Withdraw> findWaitPush();
 
 
