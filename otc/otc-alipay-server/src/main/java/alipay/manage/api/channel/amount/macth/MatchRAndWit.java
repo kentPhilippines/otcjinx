@@ -3,6 +3,7 @@ package alipay.manage.api.channel.amount.macth;
 
 import alipay.manage.api.config.PayOrderService;
 import alipay.manage.bean.DealOrderApp;
+import alipay.manage.bean.util.ResultDeal;
 import org.springframework.stereotype.Component;
 import otc.result.Result;
 
@@ -10,7 +11,7 @@ import otc.result.Result;
 /**
  * 撮合订单交易
  */
-@Component("MatchRAndWit")
+@Component("MatchRAndWit1111")
 public class MatchRAndWit extends PayOrderService {
 
     /**
@@ -22,10 +23,8 @@ public class MatchRAndWit extends PayOrderService {
 
     @Override
     public Result deal(DealOrderApp dealOrderApp, String channel) throws Exception {
+        return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl( "34.92.251.112:8081/macth?orderId=" + dealOrderApp.getOrderId()));
 
 
-
-
-        return  Result.buildFailMessage("暂无支付资源");
     }
 }
