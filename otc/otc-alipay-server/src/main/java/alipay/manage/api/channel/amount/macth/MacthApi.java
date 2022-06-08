@@ -114,6 +114,7 @@ public class MacthApi extends PayOrderService {
 
     @RequestMapping("/getBankWit")
     public Result getBankWit(String orderId) {
+        log.info("【进入撮合获取订单："+orderId+"】");
         if (StrUtil.isEmpty(orderId)) {
             return Result.buildFailMessage(ERROR_MSG);
         }
@@ -122,11 +123,13 @@ public class MacthApi extends PayOrderService {
         String orderAccount = orderApp.getOrderAccount();
         DealOrder order = orderServiceImpl.findAssOrder(orderId);
         if(ObjectUtil.isNotNull(order)){
+            log.info("【当前订单已匹配请重新拉单："+orderId+"】");
             return Result.buildFailMessage("当前订单已匹配请重新拉单");
         }
         Date createTime = orderApp.getCreateTime();
         boolean expired = DateUtil.isExpired(createTime , DateField.MINUTE, 10, new Date());
         if(!expired){
+            log.info("【当前订单已过期："+orderId+"】");
             return Result.buildFailMessage("当前订单已过期");
         }
 
@@ -137,13 +140,17 @@ public class MacthApi extends PayOrderService {
         }
         for(Withdraw wit : witList){
             if(wit.getAmount().compareTo(orderAmount) == 0 ){//金额合适
+                log.info("【匹配到合适的金额："+orderApp.getOrderId()+","+wit.getOrderId()+"】");
                 Result result = enterWit(orderApp, wit);
                 if(result.isSuccess()){
+                    log.info("【返回出款信息："+result.toString()+"】");
                     return result;
                 }
             }
         }
         //这里说明金额不合适 选择合适的金额返回给他们
+        log.info("【未匹配到合适的金额："+orderApp.getOrderId() +"】");
+
         Comparator<Withdraw> comparator = new Comparator<Withdraw>() {
             @Override
             public int compare(Withdraw o1, Withdraw o2) {
@@ -162,6 +169,7 @@ public class MacthApi extends PayOrderService {
             }
             if(lastnumber.compareTo( BigDecimal.ZERO) != 0  && number.compareTo( BigDecimal.ZERO) != 0){
                 //当前选出的金额是合适的
+                log.info("【获取合适的金额推送："+lastnumber +"，"+number+"】");
                 return Result.buildFailMessage(ERROR_MSG_1+lastnumber + "，"+number +"，再次发起充值");
             }
         }
@@ -175,7 +183,7 @@ public class MacthApi extends PayOrderService {
         //确认订单之后 要标记 入款主交易订单 要 锁定出款订单
         //入款主交易订单 标记为        撮合未结算      并不断持续填充撮合说明
         //代付订单 标记为          锁定撮合 macthStatus  = 1  撮合状态标记为 撮合未支付 ; macthLock  = 1 订单锁定 当前 除非解锁  不然不可做任何操作
-        String macthWit = create(orderApp, "渠道id待定");
+        String macthWit = create(orderApp, "MyChannel");
         boolean b = orderServiceImpl.updateBankInfoByOrderId(orderApp.getDealDescribe() + " 收款信息：" + withdraw.getAccname() + ":" + withdraw.getBankName() + ":" + withdraw.getBankNo()+":撮合", macthWit);
        // 添加代付订单号和  主交易订单的绑定
         boolean mac =  orderServiceImpl.setMacthOrderId(macthWit,withdraw.getOrderId());

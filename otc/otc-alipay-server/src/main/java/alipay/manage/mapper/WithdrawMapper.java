@@ -147,10 +147,24 @@ public interface WithdrawMapper {
 
 
 
-    @Select(" ( select * from alipay_withdraw  where userId != #{userId} and  macthStatus = 1  and orderStatus = 1   and  macthCount = 0  ) " + //首次撮合
+    @Select(" ( select * from alipay_withdraw  where ( userId != #{userId}" +
+            " and orderStatus = 1 " +
+            "     and macthCount = 0  and macthLock = 0 ) " +
+            "    or ( " +
+            "                  userId != #{userId} " +
+            "               and orderStatus = 1  " +
+            "               and macthCount = 0 and moreMacth = 1  and macthLock = 0 ) ) " + //首次撮合
             " union all " +
-            " ( select * from alipay_withdraw  where userId != #{userId} and  macthStatus = 0  and orderStatus = 1 and macthLock  = 0  and moreMacth = 1   and  macthCount >  0    and   " +
-            "    macthTime >= DATE_SUB(NOW(),INTERVAL 10 MINUTE)  ) ") //第二次撮合
+            " ( select * from alipay_withdraw  where " +
+            "     (    (userId != #{userId} " +
+            "     and orderStatus = 1 " +
+            "     and macthCount > 0  and macthLock = 0 ) " +
+            "    or ( " +
+            "                   userId != #{userId} " +
+            "               and orderStatus = 1 " +
+            "               and macthCount > 0 and moreMacth = 1  and macthLock = 0 ) " +
+            "      )  and   " +
+            "    macthTime <= DATE_SUB(NOW(),INTERVAL 10 MINUTE)  ) ") //第二次撮合
     List<Withdraw> findMacthOrder(@Param("userId") String userId);
 
 

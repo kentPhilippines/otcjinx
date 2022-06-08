@@ -7,7 +7,7 @@ server:
       namespace: spring:session
   tomcat :
     url-encoding : UTF-8
-  port: 9033
+  port: 9010
 eureka:
   client:
     serviceUrl:
