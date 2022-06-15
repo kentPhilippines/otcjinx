@@ -119,6 +119,10 @@ public class MacthApi extends PayOrderService {
             return Result.buildFailMessage(ERROR_MSG);
         }
         DealOrderApp orderApp = orderAppService.findOrderByOrderId(orderId);
+        if(ObjectUtil.isNull(orderApp)){
+            log.info("【当前订单不存在："+orderId+"】");
+            return Result.buildFailMessage("当前订单不存在");
+        }
         BigDecimal orderAmount = orderApp.getOrderAmount();
         String orderAccount = orderApp.getOrderAccount();
         DealOrder order = orderServiceImpl.findAssOrder(orderId);
@@ -173,8 +177,18 @@ public class MacthApi extends PayOrderService {
                 return Result.buildFailMessage(ERROR_MSG_1+lastnumber + "，"+number +"，再次发起充值");
             }
         }
+        //这里说明所有的订单都比匹配的金额大 抽取第一第二个金额返回
+        if(witList.size()>2){
+            lastnumber = witList.get(0).getAmount();
+            number = witList.get(1).getAmount();
+            log.info("【获取合适的金额推送："+lastnumber +"，"+number+"】");
+            return Result.buildFailMessage(ERROR_MSG_1+lastnumber + "，"+number +"，再次发起充值");
+        }else if(witList.size()>0){
+            lastnumber = witList.get(0).getAmount();
+            log.info("【获取合适的金额推送："+lastnumber +"】");
+            return Result.buildFailMessage(ERROR_MSG_1+lastnumber +  "，再次发起充值");
+        }
         return Result.buildFailMessage(ERROR_MSG);
-
     }
 
 

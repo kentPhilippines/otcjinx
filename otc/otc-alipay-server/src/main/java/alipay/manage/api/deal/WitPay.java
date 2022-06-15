@@ -265,9 +265,7 @@ public class WitPay extends PayOrderService {
             if (1 == userInfo.getAutoWit()) {
                 deal = super.withdraw(order);
                 // 扣减完成，如果是 后台提现，或者支付宝提现卡住在这里，等待推送
-                if(deal.isSuccess() && order.getRetain1().equals("1")){//后台提现的，直接不推送
-                    return  Result.buildFailMessage("不对后台提现的订单金额自动推送");
-                }
+
                 if (deal.isSuccess()) {
                   boolean pay =   withdrawServiceImpl.isPayStatus(order.getOrderId());
                    /* ThreadUtil.execute(() -> {
@@ -315,6 +313,9 @@ public class WitPay extends PayOrderService {
     public Result   witPush(Withdraw order ){
         ChannelFee channelFee = channelFeeDao.findImpl(order.getWitChannel(), order.getWitType());//缓存已加
         Result withdraw = Result.buildFail();
+        if(order.getRetain1().equals("1")){//后台提现的，直接不推送
+            return  Result.buildFailMessage("不对后台提现的订单金额自动推送");
+        }
         try {
             withdraw = factoryForStrategy.getStrategy(channelFee.getImpl()).withdraw(order);
         } catch (Exception e) {

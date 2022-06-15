@@ -364,7 +364,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public boolean setMacthOrderId(String orderId, String witOrder) {
-        return dealOrderMapper.setMacthOrderId(orderId,orderId);
+        return dealOrderMapper.setMacthOrderId(orderId,witOrder);
     }
 
     @Override

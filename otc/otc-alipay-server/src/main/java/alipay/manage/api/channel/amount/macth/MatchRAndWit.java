@@ -5,6 +5,7 @@ import alipay.manage.api.config.PayOrderService;
 import alipay.manage.bean.DealOrderApp;
 import alipay.manage.bean.util.ResultDeal;
 import org.springframework.stereotype.Component;
+import otc.common.PayApiConstant;
 import otc.result.Result;
 
 
@@ -23,7 +24,7 @@ public class MatchRAndWit extends PayOrderService {
 
     @Override
     public Result deal(DealOrderApp dealOrderApp, String channel) throws Exception {
-        return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl( "34.92.251.112:8081/macth?orderId=" + dealOrderApp.getOrderId()));
+        return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl( PayApiConstant.Notfiy.OTHER_URL+"/macth?orderId=" + dealOrderApp.getOrderId()));
 
 
     }
