@@ -9,7 +9,9 @@ import alipay.manage.service.RunOrderService;
 import alipay.manage.service.WithdrawService;
 import alipay.manage.util.OrderUtil;
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DatePattern;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.log.Log;
@@ -164,8 +166,15 @@ public class OrderTask {
 				log.info("当前订单已处理");
 				continue;
 			}
-			redis.set(KEY_WIT_PUSHWIT + order.getOrderId(), order.getOrderId(), 200); //防止多个任务同时获取一个订单发起结算
-			WitPayImpl.witPush(order);
+			redis.set(KEY_WIT_PUSHWIT + order.getOrderId(), order.getOrderId(), 20); //防止多个任务同时获取一个订单发起结算
+			Integer wating = order.getWatingTime();
+			boolean expired = DateUtil.isExpired(order.getCreateTime() , DateField.SECOND, wating, new Date());
+			if(!expired){
+				log.info("订单推送："+order.getOrderId()+"等待时间："+wating);
+				WitPayImpl.witPush(order);
+			}else{
+				log.info("订单等待中："+order.getOrderId());
+			}
 		}
 
 

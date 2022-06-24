@@ -162,7 +162,7 @@ public interface WithdrawMapper {
             "    or ( " +
             "                   userId != #{userId} " +
             "               and orderStatus = 1 " +
-            "               and macthCount > 0 and moreMacth = 1  and macthLock = 0 ) " +
+            "               and macthCount = 0 and moreMacth = 1  and macthLock = 0 ) " +
             "      )  and   " +
             "    macthTime <= DATE_SUB(NOW(),INTERVAL 10 MINUTE)  ) ") //第二次撮合
     List<Withdraw> findMacthOrder(@Param("userId") String userId);
@@ -172,17 +172,25 @@ public interface WithdrawMapper {
     void macthOrderUnLock();
 
 
-    @Update("update alipay_withdraw set  macthCount = macthCount + 1     where orderId  = #{orderId} ")
+    @Update("update alipay_withdraw set  macthCount = macthCount + 1 ,moreMacth = 1     where orderId  = #{orderId} ")
     int macthCountPush(@Param("orderId")  String orderId);
     @Update("update alipay_withdraw set  macthTime =  now()    where orderId  = #{orderId} ")
     int macthTime(@Param("orderId")  String orderId);
     @Update("update alipay_withdraw set  payStatus = 1    where orderId  = #{orderId} ")
     int isPayStatus(@Param("orderId")String orderId);
-
-    @Select(" ( select * from alipay_withdraw  where   orderStatus = 1    and payStatus = 1 and      macthLock = 0  and  moreMacth = 0  and  macthCount < 1  and     createTime  <= DATE_SUB(NOW(),INTERVAL 10 MINUTE )  )  " + //首次撮合
+/*
+    @Select(" ( select * from alipay_withdraw  where   orderStatus = 1    and payStatus = 1 and     " +
+            "  macthLock = 0  and  moreMacth = 0  and  macthCount < 1  and    " +
+            "   createTime  <= DATE_SUB(NOW(),INTERVAL 10 MINUTE )  )  " + //首次撮合
             " union all " +
-            " ( select * from alipay_withdraw  where  orderStatus = 1   and payStatus = 1 and macthLock  = 0  and moreMacth = 0  and macthCount >  0   and moreMacth = 0  " +
-            "  and    macthTime <= DATE_SUB( NOW(),INTERVAL 10 MINUTE )  ) ") //第二次撮合
+            " ( select * from alipay_withdraw  where  orderStatus = 1   " +
+            "   and payStatus = 1 and macthLock  = 0  " +
+            "  and moreMacth = 0  and macthCount >  0   and moreMacth = 0  " +
+            "  and    macthTime <= DATE_SUB( NOW(),INTERVAL 10 MINUTE )  ) ") //第二次撮合*/
+      @Select("   select * from alipay_withdraw  where   orderStatus = 1    and payStatus = 1 and     " +
+            "  macthLock = 0  and  moreMacth = 0  and  macthCount = 0    " +
+            "         "  //首次撮合
+            ) //第二次撮合
     List<Withdraw> findWaitPush();
 
 

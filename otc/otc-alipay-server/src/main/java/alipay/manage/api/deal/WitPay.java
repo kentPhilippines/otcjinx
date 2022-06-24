@@ -308,15 +308,20 @@ public class WitPay extends PayOrderService {
     }
 
 
-
+    static final String KEY_WIT_PUSHWIT = "TASK:ORDER:PUSHWIT:";
 
     public Result   witPush(Withdraw order ){
+        String orderStatus = order.getOrderStatus();
+        if(orderStatus.equals(Common.Order.Wit.ORDER_STATUS_PUSH)){
+            return Result.buildFailMessage("当前订单已推送");
+        }
         ChannelFee channelFee = channelFeeDao.findImpl(order.getWitChannel(), order.getWitType());//缓存已加
         Result withdraw = Result.buildFail();
         if(order.getRetain1().equals("1")){//后台提现的，直接不推送
             return  Result.buildFailMessage("不对后台提现的订单金额自动推送");
         }
         try {
+            redis.set(KEY_WIT_PUSHWIT + order.getOrderId(), order.getOrderId(), 20); //防止多个任务同时获取一个订单发起结算
             withdraw = factoryForStrategy.getStrategy(channelFee.getImpl()).withdraw(order);
         } catch (Exception e) {
             boolean b = withdrawServiceImpl.updatePush(order.getOrderId());

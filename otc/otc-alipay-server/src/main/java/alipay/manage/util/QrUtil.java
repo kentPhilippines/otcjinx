@@ -162,7 +162,7 @@ public class QrUtil {
 				Date parse = formatter.parse(subSuf);
 				Object object = hmget.get(obj.toString());// 当前金额
 				if (!DateUtil.isExpired(parse, DateField.SECOND,
-						Integer.valueOf(configServiceClientImpl.getConfig(ConfigFile.ALIPAY, ConfigFile.Alipay.FREEZE_PLAIN_VIRTUAL).getResult().toString()), new Date())) {
+						Integer.valueOf(600), new Date())) {
 					redisUtil.hdel(userId, obj.toString());
 				}
 			}

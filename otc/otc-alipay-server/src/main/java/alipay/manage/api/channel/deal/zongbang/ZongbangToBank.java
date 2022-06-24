@@ -75,7 +75,7 @@ public class ZongbangToBank extends PayOrderService {
                 getChannelInfo(channel, dealOrderApp.getRetain1()), dealOrderApp, payInfo
         );
         if (result.isSuccess()) {
-            return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(result.getResult()));
+            return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrlAndPayInfo(result.getResult(),result.getMessage()));
         } else {
             orderEr(dealOrderApp, "错误消息：" + result.getMessage());
             return result;

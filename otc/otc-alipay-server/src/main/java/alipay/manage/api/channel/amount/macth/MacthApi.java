@@ -225,7 +225,7 @@ public class MacthApi extends PayOrderService {
     public Result witNotfy(String orderId, String ip) {
         log.info("【进入代付回调抽象类，当前代付成功订单号：" + orderId + "】");
         Withdraw wit = withdrawServiceImpl.findOrderId(orderId);
-        if (!wit.getOrderStatus().toString().equals(Common.Order.Wit.ORDER_STATUS_PUSH)) {
+        if (!wit.getOrderStatus().toString().equals(Common.Order.Wit.ORDER_STATUS_YU)) {
             log.info("【 当前代付回调重复，当前代付订单号：" + orderId + "】");
             return Result.buildFailMessage("当前代付回调重复");
         }

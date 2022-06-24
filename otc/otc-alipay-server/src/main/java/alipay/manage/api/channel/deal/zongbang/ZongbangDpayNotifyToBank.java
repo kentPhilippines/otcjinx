@@ -56,9 +56,9 @@ public class ZongbangDpayNotifyToBank extends NotfiyChannel {
                 Result result = witNotfy(apporderid, clientIP);
                 if (result.isSuccess()) {
                     return "success";
-                }else {
-                    witNotSuccess(apporderid);
                 }
+            }else {
+                witNotSuccess(apporderid);
             }
         } else {
             return "error";

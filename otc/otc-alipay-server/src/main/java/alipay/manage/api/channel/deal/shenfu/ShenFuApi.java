@@ -41,12 +41,13 @@ public class ShenFuApi {
 }
 
 /**
- * // "bank_name":"建设银行",
- * // "card_no":"6217003110033402130",
- * // "card_user":"农洪共",
- * // "money_order":"1000.00",
- * // "no_order":"C20210212151359978932599",
- * // "oid_partner":"202102101152580034",
+ * // "bank_name":"建设银行",          银行名称
+ * // "card_no":"6217003110033402130",      卡号
+ * // "card_user":"农洪共",                 持卡人姓名
+ * // "money_order":"1000.00",              支付金额
+ * // "address":"北京朝阳102支行",              支行地址  如果为null 则查询不到支行地址
+ * // "no_order":"C20210212151359978932599",    交易订单号
+ * // "oid_partner":"202102101152580034",           交易订单号
  */
 class ShenFuBankInfo {
     private String bank_name;
