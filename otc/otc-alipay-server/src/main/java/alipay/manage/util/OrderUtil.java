@@ -2,10 +2,7 @@ package alipay.manage.util;
 
 import alipay.manage.bean.*;
 import alipay.manage.mapper.*;
-import alipay.manage.service.CorrelationService;
-import alipay.manage.service.OrderService;
-import alipay.manage.service.UserInfoService;
-import alipay.manage.service.WithdrawService;
+import alipay.manage.service.*;
 import alipay.manage.util.amount.AmountPublic;
 import alipay.manage.util.amount.AmountRunUtil;
 import alipay.manage.util.bankcardUtil.BankAccountUtil;
@@ -30,6 +27,7 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.List;
 import java.util.concurrent.Future;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -776,6 +774,7 @@ public class OrderUtil {
 
     /**
      * <p>代付失败</p>
+     *  由根据渠道退款修正为 根据  资金流水扣款
      *
      * @return
      */
@@ -784,6 +783,7 @@ public class OrderUtil {
          * ###########################
          * 代付失败给该用户退钱
          */
+       /*
         Withdraw witd = wit;
         String userId = wit.getUserId();
         if (wit.getOrderStatus().equals(Common.Order.Wit.ORDER_STATUS_SU)) {
@@ -831,7 +831,10 @@ public class OrderUtil {
                 });
         if(!addFeeTransaction.isSuccess()){
             return  addFeeTransaction;
-        }
+        }*/
+
+
+        backOrder(wit,ip);
         notifyUtil.wit(wit.getOrderId());
         return Result.buildSuccessMessage("代付金额解冻成功");
     }
@@ -1044,6 +1047,60 @@ public class OrderUtil {
         });
         if(!execute.isSuccess()){
             return  execute;
+        }
+        return Result.buildSuccessMessage("渠道退款成功");
+    }
+
+    @Autowired
+    private RunOrderService runOrderServiceImpl;
+
+    private static final String AMOUNT_TYPE_R = "0";//对于当前账户来说是   收入
+    public Result backOrder(Withdraw order,  String clientIP) {
+        log.info("【进入卡商代付订单回滚方法，当前卡商代付订单号："+order.getOrderId()+"】");
+        /**
+         * 1，先查看是否有结算流水
+         * 1，如果有结算，按照结算流水退回，订单失败即可
+         * 1，如果没有结算，直接将订单失败
+         */
+        List<RunOrder> assOrder = runOrderServiceImpl.findAssOrder(order.getOrderId());
+        for(RunOrder run : assOrder){
+            if(run.getRunOrderType()==40){//流水类型为  卡商资金退回
+                return Result.buildSuccessMessage("渠道退款成功");
+            }
+        }
+        int a = withdrawDao.updataOrderStatus1(order.getOrderId(), order.getApproval(), order.getComment(), Common.Order.Wit.ORDER_STATUS_ER);
+
+        if(a == 0 ){
+            return Result.buildSuccessMessage("渠道退款异常");
+        }
+        for(RunOrder run    : assOrder){
+            UserFund userFund = new UserFund();
+            userFund.setUserId(run.getOrderAccount());
+            run.setAmount(run.getAmount().compareTo(BigDecimal.ZERO) > 1 ? run.getAmount()  : run.getAmount().multiply(new BigDecimal(-1)));
+            String amountType = run.getAmountType();
+                 if(AMOUNT_TYPE_R.equals(amountType)){//当前流水为收入流水 ， 现在我们要处理该笔流水为 支出
+                    Result result1 = amountPublic.deleteAmount(userFund, run.getAmount(), run.getOrderId());
+                    if (!result1.isSuccess()) {
+                        log.info("【当前单笔资金退回出错，请详细查看原因，当前代付订单号：" + order.getOrderId() + "】");
+                        return result1;
+                    }
+                    Result result2 = amountRunUtil.deleteBackBank(userFund.getUserId(),order.getOrderId(),run.getAmount(),clientIP);
+                    if (!result2.isSuccess()) {
+                        log.info("【当前单笔资金退回出错，请详细查看原因，当前代付订单号：" + order.getOrderId() + "】");
+                        return result2;
+                    }
+                }else{//当前流水为 收入流水 现在我们处理该笔流水为  收入
+                    Result result1 = amountPublic.addAmountAdd(userFund, run.getAmount(), run.getOrderId());
+                    if (!result1.isSuccess()) {
+                        log.info("【当前单笔资金退回出错，请详细查看原因，当前订单号：" + order.getOrderId() + "】");
+                        return result1;
+                    }
+                    Result result2 = amountRunUtil.addBackBank(userFund.getUserId(),order.getOrderId(),run.getAmount(),clientIP);
+                    if (!result2.isSuccess()) {
+                        log.info("【当前单笔资金退回出错，请详细查看原因，当前代付订单号：" + order.getOrderId() + "】");
+                        return result2;
+                    }
+                }
         }
         return Result.buildSuccessMessage("渠道退款成功");
     }
