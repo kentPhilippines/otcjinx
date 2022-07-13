@@ -224,13 +224,13 @@ public class witTest {
 
 
 		Deal deal = new Deal();
-		deal.setAmount(202+"");//金额
+		deal.setAmount(500+"");//金额
 		deal.setAppId(userid);//商户号
 		deal.setApplyDate(d.format(new Date()));
 		deal.setNotifyUrl("http://starpay168.com:5055");
 		deal.setPageUrl("http://starpay168.com:5055");
 		deal.setOrderId(IdUtil.objectId());
-		deal.setPassCode("ALIPAY_H_B");
+		deal.setPassCode("NewXiangyunPay");
 		deal.setSubject("订单交易");
 		deal.setUserid("张三");  //to userid
 		Map<String, Object> objectToMap = MapUtil.objectToMap(deal);
@@ -249,7 +249,7 @@ public class witTest {
 		postMap.put("cipherText", publicEncrypt);
 		postMap.put("userId", userid);
 		System.out.println("请求参数：" + postMap.toString());
-		String post = HttpUtil.post("http://34.92.251.112:5055/api-alipay/deal/pay", postMap);
+		String post = HttpUtil.post("http://localhost:9010/deal/pay", postMap);
 		System.out.println("相应结果集：" + post);
 	}
 
