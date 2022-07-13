@@ -127,7 +127,7 @@ public class ZongbangDpayToBank extends PayOrderService {
             }
             return "";
         } catch (Exception e) {
-            log.error("请求刚盾代付异常", e);
+            log.error("请求代付异常", e);
             withdrawErMsg(wit, "代付异常,网络异常", wit.getRetain2());
             return "";
         }

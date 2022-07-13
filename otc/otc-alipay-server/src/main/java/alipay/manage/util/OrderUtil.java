@@ -513,7 +513,7 @@ public class OrderUtil {
         UserFund channel = new UserFund();
         channel.setUserId(wit.getChennelId());
         channelWitSu(wit.getOrderId(), wit, wit.getRetain2(), channel);
-        agentDpayChannel(wit, wit.getRetain2(), wit.getWitType(), false);//新加代付代理商结算
+      //  agentDpayChannel(wit, wit.getRetain2(), wit.getWitType(), false);//新加代付代理商结算
         notifyUtil.wit(wit.getOrderId());//通知
         UserFund userfund = new UserFund();
         userfund.setUserId(wit.getUserId());
