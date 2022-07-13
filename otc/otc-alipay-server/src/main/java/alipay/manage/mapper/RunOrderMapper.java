@@ -44,6 +44,6 @@ public interface RunOrderMapper {
      * @param associatedId
      * @return
      */
-    @Select("select orderId , associatedId  from alipay_run_order  where associatedId = #{associatedId}")
+    @Select("select orderId , associatedId , runOrderType ,amountType , orderAccount , amount  from alipay_run_order  where associatedId = #{associatedId}")
     List<RunOrder> findAssOrder(@Param("associatedId") String associatedId);
 }

@@ -114,7 +114,8 @@ public class AmountRunUtil {
     private static final Integer PROFIT_AMOUNT_AGENT_BANK_R_NUMBER = 36;
     private static final String PROFIT_AMOUNT_AGENT_BANK_W = "PROFIT_AMOUNT_AGENT_BANK_W";
     private static final Integer PROFIT_AMOUNT_AGENT_BANK_W_NUMBER = 37;
-
+    public static final Integer BANK_CARD_BACK_NUMBER = 40;//卡商流水退回
+    private static final String BANK_CARD_BACK = "BANK_CARD_BACK";
     /**
      * <p>码商代付流水生成</p>
      *
@@ -603,6 +604,9 @@ public class AmountRunUtil {
             case PROFIT_AMOUNT_AGENT_BANK_W:
                 runOrderType = PROFIT_AMOUNT_AGENT_BANK_W_NUMBER;
                 break;
+            case BANK_CARD_BACK:
+                runOrderType = BANK_CARD_BACK_NUMBER;
+                break;
             default:
                 break;
         }
@@ -696,6 +700,16 @@ public class AmountRunUtil {
             return add;
         }
         Result add = add(PROFIT_AMOUNT_AGENT_BANK_W, userId, orderId, amount, ip, "出款，代理分润结算", flag ? RUNTYPE_ARTIFICIAL : RUNTYPE_NATURAL);
+        return add;
+    }
+
+
+    public Result addBackBank(String username,String orderId,BigDecimal amount,String ip) {
+        Result add = add(BANK_CARD_BACK, username, orderId, amount, ip, "代付退款，资金退回：" + amount, RUNTYPE_ARTIFICIAL);
+        return add;
+    }
+    public Result deleteBackBank(String username,String orderId,BigDecimal amount,String ip) {
+        Result add = delete(BANK_CARD_BACK, username, orderId, amount, ip, "代付退款，资金退回：" + amount, RUNTYPE_ARTIFICIAL);
         return add;
     }
 }

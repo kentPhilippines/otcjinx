@@ -95,6 +95,7 @@ public class DouDouWit  extends PayOrderService {
         JSONObject resultJson = JSONUtil.parseObj(rString);
         if(resultJson.getInt("retcode")==0)
         {
+            witComment(wit.getOrderId());
             return WIT_RESULT;
         }
 

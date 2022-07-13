@@ -146,12 +146,12 @@ public class ZongbangToBank extends PayOrderService {
                     cardmap.put("oid_partner", orderId);
                     cardmap.put("address", address);
                     orderServiceImpl.updateBankInfoByOrderId(payInfo + " 收款信息：" + name + ":" + bankname + ":" + bankno, orderId);
-                    redis.hmset(MARS + orderId, cardmap, 600000);
+                    redis.hmset(MARS + orderId, cardmap, 600);
                 } catch (Exception e) {
                     log.error("众邦手动异常", e);
                     return Result.buildSuccessResult(returnUrl);
                 }
-                return Result.buildSuccessResult(pay, PayApiConstant.Notfiy.OTHER_URL + "/pay?orderId=" + orderId + "&type=" + channelInfo.getChannelType());
+                return Result.buildSuccessResult(pay, PayApiConstant.Notfiy.OTHER_URL + "/pay?orderId=" + orderId + "&type=203");
             } else {
                 orderAppEr(dealOrderApp, jsonObject.getStr("message"));
                 return Result.buildFailMessage(jsonObject.getStr("message"));
