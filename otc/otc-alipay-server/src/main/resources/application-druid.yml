@@ -40,9 +40,9 @@ spring:
       idle-timeout: 60000
       connection-init-sql: SET NAMES utf8mb4
   redis:
-    host: 34.150.94.93
+    host: 127.0.0.1
     port: 6379
-    password: redis123456
+    password: will1234
     timeout: 5000
     database: 1
     pool:

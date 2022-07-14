@@ -22,7 +22,7 @@ import java.util.Map;
 public class witTest {
 	public static void main(String[] args) {
 		 for (int a = 0; a <=0; a++) {
-		   new witTest().deal();
+		   //new witTest().deal();
 		}
 		//find();
 /*
@@ -49,8 +49,8 @@ public class witTest {
 
 
 
-		for (int a = 0; a <= 10; a++) {
-		// 	new witTest().wit(userid2, key2, publickey2);
+		for (int a = 0; a <= 0; a++) {
+		 	new witTest().wit(userid, key, publickey);
 		}
 
 		//USDT测试账号
@@ -144,7 +144,7 @@ public class witTest {
 		objectToMap.put("appid", userid);
 		objectToMap.put("apporderid", StrUtil.uuid());
 		objectToMap.put("ordertime", d.format(new Date()) + "");
-		objectToMap.put("amount", amount);
+		objectToMap.put("amount", "100");
 		objectToMap.put("acctno", "633982938475489382" + RandomUtil.randomLong(1, 10));
 		objectToMap.put("acctname", "张三");
 		objectToMap.put("bankcode", "ICBC");
@@ -164,7 +164,7 @@ public class witTest {
 		postMap.put("userId", userid);
 		System.out.println("请求参数：" + postMap.toString());
 		long l1 = System.currentTimeMillis();
-		String post = HttpUtil.post("http://34.92.251.112:5055/api-alipay//deal/wit", postMap);
+		String post = HttpUtil.post("http://localhost:9010/deal/wit", postMap);
 		long l = System.currentTimeMillis();
 		long a = l - l1;
 		System.out.println("相应结果集：" + post + " 处理时间：" + a);
