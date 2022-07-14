@@ -171,6 +171,7 @@ public class BankTypeUtil {
 		BANK_MAP.put("SPABANK", BankEnum.SPABANK.getBankId());
 		BANK_MAP.put("SPDB", BankEnum.SPDB.getBankId());
 		BANK_MAP.put("HXBANK", BankEnum.HXBANK.getBankId());
+		BANK_MAP.put("HURCB", BankEnum.HURCB.getBankId());
 
 		BANK_MAP_NAME.put("QDCCB", BankEnum.QDCCB.getBankNameCn());
 		BANK_MAP_NAME.put("ABC", BankEnum.ABC.getBankNameCn());
@@ -211,6 +212,7 @@ public class BankTypeUtil {
 		BANK_MAP_NAME.put("CGNB", BankEnum.CGNB.getBankNameCn());
 		BANK_MAP_NAME.put("CIB", BankEnum.CIB.getBankNameCn());
 		BANK_MAP_NAME.put("SHBANK", BankEnum.SHBANK.getBankNameCn());
+		BANK_MAP_NAME.put("HURCB", BankEnum.HURCB.getBankNameCn());
 
 
 
