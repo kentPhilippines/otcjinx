@@ -16,12 +16,13 @@ import java.util.UUID;
 public class NewXiangyunPayTest {
     public static void main(String[] args) {
         NewXiangyunPayTest newXiangyunPayTest = new NewXiangyunPayTest();
-        newXiangyunPayTest.testwit();
+        newXiangyunPayTest.test();
     }
     public void test()
     {
         String key ="MLPK0BBPcZiuqEcQfhdhDkl2ReVcckACsZZBOg6LbUUA3uDF28yV0jij4jdBBcwt";
         String payurl = "https://api.topmav.com/pay/unifiedorder";
+        String payurl1 = "http://localhost:8081/forwardForAll?url="+payurl;
         String totalAmt = "500"; // 金额
         String payType = "bankcard"; // '银行编码
         String storeCode = "1000517";// 商户id
@@ -45,7 +46,7 @@ public class NewXiangyunPayTest {
         param.add("sign", sign);
 
         RestTemplate restTemplate = new RestTemplate();
-        String rString = restTemplate.postForObject(payurl, param.toSingleValueMap(), String.class);
+        String rString = restTemplate.postForObject(payurl1, param.toSingleValueMap(), String.class);
         System.out.println(rString);
     }
     public void testwit()
