@@ -71,7 +71,7 @@ public class NewXiangyunWit extends PayOrderService {
     private String createDpay(String notify, Withdraw wit, ChannelInfo channelInfo) {
 
         String key =channelInfo.getChannelPassword();
-        String payurl = channelInfo.getDealurl();
+        String payurl = channelInfo.getWitUrl();
         String transAmt = wit.getAmount().intValue()+""; // 金额
         String storeCode = channelInfo.getChannelAppId();// 商户id
         String storeOrderNo = wit.getOrderId();// 20位订单号 时间戳+6位随机字符串组成
