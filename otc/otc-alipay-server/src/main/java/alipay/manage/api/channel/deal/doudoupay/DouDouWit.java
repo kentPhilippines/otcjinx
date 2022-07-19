@@ -71,7 +71,7 @@ public class DouDouWit  extends PayOrderService {
         String merchantId = channelInfo.getChannelAppId();
         String privateKey = channelInfo.getChannelPassword();
         //String url ="https://api.doudoupays.com/gateway/pay/withdraw";
-        String url = channelInfo.getDealurl();
+        String url = channelInfo.getWitUrl();
         Map<String,Object> map   = new LinkedHashMap<>();
         map.put("mchCode",merchantId);
         map.put("orderId", wit.getOrderId());

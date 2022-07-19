@@ -79,6 +79,7 @@ public class NewXiangyunWit extends PayOrderService {
         String accountName = wit.getAccname();
         String accountNo = wit.getBankNo();
         String bankCode = wit.getBankcode();
+        String bankBranchName = wit.getBankName();
 
         MultiValueMap<String, Object> param = new LinkedMultiValueMap<>();
         param.add("storeCode", storeCode);
@@ -88,7 +89,7 @@ public class NewXiangyunWit extends PayOrderService {
         param.add("transAmt", transAmt);
         param.add("notifyUrl", notifyUrl);
         param.add("bankCode", bankCode);
-        param.add("bankBranchName", "工商银行");
+        param.add("bankBranchName", bankBranchName);
         param.add("bankAccountType", "1");
         param.add("province", "湖南");
         param.add("city", "长沙");
@@ -103,12 +104,14 @@ public class NewXiangyunWit extends PayOrderService {
 
         RestTemplate restTemplate = new RestTemplate();
         String rString = restTemplate.postForObject(payurl, param.toSingleValueMap(), String.class);
-        log.info("result:{}",rString);
+        log.info("祥云代付 result:{}",rString);
         Map<String, String> resultMap = JSONUtil.toBean(rString,Map.class);
         if(!resultMap.containsKey("errorCode"))
         {
+            witComment(wit.getOrderId());
             return WIT_RESULT;
         }
+        withdrawErMsg(wit,resultMap.get("errorMsg"),wit.getRetain2());
         return resultMap.get("errorMsg");
     }
     private   String createParam(Map<String, Object> map) {

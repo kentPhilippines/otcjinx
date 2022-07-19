@@ -76,6 +76,10 @@ public class NotifyUtil {
         map.put("status", wit.getOrderStatus());//0 预下单    1处理中  2 成功  3失败
         map.put("amount", wit.getAmount());
         map.put("appid", wit.getUserId());
+       /* if("3".equals(wit.getOrderStatus())){
+            log.info("失败订单不回调，当前订单号："+wit.getOrderId());
+                return;
+        }*/
         String sign = CheckUtils.getSign(map, userInfo.getPayPasword());
         map.put("sign", sign);
         ThreadUtil.execute(() -> {

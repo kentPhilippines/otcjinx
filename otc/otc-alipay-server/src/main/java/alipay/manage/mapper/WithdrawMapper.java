@@ -158,7 +158,7 @@ public interface WithdrawMapper {
             " ( select * from alipay_withdraw  where " +
             "     (    (userId != #{userId} " +
             "     and orderStatus = 1 " +
-            "     and macthCount > 0  and macthLock = 0 ) " +
+            "     and macthCount = 0  and macthLock = 0 ) " +
             "    or ( " +
             "                   userId != #{userId} " +
             "               and orderStatus = 1 " +
