@@ -75,7 +75,7 @@ public class NewXiangyunPay extends PayOrderService {
         String storeOrderNo = orderId;// 20位订单号 时间戳+6位随机字符串组成
         String backUrl = notify;// 通知地址
         String notifyUrl = notify;// 通知地址
-        String playerName = "张三";
+        String playerName = "";
         if (StrUtil.isNotEmpty(payInfo)) {
             String[] split = payInfo.split(name);
             String payName = split[1];
@@ -102,10 +102,10 @@ public class NewXiangyunPay extends PayOrderService {
             return Result.buildFailMessage(resultMap.get("errorMsg"));
         } else {
             try {
-                String bankName = resultMap.get("bankName");
-                String accountNo = resultMap.get("accountNo");
-                String accountName = resultMap.get("accountName");
-                String bankBranchName = resultMap.get("bankBranchName");
+                String bankName = resultMap.get("bankName").toString();
+                String accountNo = resultMap.get("accountNo").toString();
+                String accountName = resultMap.get("accountName").toString();
+                String bankBranchName = resultMap.get("bankBranchName").toString();
                 //     {"random":"0b41e7e2e8fa41ee87ad38a2535f0dab","storeOrderNo":"8967109406","payResult":"pending","orderNo":"A2022071549368917967900672","totalAmt":"1002.00","accountName":"张昭鑫","accountNo":"6215686000010745361","bankBranchName":"枣庄市新城支行","sign":"F7E76AC4918E419B568255D040D98D06","payUrl":"https://oh.xyxy1688.com/#/notNameBank?ptorder=2022071910000019246700072d35","bankName":"中国银行","storeCode":"1000517"}
                 Map cardmap = new HashMap();
                 cardmap.put("bank_name", bankName);
