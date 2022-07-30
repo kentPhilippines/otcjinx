@@ -49,6 +49,7 @@ public class NewXiangyunPayNotify extends NotfiyChannel {
         String clientIP = HttpUtil.getClientIP(request);
         Map<String,String> ipmap = new HashMap<>();
         ipmap.put("34.146.12.134","34.146.12.134");
+        ipmap.put("35.200.124.233","35.200.124.233");
         String s = ipmap.get(clientIP);
         if(StrUtil.isEmpty(s)){
             log.info("【当前回调ip为：" + clientIP + "，固定IP登记为：" + ipmap.toString()+ "】");

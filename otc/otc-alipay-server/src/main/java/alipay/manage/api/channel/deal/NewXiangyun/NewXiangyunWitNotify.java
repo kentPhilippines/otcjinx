@@ -43,7 +43,7 @@ public class NewXiangyunWitNotify extends NotfiyChannel {
         log.info("【当前回调ip为：" + clientIP + "】");
         Map<String,String> ipmap = new HashMap<>();
         ipmap.put("34.146.12.134","34.146.12.134");
-
+        ipmap.put("35.200.124.233","35.200.124.233");
         Object object = ipmap.get(clientIP);
         if (ObjectUtil.isNull(object)) {
             log.info("【当前回调ip为：" + clientIP + "，固定IP登记为：" + ipmap.toString() + "】");
