@@ -113,9 +113,9 @@ public class WitPay extends PayOrderService {
             exceptionOrderServiceImpl.addWitOrder(wit, "用户报错：通道实体不存在，费率配置错误；处理方法：请检查商户提交的通道编码，反复确认", HttpUtil.getClientIP(request));
             return Result.buildFailMessage("通道实体不存在，费率配置错误");
         }
-        String bankcode = BankTypeUtil.getBank(wit.getBankcode());
-        /*AlipayBankConfig alipayBankConfig = Optional.ofNullable(bankConfigService.selectAlipayBankConfig(wit.getBankcode())).orElseGet(()-> new AlipayBankConfig());
-        String bankcode = alipayBankConfig.getAlias1() ;*/
+        //String bankcode = BankTypeUtil.getBank(wit.getBankcode());
+        AlipayBankConfig alipayBankConfig = Optional.ofNullable(bankConfigService.selectAlipayBankConfig(wit.getBankcode())).orElseGet(()-> new AlipayBankConfig());
+        String bankcode = alipayBankConfig.getAlias1() ;
         if (StrUtil.isBlank(bankcode)) {
             log.info("【当前银行不支持代付，当前商户：" + wit.getAppid() + "，当前订单号:" + wit.getApporderid() + "】");
             exceptionOrderServiceImpl.addWitOrder(wit, "用户报错：当前银行不支持合， 银行code值错误；处理方法：请商户检查提交的银行卡code是否正确，商户code值为：" + bankcode, HttpUtil.getClientIP(request));
@@ -198,9 +198,9 @@ public class WitPay extends PayOrderService {
         witb.setAccname(wit.getAcctname());
         bankName = wit.getBankName();
         if (StrUtil.isBlank(bankName)) {
-            /*AlipayBankConfig alipayBankConfig = Optional.ofNullable(bankConfigService.selectAlipayBankConfig(wit.getBankcode())).orElseGet(()-> new AlipayBankConfig());
-            bankName = alipayBankConfig.getBankName() ;*/
-            bankName = BankTypeUtil.getBankName(wit.getBankcode());
+            AlipayBankConfig alipayBankConfig = Optional.ofNullable(bankConfigService.selectAlipayBankConfig(wit.getBankcode())).orElseGet(()-> new AlipayBankConfig());
+            bankName = alipayBankConfig.getBankName() ;
+            //bankName = BankTypeUtil.getBankName(wit.getBankcode());
         }
         witb.setBankName(bankName);
         witb.setWithdrawType(Common.Order.Wit.WIT_ACC);
