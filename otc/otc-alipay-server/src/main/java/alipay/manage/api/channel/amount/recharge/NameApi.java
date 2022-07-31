@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.List;
 
-@RequestMapping(PayApiConstant.Alipay.ORDER_API + "/USDTInfo")
+@RequestMapping(PayApiConstant.Alipay.ORDER_API + "/NameApi")
 @RestController
 public class NameApi {
     Logger log = LoggerFactory.getLogger(NameApi.class);
@@ -43,6 +43,8 @@ public class NameApi {
     /**
      * 根据订单号 产品类型 生成订单号并返回 银行卡信息
      */
+
+    @RequestMapping("/deal")
     public Result deal(String orderId,String name, HttpServletRequest request){
         log.info("当前订单号为空，请求ip为："+ HttpUtil.getClientIP(request));
         if(StrUtil.isEmpty(orderId)){
