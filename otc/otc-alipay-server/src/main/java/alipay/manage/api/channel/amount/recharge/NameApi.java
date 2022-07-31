@@ -70,6 +70,9 @@ public class NameApi {
             BigDecimal bigDecimal =  orderApp.getOrderAmount() ;
             UserInfo channel = userInfoMapper.findUserByUserId(rate.getChannelId());
             channelFee = channelFeeDao.findImpl(rate.getChannelId(), rate.getPayTypr());
+            if(  channelFee.getImpl().equals("NameInput")){
+                continue;
+            }
             if (Common.Order.DEAL_OFF.equals(channel.getReceiveOrderState())) {
                 log.info("渠道关闭，当前订单:"+orderApp.getOrderId()+"，当前渠道："+channel.getUserName()+"，拉单支付金额："+bigDecimal);
                 continue;
