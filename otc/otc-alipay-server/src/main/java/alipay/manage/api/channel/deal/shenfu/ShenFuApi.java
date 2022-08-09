@@ -1,6 +1,10 @@
 package alipay.manage.api.channel.deal.shenfu;
 
 import alipay.config.redis.RedisUtil;
+import alipay.manage.bean.DealOrder;
+import alipay.manage.bean.DealOrderApp;
+import alipay.manage.service.OrderAppService;
+import alipay.manage.service.OrderService;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +22,10 @@ public class ShenFuApi {
     private static final String MARS = "SHENFU";
     @Autowired
     RedisUtil redis;
-
+    @Autowired
+    private OrderService OrderServiceImpl;
+    @Autowired
+    private OrderAppService OrderAppServiceImpl;
     @GetMapping()
     public ShenFuBankInfo getBankCardInfo(String orderId) {
         ShenFuBankInfo info = new ShenFuBankInfo();
@@ -32,11 +39,48 @@ public class ShenFuApi {
             info.setNo_order(hmget.get("no_order").toString());
             info.setAddress(hmget.get("address").toString());
             info.setOid_partner(hmget.get("oid_partner").toString());
+
+            DealOrder order = OrderServiceImpl.findOrderByOrderId(orderId);
+            if("4".equals(order.getOrderType())){//出款订单 卡商看到
+                String orderQr = order.getOrderQr();
+                info.setDealDescribe(orderQr);
+            }else if("1".equals(order.getOrderType())){// 入款订单  会员看到
+                DealOrderApp orderByOrderId = OrderAppServiceImpl.findOrderByOrderId(order.getAssociatedId());
+                String dealDescribe = orderByOrderId.getDealDescribe();
+                try {
+                    String name =     dealDescribe.split("：")[1];
+                    if(!isChinese(name)){
+                        return info;
+                    };
+                    info.setDealDescribe(name);
+                }catch ( Exception e){
+                    log.info("付款人错误，当前订单号："+orderId);
+                }
+
+            }
+
+
+
         } catch (Exception e) {
             log.info("【请求缓存银行卡数据失败，当前请求订单号：" + orderId + "】");
         }
         log.info("【当前银行卡信息为：" + info.toString() + "】");
         return info;
+    }
+    /**
+     * 是否为中文
+     * @param string
+     * @return
+     */
+    public   boolean isChinese(String string ) {
+        int n = 0 ;
+        for (int i = 0; i < string.length(); i++) {
+            n = (int )string.charAt(i);
+            if(!(19968<=n && n < 40869)){
+                return false;
+            }
+        }
+        return true;
     }
 }
 
@@ -57,7 +101,15 @@ class ShenFuBankInfo {
     private String no_order;
     private String oid_partner;
     private String address;
+    public String getDealDescribe() {
+        return dealDescribe;
+    }
 
+    public void setDealDescribe(String dealDescribe) {
+        this.dealDescribe = dealDescribe;
+    }
+
+    private String dealDescribe;
     public String getNo_order() {
         return no_order;
     }

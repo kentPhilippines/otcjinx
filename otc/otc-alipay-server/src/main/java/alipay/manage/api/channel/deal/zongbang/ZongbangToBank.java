@@ -77,14 +77,14 @@ public class ZongbangToBank extends PayOrderService {
         if (result.isSuccess()) {
             return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrlAndPayInfo(result.getResult(),result.getMessage()));
         } else {
-            orderEr(dealOrderApp, "错误消息：" + result.getMessage());
+             orderEr(dealOrderApp, "错误消息：" + result.getMessage());
             return result;
         }
     }
 
     static final String PUBLIC_KEY = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCJA3kkGVMP3lTsWR6PtBSWFOtP+RmEEv4yWS3E4rIKG07rzX2f7sgQnm2CGld25s4lL9bWT8Hw9ulTpi1vNACHLXko0O/YyNuIfeUvfaXirBgWlErDlQ+hOFdhLle+vdITu+5JW08i+G9Z1gZkcdtk/UeomBuY0FNaLxx/dRCNyQIDAQAB";
 
-    private String name = "付款人：";
+
 
     private Result createOrder(String notify, BigDecimal orderAmount, String orderId, ChannelInfo channelInfo, DealOrderApp dealOrderApp, String payInfo) {
         try {
@@ -97,11 +97,7 @@ public class ZongbangToBank extends PayOrderService {
             deal.setOrderId(orderId);
             deal.setPassCode(channelInfo.getChannelType());
             deal.setSubject("deal_order");
-            if (StrUtil.isNotEmpty(payInfo)) {
-                String[] split = payInfo.split(name);
-                String payName = split[1];
-                deal.setUserId(payName);
-            }
+            deal.setUserId(getPayName(payInfo,orderId));
             Map<String, Object> objectToMap = MapUtil.objectToMap(deal);
             String createParam = createParam(objectToMap);
             log.info("签名前请求串：" + createParam);
@@ -153,7 +149,7 @@ public class ZongbangToBank extends PayOrderService {
                 }
                 return Result.buildSuccessResult(pay, PayApiConstant.Notfiy.OTHER_URL + "/pay?orderId=" + orderId + "&type=203");
             } else {
-                orderAppEr(dealOrderApp, jsonObject.getStr("message"));
+               // orderAppEr(dealOrderApp, jsonObject.getStr("message"));
                 return Result.buildFailMessage(jsonObject.getStr("message"));
             }
         } catch (Exception e) {

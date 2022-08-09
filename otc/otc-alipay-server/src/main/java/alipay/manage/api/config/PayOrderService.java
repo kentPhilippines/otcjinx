@@ -1,5 +1,6 @@
 package alipay.manage.api.config;
 
+import alipay.config.redis.RedisUtil;
 import alipay.manage.api.channel.util.ChannelInfo;
 import alipay.manage.bean.*;
 import alipay.manage.mapper.ChannelFeeMapper;
@@ -57,7 +58,7 @@ public abstract class PayOrderService implements PayService {
     private OrderUtil orderUtilImpl;
   @Autowired
     private WithdrawService withdrawServiceImpl;
-
+@Autowired private RedisUtil redisUtil;
     @Override
     public Result deal(DealOrderApp dealOrderApp, String channel) throws Exception {
 		if (Common.Deal.PRODUCT_ALIPAY_SCAN.equals(channel)) {
@@ -74,7 +75,8 @@ public abstract class PayOrderService implements PayService {
 		if (ObjectUtil.isNotNull(dealOrder)) {
 			boolean updateOrderStatus = orderServiceImpl.updateOrderStatus(dealOrder.getOrderId(), Common.Order.DealOrder.ORDER_STATUS_ER, msg);
 			if (updateOrderStatus) {
-				OrderAppServiceImpl.updateOrderEr(orderApp.getOrderId(), msg);
+				//OrderAppServiceImpl.updateOrd
+				// erEr(orderApp.getOrderId(), msg);
 				return true;
 			}
 		}
@@ -126,6 +128,9 @@ public abstract class PayOrderService implements PayService {
         log.info("【当前订单系统盈利：" + subtract + "】");
 		order.setRetain3(subtract.toString());
 		orderServiceImpl.addOrder(order);
+
+
+
 		return orderQrCh;
 	};
 
@@ -287,5 +292,18 @@ public abstract class PayOrderService implements PayService {
 	@Override
 	public boolean witCheckBank(String bankCode) {
 		return Boolean.TRUE;
+	}
+
+
+	public String name = "付款人：";
+
+	public String getPayName(String payInfo ,String orderId){
+		if (StrUtil.isNotEmpty(payInfo)) {
+			String[] split = payInfo.split(name);
+			String payName = split[1];
+		 	return payName;
+		}
+		return "";
+
 	}
 }
