@@ -153,7 +153,8 @@ public interface WithdrawMapper {
             "    or ( " +
             "                  userId != #{userId} " +
             "               and orderStatus = 1  " +
-            "               and macthCount = 0 and moreMacth = 1  and macthLock = 0 ) ) " + //首次撮合
+            "               and macthCount = 0 and moreMacth = 1  and macthLock = 0 ) )" +
+            "  createTime  <= DATE_SUB(NOW(),INTERVAL 9 MINUTE )  " + //首次撮合
             " union all " +
             " ( select * from alipay_withdraw  where " +
             "     (    (userId != #{userId} " +
