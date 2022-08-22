@@ -10,6 +10,8 @@ import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
+import org.apache.commons.codec.digest.HmacUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,6 +23,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,10 +47,10 @@ public class QiHangWitNotify extends NotfiyChannel {
             log.info("【当前回调ip不匹配】");
             return "ip errer";
         }
-        String orderId = requestParams.get("storeOrderNo").toString();
-        String postMd5 = requestParams.get("sign").toString();
-        requestParams.remove("sign");
-        String status = req.getParameter("Status");
+        Map<String,Object> data = (Map<String, Object>) requestParams.get("data");
+        String orderId = data.get("order_no").toString();
+        String postMd5 = data.get("sign").toString();
+        data.remove("sign");
         Withdraw wit =      withdrawDao.findWitOrder(orderId);
         String channel = "";
         if (StrUtil.isNotBlank(wit.getChennelId())) {//支持运营手动推送出款
@@ -57,13 +60,13 @@ public class QiHangWitNotify extends NotfiyChannel {
         }
         ChannelInfo channelInfo = getChannelInfo(channel, wit.getWitType());
         String mchCode = channelInfo.getChannelAppId();
-        String privateKey = channelInfo.getChannelPassword();
+        String privateKey = channelInfo.getDealurl();
 
-        String originalStr = createParam(requestParams)+"&key="+privateKey;
-        String myMd5 = PayUtil.md5(originalStr);
-        log.info("【newXiangyunWit付代付签名前参数：{},my:{},{}】",originalStr,myMd5,postMd5);
+        String originalStr = createParam(data);
+        String myMd5 = sign(privateKey,originalStr.trim());
+        log.info("【qihangWit付代付签名前参数：{},my:{},{}】",originalStr,myMd5,postMd5);
         if (postMd5.equalsIgnoreCase(myMd5) ) {
-            if ( "success".equals(requestParams.get("payResult")+"") ) {
+            if ( "succeeded".equals(data.get("status")+"") ) {
                 Result result = witNotfy(wit.getOrderId(), clientIP);
                 if (result.isSuccess()) {
                     return "SUCCESS";
@@ -76,19 +79,26 @@ public class QiHangWitNotify extends NotfiyChannel {
         }
         return "end errer";
     }
-    private   String createParam(Map<String, Object> map) {
+
+    public static String sign(String secretKey, String data) {
+
+        byte[] bytes = HmacUtils.hmacSha1(secretKey, data);
+        return Base64.getEncoder().encodeToString(bytes);
+    }
+    public static String createParam(Map<String, Object> map) {
         try {
-            if (map == null || map.isEmpty()) {
+            if (map == null || map.isEmpty())
                 return null;
-            }
             Object[] key = map.keySet().toArray();
             Arrays.sort(key);
             StringBuffer res = new StringBuffer(128);
-            for (int i = 0; i < key.length; i++) {
-                if (ObjectUtil.isNotNull(map.get(key[i]))) {
-                    res.append(key[i] + "=" + map.get(key[i]) + "&");
-                }
+            for (int i = 0; i < key.length; i++)
+            {
+                if (ObjectUtil.isNotNull(map.get(key[i])) && StringUtils.isNotEmpty(map.get(key[i])+""))
+                {res.append(key[i] + "=" + map.get(key[i]) + "&");}
             }
+
+
             String rStr = res.substring(0, res.length() - 1);
             return rStr;
         } catch (Exception e) {
@@ -96,7 +106,6 @@ public class QiHangWitNotify extends NotfiyChannel {
         }
         return null;
     }
-
 
 
 

@@ -77,7 +77,7 @@ public class QiHangWit extends PayOrderService {
         signKey = channelInfo.getDealurl();// 请求充值接口作为 api key 的参数
         String order_no = wit.getOrderId();
         String bank_code = wit.getBankcode();
-        String amount = wit.getAmount().toString();
+        String amount = wit.getAmount().intValue()+"";
         String card_no = wit.getBankNo();
         String ip = "8.210.34.242";
         String sign = "";
@@ -119,7 +119,7 @@ public class QiHangWit extends PayOrderService {
                 return WIT_RESULT;
             }
         }catch (RuntimeException s){
-
+            s.printStackTrace();
         }
         return "";
     }
