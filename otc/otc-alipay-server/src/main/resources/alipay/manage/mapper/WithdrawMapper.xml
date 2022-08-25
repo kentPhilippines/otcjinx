@@ -25,6 +25,7 @@
     <result column="submitTime" property="submitTime" jdbcType="TIMESTAMP" />
     <result column="status" property="status" jdbcType="INTEGER" />
     <result column="ethFee" property="ethFee" jdbcType="INTEGER"/>
+    <result column="watingTime" property="watingTime" jdbcType="INTEGER"/>
     <result column="retain1" property="retain1" jdbcType="CHAR" />
     <result column="retain2" property="retain2" jdbcType="CHAR" />
   </resultMap>
@@ -87,7 +88,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, orderId, userId, withdrawType, bankNo, accname, orderStatus, bankName, amount, witChannel,
+    id, orderId, userId, withdrawType, bankNo, accname, orderStatus, bankName, amount, witChannel,watingTime,
     fee, actualAmount, mobile, notify, createTime, submitTime, status, retain1, retain2,witType,bankcode,appOrderId,currency,ethFee
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="alipay.manage.bean.WithdrawExample" >
@@ -210,6 +211,9 @@
         <if test="ethFee != null">
             ethFee,
         </if>
+        <if test="watingTime != null">
+            watingTime,
+        </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="orderId != null" >
@@ -283,6 +287,9 @@
         </if>
         <if test="ethFee != null">
             #{ethFee},
+        </if>
+        <if test="watingTime != null">
+            #{watingTime},
         </if>
     </trim>
   </insert>

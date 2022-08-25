@@ -215,6 +215,19 @@ public class WitPay extends PayOrderService {
         witb.setBankcode(wit.getBankcode());
         witb.setWitChannel(channelFee.getChannelId());
         witb.setPushOrder(0);
+        /**
+         * 新加入规则 时间 2022-08-23
+         */
+        if(Integer.valueOf(wit.getAmount())<500){
+            witb.setWatingTime(1200);
+        }
+        /*if(Integer.valueOf(wit.getAmount())<1000 && Integer.valueOf(wit.getAmount())>499 ){
+            witb.setWatingTime(1200);
+        }*/
+        /**
+         * 新加入规则
+         */
+
         UserFund userFund = userInfoServiceImpl.findCurrency(wit.getAppid());//缓存以加
         //    witb.setStatus(2);//未推送处理   未推送三方处理状态
         witb.setCurrency(userFund.getCurrency());
