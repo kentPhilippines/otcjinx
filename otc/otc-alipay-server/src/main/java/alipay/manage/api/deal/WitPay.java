@@ -218,7 +218,7 @@ public class WitPay extends PayOrderService {
         /**
          * 新加入规则 时间 2022-08-23
          */
-        if(Integer.valueOf(wit.getAmount())<500){
+        if( witb.getAmount().compareTo(new BigDecimal(500))<  0 ){
             witb.setWatingTime(1200);
         }
         /*if(Integer.valueOf(wit.getAmount())<1000 && Integer.valueOf(wit.getAmount())>499 ){
