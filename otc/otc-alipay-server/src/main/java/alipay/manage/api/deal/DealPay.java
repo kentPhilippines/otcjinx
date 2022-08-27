@@ -205,6 +205,7 @@ public class DealPay {
        }
 		/*if (deal.isSuccess())
 			deal.setResult(new ResultDeal(true, 0, deal.getCode(), deal.getResult()));*/
+       log.info(deal.toString());
        return deal;
     }
 
