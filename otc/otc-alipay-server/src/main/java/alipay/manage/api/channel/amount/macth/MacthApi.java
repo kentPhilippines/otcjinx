@@ -1,6 +1,7 @@
 package alipay.manage.api.channel.amount.macth;
 
 import alipay.config.redis.RedisLockUtil;
+import alipay.config.redis.RedisUtil;
 import alipay.manage.api.config.PayOrderService;
 import alipay.manage.bean.DealOrder;
 import alipay.manage.bean.DealOrderApp;
@@ -33,6 +34,7 @@ import java.util.List;
 @RequestMapping(PayApiConstant.Notfiy.NOTFIY_API_WAI+"/macth")
 @RestController
 public class MacthApi extends PayOrderService {
+    static final String KEY_WIT_PUSHWIT = "TASK:ORDER:PUSHWIT:";
     public static final String ERROR_MSG = "当前订单暂无充值通道，请重新发起拉单";
     public static final String ERROR_MSG_1 = "当前订单暂无充值通道，更换以下金额：";
     @Autowired
@@ -49,6 +51,8 @@ public class MacthApi extends PayOrderService {
     private RedisLockUtil redisLockUtil;
     @Autowired
     NotifyUtil notifyUtil;
+    @Autowired
+    private RedisUtil redis;
     /**
      * 1，根据传入的订单号获取会员的支付订单数据
      * 2，根据订单信息获取合适的代付订单进行匹配
@@ -136,7 +140,6 @@ public class MacthApi extends PayOrderService {
             log.info("【当前订单已过期："+orderId+"】");
             return Result.buildFailMessage("当前订单已过期");
         }
-
         //1，根据传入的订单号获取会员的支付订单数据
         List<Withdraw> witList = withdrawService.findMacthOrder(orderAccount); // 获取规则： 1 不是当前 商户的， 2，  订单为非锁定状态， 3，订单主状态为 审核中  4 ， 最后一次撮合时间已经过了10分钟 且 订单 为挂起状态
         if (CollUtil.isEmpty(witList)) {
@@ -144,6 +147,11 @@ public class MacthApi extends PayOrderService {
         }
         for(Withdraw wit : witList){
             if(wit.getAmount().compareTo(orderAmount) == 0 ){//金额合适
+                if (redis.hasKey(KEY_WIT_PUSHWIT + wit.getOrderId())) {
+                    log.info("当前订单已处理，订单号："+wit.getOrderId());
+                    continue;
+                }
+                redis.set(KEY_WIT_PUSHWIT + wit.getOrderId(), wit.getOrderId(), 20); //防止多个任务同时获取一个订单发起结算
                 log.info("【匹配到合适的金额："+orderApp.getOrderId()+","+wit.getOrderId()+"】");
                 Result result = enterWit(orderApp, wit);
                 if(result.isSuccess()){

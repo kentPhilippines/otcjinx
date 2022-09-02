@@ -14,6 +14,7 @@ import alipay.manage.service.UserInfoService;
 import alipay.manage.service.UserRateService;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONUtil;
@@ -29,6 +30,7 @@ import otc.util.number.Number;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Map;
 
@@ -123,8 +125,14 @@ public class DealPay {
         }else{
             dealApp.setOrderId(Number.getAppOreder());
         }
+        BigDecimal amount = BigDecimal.ZERO;
+        if(new BigDecimal(dealBean.getAmount()).compareTo(new BigDecimal(200))<0){
+            amount = getAmount(new BigDecimal(dealBean.getAmount())).setScale(2,BigDecimal.ROUND_UP);
+        }else{
+            amount =  new BigDecimal(dealBean.getAmount());
+        }
         dealApp.setNotify(dealBean.getNotifyUrl());
-        dealApp.setOrderAmount(new BigDecimal(dealBean.getAmount()));
+        dealApp.setOrderAmount(amount);
         String userId = dealBean.getAppId();
         dealApp.setFeeId(userRate.getId());
         dealApp.setOrderAccount(userId);
@@ -208,7 +216,18 @@ public class DealPay {
        log.info(deal.toString());
        return deal;
     }
-
+    BigDecimal getAmount(BigDecimal amount ){
+        double v = RandomUtil.randomDouble(0.01, 0.5,2, RoundingMode.HALF_UP);
+        BigDecimal bb = amount;
+        amount =  amount.add(new BigDecimal(v));
+        Object o = redis.get(amount.toString());
+        if(ObjectUtil.isNotNull(o)){
+            return getAmount(bb);
+        }else{
+            redis.set(amount.toString(),amount,300);
+            return amount;
+        }
+    }
 
 
 
