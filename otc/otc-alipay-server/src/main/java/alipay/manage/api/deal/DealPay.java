@@ -148,7 +148,7 @@ public class DealPay {
         }
         dealApp.setDealDescribe(dealDescribe);
         dealApp.setRetain1(userRate.getPayTypr());
-        dealApp.setRetain3(userRate.getFee().multiply(new BigDecimal(dealBean.getAmount())).toString());
+        dealApp.setRetain3(userRate.getFee().multiply(amount).setScale(2,BigDecimal.ROUND_UP).toString());
         UserFund userFund = userInfoServiceImpl.findCurrency(userId);//缓存以加
         dealApp.setCurrency(userFund.getCurrency());
 
