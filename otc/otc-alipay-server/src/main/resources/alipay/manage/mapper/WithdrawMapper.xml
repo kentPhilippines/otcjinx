@@ -7,6 +7,7 @@
     <result column="userId" property="userId" jdbcType="VARCHAR" />
     <result column="withdrawType" property="withdrawType" jdbcType="CHAR" />
     <result column="bankNo" property="bankNo" jdbcType="VARCHAR" />
+    <result column="bankNo1" property="bankNo1" jdbcType="VARCHAR" />
     <result column="accname" property="accname" jdbcType="VARCHAR" />
     <result column="witType" property="witType" jdbcType="VARCHAR" />
     <result column="orderStatus" property="orderStatus" jdbcType="CHAR" />
@@ -151,6 +152,9 @@
       <if test="bankNo != null" >
         bankNo,
       </if>
+      <if test="bankNo1 != null" >
+        bankNo,
+      </if>
       <if test="accname != null" >
         accname,
       </if>
@@ -227,6 +231,9 @@
       </if>
       <if test="bankNo != null" >
         #{bankNo,jdbcType=VARCHAR},
+      </if>
+      <if test="bankNo1 != null" >
+        #{bankNo1,jdbcType=VARCHAR},
       </if>
       <if test="accname != null" >
         #{accname,jdbcType=VARCHAR},

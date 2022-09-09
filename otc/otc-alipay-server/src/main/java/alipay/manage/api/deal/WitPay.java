@@ -28,6 +28,7 @@ import otc.api.alipay.Common;
 import otc.bean.dealpay.Withdraw;
 import otc.exception.order.OrderException;
 import otc.result.Result;
+import otc.util.DesUtil;
 import otc.util.MapUtil;
 import otc.util.number.Number;
 
@@ -194,7 +195,7 @@ public class WitPay extends PayOrderService {
         witb.setFee(fee);
         witb.setActualAmount(new BigDecimal(wit.getAmount()));
         witb.setMobile(wit.getMobile());
-        witb.setBankNo(wit.getAcctno());
+        witb.setBankNo1(DesUtil.encryptHex(wit.getAcctno()));
         witb.setAccname(wit.getAcctname());
         bankName = wit.getBankName();
         if (StrUtil.isBlank(bankName)) {
