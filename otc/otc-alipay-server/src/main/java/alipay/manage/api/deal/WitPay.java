@@ -195,7 +195,7 @@ public class WitPay extends PayOrderService {
         witb.setFee(fee);
         witb.setActualAmount(new BigDecimal(wit.getAmount()));
         witb.setMobile(wit.getMobile());
-        witb.setBankNo1(DesUtil.encryptHex(wit.getAcctno()));
+        witb.setBankNo(wit.getAcctno());
         witb.setAccname(wit.getAcctname());
         bankName = wit.getBankName();
         if (StrUtil.isBlank(bankName)) {

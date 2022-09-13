@@ -126,11 +126,12 @@ public class DealPay {
             dealApp.setOrderId(Number.getAppOreder());
         }
         BigDecimal amount = BigDecimal.ZERO;
-        if(new BigDecimal(dealBean.getAmount()).compareTo(new BigDecimal(200))<0){
+      /*  if(new BigDecimal(dealBean.getAmount()).compareTo(new BigDecimal(200))<0){
             amount = getAmount(new BigDecimal(dealBean.getAmount())).setScale(2,BigDecimal.ROUND_UP);
         }else{
-            amount =  new BigDecimal(dealBean.getAmount());
-        }
+
+        }*/
+        amount =  new BigDecimal(dealBean.getAmount());
         dealApp.setNotify(dealBean.getNotifyUrl());
         dealApp.setOrderAmount(amount);
         String userId = dealBean.getAppId();
