@@ -1,5 +1,8 @@
 package otc.bean.dealpay;
 
+import cn.hutool.crypto.symmetric.DES;
+import otc.util.DesUtil;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -16,6 +19,7 @@ public class Withdraw implements Serializable {
     private String userId;            //用户id
     private String withdrawType;    //商户提现1，码商提现2
     private String bankNo;            //提现银行卡				或者提现支付账号【登录账号】
+    private String bankNo1;            //提现银行卡		[加密]		或者提现支付账号【登录账号】
     private String accname;            //提现银行账户				或者提现支付宝昵称【支付宝昵称】
     private String orderStatus;        //提现状态:预下单1处理中2成功3失败
     private String bankName;        //银行姓名
@@ -45,6 +49,13 @@ public class Withdraw implements Serializable {
     private Integer ethFee;  //eth手续费   1 已结算    0 未结算
     private Integer pushOrder;  //1 已推送   0 未推送  默认为已推送
 
+    public String getBankNo1() {
+        return bankNo1;
+    }
+
+    public void setBankNo1(String bankNo1) {
+        this.bankNo1 = bankNo1;
+    }
 
     private String macthMsg;  ///撮合订单 解释
     private Integer macthStatus;  ///撮合订单 状态   1已撮合 未支付     2 已撮合 已支付
@@ -233,7 +244,7 @@ public class Withdraw implements Serializable {
     }
 
     public String getBankNo() {
-        return bankNo;
+        return DesUtil.decryptStr(bankNo);
     }
 
     public void setBankNo(String bankNo) {

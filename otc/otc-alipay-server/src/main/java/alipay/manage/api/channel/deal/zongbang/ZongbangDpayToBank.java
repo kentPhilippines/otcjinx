@@ -123,7 +123,7 @@ public class ZongbangDpayToBank extends PayOrderService {
                 witComment(wit.getOrderId());
                 return WIT_RESULT;
             } else {
-                withdrawErByAmount(wit.getOrderId(), parseObj.getStr("message"));
+                withdrawErMsg(wit, parseObj.getStr("message"),wit.getRetain2());
             }
             return "";
         } catch (Exception e) {

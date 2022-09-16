@@ -114,6 +114,7 @@ public class FinanceApi {
                 if(StrUtil.isNotEmpty(channelId)){
                     channel = channelId;
                 }
+                logger.info("渠道:"+channel+" 产品："+witType + " 订单号："+orderId);
                 ChannelFee channelFee = channelFeeDao.findChannelFee(channel, witType);
                 Result withdraw = Result.buildFail();
                 try {

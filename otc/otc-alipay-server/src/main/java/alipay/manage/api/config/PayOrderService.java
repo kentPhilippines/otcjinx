@@ -267,7 +267,7 @@ public abstract class PayOrderService implements PayService {
 		int a = withdrawDao.updataOrderStatusEr(orderId,
 				Common.Order.Wit.ORDER_STATUS_ER, msg);
 		if (a > 0) {
-				notifyUtil.wit(orderId);
+				 notifyUtil.wit(orderId);
 			return Result.buildSuccessMessage("修改成功");
 		} else {
 			return Result.buildFailMessage("修改失败");

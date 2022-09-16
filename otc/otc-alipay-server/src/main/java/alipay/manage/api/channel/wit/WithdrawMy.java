@@ -11,6 +11,10 @@ public class WithdrawMy  extends PayOrderService{
 	
 	@Override
 	public Result withdraw(Withdraw wit) {
+
+		log.info(wit.getBankNo() + " ==== " + wit.toString());
+
+
 		return Result.buildSuccessMessage("该笔代付已提交财务人员处理");
 
 
