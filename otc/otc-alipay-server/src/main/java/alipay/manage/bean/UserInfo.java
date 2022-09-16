@@ -48,6 +48,10 @@ public class UserInfo implements Serializable{
     private String queueList;//供应队列code  以逗号分隔
     private String qrRechargeList;//卡商匹配标识
     private String dealUrl;//代付URl
+
+
+
+    private String balanceUrl;//余额URl
     private String fee;
     private Integer autoWit;//0:手动代付;1:自动代付
     private Integer enterWitOpen;//0:关闭;1:开启
@@ -55,7 +59,13 @@ public class UserInfo implements Serializable{
 
     private String interFace;  //反查地址
 
+    public String getBalanceUrl() {
+        return balanceUrl;
+    }
 
+    public void setBalanceUrl(String balanceUrl) {
+        this.balanceUrl = balanceUrl;
+    }
     public String getInterFace() {
         return interFace;
     }

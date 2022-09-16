@@ -152,6 +152,7 @@ public abstract class NotfiyChannel {
         channelInfo.setChannelAppId(userInfo.getUserNode());
         channelInfo.setChannelPassword(userInfo.getPayPasword());
         channelInfo.setDealurl(userInfo.getDealUrl());
+        channelInfo.setBalanceUrl(userInfo.getBalanceUrl());
         ChannelFee channelFee = channelFeeDao.findChannelFee(channelId, payType);
         channelInfo.setChannelType(channelFee.getChannelNo());
         if (StrUtil.isNotBlank(userInfo.getWitip())) {

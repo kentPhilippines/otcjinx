@@ -188,7 +188,7 @@ public class WitPay extends PayOrderService {
         witb.setAmount(new BigDecimal(wit.getAmount()));
 
         //TODO 新增 代付取款抽点收费逻辑
-        BigDecimal psf = new BigDecimal(userRate.getRetain3()) ;//抽点收费比例
+        BigDecimal psf = new BigDecimal(Optional.ofNullable(userRate.getRetain3()).orElse("0")) ;//抽点收费比例
         BigDecimal fee = userRate.getFee();//单笔收费
         fee =   psf.multiply(new BigDecimal(wit.getAmount())).add(fee);
         witb.setFee(fee);

@@ -22,7 +22,7 @@ import java.util.Map;
 public class witTest {
 	public static void main(String[] args) {
 		 for (int a = 0; a <=0; a++) {
-		   //new witTest().deal();
+		   new witTest().deal();
 		}
 		//find();
 /*
@@ -50,7 +50,7 @@ public class witTest {
 
 
 		for (int a = 0; a <= 0; a++) {
-		 	new witTest().wit(userid, key, publickey);
+		 	//new witTest().wit(userid, key, publickey);
 		}
 
 		//USDT测试账号
@@ -139,12 +139,12 @@ public class witTest {
 		SimpleDateFormat d = new SimpleDateFormat("yyyyMMddHHmmss");
 		String userid = userid1;
 		String key = key1;//交易密钥
-		long amount = RandomUtil.randomLong(200, 300);
+		long amount = RandomUtil.randomLong(100, 110);
 		Map<String, Object> objectToMap = new HashMap<>();
 		objectToMap.put("appid", userid);
 		objectToMap.put("apporderid", StrUtil.uuid());
 		objectToMap.put("ordertime", d.format(new Date()) + "");
-		objectToMap.put("amount", "100");
+		objectToMap.put("amount", "601");
 		objectToMap.put("acctno", "633982938475489382" + RandomUtil.randomLong(1, 10));
 		objectToMap.put("acctname", "张三");
 		objectToMap.put("bankcode", "ICBC");
@@ -224,13 +224,13 @@ public class witTest {
 
 
 		Deal deal = new Deal();
-		deal.setAmount(500+"");//金额
+		deal.setAmount(501+"");//金额
 		deal.setAppId(userid);//商户号
 		deal.setApplyDate(d.format(new Date()));
 		deal.setNotifyUrl("http://starpay168.com:5055");
 		deal.setPageUrl("http://starpay168.com:5055");
 		deal.setOrderId(IdUtil.objectId());
-		deal.setPassCode("NewXiangyunPay");
+		deal.setPassCode("qihang");
 		deal.setSubject("订单交易");
 		deal.setUserid("张三");  //to userid
 		Map<String, Object> objectToMap = MapUtil.objectToMap(deal);

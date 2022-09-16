@@ -56,16 +56,51 @@ public class qihang {
     }
 
     public static void main(String[] args) throws NoSuchAlgorithmException, InvalidKeyException {
-        ssss(args);
+        pay(args);
     }
 
+    public static void pay(String[] args) throws NoSuchAlgorithmException, InvalidKeyException {
+        //52b8605da4ee112f449e2b3550a6260e45382f97
+        //05b64abf4fd8d4bf57e2010ae22b7cc42e04b4d9d42460e1e1e1d69798b2
+        String signKey = "05b64abf4fd8d4bf57e2010ae22b7cc42e04b4d9d42460e1e1e1d69798b2";
+        String key = "52b8605da4ee112f449e2b3550a6260e45382f97";
+        String order_no = RandomUtil.randomNumbers(9);
+        String amount = "100";
+        String ip = "127.0.0.1";
+        String mid = "98";
+        String time = System.currentTimeMillis() / 1000 + "";
+        String notify_url = "http://localhost:8080";
+        Map headers = new HashMap();
+        headers.put("Authorization", "api-key " + key.trim());
+        headers.put("Content-Type", "application/json");
+        Map<String, String> body = new HashMap();
+        body.put("order_no", order_no);
+        body.put("gateway", "usdt");
+        body.put("coin_type", "USDT_TRC20");
+        body.put("amount", amount);
+        body.put("ip", ip);
 
-    public static void ssss(String[] args) throws NoSuchAlgorithmException, InvalidKeyException {
+        body.put("time", time);
+        body.put("mid", mid);
+        body.put("notify_url", notify_url);
+        String param1 = createParam(body);
+        System.out.println("加密前串为：" + param1);
+        String sign1 = sign( signKey.trim(),param1);
+        body.put("sign", sign1);
+        JSONObject param = JSONUtil.parseFromMap(body);
+        System.out.println("请求参数为：" + param);
+        HttpResponse execute = HttpRequest.post("https://api.ykt66.cc/api/v1/deposits")
+                .addHeaders(headers).body(param).execute();
+        String ruselt = execute.body().toString();
+        System.out.println(ruselt);
+    }
+
+    public static void wit(String[] args) throws NoSuchAlgorithmException, InvalidKeyException {
         String signKey = "82c8a4bc8b81ed850ba1fecea0452529516cacd5d0d88fe9e4088c275732";
         String key = "bce8ae69874a73a537369836c5fc93af3d7db440";
         String order_no = RandomUtil.randomNumbers(9);
         String bank_code = "ABC";
-        String amount = "4000";
+        String amount = "100";
         String card_no = RandomUtil.randomNumbers(11)+"11111111";
         String ip = "127.0.0.1";
         String sign = "";

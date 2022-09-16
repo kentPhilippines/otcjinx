@@ -226,7 +226,7 @@ public interface UserInfoMapper {
      */
     @Cacheable(cacheNames = {USER_LONG}, unless = "#result == null")
     @Select("select id, userId, userName, password, payPasword," +
-            "    privateKey, publicKey  , witip   , dealUrl ,userNode   " +
+            "    privateKey, publicKey  , witip   , dealUrl ,userNode,balanceUrl   " +
             " from alipay_user_info where userId = #{userId}")
     UserInfo findNotifyChannel(@Param("userId") String userId);
 
