@@ -15,6 +15,7 @@ import alipay.manage.service.IAlipayBankConfigService;
 import alipay.manage.service.UserInfoService;
 import alipay.manage.service.WithdrawService;
 import alipay.manage.util.BankTypeUtil;
+import alipay.manage.util.EncryptHexUtil;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.ObjectUtil;
@@ -29,6 +30,7 @@ import otc.bean.dealpay.Withdraw;
 import otc.exception.order.OrderException;
 import otc.result.Result;
 import otc.util.DesUtil;
+import otc.util.DesUtil2;
 import otc.util.MapUtil;
 import otc.util.number.Number;
 
@@ -186,16 +188,24 @@ public class WitPay extends PayOrderService {
         }
         Withdraw witb = new Withdraw();
         witb.setUserId(wit.getAppid());
-        witb.setAmount(new BigDecimal(wit.getAmount()));
+     //   witb.setAmount(new BigDecimal(wit.getAmount()));
+        witb.setAmount1(DesUtil2.encryptHex(new BigDecimal(wit.getAmount()).toString()));
+
+
 
         //TODO 新增 代付取款抽点收费逻辑
         BigDecimal psf = new BigDecimal(Optional.ofNullable(userRate.getRetain3()).orElse("0")) ;//抽点收费比例
         BigDecimal fee = userRate.getFee();//单笔收费
         fee =   psf.multiply(new BigDecimal(wit.getAmount())).add(fee);
-        witb.setFee(fee);
-        witb.setActualAmount(new BigDecimal(wit.getAmount()));
+       // witb.setFee(fee);
+        witb.setFee1(DesUtil2.encryptHex(fee.toString()));
+     //   witb.setActualAmount(new BigDecimal(wit.getAmount()));
+        witb.setActualAmount1(DesUtil2.encryptHex(wit.getAmount()));
+
+
+
         witb.setMobile(wit.getMobile());
-        witb.setBankNo(wit.getAcctno());
+        witb.setBankNo1(DesUtil2.encryptHex(wit.getAcctno()));
         witb.setAccname(wit.getAcctname());
         bankName = wit.getBankName();
         if (StrUtil.isBlank(bankName)) {
@@ -203,7 +213,7 @@ public class WitPay extends PayOrderService {
             bankName = alipayBankConfig.getBankName() ;
             //bankName = BankTypeUtil.getBankName(wit.getBankcode());
         }
-        witb.setBankName(bankName);
+        witb.setBankName1(DesUtil2.encryptHex(bankName));
         witb.setWithdrawType(Common.Order.Wit.WIT_ACC);
         witb.setOrderId(Number.getWitOrder());
         witb.setOrderStatus(Common.Order.DealOrderApp.ORDER_STATUS_DISPOSE.toString());
@@ -216,6 +226,7 @@ public class WitPay extends PayOrderService {
         witb.setBankcode(wit.getBankcode());
         witb.setWitChannel(channelFee.getChannelId());
         witb.setPushOrder(0);
+        witb.setSgin(EncryptHexUtil.sgin(wit.getAcctno(),bankName,wit.getAcctname(),wit.getAmount()));
         /**
          * 新加入规则 时间 2022-08-23
          */

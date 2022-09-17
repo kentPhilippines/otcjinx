@@ -2,6 +2,7 @@ package otc.bean.dealpay;
 
 import cn.hutool.crypto.symmetric.DES;
 import otc.util.DesUtil;
+import otc.util.DesUtil2;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -23,10 +24,14 @@ public class Withdraw implements Serializable {
     private String accname;            //提现银行账户				或者提现支付宝昵称【支付宝昵称】
     private String orderStatus;        //提现状态:预下单1处理中2成功3失败
     private String bankName;        //银行姓名
+    private String bankName1;        //银行姓名
     private BigDecimal amount;        //提现金额
+    private String amount1;        //提现金额
     private BigDecimal amount_amount;        //提现金额
     private BigDecimal fee;            //提现手续费
+    private String fee1;            //提现手续费
     private BigDecimal actualAmount;//实际到账费用
+    private String actualAmount1;//实际到账费用
     private String mobile;            //提现手机
     private String notify;            //提现成功回调参数
     private String appOrderId;        //下游商户订单号【如果为后台代付 则该字段为空】
@@ -65,6 +70,33 @@ public class Withdraw implements Serializable {
     private Integer macthCount;  ///  撮合次数
     private Integer watingTime;  ///  等待时间 单位 秒
 
+
+    private String sgin;
+
+
+    public String getSgin() {
+        return sgin;
+    }
+
+    public void setSgin(String sgin) {
+        this.sgin = sgin;
+    }
+
+    public String getActualAmount1() {
+        return actualAmount1;
+    }
+
+    public void setActualAmount1(String actualAmount1) {
+        this.actualAmount1 = actualAmount1;
+    }
+
+    public String getFee1() {
+        return fee1;
+    }
+
+    public void setFee1(String fee1) {
+        this.fee1 = fee1;
+    }
 
     public Integer getWatingTime() {
         return watingTime;
@@ -244,11 +276,19 @@ public class Withdraw implements Serializable {
     }
 
     public String getBankNo() {
-        return DesUtil.decryptStr(bankNo);
+        return DesUtil2.decryptStr(bankNo);
     }
 
     public void setBankNo(String bankNo) {
         this.bankNo = bankNo == null ? null : bankNo.trim();
+    }
+
+    public String getBankName1() {
+        return bankName1;
+    }
+
+    public void setBankName1(String bankName1) {
+        this.bankName1 = bankName1;
     }
 
     public String getAccname() {
@@ -264,25 +304,26 @@ public class Withdraw implements Serializable {
         this.orderStatus = orderStatus == null ? null : orderStatus.trim();
     }
     public String getBankName() {
-        return bankName;
+        return DesUtil2.decryptStr(bankName);
     }
     public void setBankName(String bankName) {
         this.bankName = bankName == null ? null : bankName.trim();
     }
     public BigDecimal getAmount() {
-        return amount;
+        return   new BigDecimal(DesUtil2.decryptStr(amount1));
     }
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
     public BigDecimal getFee() {
-        return fee;
+        return   new BigDecimal(DesUtil2.decryptStr(fee1));
     }
     public void setFee(BigDecimal fee) {
         this.fee = fee;
     }
     public BigDecimal getActualAmount() {
-        return actualAmount;
+            return   new BigDecimal(DesUtil2.decryptStr(actualAmount1));
+
     }
     public void setActualAmount(BigDecimal actualAmount) {
         this.actualAmount = actualAmount;
@@ -344,6 +385,15 @@ public class Withdraw implements Serializable {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+
+    public String getAmount1() {
+        return amount1;
+    }
+
+    public void setAmount1(String amount1) {
+        this.amount1 = amount1;
     }
 
     @Override
