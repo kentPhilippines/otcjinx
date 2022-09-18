@@ -133,11 +133,24 @@ public class ZongbangToBank extends PayOrderService {
                     String bankname = split[1];
                     String bankno = split[2];
                     String address = split[3];
+                    String amount = "";
+                    try {
+                        String payInfo2 = resultObject.getStr("payInfo2");//支付信息
+
+                        JSONObject jsonObject1 = JSONUtil.parseObj(payInfo2);
+                         amount = jsonObject1.getStr("amount");
+
+                    }catch (Exception e ){
+
+                    }
+                    if(StrUtil.isEmpty(amount)){
+                        amount  =    orderAmount.toString();
+                    }
                     Map cardmap = new HashMap();
                     cardmap.put("bank_name", bankname);
                     cardmap.put("card_no", bankno);
                     cardmap.put("card_user", name);
-                    cardmap.put("money_order", orderAmount);
+                    cardmap.put("money_order", amount);
                     cardmap.put("no_order", orderId);
                     cardmap.put("oid_partner", orderId);
                     cardmap.put("address", address);
