@@ -10,6 +10,7 @@
     <result column="bankNo1" property="bankNo1" jdbcType="VARCHAR" />
     <result column="accname" property="accname" jdbcType="VARCHAR" />
     <result column="witType" property="witType" jdbcType="VARCHAR" />
+    <result column="sgin" property="sgin" jdbcType="VARCHAR" />
     <result column="orderStatus" property="orderStatus" jdbcType="CHAR" />
     <result column="bankName" property="bankName" jdbcType="VARCHAR" />
     <result column="bankcode" property="bankcode" jdbcType="VARCHAR" />
@@ -18,8 +19,10 @@
      <result column="witChannel" property="witChannel"  />
     <result column="amount" property="amount" jdbcType="DECIMAL" />
     <result column="amount_amount" property="amount_amount" jdbcType="DECIMAL"/>
-    <result column="fee" property="fee" jdbcType="DECIMAL" />
-    <result column="actualAmount" property="actualAmount" jdbcType="DECIMAL" />
+    <result column="fee" property="fee"   />
+    <result column="fee1" property="fee1"   />
+    <result column="actualAmount" property="actualAmount"   />
+    <result column="actualAmount1" property="actualAmount1"   />
     <result column="mobile" property="mobile" jdbcType="CHAR" />
     <result column="notify" property="notify" jdbcType="VARCHAR" />
     <result column="createTime" property="createTime" jdbcType="TIMESTAMP" />
@@ -89,8 +92,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, orderId, userId, withdrawType, bankNo, accname, orderStatus, bankName, amount, witChannel,watingTime,
-    fee, actualAmount, mobile, notify, createTime, submitTime, status, retain1, retain2,witType,bankcode,appOrderId,currency,ethFee
+    id, orderId, userId, withdrawType, bankNo, accname, orderStatus, bankName, amount,amount1, witChannel,watingTime,sgin
+    fee,fee1, actualAmount, actualAmount1, mobile, notify, createTime, submitTime, status, retain1, retain2,witType,bankcode,appOrderId,currency,ethFee
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="alipay.manage.bean.WithdrawExample" >
     select
@@ -158,26 +161,30 @@
       <if test="accname != null" >
         accname,
       </if>
+
       <if test="orderStatus != null" >
         orderStatus,
       </if>
       <if test="bankName != null" >
         bankName,
+      </if><if test="bankName1 != null" >
+        bankName,
       </if>
       <if test="bankcode != null" >
         bankcode,
       </if>
-      <if test="amount != null" >
-        amount,
+       <if test="amount1 != null" >
+        amount1,
       </if>
-      <if test="fee != null" >
-        fee,
+
+      <if test="fee1 != null" >
+        fee1,
       </if>
       <if test="witChannel != null" >
         witChannel,
       </if>
-      <if test="actualAmount != null" >
-        actualAmount,
+      <if test="actualAmount1 != null" >
+        actualAmount1,
       </if>
       <if test="mobile != null" >
         mobile,
@@ -217,6 +224,8 @@
         </if>
         <if test="watingTime != null">
             watingTime,
+        </if><if test="sgin != null">
+      sgin,
         </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -233,7 +242,7 @@
         #{bankNo,jdbcType=VARCHAR},
       </if>
       <if test="bankNo1 != null" >
-        #{bankNo1,jdbcType=VARCHAR},
+        #{bankNo1},
       </if>
       <if test="accname != null" >
         #{accname,jdbcType=VARCHAR},
@@ -243,21 +252,23 @@
       </if>
       <if test="bankName != null" >
         #{bankName,jdbcType=VARCHAR},
+      </if> <if test="bankName1 != null" >
+        #{bankName1,jdbcType=VARCHAR},
       </if>
       <if test="bankcode != null" >
         #{bankcode,jdbcType=VARCHAR},
       </if>
-      <if test="amount != null" >
-        #{amount,jdbcType=DECIMAL},
+      <if test="amount1 != null" >
+        #{amount1 },
       </if>
-      <if test="fee != null" >
-        #{fee,jdbcType=DECIMAL},
+       <if test="fee1 != null" >
+        #{fee1 },
       </if>
       <if test="witChannel != null" >
         #{witChannel },
       </if>
-      <if test="actualAmount != null" >
-        #{actualAmount,jdbcType=DECIMAL},
+      <if test="actualAmount1 != null" >
+        #{actualAmount1 },
       </if>
       <if test="mobile != null" >
         #{mobile,jdbcType=CHAR},
@@ -297,6 +308,8 @@
         </if>
         <if test="watingTime != null">
             #{watingTime},
+        </if> <if test="sgin != null">
+            #{sgin},
         </if>
     </trim>
   </insert>
