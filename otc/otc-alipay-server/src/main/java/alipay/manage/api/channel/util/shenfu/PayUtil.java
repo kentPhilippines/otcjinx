@@ -24,6 +24,8 @@ public class PayUtil {
     public static Map<String, String> ipMap = new HashMap();
 
     static {
+        ipMap.put("47.243.127.115", "47.243.127.115");
+        ipMap.put("47.242.25.214", "47.242.25.214");
         ipMap.put("47.52.243.5", "47.52.243.5");
         ipMap.put("127.0.0.1", "127.0.0.1");
         ipMap.put("47.91.232.22", "47.91.232.22");
