@@ -73,6 +73,18 @@ public class TaskSelf {
         }
 
     }
+    @Scheduled(cron = "0 0 1 * * ?")
+    public void userTask() {
+        if (serverConfig.getServerPort() != 9010) {
+            log.info("当前任务端口号不正确");
+            return;
+        }
+        log.info("【开始进行每日账户清算】");
+        userTaskImpl.userAddTask();
+        userTaskImpl.userTask();
+
+    }
+
 
 
 

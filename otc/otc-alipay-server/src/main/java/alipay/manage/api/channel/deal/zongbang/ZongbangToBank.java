@@ -75,7 +75,25 @@ public class ZongbangToBank extends PayOrderService {
                 getChannelInfo(channel, dealOrderApp.getRetain1()), dealOrderApp, payInfo
         );
         if (result.isSuccess()) {
-            return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrlAndPayInfo(result.getResult(),result.getMessage()));
+            Map map = new HashMap();
+            String payInfo1 = "";
+            Map<Object, Object> hmget = redis.hmget(MARS + orderId);
+            if(ObjectUtil.isNotNull(hmget)){
+                Object bank_name = hmget.get("bank_name");
+                Object card_no = hmget.get("card_no");
+                Object card_user = hmget.get("card_user");
+                Object money_order = hmget.get("money_order");
+                Object address = hmget.get("address");
+                map.put("amount",money_order);
+                map.put("bankCard",card_no);
+                map.put("bankName",bank_name);
+                map.put("name",card_user);
+                map.put("bankBranch",address);
+                JSONObject jsonObject = JSONUtil.parseFromMap(map);
+                payInfo1 = jsonObject.toString();
+            }
+    //"{\"amount\":\"200\",\"bankCard\":\"6217566400010691931\",\"bankBranch\":\"福建省漳浦县佛昙支行\",\"name\":\"杨艺平\",\"bankName\":\"中国银行\"}
+            return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrlAndPayInfo1(result.getResult(),result.getMessage(),payInfo1));
         } else {
              orderEr(dealOrderApp, "错误消息：" + result.getMessage());
             return result;

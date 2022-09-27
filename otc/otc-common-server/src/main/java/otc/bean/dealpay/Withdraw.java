@@ -1,5 +1,6 @@
 package otc.bean.dealpay;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.symmetric.DES;
 import otc.util.DesUtil;
 import otc.util.DesUtil2;
@@ -310,18 +311,27 @@ public class Withdraw implements Serializable {
         this.bankName = bankName == null ? null : bankName.trim();
     }
     public BigDecimal getAmount() {
+        if(StrUtil.isEmpty(amount1)){
+            return  amount;
+        }
         return   new BigDecimal(DesUtil2.decryptStr(amount1));
     }
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
     public BigDecimal getFee() {
+        if(StrUtil.isEmpty(fee1)){
+            return  fee;
+        }
         return   new BigDecimal(DesUtil2.decryptStr(fee1));
     }
     public void setFee(BigDecimal fee) {
         this.fee = fee;
     }
     public BigDecimal getActualAmount() {
+        if(StrUtil.isEmpty(actualAmount1)){
+            return  actualAmount;
+        }
             return   new BigDecimal(DesUtil2.decryptStr(actualAmount1));
 
     }
