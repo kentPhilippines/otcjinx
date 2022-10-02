@@ -14,6 +14,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import otc.result.Result;
+import otc.util.DesUtil2;
 
 import java.util.Date;
 import java.util.List;
@@ -35,6 +36,7 @@ public class TaskSelf {
         }
         log.info("【开始进行每10秒订单清算】");
         orderTask.orderTask();
+
     }
     @Scheduled(cron = "0/5 * * * * ?")
     public void orderWitTask() {
@@ -46,6 +48,8 @@ public class TaskSelf {
         orderTask.orderWitTask();
         log.info("【撮合订单解锁】");
         orderTask.macthOrder();
+        log.info("【开始订单解密】");
+        orderTask.decryptStr();
     }
 
 
@@ -84,8 +88,6 @@ public class TaskSelf {
         userTaskImpl.userTask();
 
     }
-
-
 
 
 

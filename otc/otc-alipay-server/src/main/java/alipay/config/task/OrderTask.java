@@ -181,6 +181,17 @@ public class OrderTask {
 
 	}
 
+	void decryptStr(){
+		List<Withdraw>  wit = 	withdrawServiceImpl.findSuccessAndAmount();
+		for (Withdraw witOrder : wit ){
+		boolean  a =  	withdrawServiceImpl.updateAmount(witOrder.getAmount(),witOrder.getFee(),witOrder.getActualAmount(),witOrder.getOrderId());
+			if(!a){
+				continue;
+			}
+		}
+	}
+
+
 	void push(String msg) {
 		ThreadUtil.execute(() -> {
 			String url = "http://172.29.17.156:8889/api/send?text=";

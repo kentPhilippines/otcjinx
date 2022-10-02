@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import otc.bean.dealpay.Withdraw;
 
+import java.math.BigDecimal;
 import java.util.List;
 @Mapper
 public interface WithdrawMapper {
@@ -107,6 +108,8 @@ public interface WithdrawMapper {
      */
     @Select("select * from alipay_withdraw where ethFee = 0 and currency = 'CNY' and orderStatus = 2  and submitTime >= CURRENT_TIMESTAMP - INTERVAL 10 MINUTE    limit 15")
     List<Withdraw> findSuccessAndNotAmount();
+    @Select("select * from alipay_withdraw where ethFee = 1 and currency = 'CNY' and ( orderStatus = 2  or  orderStatus = 3 ) and amount = 0 and sgin != null     limit 15")
+    List<Withdraw> findSuccessAndAmount();
 
     /**
      * 修改订单未已结算
@@ -192,6 +195,8 @@ public interface WithdrawMapper {
             "         "  //首次撮合
             ) //第二次撮合
     List<Withdraw> findWaitPush();
+      @Update("update alipay_withdraw set amount = #{amount}, fee = #{fee}, actualAmount = #{actualAmount}  where orderId = #{orderId}")
+    int updateAmount(@Param("amount") BigDecimal amount, @Param("fee")BigDecimal fee,@Param("actualAmount") BigDecimal actualAmount, @Param("orderId")String orderId);
 
 
 

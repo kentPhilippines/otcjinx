@@ -2,6 +2,7 @@ package alipay.manage.service;
 
 import otc.bean.dealpay.Withdraw;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface WithdrawService {
@@ -130,5 +131,10 @@ public interface WithdrawService {
     boolean isPayStatus(String orderId);
 
     List<Withdraw> findWaitPush();
+
+	List<Withdraw> findSuccessAndAmount();
+
+
+	boolean updateAmount(BigDecimal amount, BigDecimal fee, BigDecimal actualAmount, String orderId);
 
 }

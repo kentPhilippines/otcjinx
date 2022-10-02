@@ -142,4 +142,19 @@ public class WithdrawServiceImpl implements WithdrawService {
 
     }
 
+    @Override
+    public  List<Withdraw> findSuccessAndAmount() {
+
+        return withdrawDao.findSuccessAndAmount();
+    }
+
+    @Override
+    public boolean updateAmount(BigDecimal amount, BigDecimal fee, BigDecimal actualAmount, String orderId) {
+
+    int a =     withdrawDao.updateAmount(amount,fee,actualAmount,orderId);
+return  a == 1 ;
+
+
+    }
+
 }

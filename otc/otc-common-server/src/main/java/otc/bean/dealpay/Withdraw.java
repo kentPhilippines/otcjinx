@@ -52,7 +52,7 @@ public class Withdraw implements Serializable {
     private String witChannel;
     private String chennelId;
     private String currency;
-    private Integer ethFee;  //eth手续费   1 已结算    0 未结算
+    private Integer ethFee;  //    1 已结算    0 未结算   作用为  订单成功之后 结算手续费 主要是 渠道 手续费和 代理手续费
     private Integer pushOrder;  //1 已推送   0 未推送  默认为已推送
 
     public String getBankNo1() {
