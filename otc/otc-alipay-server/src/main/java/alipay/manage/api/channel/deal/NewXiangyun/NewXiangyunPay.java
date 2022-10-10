@@ -11,6 +11,7 @@ import alipay.manage.service.OrderService;
 import alipay.manage.service.UserInfoService;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -55,7 +56,32 @@ public class NewXiangyunPay extends PayOrderService {
                 orderId,
                 getChannelInfo(channel, dealOrderApp.getRetain1()), payInfo);
         if (result.isSuccess()) {
-            return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(result.getResult()));
+
+     //郑瑞星:农业银行:6228480228758339375:农行彬州市支行    深圳福田银座村镇银行:6213471011003073814:布吉支行     result.setMessage(qr.getMediumHolder() + ":" + qr.getAccount() + ":" + qr.getMediumNumber() + ":" + qr.getPayInfo() );
+            Map map = new HashMap();
+            String payInfo1 = "";
+            String  payInfos = "";
+            Map<Object, Object> hmget = redis.hmget(MARS + orderId);
+            try {
+                if(ObjectUtil.isNotNull(hmget)){
+                    Object bank_name = hmget.get("bank_name");
+                    Object card_no = hmget.get("card_no");
+                    Object card_user = hmget.get("card_user");
+                    Object money_order = hmget.get("money_order");
+                    Object address = hmget.get("address");
+                    map.put("amount",money_order);
+                    map.put("bankCard",card_no);
+                    map.put("bankName",bank_name);
+                    map.put("name",card_user);
+                    map.put("bankBranch",address);
+                    JSONObject jsonObject = JSONUtil.parseFromMap(map);
+                    payInfo1 = jsonObject.toString();
+                    payInfos = card_user+":"+bank_name+":"+card_no+":"+address;
+                }
+            }catch (Exception e ){
+                log.info("详细数据解析异常，当前订单号：" + dealOrderApp.getAppOrderId());
+            }
+            return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrlAndPayInfo1(result.getResult(),payInfos,payInfo1));
         } else {
             orderEr(dealOrderApp, result.getMessage());
             return result;
