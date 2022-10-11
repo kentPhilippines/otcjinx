@@ -231,9 +231,13 @@ public class WitPay extends PayOrderService {
          * 新加入规则 时间 2022-08-23
          */
         if( witb.getAmount().compareTo(new BigDecimal(500))<  0 ){
-            witb.setWatingTime(1200);
-        } if( witb.getAmount().compareTo(new BigDecimal(2999))>  0 ){
-            witb.setWatingTime(300);
+            witb.setWatingTime(900);
+        }
+        if( witb.getAmount().compareTo(new BigDecimal(500)) >  0 && witb.getAmount().compareTo(new BigDecimal(500)) < 2999 ){
+            witb.setWatingTime(600);
+        }
+        if( witb.getAmount().compareTo(new BigDecimal(2999))>  0 ){
+            witb.setWatingTime(240);
         }
         /*if(Integer.valueOf(wit.getAmount())<1000 && Integer.valueOf(wit.getAmount())>499 ){
             witb.setWatingTime(1200);
