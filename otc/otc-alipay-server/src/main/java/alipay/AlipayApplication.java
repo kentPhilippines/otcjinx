@@ -8,6 +8,7 @@ import cn.hutool.core.util.NetUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.cron.CronUtil;
 import cn.hutool.cron.task.Task;
+import com.alibaba.nacos.spring.context.annotation.config.NacosPropertySource;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -40,6 +41,7 @@ import java.util.concurrent.*;
 @EnableTransactionManagement //事务
 @EnableRedisHttpSession //redis   session 共享
 @EnableAspectJAutoProxy(proxyTargetClass = true)
+@NacosPropertySource(dataId = "${nacos.config.data-id}",autoRefreshed = true)
 public class AlipayApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(AlipayApplication.class, args);

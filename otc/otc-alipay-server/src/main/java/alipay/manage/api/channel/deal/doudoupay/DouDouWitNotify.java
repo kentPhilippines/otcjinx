@@ -43,6 +43,7 @@ public class DouDouWitNotify extends NotfiyChannel {
         log.info("【当前回调ip为：" + clientIP + "】");
         Map<String,String> ipmap = new HashMap<>();
         ipmap.put("52.187.72.221","52.187.72.221");
+        ipmap.put("104.208.76.107","104.208.76.107");
 
         Object object = ipmap.get(clientIP);
         if (ObjectUtil.isNull(object)) {
