@@ -25,6 +25,7 @@ import cn.hutool.json.JSONUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import otc.bean.alipay.OrderDealStatus;
@@ -66,6 +67,9 @@ public class UsdtPayOut extends NotfiyChannel implements USDT {
     @Autowired
     private RedisUtil redis;
 
+
+    @Value("{otc.url.forwardGet}")
+    public String forwardGet;
     public static String findETHUSDTOrderList(String address) {
         String url = FIND_URL + address + "&page=1&offset=20&sort=desc&apikey=" + APP_KEY;
         String s = HttpUtil.get(url);
@@ -74,13 +78,14 @@ public class UsdtPayOut extends NotfiyChannel implements USDT {
     }
     public static String findETHUSDTOrderListTRC(String address) {
             String url = TRC_USDT_URL+address;
-            String s = HttpUtil.get(url);
+            String s = HttpUtil.get(url+url);
             log.info("【查询返回：" + s + "】");
             return s;
         }
 
     String findAMount(String address) {
-        String s = HttpUtil.get(FIND_AMOUNT_URL + address + FIND_AMOUNT_URL_KEY);
+        String url =   FIND_AMOUNT_URL + address + FIND_AMOUNT_URL_KEY;
+        String s = HttpUtil.get(forwardGet+url);
         //{"status":"1","message":"OK","result":"8800000000000000"}
         JSONObject jsonObject = JSONUtil.parseObj(s);
         String result = jsonObject.getStr("result");
@@ -94,7 +99,7 @@ public class UsdtPayOut extends NotfiyChannel implements USDT {
             log.info("当前查询hash 为null<>");
             return  null;
         }
-        String s = HttpUtil.get(TRC_USDT_INFO_URL + hash);
+        String s = HttpUtil.get(forwardGet+TRC_USDT_INFO_URL + hash);
         JSONObject jsonObject = JSONUtil.parseObj(s);
         String contractRet = jsonObject.getStr("contractRet");
         String amount_str = "";
