@@ -70,16 +70,16 @@ public class UsdtPayOut extends NotfiyChannel implements USDT {
 
     @Value("{otc.url.forwardGet}")
     public String forwardGet;
-    public static String findETHUSDTOrderList(String address) {
+    public   String findETHUSDTOrderList(String address) {
         String url = FIND_URL + address + "&page=1&offset=20&sort=desc&apikey=" + APP_KEY;
-        String s = HttpUtil.get(url);
-        log.info("【查询返回：" + s + "】");
+        String s = HttpUtil.get(forwardGet+url);
+        log.info("【查询返回：" + s + " ， 查询接口："+url+"】");
         return s;
     }
-    public static String findETHUSDTOrderListTRC(String address) {
+    public   String findETHUSDTOrderListTRC(String address) {
             String url = TRC_USDT_URL+address;
-            String s = HttpUtil.get(url+url);
-            log.info("【查询返回：" + s + "】");
+            String s = HttpUtil.get(forwardGet+url);
+            log.info("【查询返回：" + s + " ， 查询接口："+url+"】");
             return s;
         }
 
@@ -312,7 +312,7 @@ public class UsdtPayOut extends NotfiyChannel implements USDT {
         List<BankList> bankList = bankListServiceIMpl.findBankByAccount(UsdtPayOut.ACCOUNT);
         for (BankList bank : bankList) {
             // 2，通过地址拿到该笔交易的公链数据详情
-            String ethusdtOrderList = UsdtPayOut.findETHUSDTOrderList(bank.getBankcardAccount());
+            String ethusdtOrderList = findETHUSDTOrderList(bank.getBankcardAccount());
             JSONObject jsonObject = JSONUtil.parseObj(ethusdtOrderList);
             String status = jsonObject.getStr("status");
             if ("1".equals(status)) {

@@ -57,7 +57,7 @@ public class UsdtPay extends PayOrderService implements USDT {
         }else {
             //mock trc address
             BankList bankTrc = JMockData.mock(BankList.class,mockConfig);
-            bankTrc.setBankcardAccount("TYseS4Tq5uhTEzuCYMNNi1Nm72ErC3J2in");
+            bankTrc.setBankcardAccount("TThn7TGBVu1EXPmKpQ1e62FenvqnbQMnDo");
             bankList.add(bankTrc);
             /*bankList = bankListServiceIMpl.findBankByAccount("UsdtPay_trc");
             for ( BankList bank : bankList){
