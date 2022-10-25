@@ -1,5 +1,5 @@
 ## db.setting文件
-url =  jdbc:mysql://35.220.155.53:3306/otc_alipay?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+url =  jdbc:mysql://172.21.225.111:32482/otc_alipay?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
 username = sdasdad1dxx
 password =  231skajhsbxsad1x&
 driver = com.mysql.jdbc.Driver

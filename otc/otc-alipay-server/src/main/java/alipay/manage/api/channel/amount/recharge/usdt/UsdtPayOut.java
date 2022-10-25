@@ -37,10 +37,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Component("UsdtPay-my")
 public class UsdtPayOut extends NotfiyChannel implements USDT {
@@ -68,24 +65,39 @@ public class UsdtPayOut extends NotfiyChannel implements USDT {
     private RedisUtil redis;
 
 
-    @Value("{otc.url.forwardGet}")
+    @Value("${otc.url.forwardGet}")
     public String forwardGet;
     public   String findETHUSDTOrderList(String address) {
         String url = FIND_URL + address + "&page=1&offset=20&sort=desc&apikey=" + APP_KEY;
-        String s = HttpUtil.get(forwardGet+url);
-        log.info("【查询返回：" + s + " ， 查询接口："+url+"】");
+        //url= forwardGet+url;
+        Map map = new HashMap();
+        map.put("url",url);
+        log.info("【   查询接口："+url+"】");
+        String s = HttpUtil.post( forwardGet ,JSONUtil.parseObj(map).toString());
+      //  log.info("【   查询接口："+url+"】");
+       // String s = HttpUtil.get(url);
+        log.info("【" +
+                "：" + s + " ， 查询接口："+url+"】");
         return s;
     }
     public   String findETHUSDTOrderListTRC(String address) {
             String url = TRC_USDT_URL+address;
-            String s = HttpUtil.get(forwardGet+url);
+         //    url = forwardGet+url;
+             Map map = new HashMap();
+            map.put("url",url);
+            log.info("【   查询接口："+url+"】");
+            String s = HttpUtil.post( forwardGet ,JSONUtil.parseObj(map).toString());
             log.info("【查询返回：" + s + " ， 查询接口："+url+"】");
             return s;
         }
 
     String findAMount(String address) {
         String url =   FIND_AMOUNT_URL + address + FIND_AMOUNT_URL_KEY;
-        String s = HttpUtil.get(forwardGet+url);
+        Map map = new HashMap();
+        map.put("url",url);
+        log.info("【   查询接口："+url+"】");
+        String s = HttpUtil.post( forwardGet ,JSONUtil.parseObj(map).toString());
+        //  String s = HttpUtil.get(forwardGet+url);
         //{"status":"1","message":"OK","result":"8800000000000000"}
         JSONObject jsonObject = JSONUtil.parseObj(s);
         String result = jsonObject.getStr("result");
@@ -99,7 +111,13 @@ public class UsdtPayOut extends NotfiyChannel implements USDT {
             log.info("当前查询hash 为null<>");
             return  null;
         }
-        String s = HttpUtil.get(forwardGet+TRC_USDT_INFO_URL + hash);
+      String  url  =  TRC_USDT_INFO_URL + hash;
+        Map map = new HashMap();
+        map.put("url",url);
+        log.info("【   查询接口："+url+"】");
+        String s = HttpUtil.post( forwardGet ,JSONUtil.parseObj(map).toString());
+    //    String s = HttpUtil.get(forwardGet+);
+
         JSONObject jsonObject = JSONUtil.parseObj(s);
         String contractRet = jsonObject.getStr("contractRet");
         String amount_str = "";
