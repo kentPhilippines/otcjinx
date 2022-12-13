@@ -62,7 +62,31 @@ public class HenPay extends PayOrderService {
                 getChannelInfo(channel, dealOrderApp.getRetain1()), dealOrderApp, payInfo
         );
         if (result.isSuccess()) {
-            return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(result.getResult()));
+            Map map = new HashMap();
+            String payInfo1 = "";
+            Map<Object, Object> hmget = redis.hmget(MARS + orderId);
+            try {
+                if (ObjectUtil.isNotNull(hmget)) {
+                    Object bank_name = hmget.get("bank_name");
+                    Object card_no = hmget.get("card_no");
+                    Object card_user = hmget.get("card_user");
+                    Object money_order = hmget.get("money_order");
+                    Object address = hmget.get("address");
+                    map.put("amount", money_order);
+                    map.put("bankCard", card_no);
+                    map.put("bankName", bank_name);
+                    map.put("name", card_user);
+                    map.put("bankBranch", address);
+                    JSONObject jsonObject = JSONUtil.parseFromMap(map);
+                    payInfo1 = jsonObject.toString();
+                }
+            }catch (Exception e ){
+                log.info("详细数据解析异常，当前订单号：" + dealOrderApp.getAppOrderId());
+            }
+            //"{\"amount\":\"200\",\"bankCard\":\"6217566400010691931\",\"bankBranch\":\"福建省漳浦县佛昙支行\",\"name\":\"杨艺平\",\"bankName\":\"中国银行\"}
+            return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrlAndPayInfo1(result.getResult(),result.getMessage(),payInfo1));
+
+            //     return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(result.getResult()));
         } else {
             orderEr(dealOrderApp, "错误消息：" + result.getMessage());
             return result;
@@ -72,7 +96,7 @@ public class HenPay extends PayOrderService {
         try {
             String merchId = channelInfo.getChannelAppId();
             String money = orderAmount.toString();
-            String userId = payInfo;
+            String userId =getPayName(payInfo,orderId) ;
             orderId = orderId;
             String time = d.format(new Date());
             String notifyUrl = notify;
@@ -80,7 +104,7 @@ public class HenPay extends PayOrderService {
             String curType = "CNY";
             String reType = "INFO";
             String signType = "MD5";
-            String payName = payInfo;
+            String payName = userId;
             Map<String, Object> map = new HashMap<>();
             map.put("merchId", merchId);
             map.put("money", money);
@@ -102,12 +126,39 @@ public class HenPay extends PayOrderService {
             String post1 = HttpUtil.post(channelInfo.getDealurl(), map);
             log.info("恒支付响应参数：" + post1);
             //  恒支付响应参数：{"merchId":"662022111914064912","orderId":"7699696969861198696","curType":"CNY","money":"888","code":"0000","msg":"SUCCESS","payUrl":"https:\/\/hengpay.cc\/Apipay\/checkpage\/ordernum\/466901318391797767","sign":"544d4f0d558c34e065aec03454d26328"}
-
-
+//恒支付响应参数：{"merchId":"662022111914064912","orderId":"76996922226969861198696","curType":"CNY","money":"888","code":"0000","msg":"SUCCESS","payInfo":"{\"name\":\"胡正\",\"bank_card\":\"6230521380040099577\",\"bank\":\"农业银行\",\"bank_branch\":\"农行桃江县支行营业室\"}","payUrl":"http:\/\/api.sunnydoom.com\/pass\/?code=867090946232200249","sign":"c3c8ebffe0aeedc2d7bb112441dd15e3"}
             JSONObject resultObject = JSONUtil.parseObj(post1);
             if ("0000".equals(resultObject.getStr("code"))) {
                 String returnUrl = resultObject.getStr("payUrl");//支付链接
-                return Result.buildSuccessResult(returnUrl);
+                String name = "";
+                String bankname ="";
+                String bankno = "";
+                String address = "";
+                String amount = "";
+//"{\"name\":\"胡正\",\"bank_card\":\"6230521380040099577\",\"bank\":\"农业银行\",\"bank_branch\":\"农行桃江县支行营业室\"}"
+                String payInfo2 = resultObject.getStr("payInfo");//支付信息
+                try {
+                    JSONObject jsonObject1 = JSONUtil.parseObj(payInfo2);
+                     address = jsonObject1.getStr("bank_branch");
+                    bankname = jsonObject1.getStr("bank");
+                    bankno = jsonObject1.getStr("bank_card");
+                    name = jsonObject1.getStr("name");
+                }catch (Exception e ){
+                }
+                if(StrUtil.isEmpty(amount)){
+                    amount  =    orderAmount.toString();
+                }
+                Map cardmap = new HashMap();
+                cardmap.put("bank_name", bankname);
+                cardmap.put("card_no", bankno);
+                cardmap.put("card_user", name);
+                cardmap.put("money_order", amount);
+                cardmap.put("no_order", orderId);
+                cardmap.put("oid_partner", orderId);
+                cardmap.put("address", address);
+                orderServiceImpl.updateBankInfoByOrderId(payInfo + " 收款信息：" + name + ":" + bankname + ":" + bankno, orderId);
+                redis.hmset(MARS + orderId, cardmap, 600);
+                return Result.buildSuccessResult(payInfo2, PayApiConstant.Notfiy.OTHER_URL + "/pay?orderId=" + orderId + "&type=203");
             } else {
                 return Result.buildFailMessage("支付失败");
             }

@@ -116,7 +116,7 @@ public class HenPayNotify extends NotfiyChannel {
             return back;
         }
 
-        Result dealpayNotfiy = dealpayNotfiy((String) decodeParamMap.get("no_order"), clientIP);
+        Result dealpayNotfiy = dealpayNotfiy(orderId.toString(), clientIP);
         if (dealpayNotfiy.isSuccess()) {
             Map<String, Object> back = new HashMap<>();
             back.put("code", "0000");
