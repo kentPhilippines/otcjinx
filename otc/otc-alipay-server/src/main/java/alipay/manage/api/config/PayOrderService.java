@@ -109,7 +109,7 @@ public abstract class PayOrderService implements PayService {
 		order.setExternalOrderId(orderApp.getAppOrderId());
 		order.setOrderAccount(orderApp.getOrderAccount());
 		order.setNotify(orderApp.getNotify());
-		String orderQrCh = GenerateOrderNo.Generate("J");
+		String orderQrCh = GenerateOrderNo.Generate("JS");
         order.setOrderId(orderQrCh);
         order.setOrderQrUser(userinfo.getUserId());
         order.setOrderStatus(Common.Order.DealOrder.ORDER_STATUS_DISPOSE.toString());

@@ -401,7 +401,7 @@ public class UsdtPayOut extends NotfiyChannel implements USDT {
 
 
 
-
+                                            //  https://apilist.tronscanapi.com/api/token_trc20/transfers?limit=20&start=0&sort=-timestamp&count=true&relatedAddress=
     private static final String TRC_USDT_URL = "https://apilist.tronscan.org/api/transaction?sort=-timestamp&count=true&limit=50&start=0&address=";
     private static final String TRC_USDT_INFO_URL = "https://apilist.tronscan.org/api/transaction-info?hash=";
 
