@@ -21,9 +21,9 @@ import java.util.Map;
 
 public class witTest {
 	public static void main(String[] args) {
-		 for (int a = 0; a <=0; a++) {
-		   new witTest().deal();
-		}
+//		 for (int a = 0; a <=0; a++) {
+//		   new witTest().deal();
+//		}
 		//find();
 /*
         String userid2 = "2u7rMduh";
@@ -50,7 +50,7 @@ public class witTest {
 
 
 		for (int a = 0; a <= 0; a++) {
-		 	//new witTest().wit(userid, key, publickey);
+		 	new witTest().wit(userid, key, publickey);
 		}
 
 		//USDT测试账号
@@ -144,7 +144,7 @@ public class witTest {
 		objectToMap.put("appid", userid);
 		objectToMap.put("apporderid", StrUtil.uuid());
 		objectToMap.put("ordertime", d.format(new Date()) + "");
-		objectToMap.put("amount", "601");
+		objectToMap.put("amount", "101");
 		objectToMap.put("acctno", "633982938475489382" + RandomUtil.randomLong(1, 10));
 		objectToMap.put("acctname", "张三");
 		objectToMap.put("bankcode", "ICBC");
