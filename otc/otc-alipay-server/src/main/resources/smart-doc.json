@@ -1,0 +1,13 @@
+{
+  "serverUrl": "http://localhost:8080", //服务器地址,非必须。导出postman建议设置成http://{{server}}方便直接在postman直接设置环境变量
+  "allInOne": true,  //是否将文档合并到一个文件中，一般推荐为true
+  "outPath": "src/main/resources/static/doc", //指定文档的输出路径
+  "coverOld": true,  //是否覆盖旧的文件，主要用于mardown文件覆盖
+  "createDebugPage": true,//@since 2.0.0 smart-doc支持创建可以测试的html页面，仅在AllInOne模式中起作用。
+  "projectName": "彗星支付cometpay",//配置自己的项目名称
+  "sortByTitle":false,//接口标题排序，默认为false,@since 1.8.7版本开始
+  "showAuthor":false,//是否显示接口作者名称，默认是true,不想显示可关闭
+  "packageFilters": "alipay.manage.api.V2",
+  "allInOneDocFileName":"index.html"//自定义设置输出文档名称, @since 1.9.0
+
+}

@@ -5,11 +5,42 @@ import cn.hutool.json.JSONUtil;
 /**
  * <p>全局返回值类</p>
  * @author K
+ *
+ * @description
+ * {"success":false,"message":"商户交易费率未配置或未开通","result":null,"code":null}
+ * 说明：费率没有开通请检查通道编码
+ * {"success":false,"message":"签名验证失败","result":null,"code":null}
+ * 说明：验签错误
+ * 正确响应结果集案例：
+ * {"success":true,"message":"支付处理中","result":{"sussess":true,"cod":0,"openType":1,"returnUrl":"http://api.sdsadsadas.com/gateway/bankgateway/payorder/order/43543.html"},"code":1}
  */
 public class Result {
-	private boolean success; 
-	private String message; 
-	private Object result; 
+	/**
+	 * True 成功  false  失败
+	 * 【以该数据判断订单是否成功】
+	 *
+	 */
+	private boolean success;
+	/**
+	 * 提示消息
+	 */
+	private String message;
+
+	/**
+	 * sussess  True 成功  false  失败
+	 *
+	 * returnUrl  支付连接
+	 *
+	 * openType 1：URL  0 ： HTML
+	 *
+	 * cod 1 ：成功
+	 *
+	 */
+	private Object result;
+
+	/**
+	 * 1 ：成功
+	 */
 	private Integer code;
 
 	public Result(boolean b, Integer o, Object result) {
@@ -97,20 +128,23 @@ public class Result {
 	public static Result buildFailMessage(String message) {
 		return new Result(false, message, null,null);
 	}
-	
-		public Result(boolean success, String message, Object result, Integer code) {
-			super();
-			this.success = success;
-			this.message = message;
-			this.result = result;
-			this.code = code;
-		}
+
+	public Result(boolean success, String message, Object result, Integer code) {
+		super();
+		this.success = success;
+		this.message = message;
+		this.result = result;
+		this.code = code;
+	}
 	public Result() {
 		super();
 	}
 
 	public static Result buildSuccessMessageCode(String msg, Object o, int i) {
-			return new Result(true, msg, o,i);
+		return new Result(true, msg, o,i);
+	}
+	public static Result buildFailMessageCode(String msg, int i) {
+		return new Result(false, msg, null,i);
 	}
 
 	public boolean isSuccess() {

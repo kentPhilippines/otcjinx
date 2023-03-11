@@ -151,6 +151,29 @@
     <build>
     <plugins>
         <plugin>
+            <groupId>com.github.shalousun</groupId>
+            <artifactId>smart-doc-maven-plugin</artifactId>
+            <version>2.4.2</version>
+            <configuration>
+                <configFile>./src/main/resources/smart-doc.json</configFile>
+                <projectName>支付项目</projectName>
+                <excludes>
+                    <exclude>com.alibaba:fastjson</exclude>
+                </excludes>
+                <includes>
+                    <include>com.alibaba:fastjson</include>
+                </includes>
+            </configuration>
+            <executions>
+                <execution>
+                    <phase>compile</phase>
+                    <goals>
+                        <goal>html</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+        <plugin>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-maven-plugin</artifactId>
             <version>1.5.11.RELEASE</version>

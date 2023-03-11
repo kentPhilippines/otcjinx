@@ -4,6 +4,7 @@ import alipay.config.redis.RedisLockUtil;
 import alipay.config.redis.RedisUtil;
 import alipay.manage.api.AccountApiService;
 import alipay.manage.api.DealAppApi;
+import alipay.manage.api.V2.vo.WithdrawRequestVO;
 import alipay.manage.api.VendorRequestApi;
 import alipay.manage.api.config.FactoryForStrategy;
 import alipay.manage.api.config.PayOrderService;
@@ -75,9 +76,9 @@ public class WitPay extends PayOrderService {
      * @param amount  true   检查余额   false  不检查余额
      * @return
      */
-    public Result wit(HttpServletRequest request, boolean amount) {
+    public Result wit(HttpServletRequest request, boolean amount, WithdrawRequestVO withdrawRequestVO) {
         String userId = request.getParameter("userId");
-        if (ObjectUtil.isNull(userId)) {
+        if (ObjectUtil.isNull(userId) && withdrawRequestVO==null ) {
             return Result.buildFailMessage("当前传参，参数格式错误，请使用[application/x-www-form-urlencoded]表单格式传参");
         }
         redisLockUtil.redisLock(RedisLockUtil.AMOUNT_USER_KEY + userId);
@@ -86,7 +87,7 @@ public class WitPay extends PayOrderService {
         if (StrUtil.isNotBlank(manage)) {
             flag = true;
         }
-        Result withdrawal = vendorRequestApi.withdrawal(request, flag);
+        Result withdrawal = vendorRequestApi.withdrawal(request, flag,withdrawRequestVO);
         if (!withdrawal.isSuccess()) {
             return withdrawal;
         }

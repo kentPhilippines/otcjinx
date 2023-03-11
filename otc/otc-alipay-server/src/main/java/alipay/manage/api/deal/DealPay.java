@@ -2,6 +2,7 @@ package alipay.manage.api.deal;
 
 import alipay.config.redis.RedisUtil;
 import alipay.manage.api.AccountApiService;
+import alipay.manage.api.V2.vo.DepositRequestVO;
 import alipay.manage.api.VendorRequestApi;
 import alipay.manage.api.config.FactoryForStrategy;
 import alipay.manage.bean.*;
@@ -57,12 +58,12 @@ public class DealPay {
     private RedisUtil redis;
 
     @Autowired private UserRateService userRateService;
-    public Result deal(HttpServletRequest request) {
-        if (ObjectUtil.isNull(request.getParameter("userId"))) {
+    public Result deal(HttpServletRequest request, DepositRequestVO depositRequestVO) {
+        if (ObjectUtil.isNull(request.getParameter("userId")) && depositRequestVO == null) {
             log.info("当前传参，参数格式错误");
-            return Result.buildFailMessage("当前传参，参数格式错误，请使用[application/x-www-form-urlencoded]表单格式传参");
+            return Result.buildFailMessage("当前传参，参数格式错误，");
         }
-        Result pay = vendorRequestApi.pay(request);
+        Result pay = vendorRequestApi.pay(request, depositRequestVO);
         if (!pay.isSuccess()) {
             return pay;
         }

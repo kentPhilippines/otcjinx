@@ -1,6 +1,8 @@
 package alipay.manage.api;
 
 import alipay.config.redis.RedisUtil;
+import alipay.manage.api.V2.vo.DepositRequestVO;
+import alipay.manage.api.V2.vo.WithdrawRequestVO;
 import alipay.manage.bean.UserFund;
 import alipay.manage.bean.UserInfo;
 import alipay.manage.bean.UserRate;
@@ -13,6 +15,8 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONUtil;
+import com.google.common.collect.Maps;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +31,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class VendorRequestApi {
@@ -94,8 +99,13 @@ public class VendorRequestApi {
      * @param request
      * @return
      */
-    public Result pay(HttpServletRequest request) {
+    public Result pay(HttpServletRequest request, DepositRequestVO depositRequestVO) {
         String userId = request.getParameter("userId");//商户号
+        //兼容新协议
+        if(StringUtils.isEmpty(userId))
+        {
+            userId = depositRequestVO.getAppId();
+        }
         log.info("reuserid:{}",userId);
         //根据商户号查询商户实体
         UserInfo userInfo = accountApiServiceImpl.findClick(userId);
@@ -107,7 +117,17 @@ public class VendorRequestApi {
         log.info("--------------【用户开始RSA解密】----------------");
         String rsaSign = request.getParameter("cipherText");//商户传过来的密文
         log.info("【报文：" + rsaSign + "】");
-        Map<String, Object> paramMap = RSAUtils.getDecodePrivateKey(rsaSign, key.getPrivateKey());
+        Map<String, Object> paramMap ;
+        //新的v2协议
+        if(depositRequestVO!=null)
+        {
+            String despositRequestJson = JSONUtil.toJsonStr(depositRequestVO);
+            paramMap = JSONUtil.toBean(despositRequestJson,Map.class);
+        }else
+        {
+            //老的公钥加密方式
+            paramMap = RSAUtils.getDecodePrivateKey(rsaSign, key.getPrivateKey());
+        }
         log.info("【商户RSA解密的参数：" + paramMap.toString() + "】 ");
         log.info("keyobj:{}", JSONUtil.toJsonStr(key));
         //验证结果
@@ -143,8 +163,14 @@ public class VendorRequestApi {
         return Result.buildSuccessResult(paramMap);
     }
     @Autowired  private RedisUtil redis;
-    public Result withdrawal(HttpServletRequest request, boolean flag) {
-        String userId = request.getParameter("userId");//商户号
+    public Result withdrawal(HttpServletRequest request, boolean flag, WithdrawRequestVO withdrawRequestVO) {
+        String finalUserId = request.getParameter("userId");//商户号
+        //兼容新V2协议
+        if(StringUtils.isEmpty(finalUserId))
+        {
+            finalUserId = withdrawRequestVO.getAppid();
+        }
+        String userId = finalUserId;
         UserInfo userInfo = accountApiServiceImpl.findClick(userId);
         UserInfo key = accountApiServiceImpl.findPrivateKey(userId);
         if (null == userInfo || null == key) {
@@ -154,7 +180,17 @@ public class VendorRequestApi {
         log.info("--------------【用户开始RSA解密】----------------");
         String rsaSign = request.getParameter("cipherText");//商户传过来的密文
         log.info("【获取参数为：" + rsaSign + "】");
-        Map<String, Object> paramMap = RSAUtils.getDecodePrivateKey(rsaSign, key.getPrivateKey());
+        Map<String, Object> paramMap ;
+        //新的v2协议
+        if(withdrawRequestVO!=null)
+        {
+            String withdrawRequestJson = JSONUtil.toJsonStr(withdrawRequestVO);
+            paramMap = JSONUtil.toBean(withdrawRequestJson,Map.class);
+        }else
+        {
+            //老的公钥加密方式
+            paramMap = RSAUtils.getDecodePrivateKey(rsaSign, key.getPrivateKey());
+        }
         log.info("【商户RSA解密的参数：" + paramMap.toString() + "】 ");
         if (CollUtil.isEmpty(paramMap)) {
             return Result.buildFailMessage("RSA解密参数为空");
