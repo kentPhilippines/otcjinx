@@ -25,6 +25,7 @@ public class PayUtil {
 
     static {
         ipMap.put("47.243.127.115", "47.243.127.115");
+        ipMap.put("66.203.152.213", "66.203.152.213");
         ipMap.put("47.242.25.214", "47.242.25.214");
         ipMap.put("47.52.243.5", "47.52.243.5");
         ipMap.put("127.0.0.1", "127.0.0.1");
@@ -108,6 +109,7 @@ public class PayUtil {
     }
 
     public static String createParam(Map<String, Object> map) {
+
         try {
             if (map == null || map.isEmpty()) {
                 return null;

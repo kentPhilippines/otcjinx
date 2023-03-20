@@ -144,7 +144,7 @@ public class witTest {
 		objectToMap.put("appid", userid);
 		objectToMap.put("apporderid", StrUtil.uuid());
 		objectToMap.put("ordertime", d.format(new Date()) + "");
-		objectToMap.put("amount", "101");
+		objectToMap.put("amount", "100");
 		objectToMap.put("acctno", "633982938475489382" + RandomUtil.randomLong(1, 10));
 		objectToMap.put("acctname", "张三");
 		objectToMap.put("bankcode", "ICBC");
