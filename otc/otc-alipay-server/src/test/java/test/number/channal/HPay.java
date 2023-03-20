@@ -11,7 +11,7 @@ public class HPay<merchId> {
     private static SimpleDateFormat d = new SimpleDateFormat("YYYYMMDDhhmmss");
 
     public static void main(String[] args) {
-wit();
+pay();
         //curType=CNY&merchId=662022111914064912&money=888&notifyUrl=http://www.sdadsa.cn/sda/asda&orderId=6f896593-bef2-400a-a557-0356c09f54e9&payName=李逵&payType=306&reType=INFO&signType=MD5&time=202211325015349&userId=李逵&md5ey=s66202P0-licy872&SGTSU11191406>>4912adsd
         //curType=CNY&merchId=123123&money=100&notifyUrl=www.baidu.com&orderId=1 2312312&payName=张三 &payType=66&reType=LINK&signType=MD5&time=20220905002841&userId=1&md5ey= PSnb9LnXabju0XIVbfQDFmMmLZiXw0pu
     }
@@ -39,16 +39,16 @@ wit();
 
 
 
-  void   pay(){
+ static void   pay(){
         String merchId = "662022111914064912";
         String money = "888";
         String userId = "李逵";
-        String orderId = "7699696969861198696";
+        String orderId = "76996922226969861198696";
         String time = d.format(new Date());
         String notifyUrl = "http://www.aaa.cn";
-        String payType = "308";
+        String payType = "66";
         String curType = "CNY";
-        String reType = "LINK";
+        String reType = "INFO";
         String signType = "MD5";
         String payName = userId;
         ;
