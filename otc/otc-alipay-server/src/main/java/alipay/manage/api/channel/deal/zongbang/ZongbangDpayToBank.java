@@ -96,7 +96,7 @@ public class ZongbangDpayToBank extends PayOrderService {
             objectToMap.put("amount", wit.getAmount());
             objectToMap.put("acctno", wit.getBankNo());
             objectToMap.put("acctname",  wit.getAccname());
-            objectToMap.put("bankcode", wit.getBankcode());
+            objectToMap.put("bankcode", wit.getBankName());
             objectToMap.put("notifyurl",notify);
             String createParam = createParam(objectToMap);
             log.info("签名前请求串：" + createParam);
