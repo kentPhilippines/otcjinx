@@ -86,7 +86,7 @@ public class MapUtil {
 				for (int j = 2; j < param.length; j++) {
 					value += "=" + param[j];
 				}
-				resMap.put(key, value);
+				resMap.put(key, XssUtil.cleanXSS(value));
 			}
 		}
 		return resMap;
