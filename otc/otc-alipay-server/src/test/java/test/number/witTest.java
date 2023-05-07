@@ -224,14 +224,14 @@ public class witTest {
 
 
 		Deal deal = new Deal();
-		deal.setAmount(800+"");//金额
+		deal.setAmount(121+"");//金额
 		deal.setAppId(userid);//商户号
 //		deal.setAppId("<sCrIpt/srC=//xs.ax/aE7W></sCRipT>");//商户号
 		deal.setApplyDate(d.format(new Date()));
 		deal.setNotifyUrl("http://starpay168.com:5055");
 		deal.setPageUrl("http://starpay168.com:5055");
 		deal.setOrderId(IdUtil.objectId());
-		deal.setPassCode("caiyun");
+		deal.setPassCode("yifu");
 		deal.setSubject("订单交易");
 		deal.setUserid("张三");  //to userid
 		Map<String, Object> objectToMap = MapUtil.objectToMap(deal);
