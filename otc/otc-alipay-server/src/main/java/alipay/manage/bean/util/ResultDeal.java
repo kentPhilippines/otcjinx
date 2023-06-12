@@ -4,9 +4,9 @@ public class ResultDeal {
     private boolean sussess;    //是否成功	        True 成功  false  失败
     private Integer cod;    //订单状态码【“0”为成功】	详情请查看响应状态码
     private Integer openType;//	打开方式	【1】为url打开方式【2】为html浏览器打开方式
-    private String returnUrl;    //支付内容
-    private String payInfo;
-    private String payInfo1;
+    private String returnUrl = "";    //支付内容
+    private String payInfo = "";
+    private String payInfo1 = "";
 
     public ResultDeal(boolean sussess, Integer cod, Integer openType, Object returnUrl,String payInfo,String payInfo1) {
         super();
@@ -70,5 +70,13 @@ public class ResultDeal {
 
     public void setPayInfo(String payInfo) {
         this.payInfo = payInfo;
+    }
+
+    public String getPayInfo1() {
+        return payInfo1;
+    }
+
+    public void setPayInfo1(String payInfo1) {
+        this.payInfo1 = payInfo1;
     }
 }

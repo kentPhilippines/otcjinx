@@ -17,6 +17,7 @@ import cn.hutool.json.JSONUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import otc.common.PayApiConstant;
 import otc.result.Result;
@@ -32,6 +33,8 @@ import java.util.Map;
 
 @Component("HenPay")
 public class HenPay extends PayOrderService {
+    @Value("${otc.payInfo.url}")
+    public   String url;
     private static final String MARS = "SHENFU";
     private static SimpleDateFormat d = new SimpleDateFormat("YYYYMMDDhhmmss");
     private static final Log log = LogFactory.get();
@@ -158,7 +161,7 @@ public class HenPay extends PayOrderService {
                 cardmap.put("address", address);
                 orderServiceImpl.updateBankInfoByOrderId(payInfo + " 收款信息：" + name + ":" + bankname + ":" + bankno, orderId);
                 redis.hmset(MARS + orderId, cardmap, 600);
-                return Result.buildSuccessResult(payInfo2, PayApiConstant.Notfiy.OTHER_URL + "/pay?orderId=" + orderId + "&type=203");
+                return Result.buildSuccessResult(payInfo2, url + "/pay?orderId=" + orderId + "&type=203");
             } else {
                 return Result.buildFailMessage("支付失败");
             }

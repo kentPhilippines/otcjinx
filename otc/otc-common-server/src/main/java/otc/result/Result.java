@@ -24,7 +24,7 @@ public class Result {
 	/**
 	 * 提示消息
 	 */
-	private String message;
+	private String message = "";
 
 	/**
 	 * sussess  True 成功  false  失败
@@ -36,7 +36,7 @@ public class Result {
 	 * cod 1 ：成功
 	 *
 	 */
-	private Object result;
+	private Object result = "";
 
 	/**
 	 * 1 ：成功

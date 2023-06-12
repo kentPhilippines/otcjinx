@@ -65,7 +65,7 @@ public class AnXinPay extends PayOrderService {
             paramMap.put("amount", orderAmount.multiply(new BigDecimal(100)).toBigInteger());
             paramMap.put("realName", getPayName(payInfo, orderId));
             paramMap.put("type", channelInfo.getChannelType());
-            paramMap.put("notifyUrl", "127.0.0.1");
+            paramMap.put("notifyUrl", notify);
             String reqSign = PayDigestUtil.getSign(paramMap, key);
             paramMap.put("sign", reqSign);
             String reqData = "params=" + paramMap.toJSONString();
