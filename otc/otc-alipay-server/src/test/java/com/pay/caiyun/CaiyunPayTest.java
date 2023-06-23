@@ -3,7 +3,6 @@ package com.pay.caiyun;
 import alipay.manage.api.channel.util.qiangui.MD5;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.json.JSONUtil;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.RandomStringUtils;
 import org.joda.time.DateTime;
 import org.springframework.http.HttpEntity;
@@ -15,7 +14,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
 import java.util.Map;
-@Slf4j
 public class CaiyunPayTest {
     public static void main(String[] args) {
         CaiyunPayTest newXiangyunPayTest = new CaiyunPayTest();
@@ -71,7 +69,7 @@ public class CaiyunPayTest {
                 }
             }
             String rStr = res.substring(0, res.length() - 1);
-            log.info(rStr);
+            //log.info(rStr);
             return rStr;
         } catch (Exception e) {
             e.printStackTrace();

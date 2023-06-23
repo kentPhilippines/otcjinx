@@ -271,7 +271,7 @@ public class DepositRequestVO {
     private String userId;
 
 
-
-
-
+    public String getAppId() {
+        return appId;
+    }
 }

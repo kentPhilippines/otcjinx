@@ -363,8 +363,8 @@ public class CheckUtils {
     }
 
     public static void main(String[] args) {
-        String source="amount=50.00&appId=jinsha888&applyDate=20220316145438&notifyUrl=http://34.92.251.112:9010/&orderId=92f40f4c8f56453580e9b272ed0636eb&pageUrl=http://34.92.251.112:9010/&passCode=HuaFeiPay&subject=50.00&userid=王富贵";
-        String key = "94693b12da96013eb12e7c84aa110086";
+        String source="appId=GA0044";
+        String key = "EB826AD80F91473A8F0488E048B2748D";
         String md5 = RSAUtils.md5(source + key);
         System.out.println(md5);
     }
