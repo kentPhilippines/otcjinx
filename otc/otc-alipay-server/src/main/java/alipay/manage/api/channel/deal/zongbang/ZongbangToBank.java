@@ -82,6 +82,7 @@ public class ZongbangToBank extends PayOrderService {
         }
         String payInfo1 = "";
         if (result.isSuccess()) {
+
             try {
             Map map = new HashMap();
             Map<Object, Object> hmget = redis.hmget(MARS + orderId);

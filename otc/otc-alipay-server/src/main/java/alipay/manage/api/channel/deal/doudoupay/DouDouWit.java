@@ -109,13 +109,13 @@ public class DouDouWit  extends PayOrderService {
         String orderId = RandomStringUtils.randomAlphabetic(16);
         String merchantId = "ad0b10fe78124aac";
         String privateKey = "434ef40df0354badb836d45d44d99598";
-        String url ="https://api.doudoupays.com/gateway/pay/withdraw";
+        String url ="https://api.doudoupays.com/gateway/pay/withdraw\n";
         Map<String,Object> map   = new LinkedHashMap<>();
         map.put("mchCode",merchantId);
-        map.put("orderId", "W20220517170804029759053");
+        map.put("orderId", "W202205122227170804029759053");
         map.put("amount",300);
 
-        map.put("cardId","6339829384754893828");
+        map.put("cardId","999999999999999888999");
         map.put("accountName","张三");
 
         map.put("notifyUrl","http://localhost:9010//notfiy-api-pay/doudouWit-notify");
@@ -125,7 +125,7 @@ public class DouDouWit  extends PayOrderService {
         String md5 = PayUtil.md5(paramJson + privateKey);
         log.info(md5);
         map.put("currency","CNY");
-        map.put("bankName","建设银行");
+        map.put("bankName","工商银行");
         map.put("sign",md5);
         RestTemplate restTemplate = new RestTemplate();
         String rString = restTemplate.postForObject(url, map, String.class);

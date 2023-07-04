@@ -89,4 +89,8 @@ public class WithdrawRequestVO {
     @NotEmpty(message = "签名sign不能为空")
     String  sign;
 
+
+    public String getAppid() {
+        return appid;
+    }
 }

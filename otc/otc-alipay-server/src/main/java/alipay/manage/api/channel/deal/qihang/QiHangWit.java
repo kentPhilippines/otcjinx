@@ -71,7 +71,7 @@ public class QiHangWit extends PayOrderService {
     }
 
     private String createDpay(String noyifyUrl, Withdraw wit, ChannelInfo channelInfo) {
-        String signKey = "82c8a4bc8b81ed850ba1fecea0452529516cacd5d0d88fe9e4088c275732";
+        String signKey = "844b59e777b7a14c12a821ea13984ef053a3af41721e0298d815d8a030f2";
         String key = "bce8ae69874a73a537369836c5fc93af3d7db440";
         key = channelInfo.getChannelPassword();
         signKey = channelInfo.getDealurl();// 请求充值接口作为 api key 的参数
@@ -115,14 +115,25 @@ public class QiHangWit extends PayOrderService {
             log.info(successResponse.toString());
             JSONObject jsonObject1 = JSONUtil.parseObj(successResponse);
             Object data = jsonObject1.get("data");
-            if(data.toString().equals("success")){
+            if(data.toString().equals("message")){
+                witComment(wit.getOrderId());
                 return WIT_RESULT;
             }
         }catch (RuntimeException s){
-            s.printStackTrace();
-        }
+            try {
+            JSONObject jsonObject = JSONUtil.xmlToJson(ruselt);
+            Object ErrorResponse = jsonObject.get("ErrorResponse");
+            log.info(ErrorResponse.toString());
+            JSONObject jsonObject1 = JSONUtil.parseObj(ErrorResponse);
+            Object message = jsonObject1.get("message");
+            withdrawErMsg(wit, message.toString(),wit.getRetain2());
+            }catch (RuntimeException s1){
+
+            }
+         }
         return "";
     }
+
 
     public static String sign(String secretKey, String data) {
 
@@ -145,5 +156,26 @@ public class QiHangWit extends PayOrderService {
             e.printStackTrace();
         }
         return null;
+    }
+
+
+    public static void main(String[] args) {
+    //    <ErrorResponse><code>-9999</code><message>IP 159.138.57.200 not allowed</message><data/></ErrorResponse>
+//<SuccessResponse><code>200</code><message>OK</message><data>success</data></SuccessResponse>
+
+
+
+        String str = "<SuccessResponse><code>200</code><message>OK</message><data>success</data></SuccessResponse>";
+        String sss = "<ErrorResponse><code>-9999</code><message>IP 159.138.57.200 not allowed</message><data/></ErrorResponse>";
+
+        JSONObject jsonObject = JSONUtil.xmlToJson(str);
+        JSONObject sssj = JSONUtil.xmlToJson(sss);
+
+        System.out.println(jsonObject.toString());
+        System.out.println(sssj.toString());
+
+
+
+
     }
 }

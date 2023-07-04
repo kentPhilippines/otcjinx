@@ -19,7 +19,7 @@ public class XSSFilter implements Filter {
     /**
      * 排除链接
      */
-    @Value("#{'${xss.excludes}'.split(',')}")
+ //   @Value("#{'${xss.excludes}'.split(',')}")
     private List<String> excludes;
 
     @Value("${xss.enabled}")

@@ -39,7 +39,7 @@ public class WithdrawApi {
      * @return
      */
     public Result witOrder(HttpServletRequest request, @RequestBody WithdrawRequestVO withdrawRequestVO) {
-        log.info("v2 with request:{}", JSONUtil.toJsonStr(withdrawRequestVO));
+    //    log.info("v2 with request:{}", JSONUtil.toJsonStr(withdrawRequestVO));
         return witPay.wit(request, false,withdrawRequestVO);
     }
 }

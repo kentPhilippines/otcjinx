@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 
-@Slf4j
+
 public class YifuPayTest {
     public static void main(String[] args) throws IOException {
         YifuPayTest newXiangyunPayTest = new YifuPayTest();
@@ -53,7 +53,7 @@ public class YifuPayTest {
 
 
         String requestJson = JSONUtil.toJsonStr(param.toSingleValueMap());
-        log.info(requestJson);
+        System.out.println(requestJson);
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
         MediaType mediaType = MediaType.parse("application/json");
