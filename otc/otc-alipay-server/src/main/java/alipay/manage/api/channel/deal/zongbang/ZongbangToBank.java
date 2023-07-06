@@ -77,9 +77,10 @@ public class ZongbangToBank extends PayOrderService {
                 getChannelInfo(channel, dealOrderApp.getRetain1()), dealOrderApp, payInfo
         );
         log.info(result.toString());
-        if("ALIPAY_SCAN".equals(dealOrderApp.getRetain1())){
+        if(dealOrderApp.getRetain1().contains("ALIPAY")){
             return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(result.getResult()));
         }
+
         String payInfo1 = "";
         if (result.isSuccess()) {
 

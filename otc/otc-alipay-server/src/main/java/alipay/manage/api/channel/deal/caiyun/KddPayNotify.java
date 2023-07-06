@@ -49,13 +49,13 @@ public class KddPayNotify extends NotfiyChannel {
         String postSign= params.get("sign");
         String sign = createSign(params, password);
         if(postSign.equalsIgnoreCase(sign) && "1".equals(params.get("order_status")+"")) {
-            Result result = dealpayNotfiy(params.get("out_trade_no")+"", s, "kdd回调成功");
+            Result result = dealpayNotfiy(params.get("out_trade_no")+"", s, "三方回调成功");
             return "success";
         }
         return "error";
     }
 
-
+     
     private static String createSign(Map map, String key)
     {
         map.remove("sign");
