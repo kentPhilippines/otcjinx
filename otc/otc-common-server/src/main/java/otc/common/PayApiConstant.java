@@ -98,6 +98,6 @@ public class PayApiConstant {
         public static final String NOTFIY_API = "/notfiy-api";
         public static final String NOTFIY_API_WAI = "/notfiy-api-pay";
         public static final String NOTFIY_AGENT = "/notfiy-agent";
-        public static final String OTHER_URL = "http://47.242.166.222:32437";
+        public static final String OTHER_URL = "http://119.13.124.114";
     }
 }

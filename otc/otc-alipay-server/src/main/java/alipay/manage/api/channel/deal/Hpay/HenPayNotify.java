@@ -76,16 +76,7 @@ public class HenPayNotify extends NotfiyChannel {
         }
         String clientIP = HttpUtil.getClientIP(req);
         log.info("【当前回调ip为：" + clientIP + "】");
-        Map map = PayUtil.ipMap;
-        Object object = map.get(clientIP);
-        if (ObjectUtil.isNull(object)) {
-            log.info("【当前回调ip为：" + clientIP + "，固定IP登记为：" + map.toString() + "】");
-            log.info("【当前回调ip不匹配】");
-            Map<String, Object> back = new HashMap<>();
-            back.put("code", "9999");
-            back.put("msg", "ip 错误");
-            return back;
-        }
+
         log.info("恒支付回调参数：" + decodeParamMap.toString());
         Object merchId = decodeParamMap.get("merchId");
 /*

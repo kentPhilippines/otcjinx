@@ -1,45 +1,60 @@
 package alipay.manage.bean;
 
 import lombok.Data;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 
 import java.io.Serializable;
 import java.util.Date;
 
 /**
  * bankconfig对象 alipay_bank_config
- * 
+ *
  * @author ruoyi
  * @date 2022-07-07
  */
 @Data
-public class AlipayBankConfig implements Serializable
-{
+public class AlipayBankConfig implements Serializable {
     private static final long serialVersionUID = 1L;
     private Date createTime;
-    /** id */
+    /**
+     * id
+     */
     private Integer id;
 
-    /** 银行编码 */
+    /**
+     * 银行编码
+     */
     private String codeValue;
 
-    /** 银行名称 */
+    /**
+     * 银行名称
+     */
     private String bankName;
 
-    /** 方言1 */
+    /**
+     * 方言1
+     */
     private String alias1;
 
-    /** 方言2 */
+    /**
+     * 方言2
+     */
     private String alias2;
 
-    /** 方言3 */
+    /**
+     * 方言3
+     */
     private String alias3;
 
-    /** 方言4 */
+    /**
+     * 方言4
+     */
     private String alias4;
 
     
 
-    /*public void setId(Integer id) 
+   public void setId(Integer id)
     {
         this.id = id;
     }
@@ -102,10 +117,14 @@ public class AlipayBankConfig implements Serializable
     {
         return alias4;
     }
-*/
-    /*@Override
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    @Override
     public String toString() {
-        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
             .append("id", getId())
             .append("codeValue", getCodeValue())
             .append("bankName", getBankName())
@@ -113,7 +132,6 @@ public class AlipayBankConfig implements Serializable
             .append("alias2", getAlias2())
             .append("alias3", getAlias3())
             .append("alias4", getAlias4())
-            .append("createTime", getCreateTime())
             .toString();
-    }*/
+    }
 }

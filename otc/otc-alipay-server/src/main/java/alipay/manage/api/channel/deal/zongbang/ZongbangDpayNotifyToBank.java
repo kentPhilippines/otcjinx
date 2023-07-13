@@ -28,13 +28,6 @@ public class ZongbangDpayNotifyToBank extends NotfiyChannel {
     public String notify(HttpServletRequest req, HttpServletResponse res ) {
         String clientIP = HttpUtil.getClientIP(req);
         log.info("【当前回调ip为：" + clientIP + "】");
-        Map mapIp = PayUtil.ipMap;
-        Object object = mapIp.get(clientIP);
-        if (ObjectUtil.isNull(object)) {
-            log.info("【当前回调ip为：" + clientIP + "，固定IP登记为：" + mapIp.toString() + "】");
-            log.info("【当前回调ip不匹配】");
-            return "ip errer";
-        }
         String apporderid = req.getParameter("apporderid");
         String tradesno = req.getParameter("tradesno");
         String status = req.getParameter("status");

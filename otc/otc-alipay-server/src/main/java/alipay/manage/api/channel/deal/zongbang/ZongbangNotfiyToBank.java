@@ -32,13 +32,6 @@ public class ZongbangNotfiyToBank extends NotfiyChannel {
         log.info("【收到汇通付手动支付成功回调】");
         String clientIP = HttpUtil.getClientIP(req);
         log.info("【当前回调ip为：" + clientIP + "】");
-        Map map = PayUtil.ipMap;
-        Object object = map.get(clientIP);
-        if (ObjectUtil.isNull(object)) {
-            log.info("【当前回调ip为：" + clientIP + "，固定IP登记为：" + map.toString() + "】");
-            log.info("【当前回调ip不匹配】");
-            return "ip errer";
-        }
         String apporderid = req.getParameter("apporderid");
         String tradesno = req.getParameter("tradesno");
         String status = req.getParameter("status");

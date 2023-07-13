@@ -38,7 +38,7 @@ public class DepositApi {
      */
     @PostMapping("/pay")
     public Result dealAppPay(HttpServletRequest request, @RequestBody DepositRequestVO depositRequestVO) {
-        log.info("v2 depsoit request:{}", JSONUtil.toJsonStr(depositRequestVO));
+   ///     log.info("v2 depsoit request:{}", JSONUtil.toJsonStr(depositRequestVO));
 
         return dealPay.deal(request,depositRequestVO);
     }

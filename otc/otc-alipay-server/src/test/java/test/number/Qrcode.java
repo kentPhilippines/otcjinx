@@ -12,7 +12,7 @@ import java.sql.SQLException;
 public class Qrcode {
     public static void main(String[] args) throws SQLException {
         //   String s = HttpUtil.get("https://api.etherscan.io/api?module=account&action=tokentx&address=0x28250971cF8bB17eDB2fD31e72C7fD352ae0eFCB&page=1&offset=5&sort=desc&apikey=JYNM1VJSXN8JE6JCY5M9JGKBDB7KPJDC5M");
-        /*String ethusdtOrderList = UsdtPayOut.findETHUSDTOrderList("0x28250971cF8bB17eDB2fD31e72C7fD352ae0eFCB");
+        String ethusdtOrderList ="";// UsdtPayOut.findETHUSDTOrderList("0x28250971cF8bB17eDB2fD31e72C7fD352ae0eFCB");
         System.out.println(ethusdtOrderList);
         JSONObject jsonObject = JSONUtil.parseObj(ethusdtOrderList);
         String status = jsonObject.getStr("status");
@@ -52,7 +52,7 @@ public class Qrcode {
 
             //   BigDecimal price = new BigDecimal(gasPrice).divide(new BigDecimal("1000000000"),BigDecimal.ROUND_HALF_EVEN);
 
-        }*/
+        }
 
 
     }

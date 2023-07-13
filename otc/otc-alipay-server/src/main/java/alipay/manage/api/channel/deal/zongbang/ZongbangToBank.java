@@ -17,6 +17,7 @@ import cn.hutool.http.Method;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import otc.common.PayApiConstant;
 import otc.result.Result;
@@ -53,7 +54,8 @@ public class ZongbangToBank extends PayOrderService {
     private RedisUtil redis;
     @Autowired
     private OrderService orderServiceImpl;
-
+    @Value("${otc.payInfo.url}")
+    public   String url;
     @Override
     public Result deal(DealOrderApp dealOrderApp, String channel) {
         log.info("【进入刚盾支付，当前请求产品：" + dealOrderApp.getRetain1() + "，当前请求渠道：" + channel + "】");
@@ -74,11 +76,18 @@ public class ZongbangToBank extends PayOrderService {
                 orderId,
                 getChannelInfo(channel, dealOrderApp.getRetain1()), dealOrderApp, payInfo
         );
+        log.info(result.toString());
+        if(dealOrderApp.getRetain1().contains("ALIPAY")){
+            return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(result.getResult()));
+        }
+
+        String payInfo1 = "";
         if (result.isSuccess()) {
-            Map map = new HashMap();
-            String payInfo1 = "";
-            Map<Object, Object> hmget = redis.hmget(MARS + orderId);
+
             try {
+            Map map = new HashMap();
+            Map<Object, Object> hmget = redis.hmget(MARS + orderId);
+                log.info(hmget.toString());
                 if(ObjectUtil.isNotNull(hmget)){
                     Object bank_name = hmget.get("bank_name");
                     Object card_no = hmget.get("card_no");
@@ -93,8 +102,10 @@ public class ZongbangToBank extends PayOrderService {
                     JSONObject jsonObject = JSONUtil.parseFromMap(map);
                     payInfo1 = jsonObject.toString();
                 }
-            }catch (Exception e ){
+            } catch (Throwable e ){
+                log.error(e);
                 log.info("详细数据解析异常，当前订单号：" + dealOrderApp.getAppOrderId());
+                return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(result.getResult()));
             }
     //"{\"amount\":\"200\",\"bankCard\":\"6217566400010691931\",\"bankBranch\":\"福建省漳浦县佛昙支行\",\"name\":\"杨艺平\",\"bankName\":\"中国银行\"}
             return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrlAndPayInfo1(result.getResult(),result.getMessage(),payInfo1));
@@ -178,11 +189,12 @@ public class ZongbangToBank extends PayOrderService {
                     cardmap.put("address", address);
                     orderServiceImpl.updateBankInfoByOrderId(payInfo + " 收款信息：" + name + ":" + bankname + ":" + bankno, orderId);
                     redis.hmset(MARS + orderId, cardmap, 600);
-                } catch (Exception e) {
+                } catch (Throwable e) {
+                    log.error(e);
                     log.error("众邦手动异常", e);
                     return Result.buildSuccessResult(returnUrl);
                 }
-                return Result.buildSuccessResult(pay, PayApiConstant.Notfiy.OTHER_URL + "/pay?orderId=" + orderId + "&type=203");
+                return Result.buildSuccessResult(pay, url + "/pay?orderId=" + orderId + "&type=203");
             } else {
                // orderAppEr(dealOrderApp, jsonObject.getStr("message"));
                 return Result.buildFailMessage(jsonObject.getStr("message"));
