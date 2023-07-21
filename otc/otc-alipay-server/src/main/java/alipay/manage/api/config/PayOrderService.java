@@ -82,6 +82,19 @@ public abstract class PayOrderService implements PayService {
 		}
 		return false;
 	}
+	public  boolean orderEr(String orderId, String msg) {
+		log.info("【将当前订单置为失败，当前交易订单号：" + orderId + "】");
+		DealOrder dealOrder = orderServiceImpl.findOrderByOrderId(orderId);
+		if (ObjectUtil.isNotNull(dealOrder)) {
+			boolean updateOrderStatus = orderServiceImpl.updateOrderStatus(dealOrder.getOrderId(), Common.Order.DealOrder.ORDER_STATUS_ER, msg);
+			if (updateOrderStatus) {
+				//OrderAppServiceImpl.updateOrd
+				// erEr(orderApp.getOrderId(), msg);
+				return true;
+			}
+		}
+		return false;
+	}
 
 	public boolean orderAppEr(DealOrderApp orderApp, String msg) {
 		log.info("【将当前订单置为失败，当前交易订单号：" + orderApp.getOrderId() + "】");
@@ -296,6 +309,11 @@ public abstract class PayOrderService implements PayService {
 	}
 
 
+	public boolean orderDealEr(String orderId, String msg) {
+		log.info("【将当前订单置为失败，当前交易订单号：" + orderId + "】");
+		boolean updateOrderStatus = orderServiceImpl.updateOrderStatus(orderId, Common.Order.DealOrder.ORDER_STATUS_ER, msg);
+		return updateOrderStatus;
+	}
 	public String name = "付款人：";
 
 	public String getPayName(String payInfo ,String orderId){

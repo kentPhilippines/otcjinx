@@ -117,4 +117,28 @@ public class MapUtil {
 		}
 		return null;
 	}
+	/**
+	 * 对参数map进行升序排序用&拼接
+	 * @param map
+	 * @return
+	 */
+	public static String createParamNotSort(Map<String, Object> map) {
+		try {
+			if (map == null || map.isEmpty()) {
+				return null;
+			}
+			Object[] key = map.keySet().toArray();
+			StringBuffer res = new StringBuffer(128);
+			for (int i = 0; i < key.length; i++) {
+				if (ObjectUtil.isNotNull(map.get(key[i])) && !"sign".equals(key[i])) {
+					res.append(key[i] + "=" + map.get(key[i]) + "&");
+				}
+			}
+			String rStr = res.substring(0, res.length() - 1);
+			return rStr;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 }

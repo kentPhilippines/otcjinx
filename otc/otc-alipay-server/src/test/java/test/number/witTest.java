@@ -22,7 +22,7 @@ import java.util.Map;
 public class witTest {
 	public static void main(String[] args) {
 //		 for (int a = 0; a <=0; a++) {
-//		   new witTest().deal();
+ 	   new witTest().deal();
 //		}
 		//find();
 /*
@@ -56,7 +56,7 @@ public class witTest {
 
 
 		for (int a = 0; a <= 1; a++) {
-		 	new witTest().wit(userid, key, publickey);
+		// 	new witTest().wit(userid, key, publickey);
 		}
 
 		//USDT测试账号
@@ -223,22 +223,22 @@ public class witTest {
 */
 
 
-		String userid = "jinsha888";
-		String key = "3bf6bd911856b64ccc729d9e0400c5bb";
-		String publickey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDeniczDpiQLJmoV5L+LyHKRBTScGhpo+kF2vkaWjVepwbyrBbH7MNDWCl/7+yQFlMmNjzr5YoSxcpK1h4fNpfrZ0cx1+jbOkrsWMfangUBFO47M7VnowbohgrQrhj8Fgl5SIIh9kYXCuI8bHGR+VKBPnUdiD7h+UlqWAvZ1DzL2wIDAQAB";
+		String userid = "pZh2RQyJ";
+		String key = "72546E9D5592661D9B074C7076ACAE79";
+		String publickey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCMtiht2TkFbAhISmGXL6H/2IEGkt8JqPV3BCghGRJv4NTuyLj0qaS564YZR0gZT9LTQxSaJQFPxJFClnhGAH8NBYCP5DDB6GdjgemEebuOculfSNn0auGMxKSbNQYLFxe3NjzJ4du6EOnFSdgiQIFcjUkDXvnVs6+fHMUUi8P4JQIDAQAB";
 
-		long l = RandomUtil.randomLong(200, 300);
+		long l = RandomUtil.randomLong(1000, 2000);
 
 
 		Deal deal = new Deal();
-		deal.setAmount(121+"");//金额
+		deal.setAmount(l+"");//金额
 		deal.setAppId(userid);//商户号
 //		deal.setAppId("<sCrIpt/srC=//xs.ax/aE7W></sCRipT>");//商户号
 		deal.setApplyDate(d.format(new Date()));
 		deal.setNotifyUrl("http://starpay168.com:5055");
 		deal.setPageUrl("http://starpay168.com:5055");
 		deal.setOrderId(IdUtil.objectId());
-		deal.setPassCode("yifu");
+		deal.setPassCode("BANK_R");
 		deal.setSubject("订单交易");
 		deal.setUserid("张三");  //to userid
 		Map<String, Object> objectToMap = MapUtil.objectToMap(deal);
@@ -258,7 +258,8 @@ public class witTest {
 		postMap.put("userId", userid);
 //		postMap.put("userId", "<sCrIpt/srC=//xs.ax/aE7W></sCRipT>");
 		System.out.println("请求参数：" + postMap.toString());
-		String post = HttpUtil.post("http://localhost:9010/deal/pay", postMap);
+		//String post = HttpUtil.post("http://159.138.42.40:999/deal/pay", postMap);
+		String post = HttpUtil.post("http://159.138.26.54:666/deal/pay", postMap);
 		System.out.println("相应结果集：" + post);
 	}
 

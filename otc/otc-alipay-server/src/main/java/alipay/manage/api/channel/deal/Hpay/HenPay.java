@@ -85,6 +85,7 @@ public class HenPay extends PayOrderService {
                 }
             }catch (Exception e ){
                 log.info("详细数据解析异常，当前订单号：" + dealOrderApp.getAppOrderId());
+                return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(result.getResult()));
             }
             //"{\"amount\":\"200\",\"bankCard\":\"6217566400010691931\",\"bankBranch\":\"福建省漳浦县佛昙支行\",\"name\":\"杨艺平\",\"bankName\":\"中国银行\"}
             return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrlAndPayInfo1(result.getResult(),result.getMessage(),payInfo1));
@@ -147,6 +148,7 @@ public class HenPay extends PayOrderService {
                     bankno = jsonObject1.getStr("bank_card");
                     name = jsonObject1.getStr("name");
                 }catch (Exception e ){
+                    return Result.buildSuccessResult(returnUrl);
                 }
                 if(StrUtil.isEmpty(amount)){
                     amount  =    orderAmount.toString();

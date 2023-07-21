@@ -5,7 +5,6 @@ import alipay.manage.api.config.NotfiyChannel;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONUtil;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,7 +16,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
-@Slf4j
 @Controller
 @RequestMapping(PayApiConstant.Notfiy.NOTFIY_API_WAI)
 public class KddPayNotify extends NotfiyChannel {
@@ -55,7 +53,7 @@ public class KddPayNotify extends NotfiyChannel {
         return "error";
     }
 
-     
+
     private static String createSign(Map map, String key)
     {
         map.remove("sign");

@@ -161,7 +161,7 @@ public class CaicaiPay extends PayOrderService {
 
     public static void main(String[] args) throws IOException {
         String notify = "http://www.bai22222du.com";
-        String orderId = "HH22222222290099";
+        String orderId = "HH2222111222222290099";
         BigDecimal amount = new BigDecimal(300);
         ChannelInfo info = new ChannelInfo();
         info.setChannelAppId("100747");

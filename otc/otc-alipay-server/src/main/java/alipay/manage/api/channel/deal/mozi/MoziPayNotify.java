@@ -4,7 +4,6 @@ import alipay.manage.api.channel.util.yifu.YiFuUtil;
 import alipay.manage.api.config.NotfiyChannel;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONUtil;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,7 +14,6 @@ import otc.result.Result;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
-@Slf4j
 @Controller
 @RequestMapping(PayApiConstant.Notfiy.NOTFIY_API_WAI)
 public class MoziPayNotify extends NotfiyChannel {
@@ -36,10 +34,10 @@ public class MoziPayNotify extends NotfiyChannel {
         String clientIP = HttpUtil.getClientIP(request);
 
         String orderId = params.get("out_trade_no");
-//        String password = getChannelKey(orderId);
+         String password = getChannelKey(orderId);
 //        this.getChannelKey("");
         String postSign= params.get("sign");
-        String sign = createSign(params, "CE242C6F988ACD");
+        String sign = createSign(params, password);
         if(postSign.equalsIgnoreCase(sign) && "4".equals(params.get("pay_status")+"")) {
             Result result = dealpayNotfiy(orderId+"", clientIP, "三方回调成功");
             return "success";
