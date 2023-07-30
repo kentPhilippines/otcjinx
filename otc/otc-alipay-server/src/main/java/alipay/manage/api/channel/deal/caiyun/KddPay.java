@@ -49,7 +49,7 @@ public class KddPay extends PayOrderService {
         if (result.isSuccess()) {
             return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(result.getResult()));
         } else {
-            orderEr(dealOrderApp, result.getMessage());
+            orderDealEr(orderId, result.getMessage());
             return result;
         }
     }

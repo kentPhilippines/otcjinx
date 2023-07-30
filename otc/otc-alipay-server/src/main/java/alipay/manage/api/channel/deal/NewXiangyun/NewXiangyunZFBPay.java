@@ -1,4 +1,4 @@
-package alipay.manage.api.channel.deal.caiyun;
+package alipay.manage.api.channel.deal.NewXiangyun;
 
 import alipay.config.redis.RedisUtil;
 import alipay.manage.api.channel.util.ChannelInfo;
@@ -9,16 +9,11 @@ import alipay.manage.bean.UserInfo;
 import alipay.manage.bean.util.ResultDeal;
 import alipay.manage.service.OrderService;
 import alipay.manage.service.UserInfoService;
-import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -31,8 +26,8 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Map;
 
-@Component("CaiyunPay")
-public class CaiyunPay extends PayOrderService {
+@Component("NewXiangyunZFBPay")
+public class NewXiangyunZFBPay extends PayOrderService {
     @Autowired
     private UserInfoService userInfoServiceImpl;
     private static final String MARS = "SHENFU";
@@ -40,10 +35,11 @@ public class CaiyunPay extends PayOrderService {
     private RedisUtil redis;
     @Autowired
     private OrderService orderServiceImpl;
-
+    @Value("${otc.payInfo.url}")
+    public   String url;
     @Override
     public Result deal(DealOrderApp dealOrderApp, String channel) throws Exception {
-        log.info("【进入caiyun    Pay支付，当前请求产品：" + dealOrderApp.getRetain1() + "，当前请求渠道：" + channel + "】");
+        log.info("【进入NewXiangyunPay支付，当前请求产品：" + dealOrderApp.getRetain1() + "，当前请求渠道：" + channel + "】");
         String orderId = create(dealOrderApp, channel);
         UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(dealOrderApp.getOrderAccount());
         if (StrUtil.isBlank(userInfo.getDealUrl())) {
@@ -56,15 +52,13 @@ public class CaiyunPay extends PayOrderService {
         }
         Result result = createOrder(
                 userInfo.getDealUrl() +
-                        PayApiConstant.Notfiy.NOTFIY_API_WAI + "/caiyunNotify",
+                        PayApiConstant.Notfiy.NOTFIY_API_WAI + "/newXiangyunPayNotify",
                 dealOrderApp.getOrderAmount(),
                 orderId,
                 getChannelInfo(channel, dealOrderApp.getRetain1()), payInfo);
-
         if (result.isSuccess()) {
             return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(result.getResult()));
         } else {
-            orderDealEr(orderId, result.getMessage());
             return result;
         }
     }
@@ -74,55 +68,48 @@ public class CaiyunPay extends PayOrderService {
     private Result createOrder(String notify, BigDecimal orderAmount,
                                String orderId,
                                ChannelInfo channelInfo, String payInfo) throws IOException {
-        String key =channelInfo.getChannelPassword();
-//        String payurl = "https://paygate.lelipay.com:9043/lelipay-gateway-onl/txn";
+        String key = channelInfo.getChannelPassword();
         String payurl = channelInfo.getDealurl();
-        String money = orderAmount.intValue()+".00"; // 金额
-//        String payType = "QX801705"; // '银行编码
+        String totalAmt = orderAmount.abs().toPlainString(); // 金额
         String payType = channelInfo.getChannelType(); // '银行编码
-//        String user = "988001944000367";// 商户id
-        String user = channelInfo.getChannelAppId();// 商户id
-        String osn = orderId;// 20位订单号 时间戳+6位随机字符串组成
-        String notifyUrl = notify;
-        String name = payInfo;
+        String storeCode = channelInfo.getChannelAppId();// 商户id
+        String storeOrderNo = orderId;// 20位订单号 时间戳+6位随机字符串组成
+        String backUrl = notify;// 通知地址
+        String notifyUrl = notify;// 通知地址
+        String playerName = "";
+        if (StrUtil.isNotEmpty(payInfo)) {
+            String[] split = payInfo.split(name);
+            String payName = split[1];
+            playerName = payName;
+        }
+        MultiValueMap<String, Object> param = new LinkedMultiValueMap<>();
+        param.add("storeCode", storeCode);
+        param.add("storeOrderNo", storeOrderNo);
+        param.add("payType", payType);
+        param.add("totalAmt", totalAmt);
+        param.add("backUrl", backUrl);
+        param.add("notifyUrl", notifyUrl);
+        param.add("playerName", playerName);
 
-//        String key ="eac29f43410e8cecc210605ce52fb994";
-//        String payurl = "http://hgapi2.facaishop.com/v1/order/create";
-//        String money = "800.00"; // 金额
-//        String payType = "QX801705"; //
-//        String user = "35508142";// 商户id
-//        String osn = RandomStringUtils.randomNumeric(10);// 20位订单号 时间戳+6位随机字符串组成
-//        String notifyUrl = "http://34.92.251.112:9010/notfiy-api-pay/caiyun-notify";
-
-        MultiValueMap<String, String> param= new LinkedMultiValueMap<String, String>();
-        param.add("merchant_no", user);
-        param.add("pay_code", payType);
-        param.add("order_amount", money);
-        param.add("order_no", osn);
-        param.add("callback_url", notifyUrl);
-        param.add("ts", DateTime.now().getTime()+"");
-
-        String originalStr = createParam(param.toSingleValueMap())+"&key="+key;
-        log.info(originalStr);
+        String originalStr = createParam(param.toSingleValueMap()) + "&key=" + key;
         String sign = MD5.MD5Encode(originalStr);
-        param.add("sign", sign.toLowerCase());
-
-        log.info(JSONUtil.toJsonStr(param.toSingleValueMap()));
+        param.add("sign", sign);
+        log.info("请求canshu：" + JSONUtil.toJsonStr(param));
         RestTemplate restTemplate = new RestTemplate();
         String rString = restTemplate.postForObject(payurl, param.toSingleValueMap(), String.class);
-        log.info("result:{}",rString);
-        JSONObject jsonObject = JSONUtil.parseObj(rString);
-        if(jsonObject.getStr("code").equals("200"))
-        {
-            JSONObject data =jsonObject.getJSONObject("data");
-            String url = data.getStr("pay_url");
-            return Result.buildSuccessResult("支付处理中", url);
-        }else {
-            return Result.buildFail();
+        log.info("xiangyun请求结果：" + rString);
+        Map<String, String> resultMap = JSONUtil.toBean(rString, Map.class);
+        if (resultMap.containsKey("errorCode")) {
+            orderDealEr(orderId,resultMap.get("errorMsg"));
+            return Result.buildFailMessage(resultMap.get("errorMsg"));
+        } else {
+
+            String payUrl = resultMap.get("payUrl");
+            return Result.buildSuccessResult("支付处理中", payUrl);
         }
     }
 
-    private String createParam(Map<String, String> map) {
+    private String createParam(Map<String, Object> map) {
         try {
             if (map == null || map.isEmpty()) {
                 return null;
