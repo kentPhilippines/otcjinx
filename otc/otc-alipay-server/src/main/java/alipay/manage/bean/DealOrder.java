@@ -45,10 +45,27 @@ public class DealOrder implements Serializable{
     private String currency;  ///货币类型
     private List orderQrUserList;
 
-
+    private String mcRealName;          //付款人真实姓名    部分通道使用
     private String macthMsg;  ///撮合订单 解释
     private Integer macthStatus;  ///撮合订单 状态   1已撮合 未支付     2 已撮合 已支付
     private String witOrderId;  /// 撮合对应的代付订单
+    private String openType;                        //付款人打开方式
+
+    public String getOpenType() {
+        return openType;
+    }
+
+    public void setOpenType(String openType) {
+        this.openType = openType;
+    }
+
+    public String getMcRealName() {
+        return mcRealName;
+    }
+
+    public void setMcRealName(String mcRealName) {
+        this.mcRealName = mcRealName;
+    }
 
     public String getWitOrderId() {
         return witOrderId;

@@ -13,7 +13,7 @@ import java.util.Date;
  */
 public class UserInfo implements Serializable{
     private static final long serialVersionUID =-3774809486372838018L;
-
+    private BigDecimal limitBalance;			// 渠道限制余额
     private Integer id;					//数据id
     private String userId;				//用户id
     private String userName;			//用户姓名
@@ -58,6 +58,15 @@ public class UserInfo implements Serializable{
 
 
     private String interFace;  //反查地址
+
+
+    public BigDecimal getLimitBalance() {
+        return limitBalance;
+    }
+
+    public void setLimitBalance(BigDecimal limitBalance) {
+        this.limitBalance = limitBalance;
+    }
 
     public String getBalanceUrl() {
         return balanceUrl;

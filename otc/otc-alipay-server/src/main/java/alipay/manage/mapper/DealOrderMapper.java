@@ -160,4 +160,8 @@ public interface DealOrderMapper {
     boolean macthLock(@Param("orderId")String orderId,@Param("macthStatus") Integer macthStatus);
 
 
+    @Update(" update alipay_deal_order set request = #{request}  where orderId = #{orderId}")
+    void updateOrderRequest(@Param("orderId")String orderId, @Param("request") String request);
+    @Update(" update alipay_deal_order set response = #{response}  where orderId = #{orderId}")
+    void updateOrderResponse(@Param("orderId") String orderId, @Param("response") String response);
 }

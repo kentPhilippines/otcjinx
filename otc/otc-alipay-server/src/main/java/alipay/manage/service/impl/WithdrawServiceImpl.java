@@ -12,19 +12,19 @@ import java.util.List;
 
 @Component
 public class WithdrawServiceImpl implements WithdrawService {
-	@Resource
-	private WithdrawMapper withdrawDao;
+    @Resource
+    private WithdrawMapper withdrawDao;
 
-	@Override
-	public boolean addOrder(Withdraw witb) {
-		int insertSelective = withdrawDao.insertSelective(witb);
-		return insertSelective > 0 && insertSelective < 2;
-	}
+    @Override
+    public boolean addOrder(Withdraw witb) {
+        int insertSelective = withdrawDao.insertSelective(witb);
+        return insertSelective > 0 && insertSelective < 2;
+    }
 
-	@Override
-	public Withdraw findOrderId(String orderId) {
-		return withdrawDao.findWitOrder(orderId);
-	}
+    @Override
+    public Withdraw findOrderId(String orderId) {
+        return withdrawDao.findWitOrder(orderId);
+    }
 
     @Override
     public Withdraw findOrderByApp(String appId, String appOrderId) {
@@ -66,6 +66,7 @@ public class WithdrawServiceImpl implements WithdrawService {
     public List<Withdraw> findSuccessAndNotAmount() {
         return withdrawDao.findSuccessAndNotAmount();
     }
+
     /**
      * 将订单修改为以结算
      *
@@ -85,25 +86,26 @@ public class WithdrawServiceImpl implements WithdrawService {
     public List<Withdraw> findNotPush() {
         return withdrawDao.findNotPush();
     }
+
     @Override
     public void updateMsg(String orderId, String msg) {
-        withdrawDao.updateMsg(orderId,msg);
+        withdrawDao.updateMsg(orderId, msg);
     }
 
     @Override
     public boolean updatePushAgent(String orderId) {
 
-        return withdrawDao.updatePushAgent(orderId) > 0  ;
+        return withdrawDao.updatePushAgent(orderId) > 0;
     }
 
     @Override
     public List<Withdraw> findChannelAndType(String channel, String type) {
-        return withdrawDao.findChannelAndType(channel,type);
+        return withdrawDao.findChannelAndType(channel, type);
     }
 
     @Override
     public boolean macthLock(String orderId, Integer macthStatus, Integer macthLock) {
-        return withdrawDao.macthLock(orderId,macthStatus,macthLock);
+        return withdrawDao.macthLock(orderId, macthStatus, macthLock);
     }
 
     @Override
@@ -120,16 +122,16 @@ public class WithdrawServiceImpl implements WithdrawService {
 
     @Override
     public boolean macthCountPush(String orderId) {
-      int a =   withdrawDao.macthCountPush(orderId);
-        int b =   withdrawDao.macthTime(orderId);
-        return  a > 0  && b > 1 ;
+        int a = withdrawDao.macthCountPush(orderId);
+        int b = withdrawDao.macthTime(orderId);
+        return a > 0 && b > 1;
 
     }
 
     @Override
     public boolean isPayStatus(String orderId) {
-       int a =  withdrawDao.isPayStatus(orderId);
-        return a>0;
+        int a = withdrawDao.isPayStatus(orderId);
+        return a > 0;
     }
 
     @Override
@@ -137,13 +139,13 @@ public class WithdrawServiceImpl implements WithdrawService {
         /**
          * 当前订单 未 挂起      未锁定    已结算  且超过10分分钟    ， 且 超过10分的撮合时间
          */
-      return   withdrawDao.findWaitPush();
+        return withdrawDao.findWaitPush();
 
 
     }
 
     @Override
-    public  List<Withdraw> findSuccessAndAmount() {
+    public List<Withdraw> findSuccessAndAmount() {
 
         return withdrawDao.findSuccessAndAmount();
     }
@@ -151,10 +153,15 @@ public class WithdrawServiceImpl implements WithdrawService {
     @Override
     public boolean updateAmount(BigDecimal amount, BigDecimal fee, BigDecimal actualAmount, String orderId) {
 
-    int a =     withdrawDao.updateAmount(amount,fee,actualAmount,orderId);
-return  a == 1 ;
+        int a = withdrawDao.updateAmount(amount, fee, actualAmount, orderId);
+        return a == 1;
 
 
+    }
+
+    @Override
+    public void updateEr(String orderId) {
+        withdrawDao.updateEr(orderId);
     }
 
 }

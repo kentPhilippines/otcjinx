@@ -3,6 +3,7 @@ package alipay.manage.api.config;
 import alipay.config.redis.RedisUtil;
 import alipay.manage.api.channel.util.ChannelInfo;
 import alipay.manage.bean.*;
+import alipay.manage.bean.util.WitInfo;
 import alipay.manage.mapper.ChannelFeeMapper;
 import alipay.manage.mapper.WithdrawMapper;
 import alipay.manage.service.*;
@@ -13,6 +14,7 @@ import alipay.manage.util.amount.AmountRunUtil;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +45,8 @@ public abstract class PayOrderService implements PayService {
 	@Autowired
 	private UserInfoService userInfoServiceImpl;
 	@Autowired
+	private DealWitService dealWitServIceImpl;
+	@Autowired
 	NotifyUtil notifyUtil;
 	@Autowired
 	private OrderService orderServiceImpl;
@@ -59,6 +63,22 @@ public abstract class PayOrderService implements PayService {
   @Autowired
     private WithdrawService withdrawServiceImpl;
 @Autowired private RedisUtil redisUtil;
+	@Override
+	public String dealNotify(Map map) {
+		return Result.buildFail().toJson();
+	}
+
+	@Override
+	public String witNotify(Map map) {
+		return Result.buildFail().toJson();
+	}
+
+
+	@Override
+	public Result findBalance(String channelId, String payType) {
+		return null;
+	}
+
     @Override
     public Result deal(DealOrderApp dealOrderApp, String channel) throws Exception {
 		if (Common.Deal.PRODUCT_ALIPAY_SCAN.equals(channel)) {
@@ -141,13 +161,38 @@ public abstract class PayOrderService implements PayService {
         log.info("【当前订单系统盈利：" + subtract + "】");
 		order.setRetain3(subtract.toString());
 		orderServiceImpl.addOrder(order);
-
-
-
 		return orderQrCh;
 	};
 
-
+	public DealWit create(Withdraw wit, String channeId, String notify) {
+		log.info("【开始创建本地订单，当前创建订单的商户订单为：" + wit.toString() + "】");
+		log.info("【当前交易的渠道账号为：" + channeId + "】");
+		DealWit order = new DealWit();
+		UserInfo userinfo = userInfoServiceImpl.findDealUrl(channeId);//查询渠道账户
+		ChannelFee channelFee = channelFeeDao.findChannelFee(channeId, wit.getWitType());
+		order.setAssociatedId(wit.getOrderId());
+		order.setActualAmount(wit.getAmount().add(new BigDecimal(channelFee.getChannelDFee())));
+		order.setDealAmount(wit.getAmount());
+		order.setDealFee(new BigDecimal(channelFee.getChannelDFee()));
+		order.setExternalOrderId(wit.getAppOrderId());
+		order.setNotify(   notify);
+		order.setChanenlId(channeId);
+		String orderQrCh = GenerateOrderNo.Generate("SW");
+		order.setOrderId(orderQrCh);
+		order.setOrderAccount(wit.getUserId());
+		order.setOrderStatus(Common.Order.DealOrder.ORDER_STATUS_DISPOSE.toString());
+		order.setWitType(wit.getWitType());
+		order.setCurrency(wit.getCurrency());
+		WitInfo info = new WitInfo();
+		info.setAccount(wit.getAccname());
+		info.setBankName(wit.getBankName());
+		info.setBankNo(wit.getBankNo());
+		info.setBankCode(wit.getBankcode());
+		order.setWitInfo(JSONUtil.toJsonStr(info));
+		order.setWitType(wit.getWitType());
+		boolean a = dealWitServIceImpl.add(order);
+		return order;
+	};
 	/**
 	 * <p>支付宝扫码支付实体</p>
 	 */
@@ -298,15 +343,6 @@ public abstract class PayOrderService implements PayService {
 		return dPoint > 0;
 	}
 
-	/**
-	 * 各渠道检测代付银行是否支持的方法，默认为支持
-	 * @param bankCode
-	 * @return
-	 */
-	@Override
-	public boolean witCheckBank(String bankCode) {
-		return Boolean.TRUE;
-	}
 
 
 	public boolean orderDealEr(String orderId, String msg) {
@@ -314,9 +350,9 @@ public abstract class PayOrderService implements PayService {
 		boolean updateOrderStatus = orderServiceImpl.updateOrderStatus(orderId, Common.Order.DealOrder.ORDER_STATUS_ER, msg);
 		return updateOrderStatus;
 	}
-	public String name = "付款人：";
+	public static String name = "付款人：";
 
-	public String getPayName(String payInfo ,String orderId){
+	public  String getPayName(String payInfo ,String orderId){
 		if (StrUtil.isNotEmpty(payInfo)) {
 			String[] split = payInfo.split(name);
 			String payName = split[1];

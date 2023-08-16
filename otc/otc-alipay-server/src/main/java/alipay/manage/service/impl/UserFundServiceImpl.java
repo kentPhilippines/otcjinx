@@ -3,9 +3,12 @@ package alipay.manage.service.impl;
 import alipay.manage.bean.UserFund;
 import alipay.manage.mapper.UserFundMapper;
 import alipay.manage.service.UserFundService;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Component
@@ -28,6 +31,11 @@ public class UserFundServiceImpl implements UserFundService {
 
 		return userFundDao.findBankUserId();
 
+	}
+
+	@Override
+	public void updateAmount(BigDecimal amount, String userId) {
+		  userFundDao.updateAmount(amount,userId);
 	}
 
 }
