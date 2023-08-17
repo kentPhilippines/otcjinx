@@ -31,7 +31,7 @@ import java.util.Map;
 public class SwPayNotify extends NotfiyChannel {
     private static final Log log = LogFactory.get();
 
-    @RequestMapping("/sw-noyfit")
+    @RequestMapping("/sw-notify")
     public String notify(HttpServletRequest req, HttpServletResponse res, @RequestBody Map<String, String> params) {
         log.info("【sw付代付回调数据为：" + JSONUtil.toJsonStr(params) + "】");
         String clientIP = HttpUtil.getClientIP(req);
