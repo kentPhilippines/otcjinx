@@ -56,7 +56,7 @@ public class SwPayNotify extends NotfiyChannel {
         String orderId =params.get("OrderNo");
         String sign =params.get("Sign");
         params.remove("Sign");
-        String channelKey = getChannelKey(orderId+"");
+        String channelKey = getDPAyChannelKey(orderId+"");
 
         String createParam = createParam(params);
         log.info("【sw代付签名前参数：" + createParam + "】");
