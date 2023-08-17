@@ -55,6 +55,7 @@ public class SwPayNotify extends NotfiyChannel {
          */
         String orderId =params.get("OrderNo");
         String sign =params.get("Sign");
+        params.remove("Sign");
         String channelKey = getChannelKey(orderId+"");
 
         String createParam = createParam(params);
