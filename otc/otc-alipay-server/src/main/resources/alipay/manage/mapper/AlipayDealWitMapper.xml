@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="alipay.manage.mapper.AlipayDealWitMapper">
+    <resultMap id="BaseResultMap" type="alipay.manage.bean.DealWit">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="orderId" jdbcType="CHAR" property="orderId"/>
+        <result column="associatedId" jdbcType="CHAR" property="associatedId"/>
+        <result column="orderStatus" jdbcType="CHAR" property="orderStatus"/>
+        <result column="dealAmount" jdbcType="DECIMAL" property="dealAmount"/>
+        <result column="dealFee" jdbcType="DECIMAL" property="dealFee"/>
+        <result column="actualAmount" jdbcType="DECIMAL" property="actualAmount"/>
+        <result column="orderAccount" jdbcType="CHAR" property="orderAccount"/>
+        <result column="chanenlId" jdbcType="CHAR" property="chanenlId"/>
+        <result column="witInfo" jdbcType="VARCHAR" property="witInfo"/>
+        <result column="externalOrderId" jdbcType="VARCHAR" property="externalOrderId"/>
+        <result column="notify" jdbcType="VARCHAR" property="notify"/>
+        <result column="back" jdbcType="VARCHAR" property="back"/>
+        <result column="isNotify" jdbcType="VARCHAR" property="isNotify"/>
+        <result column="createTime" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="submitTime" jdbcType="TIMESTAMP" property="submitTime"/>
+        <result column="feeId" jdbcType="INTEGER" property="feeId"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="witType" jdbcType="CHAR" property="witType"/>
+        <result column="currency" jdbcType="VARCHAR" property="currency"/>
+        <result column="msg" jdbcType="VARCHAR" property="msg"/>
+    </resultMap>
+    <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="alipay.manage.bean.DealWit">
+        <result column="dealDescribe" jdbcType="LONGVARCHAR" property="dealDescribe"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, orderId, associatedId, orderStatus, dealAmount, dealFee, actualAmount, orderAccount,
+        chanenlId, witInfo, externalOrderId, notify, back, isNotify, createTime, submitTime,
+        feeId, status, witType, currency, msg
+    </sql>
+    <sql id="Blob_Column_List">
+        dealdescribe
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from alipay_deal_wit
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete from alipay_deal_wit
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="alipay.manage.bean.DealWit">
+        insert into alipay_deal_wit (id, orderId, associatedId,
+        orderStatus, dealAmount, dealFee,
+        actualAmount, orderAccount, chanenlId,
+        witInfo, externalOrderId, notify,
+        back, isNotify, createTime,
+        submitTime, feeId, status,
+        witType, currency, msg,
+        dealDescribe)
+        values (#{id,jdbcType=INTEGER}, #{orderId,jdbcType=CHAR}, #{associatedId,jdbcType=CHAR},
+        #{orderStatus,jdbcType=CHAR}, #{dealAmount,jdbcType=DECIMAL}, #{dealFee,jdbcType=DECIMAL},
+        #{actualAmount,jdbcType=DECIMAL}, #{orderAccount,jdbcType=CHAR}, #{chanenlId,jdbcType=CHAR},
+        #{witInfo,jdbcType=VARCHAR}, #{externalOrderId,jdbcType=VARCHAR}, #{notify,jdbcType=VARCHAR},
+        #{back,jdbcType=VARCHAR}, #{isNotify,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
+        #{submitTime,jdbcType=TIMESTAMP}, #{feeId,jdbcType=INTEGER}, #{status,jdbcType=INTEGER},
+        #{witType,jdbcType=CHAR}, #{currency,jdbcType=VARCHAR}, #{msg,jdbcType=VARCHAR},
+        #{dealDescribe,jdbcType=LONGVARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="alipay.manage.bean.DealWit">
+        insert into alipay_deal_wit
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="orderId != null">
+                orderId,
+            </if>
+            <if test="associatedId != null">
+                associatedid,
+            </if>
+            <if test="orderStatus != null">
+                orderStatus,
+            </if>
+            <if test="dealAmount != null">
+                dealAmount,
+            </if>
+            <if test="dealFee != null">
+                dealFee,
+            </if>
+            <if test="actualAmount != null">
+                actualAmount,
+            </if>
+            <if test="orderAccount != null">
+                orderAccount,
+            </if>
+            <if test="chanenlId != null">
+                chanenlId,
+            </if>
+            <if test="witInfo != null">
+                witInfo,
+            </if>
+            <if test="externalOrderId != null">
+                externalOrderId,
+            </if>
+            <if test="notify != null">
+                notify,
+            </if>
+            <if test="back != null">
+                back,
+            </if>
+            <if test="isNotify != null">
+                isNotify,
+            </if>
+            <if test="createTime != null">
+                createTime,
+            </if>
+            <if test="submitTime != null">
+                submitTime,
+            </if>
+            <if test="feeId != null">
+                feeId,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="witType != null">
+                witType,
+            </if>
+            <if test="currency != null">
+                currency,
+            </if>
+            <if test="msg != null">
+                msg,
+            </if>
+            <if test="dealDescribe != null">
+                dealDescribe,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="orderId != null">
+                #{orderId,jdbcType=CHAR},
+            </if>
+            <if test="associatedId != null">
+                #{associatedId,jdbcType=CHAR},
+            </if>
+            <if test="orderStatus != null">
+                #{orderStatus,jdbcType=CHAR},
+            </if>
+            <if test="dealAmount != null">
+                #{dealAmount,jdbcType=DECIMAL},
+            </if>
+            <if test="dealFee != null">
+                #{dealFee,jdbcType=DECIMAL},
+            </if>
+            <if test="actualAmount != null">
+                #{actualAmount,jdbcType=DECIMAL},
+            </if>
+            <if test="orderAccount != null">
+                #{orderAccount,jdbcType=CHAR},
+            </if>
+            <if test="chanenlId != null">
+                #{chanenlId,jdbcType=CHAR},
+            </if>
+            <if test="witInfo != null">
+                #{witInfo,jdbcType=VARCHAR},
+            </if>
+            <if test="externalOrderId != null">
+                #{externalOrderId,jdbcType=VARCHAR},
+            </if>
+            <if test="notify != null">
+                #{notify,jdbcType=VARCHAR},
+            </if>
+            <if test="back != null">
+                #{back,jdbcType=VARCHAR},
+            </if>
+            <if test="isNotify != null">
+                #{isNotify,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="submitTime != null">
+                #{submitTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="feeId != null">
+                #{feeId,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="witType != null">
+                #{witType,jdbcType=CHAR},
+            </if>
+            <if test="currency != null">
+                #{currency,jdbcType=VARCHAR},
+            </if>
+            <if test="msg != null">
+                #{msg,jdbcType=VARCHAR},
+            </if>
+            <if test="dealDescribe != null">
+                #{dealDescribe,jdbcType=LONGVARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+</mapper>

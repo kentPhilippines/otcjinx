@@ -62,7 +62,7 @@ public class OrderTask {
 		List<DealOrder> orderList = dealOrderDao.findSuccessAndNotAmount();
 		for (DealOrder order : orderList) {
 			if (redis.hasKey(KEY + order.getOrderId())) {
-				log.info("当前订单已处理");
+				log.info("当前订单已处理："+order.getOrderId());
 				continue;
 			}
 			;

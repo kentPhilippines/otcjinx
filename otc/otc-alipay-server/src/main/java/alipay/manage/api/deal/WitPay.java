@@ -78,7 +78,7 @@ public class WitPay extends PayOrderService {
      */
     public Result wit(HttpServletRequest request, boolean amount, WithdrawRequestVO withdrawRequestVO) {
         String userId = request.getParameter("userId");
-        if (ObjectUtil.isNull(userId) && withdrawRequestVO==null ) {
+        if (ObjectUtil.isNull(userId) && withdrawRequestVO == null) {
             return Result.buildFailMessage("当前传参，参数格式错误，请使用[application/x-www-form-urlencoded]表单格式传参");
         }
         redisLockUtil.redisLock(RedisLockUtil.AMOUNT_USER_KEY + userId);
@@ -87,7 +87,7 @@ public class WitPay extends PayOrderService {
         if (StrUtil.isNotBlank(manage)) {
             flag = true;
         }
-        Result withdrawal = vendorRequestApi.withdrawal(request, flag,withdrawRequestVO);
+        Result withdrawal = vendorRequestApi.withdrawal(request, flag, withdrawRequestVO);
         if (!withdrawal.isSuccess()) {
             return withdrawal;
         }
@@ -118,8 +118,8 @@ public class WitPay extends PayOrderService {
             return Result.buildFailMessage("通道实体不存在，费率配置错误");
         }
         //String bankcode = BankTypeUtil.getBank(wit.getBankcode());
-        AlipayBankConfig alipayBankConfig = Optional.ofNullable(bankConfigService.selectAlipayBankConfig(wit.getBankcode())).orElseGet(()-> new AlipayBankConfig());
-        String bankcode = alipayBankConfig.getAlias1() ;
+        AlipayBankConfig alipayBankConfig = Optional.ofNullable(bankConfigService.selectAlipayBankConfig(wit.getBankcode())).orElseGet(() -> new AlipayBankConfig());
+        String bankcode = alipayBankConfig.getAlias1();
         if (StrUtil.isBlank(bankcode)) {
             log.info("【当前银行不支持代付，当前商户：" + wit.getAppid() + "，当前订单号:" + wit.getApporderid() + "】");
             exceptionOrderServiceImpl.addWitOrder(wit, "用户报错：当前银行不支持合， 银行code值错误；处理方法：请商户检查提交的银行卡code是否正确，商户code值为：" + bankcode, HttpUtil.getClientIP(request));
@@ -182,27 +182,25 @@ public class WitPay extends PayOrderService {
         log.info("【当前转换参数 代付实体类为：" + wit.toString() + "】");
         String type = "";
         String bankName = "";
-        if (fla ||  wit.getBankcode().equals("ALIPAY")) {//后台提现
+        if (fla || wit.getBankcode().equals("ALIPAY")) {//后台提现
             type = Common.Order.Wit.WIT_TYPE_API;
         } else {
             type = Common.Order.Wit.WIT_TYPE_MANAGE;
         }
         Withdraw witb = new Withdraw();
         witb.setUserId(wit.getAppid());
-     //   witb.setAmount(new BigDecimal(wit.getAmount()));
+        //   witb.setAmount(new BigDecimal(wit.getAmount()));
         witb.setAmount1(DesUtil2.encryptHex(new BigDecimal(wit.getAmount()).toString()));
 
 
-
         //TODO 新增 代付取款抽点收费逻辑
-        BigDecimal psf = new BigDecimal(Optional.ofNullable(userRate.getRetain3()).orElse("0")) ;//抽点收费比例
+        BigDecimal psf = new BigDecimal(Optional.ofNullable(userRate.getRetain3()).orElse("0"));//抽点收费比例
         BigDecimal fee = userRate.getFee();//单笔收费
-        fee =   psf.multiply(new BigDecimal(wit.getAmount())).add(fee);
-       // witb.setFee(fee);
+        fee = psf.multiply(new BigDecimal(wit.getAmount())).add(fee);
+        // witb.setFee(fee);
         witb.setFee1(DesUtil2.encryptHex(fee.toString()));
-     //   witb.setActualAmount(new BigDecimal(wit.getAmount()));
+        //   witb.setActualAmount(new BigDecimal(wit.getAmount()));
         witb.setActualAmount1(DesUtil2.encryptHex(wit.getAmount()));
-
 
 
         witb.setMobile(wit.getMobile());
@@ -210,8 +208,8 @@ public class WitPay extends PayOrderService {
         witb.setAccname(wit.getAcctname());
         bankName = wit.getBankName();
         if (StrUtil.isBlank(bankName)) {
-            AlipayBankConfig alipayBankConfig = Optional.ofNullable(bankConfigService.selectAlipayBankConfig(wit.getBankcode())).orElseGet(()-> new AlipayBankConfig());
-            bankName = alipayBankConfig.getBankName() ;
+            AlipayBankConfig alipayBankConfig = Optional.ofNullable(bankConfigService.selectAlipayBankConfig(wit.getBankcode())).orElseGet(() -> new AlipayBankConfig());
+            bankName = alipayBankConfig.getBankName();
             //bankName = BankTypeUtil.getBankName(wit.getBankcode());
         }
         witb.setBankName1(DesUtil2.encryptHex(bankName));
@@ -227,17 +225,17 @@ public class WitPay extends PayOrderService {
         witb.setBankcode(wit.getBankcode());
         witb.setWitChannel(channelFee.getChannelId());
         witb.setPushOrder(0);
-        witb.setSgin(EncryptHexUtil.sgin(wit.getAcctno(),bankName,wit.getAcctname(),wit.getAmount()));
+        witb.setSgin(EncryptHexUtil.sgin(wit.getAcctno(), bankName, wit.getAcctname(), wit.getAmount()));
         /**
          * 新加入规则 时间 2022-08-23
          */
-        if( witb.getAmount().compareTo(new BigDecimal(500))<  0 ){
+        if (witb.getAmount().compareTo(new BigDecimal(500)) < 0) {
             witb.setWatingTime(900);
         }
-        if( witb.getAmount().compareTo(new BigDecimal(500)) >  0 && witb.getAmount().compareTo(new BigDecimal(500)) < 2999 ){
+        if (witb.getAmount().compareTo(new BigDecimal(500)) > 0 && witb.getAmount().compareTo(new BigDecimal(500)) < 2999) {
             witb.setWatingTime(600);
         }
-        if( witb.getAmount().compareTo(new BigDecimal(2999))>  0 ){
+        if (witb.getAmount().compareTo(new BigDecimal(2999)) > 0) {
             witb.setWatingTime(240);
         }
         /*if(Integer.valueOf(wit.getAmount())<1000 && Integer.valueOf(wit.getAmount())>499 ){
@@ -299,38 +297,12 @@ public class WitPay extends PayOrderService {
                 push("金额不足或其他异常情况，请及时处理，当前订单号：" + order.getOrderId() + "，当前程序堆栈数据：" + printStackTrace(ex.getStackTrace()));
                 return Result.buildFailMessage("金额不足或其他异常情况，请及时处理");
             }
-            if (1 == userInfo.getAutoWit()) {
-                deal = super.withdraw(order);
-                // 扣减完成，如果是 后台提现，或者支付宝提现卡住在这里，等待推送
-
-                if (deal.isSuccess()) {
-                  boolean pay =   withdrawServiceImpl.isPayStatus(order.getOrderId());
-                   /* ThreadUtil.execute(() -> {
-                        ChannelFee channelFee = channelFeeDao.findImpl(order.getWitChannel(), order.getWitType());//缓存已加
-                        Result withdraw = Result.buildFail();
-                        try {
-                            withdraw = factoryForStrategy.getStrategy(channelFee.getImpl()).withdraw(order);
-                        } catch (Exception e) {
-                            push("当前订单推送异常，请及时检查异常情况，当前订单号：" + order.getOrderId() + "，当前程序堆栈数据：" + printStackTrace(e.getStackTrace()));
-                            //  return Result.buildFailMessage("推送异常");
-                        }
-                    });*/
-                  /*  ThreadUtil.execute(() -> {
-                        //修改订单为已推送 不管当前订单是否推送成功
-                        boolean b = withdrawServiceImpl.updatePush(order.getOrderId());
-                        if (b) {
-                            log.info("【当前订单已推送，状态已修改，当前订单号：" + order.getOrderId() + "】");
-                        } else {
-                            log.info("【当前订单已推送，状态未修改，当前订单号：" + order.getOrderId() + "】");
-                        }
-                    });*/
-                } else {
-                    throw new OrderException("代付订单结算失败", null);
-                }
+            deal = super.withdraw(order);
+            // 扣减完成，如果是 后台提现，或者支付宝提现卡住在这里，等待推送
+            if (deal.isSuccess()) {
+                boolean pay = withdrawServiceImpl.isPayStatus(order.getOrderId());
             } else {
-                deal = super.withdraw(order);
-                boolean pay =   withdrawServiceImpl.isPayStatus(order.getOrderId());
-
+                throw new OrderException("代付订单结算失败", null);
             }
         } catch (Exception e) {
             push("当前推送发生异常，修改订单为已推送状态， 请及时检查异常情况，当前订单号：" + order.getOrderId() + "，当前程序堆栈数据：" + printStackTrace(e.getStackTrace()));
@@ -347,15 +319,15 @@ public class WitPay extends PayOrderService {
 
     static final String KEY_WIT_PUSHWIT = "TASK:ORDER:PUSHWIT:";
 
-    public Result   witPush(Withdraw order ){
+    public Result witPush(Withdraw order) {
         String orderStatus = order.getOrderStatus();
-        if(orderStatus.equals(Common.Order.Wit.ORDER_STATUS_PUSH)){
+        if (orderStatus.equals(Common.Order.Wit.ORDER_STATUS_PUSH)) {
             return Result.buildFailMessage("当前订单已推送");
         }
         ChannelFee channelFee = channelFeeDao.findImpl(order.getWitChannel(), order.getWitType());//缓存已加
         Result withdraw = Result.buildFail();
-        if(order.getRetain1().equals("1")){//后台提现的，直接不推送
-            return  Result.buildFailMessage("不对后台提现的订单金额自动推送");
+        if (order.getRetain1().equals("1")) {//后台提现的，直接不推送
+            return Result.buildFailMessage("不对后台提现的订单金额自动推送");
         }
         try {
             redis.set(KEY_WIT_PUSHWIT + order.getOrderId(), order.getOrderId(), 20); //防止多个任务同时获取一个订单发起结算
@@ -367,14 +339,11 @@ public class WitPay extends PayOrderService {
             //  return Result.buildFailMessage("推送异常");
         }
         boolean b = withdrawServiceImpl.updatePush(order.getOrderId());
-        if(b){
+        if (b) {
             return Result.buildSuccessResult();
         }
         return Result.buildFail();
     }
-
-
-
 
 
     void push(String msg) {

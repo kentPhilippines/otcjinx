@@ -25,8 +25,7 @@ import java.util.List;
 public class TaskSelf {
     private static final Log log = LogFactory.get();
     @Autowired private ServerConfig serverConfig;
-    @Autowired private ChannelQueryOrder channelQueryOrder;
-    @Autowired private UserTask userTaskImpl;
+     @Autowired private UserTask userTaskImpl;
     @Autowired private OrderTask orderTask;
     @Scheduled(cron = "0/20 * * * * ?")
     public void orderTask() {
@@ -60,7 +59,6 @@ public class TaskSelf {
             return;
         }
         log.info("【开始查询渠道代付数据】");
-        channelQueryOrder.query();
     }
 
  //   @Scheduled(cron = "* */50 * * * ?")

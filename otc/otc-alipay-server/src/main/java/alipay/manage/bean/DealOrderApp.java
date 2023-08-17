@@ -32,6 +32,15 @@ public class DealOrderApp implements Serializable {
     private String currency;  ///货币类型
 
     private String payName;
+    private String openType;                        //付款人打开方式
+
+    public String getOpenType() {
+        return openType;
+    }
+
+    public void setOpenType(String openType) {
+        this.openType = openType;
+    }
 
     public String getPayName() {
         return payName;
@@ -182,6 +191,10 @@ public class DealOrderApp implements Serializable {
     }
 
     public String getRetain1() {
+        return retain1;
+    }
+
+    public String getPayType() {
         return retain1;
     }
 

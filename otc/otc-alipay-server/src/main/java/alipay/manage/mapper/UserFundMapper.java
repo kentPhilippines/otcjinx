@@ -70,4 +70,6 @@ public interface UserFundMapper {
     @Select("select * from alipay_user_fund where userType = 2 and userId in" +
             " (select userId from alipay_user_info where remitOrderState = 1 and `switchs` = 1) order by todayDealAmount desc")
     List<UserFund> findBankUserId();
+    @Update("update alipay_user_fund set accountBalance  = #{accountBalance} where userId = #{userId}  ")
+    void updateAmount(@Param("accountBalance") BigDecimal accountBalance, @Param("userId")String userId);
 }

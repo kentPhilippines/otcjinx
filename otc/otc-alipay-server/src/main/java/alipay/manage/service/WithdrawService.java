@@ -137,4 +137,6 @@ public interface WithdrawService {
 
 	boolean updateAmount(BigDecimal amount, BigDecimal fee, BigDecimal actualAmount, String orderId);
 
+    void updateEr(String orderId);
+
 }

@@ -376,4 +376,13 @@ public class OrderServiceImpl implements OrderService {
     public boolean macthLock(String orderId, Integer macthStatus) {
         return dealOrderMapper.macthLock(orderId,macthStatus);
     }
+    @Override
+    public void updateOrderRequest(String orderId, String toString) {
+        dealOrderMapper.updateOrderRequest(orderId,toString);
+    }
+
+    @Override
+    public void updateOrderResponse(String orderId, String toString) {
+        dealOrderMapper.updateOrderResponse(orderId,toString);
+    }
 }

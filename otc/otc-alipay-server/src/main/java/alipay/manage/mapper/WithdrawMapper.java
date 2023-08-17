@@ -9,6 +9,7 @@ import otc.bean.dealpay.Withdraw;
 
 import java.math.BigDecimal;
 import java.util.List;
+
 @Mapper
 public interface WithdrawMapper {
     int countByExample(WithdrawExample example);
@@ -108,6 +109,7 @@ public interface WithdrawMapper {
      */
     @Select("select * from alipay_withdraw where ethFee = 0 and currency = 'CNY' and orderStatus = 2  and submitTime >= CURRENT_TIMESTAMP - INTERVAL 10 MINUTE    limit 15")
     List<Withdraw> findSuccessAndNotAmount();
+
     @Select("select * from alipay_withdraw where ethFee = 1 and currency = 'CNY' and ( orderStatus = 2  or  orderStatus = 3 ) and amount = 0 and  sgin is not null       limit 15")
     List<Withdraw> findSuccessAndAmount();
 
@@ -124,18 +126,20 @@ public interface WithdrawMapper {
 
 
     @Update("update alipay_withdraw set    comment = #{msg}  where orderId  = #{orderId} ")
-    void updateMsg(@Param("orderId")String orderId, @Param("msg")String msg);
+    void updateMsg(@Param("orderId") String orderId, @Param("msg") String msg);
+
     @Update("update alipay_withdraw set    comment =  '无法处理当前订单,请再次推送' ,pushOrder = 3   where orderId  = #{orderId} ")
     int updatePushAgent(String orderId);
+
     @Select("select * from alipay_withdraw where  orderStatus = 4   and ( witChannel = #{channel} or chennelId = #{channel} ) and witType = #{type}  and submitTime >= CURRENT_TIMESTAMP - INTERVAL 20 MINUTE      ")
-    List<Withdraw> findChannelAndType(@Param("channel") String channel,@Param("witType")   String type);
+    List<Withdraw> findChannelAndType(@Param("channel") String channel, @Param("witType") String type);
+
     @Select("select * from alipay_withdraw  where txhash = #{txhash}   ")
-    Withdraw findHash(@Param("txhash")  String txhash);
+    Withdraw findHash(@Param("txhash") String txhash);
 
 
     @Update("update alipay_withdraw set    macthStatus = #{macthStatus} , macthLock = #{macthLock} where orderId  = #{orderId} ")
-    boolean macthLock(@Param("orderId")String orderId, @Param("macthStatus")Integer macthStatus, @Param("macthLock")Integer macthLock);
-
+    boolean macthLock(@Param("orderId") String orderId, @Param("macthStatus") Integer macthStatus, @Param("macthLock") Integer macthLock);
 
 
     /**
@@ -144,10 +148,10 @@ public interface WithdrawMapper {
      * 2，  订单为非锁定状态，
      * 3，	订单主状态为 审核中
      * 4 ， 最后一次撮合时间已经过了10分钟 且 订单 为挂起状态
+     *
      * @param
      * @return
      */
-
 
 
     @Select(" ( select * from alipay_withdraw  where ( userId != #{userId}" +
@@ -167,7 +171,8 @@ public interface WithdrawMapper {
             "               and orderStatus = 1 " +
             "               and macthCount = 0 and moreMacth = 1  and macthLock = 0 ) " +
             "      )  and   " +
-            "    macthTime <= DATE_SUB(NOW(),INTERVAL 10 MINUTE)  ) ") //第二次撮合
+            "    macthTime <= DATE_SUB(NOW(),INTERVAL 10 MINUTE)  ) ")
+    //第二次撮合
     List<Withdraw> findMacthOrder(@Param("userId") String userId);
 
 
@@ -176,28 +181,37 @@ public interface WithdrawMapper {
 
 
     @Update("update alipay_withdraw set  macthCount = macthCount + 1 ,moreMacth = 1     where orderId  = #{orderId} ")
-    int macthCountPush(@Param("orderId")  String orderId);
+    int macthCountPush(@Param("orderId") String orderId);
+
     @Update("update alipay_withdraw set  macthTime =  now()    where orderId  = #{orderId} ")
-    int macthTime(@Param("orderId")  String orderId);
+    int macthTime(@Param("orderId") String orderId);
+
     @Update("update alipay_withdraw set  payStatus = 1    where orderId  = #{orderId} ")
-    int isPayStatus(@Param("orderId")String orderId);
-/*
-    @Select(" ( select * from alipay_withdraw  where   orderStatus = 1    and payStatus = 1 and     " +
-            "  macthLock = 0  and  moreMacth = 0  and  macthCount < 1  and    " +
-            "   createTime  <= DATE_SUB(NOW(),INTERVAL 10 MINUTE )  )  " + //首次撮合
-            " union all " +
-            " ( select * from alipay_withdraw  where  orderStatus = 1   " +
-            "   and payStatus = 1 and macthLock  = 0  " +
-            "  and moreMacth = 0  and macthCount >  0   and moreMacth = 0  " +
-            "  and    macthTime <= DATE_SUB( NOW(),INTERVAL 10 MINUTE )  ) ") //第二次撮合*/
-      @Select("   select * from alipay_withdraw  where   orderStatus = 1    and payStatus = 1 and     " +
+    int isPayStatus(@Param("orderId") String orderId);
+
+    /*
+        @Select(" ( select * from alipay_withdraw  where   orderStatus = 1    and payStatus = 1 and     " +
+                "  macthLock = 0  and  moreMacth = 0  and  macthCount < 1  and    " +
+                "   createTime  <= DATE_SUB(NOW(),INTERVAL 10 MINUTE )  )  " + //首次撮合
+                " union all " +
+                " ( select * from alipay_withdraw  where  orderStatus = 1   " +
+                "   and payStatus = 1 and macthLock  = 0  " +
+                "  and moreMacth = 0  and macthCount >  0   and moreMacth = 0  " +
+                "  and    macthTime <= DATE_SUB( NOW(),INTERVAL 10 MINUTE )  ) ") //第二次撮合*/
+    @Select("   select * from alipay_withdraw  where   orderStatus = 1    and payStatus = 1 and     " +
             "  macthLock = 0  and  moreMacth = 0  and  macthCount = 0    " +
             "         "  //首次撮合
-            ) //第二次撮合
+    )
+    //第二次撮合
     List<Withdraw> findWaitPush();
-      @Update("update alipay_withdraw set amount = #{amount}, fee = #{fee}, actualAmount = #{actualAmount}  where orderId = #{orderId}")
-    int updateAmount(@Param("amount") BigDecimal amount, @Param("fee")BigDecimal fee,@Param("actualAmount") BigDecimal actualAmount, @Param("orderId")String orderId);
+
+    @Update("update alipay_withdraw set amount = #{amount}, fee = #{fee}, actualAmount = #{actualAmount}  where orderId = #{orderId}")
+    int updateAmount(@Param("amount") BigDecimal amount, @Param("fee") BigDecimal fee, @Param("actualAmount") BigDecimal actualAmount, @Param("orderId") String orderId);
 
 
-
+    @Update("update alipay_withdraw set " +
+            "orderStatus = '3' , " +
+            "submitTime = sysdate() " +
+            "where orderId = #{orderId}")
+    void updateEr(@Param("orderId")String orderId);
 }

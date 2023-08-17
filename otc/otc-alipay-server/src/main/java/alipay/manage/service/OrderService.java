@@ -200,4 +200,8 @@ public interface OrderService {
 	 */
     boolean macthLock(String macthWit, Integer macthStatus);
 
+	void updateOrderRequest(String orderId, String request);
+
+	void updateOrderResponse(String orderId, String response);
+
 }
