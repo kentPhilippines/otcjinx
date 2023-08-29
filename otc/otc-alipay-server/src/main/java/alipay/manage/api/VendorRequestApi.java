@@ -102,29 +102,26 @@ public class VendorRequestApi {
     public Result pay(HttpServletRequest request, DepositRequestVO depositRequestVO) {
         String userId = request.getParameter("userId");//商户号
         //兼容新协议
-        if(StringUtils.isEmpty(userId))
-        {
+        if (StringUtils.isEmpty(userId)) {
             userId = depositRequestVO.getAppId();
         }
-        log.info("reuserid:{}",userId);
+        log.info("reuserid:{}", userId);
         //根据商户号查询商户实体
         UserInfo userInfo = accountApiServiceImpl.findClick(userId);
         UserInfo key = accountApiServiceImpl.findPrivateKey(userId);
-        log.info("userinfo:{},key:{},",JSONUtil.toJsonStr(userInfo),JSONUtil.toJsonStr(key));
+        log.info("userinfo:{},key:{},", JSONUtil.toJsonStr(userInfo), JSONUtil.toJsonStr(key));
         if (null == userInfo || null == key) {
             return Result.buildFailMessage("商户不存在");
         }
         log.info("--------------【用户开始RSA解密】----------------");
         String rsaSign = request.getParameter("cipherText");//商户传过来的密文
         log.info("【报文：" + rsaSign + "】");
-        Map<String, Object> paramMap ;
+        Map<String, Object> paramMap;
         //新的v2协议
-        if(depositRequestVO!=null)
-        {
+        if (depositRequestVO != null) {
             String despositRequestJson = JSONUtil.toJsonStr(depositRequestVO);
-            paramMap = JSONUtil.toBean(despositRequestJson,Map.class);
-        }else
-        {
+            paramMap = JSONUtil.toBean(despositRequestJson, Map.class);
+        } else {
             //老的公钥加密方式
             paramMap = RSAUtils.getDecodePrivateKey(rsaSign, key.getPrivateKey());
         }
@@ -132,42 +129,29 @@ public class VendorRequestApi {
         log.info("keyobj:{}", JSONUtil.toJsonStr(key));
         //验证结果
         Result result = CheckUtils.requestVerify(request, paramMap, key.getPayPasword());
-        log.info("result:{}",result);
+        log.info("result:{}", result);
         if (!result.isSuccess()) {
             return result;
         }
         //验证商户是否配置费率
         Integer remitOrderState = userInfo.getReceiveOrderState();// 1 接单 2 暂停接单
-        log.info("remitOrderState:{}",remitOrderState);
+        log.info("remitOrderState:{}", remitOrderState);
         if (Common.Order.DEAL_OFF.equals(remitOrderState)) {
             ThreadUtil.execute(() -> {
                 exceptionOrderServiceImpl.addDealEx(paramMap.get("appId").toString(), paramMap.get("amount").toString(), "商户相应提示：当前账户交易权限未开通；处理方法：检查商户交易权限或商户状态是否开启,", HttpUtil.getClientIP(request), paramMap.get("orderId").toString());
             });
             return Result.buildFailMessage("当前账户交易权限未开通");
         }
-        String passCode = paramMap.get("passCode").toString();
-        UserFund userFund = accountApiServiceImpl.findUserFundByUserId(userId);
-        log.info("userFund:{}",JSONUtil.toJsonStr(userFund));
-        BigDecimal totalAmount = userInfo.getTotalAmount();
-        if (null != totalAmount) {
-            if (userFund.getAccountBalance().compareTo(userInfo.getTotalAmount()) > -1) {
-                BigDecimal accountBalance = userFund.getAccountBalance();
-                ThreadUtil.execute(() -> {
-                    exceptionOrderServiceImpl.addDealEx(paramMap.get("appId").toString(), paramMap.get("amount").toString(), "商户相应提示：当前留存过多，请及时下发；" + "处理方法：提示商户及时下发，当前商户余额：" + accountBalance + "，受限额度：" + userInfo.getTotalAmount() + "，当前商户传入通道编码：" + passCode, HttpUtil.getClientIP(request), paramMap.get("orderId").toString());
-                });
-                return Result.buildFailMessage("当前留存过多，请及时下发");
-            }
-        }
-        totalAmount = null;
-        userFund = null;
         return Result.buildSuccessResult(paramMap);
     }
-    @Autowired  private RedisUtil redis;
+
+    @Autowired
+    private RedisUtil redis;
+
     public Result withdrawal(HttpServletRequest request, boolean flag, WithdrawRequestVO withdrawRequestVO) {
         String finalUserId = request.getParameter("userId");//商户号
         //兼容新V2协议
-        if(StringUtils.isEmpty(finalUserId))
-        {
+        if (StringUtils.isEmpty(finalUserId)) {
             finalUserId = withdrawRequestVO.getAppid();
         }
         String userId = finalUserId;
@@ -180,14 +164,12 @@ public class VendorRequestApi {
         log.info("--------------【用户开始RSA解密】----------------");
         String rsaSign = request.getParameter("cipherText");//商户传过来的密文
         log.info("【获取参数为：" + rsaSign + "】");
-        Map<String, Object> paramMap ;
+        Map<String, Object> paramMap;
         //新的v2协议
-        if(withdrawRequestVO!=null)
-        {
+        if (withdrawRequestVO != null) {
             String withdrawRequestJson = JSONUtil.toJsonStr(withdrawRequestVO);
-            paramMap = JSONUtil.toBean(withdrawRequestJson,Map.class);
-        }else
-        {
+            paramMap = JSONUtil.toBean(withdrawRequestJson, Map.class);
+        } else {
             //老的公钥加密方式
             paramMap = RSAUtils.getDecodePrivateKey(rsaSign, key.getPrivateKey());
         }
@@ -227,11 +209,11 @@ public class VendorRequestApi {
             String acctno = paramMap.get("acctno").toString();//银行卡号
             String appid = paramMap.get("appid").toString();//商户号
             Object wi = redis.get(acctno + appid + paramMap.get("amount").toString());
-            if(null != wi){
-                log.info("当值当前商户重复提交，限制key = "+acctno + appid + paramMap.get("amount").toString());
+            if (null != wi) {
+                log.info("当值当前商户重复提交，限制key = " + acctno + appid + paramMap.get("amount").toString());
                 return Result.buildFailMessage("限制提交");
             }
-             redis.set(acctno + appid + paramMap.get("amount").toString(),acctno + appid + paramMap.get("amount").toString(),300);
+            redis.set(acctno + appid + paramMap.get("amount").toString(), acctno + appid + paramMap.get("amount").toString(), 300);
             String clientIP = getIpAddress(request, userInfo.getUserId());
             if (StrUtil.isBlank(clientIP)) {
                 clientIP = HttpUtil.getClientIP(request);
@@ -272,11 +254,11 @@ public class VendorRequestApi {
             String acctno = paramMap.get("acctno").toString();//银行卡号
             String appid = paramMap.get("appid").toString();//商户号
             Object wi = redis.get(acctno + appid + paramMap.get("amount").toString());
-            if(null != wi){
-                log.info("当值当前商户重复提交，限制key = "+acctno + appid + paramMap.get("amount").toString());
+            if (null != wi) {
+                log.info("当值当前商户重复提交，限制key = " + acctno + appid + paramMap.get("amount").toString());
                 return Result.buildFailMessage("限制提交");
             }
-            redis.set(acctno + appid + paramMap.get("amount").toString(),acctno + appid + paramMap.get("amount").toString(),300);
+            redis.set(acctno + appid + paramMap.get("amount").toString(), acctno + appid + paramMap.get("amount").toString(), 300);
         }
         String amount1 = paramMap.get("amount").toString();
         BigDecimal witAmount = new BigDecimal(amount1);

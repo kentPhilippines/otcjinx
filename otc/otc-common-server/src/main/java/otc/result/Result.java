@@ -1,6 +1,7 @@
 package otc.result;
 
 import cn.hutool.json.JSONUtil;
+import lombok.Data;
 
 /**
  * <p>全局返回值类</p>
@@ -14,6 +15,7 @@ import cn.hutool.json.JSONUtil;
  * 正确响应结果集案例：
  * {"success":true,"message":"支付处理中","result":{"sussess":true,"cod":0,"openType":1,"returnUrl":"http://api.sdsadsadas.com/gateway/bankgateway/payorder/order/43543.html"},"code":1}
  */
+@Data
 public class Result {
 	/**
 	 * True 成功  false  失败
@@ -145,36 +147,6 @@ public class Result {
 	}
 	public static Result buildFailMessageCode(String msg, int i) {
 		return new Result(false, msg, null,i);
-	}
-
-	public boolean isSuccess() {
-		return success;
-	}
-	public void setSuccess(boolean success) {
-		this.success = success;
-	}
-	public String getMessage() {
-		return message;
-	}
-	public void setMessage(String message) {
-		this.message = message;
-	}
-	public Object getResult() {
-		return result;
-	}
-	public void setResult(Object result) {
-		this.result = result;
-	}
-	public Integer getCode() {
-		return code;
-	}
-	public void setCode(Integer code) {
-		this.code = code;
-	}
-
-	@Override
-	public String toString() {
-		return "Result [success=" + success + ", message=" + message + ", result=" + result + ", code=" + code + "]";
 	}
 	public  String toJson(){
 		return JSONUtil.parse(this).toString();

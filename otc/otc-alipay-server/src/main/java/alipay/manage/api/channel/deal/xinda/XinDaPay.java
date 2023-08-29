@@ -69,7 +69,7 @@ public class XinDaPay extends PayOrderService {
             );
             String payInfo1 = "";
             if (url.isSuccess()) {
-                try {
+               /* try {
                     Map map = new HashMap();
                     Map<Object, Object> hmget = redis.hmget(MARS + create);
                     log.info(hmget.toString());
@@ -89,9 +89,9 @@ public class XinDaPay extends PayOrderService {
                     }
                     return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrlAndPayInfo1(url.getResult(), url.getMessage(), payInfo1));
 
-                } catch (Throwable e) {
+                } catch (Throwable e) {*/
                     return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(url.getResult()));
-                }
+           //     }
             }
         }
         return Result.buildFailMessage("支付错误");
@@ -164,7 +164,8 @@ public class XinDaPay extends PayOrderService {
             String status = JSONUtil.parseObj(post).getStr("status");
             if ("2".equals(status)) {
                 try {
-                    Map cardmap = new HashMap();
+                    return Result.buildSuccessResult(JSONUtil.parseObj(post).getStr("link"));
+                   /* Map cardmap = new HashMap();
                     cardmap.put("bank_name", JSONUtil.parseObj(post).getStr("payeeBankName"));
                     cardmap.put("card_no", JSONUtil.parseObj(post).getStr("payeeAcctNo"));
                     cardmap.put("card_user", JSONUtil.parseObj(post).getStr("payeeName"));
@@ -175,7 +176,8 @@ public class XinDaPay extends PayOrderService {
                     orderServiceImpl.updateBankInfoByOrderId(payInfo + " 收款信息：" + JSONUtil.parseObj(post).getStr("payeeName") + ":" + JSONUtil.parseObj(post).getStr("payeeBankName") + ":" + JSONUtil.parseObj(post).getStr("payeeAcctNo"), orderId);
                     redis.hmset(MARS + orderId, cardmap, 600);
                     return Result.buildSuccessResult(JSONUtil.parseObj(post).getStr("payeeName") + ":" + JSONUtil.parseObj(post).getStr("payeeBankName") + ":" + JSONUtil.parseObj(post).getStr("payeeAcctNo"), url + "/pay?orderId=" + orderId + "&type=203");
-                } catch (Throwable e) {
+    */            } catch (Throwable e) {
+                    log.error("请求失败异常：",e);
                     return Result.buildSuccessResult(JSONUtil.parseObj(post).getStr("link"));
                 }
                 /**

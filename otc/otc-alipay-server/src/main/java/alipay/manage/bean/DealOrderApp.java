@@ -1,5 +1,7 @@
 package alipay.manage.bean;
 
+import lombok.Data;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -7,6 +9,7 @@ import java.util.Date;
  * <p>下游商户交易订单</p>
  * @author K
  */
+@Data
 public class DealOrderApp implements Serializable {
     private static final long serialVersionUID = 1L;
     private Integer id;                                //数据id
@@ -25,214 +28,11 @@ public class DealOrderApp implements Serializable {
     private Date submitTime;
     private String submitSystem;
     private Integer status;
-    private String retain1;
+    private String retain1;                         //产品类型
     private String retain2;
     private String retain3;
     private String dealDescribe;                    //交易备注
     private String currency;  ///货币类型
-
     private String payName;
     private String openType;                        //付款人打开方式
-
-    public String getOpenType() {
-        return openType;
-    }
-
-    public void setOpenType(String openType) {
-        this.openType = openType;
-    }
-
-    public String getPayName() {
-        return payName;
-    }
-
-    public void setPayName(String payName) {
-        this.payName = payName;
-    }
-
-    public BigDecimal getOrderAmount_orderAmount() {
-        return orderAmount_orderAmount;
-    }
-
-    public void setOrderAmount_orderAmount(BigDecimal orderAmount_orderAmount) {
-        this.orderAmount_orderAmount = orderAmount_orderAmount;
-    }
-
-    public String getCurrency() {
-        return currency;
-    }
-
-    public void setCurrency(String currency) {
-        this.currency = currency;
-    }
-
-    public void setDealDescribe(String dealDescribe) {
-        this.dealDescribe = dealDescribe;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(String orderId) {
-        this.orderId = orderId == null ? null : orderId.trim();
-    }
-
-    public Integer getOrderType() {
-        return orderType;
-    }
-
-    public void setOrderType(Integer orderType) {
-        this.orderType = orderType;
-    }
-
-    public String getOrderAccount() {
-        return orderAccount;
-    }
-
-    public void setOrderAccount(String orderAccount) {
-        this.orderAccount = orderAccount == null ? null : orderAccount.trim();
-    }
-
-    public String getOrderStatus() {
-        return orderStatus;
-    }
-
-    public void setOrderStatus(String orderStatus) {
-        this.orderStatus = orderStatus;
-    }
-
-    public BigDecimal getOrderAmount() {
-        return orderAmount;
-    }
-
-    public void setOrderAmount(BigDecimal orderAmount) {
-        this.orderAmount = orderAmount;
-    }
-
-    public String getOrderIp() {
-        return orderIp;
-    }
-
-    public void setOrderIp(String orderIp) {
-        this.orderIp = orderIp == null ? null : orderIp.trim();
-    }
-
-    public String getAppOrderId() {
-        return appOrderId;
-    }
-
-    public void setAppOrderId(String appOrderId) {
-        this.appOrderId = appOrderId == null ? null : appOrderId.trim();
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Integer getFeeId() {
-        return feeId;
-    }
-
-    public void setFeeId(Integer feeId) {
-        this.feeId = feeId;
-    }
-
-    public String getNotify() {
-        return notify;
-    }
-
-    public void setNotify(String notify) {
-        this.notify = notify == null ? null : notify.trim();
-    }
-
-    public String getBack() {
-        return back;
-    }
-
-    public void setBack(String back) {
-        this.back = back == null ? null : back.trim();
-    }
-
-    public Date getSubmitTime() {
-        return submitTime;
-    }
-
-    public void setSubmitTime(Date submitTime) {
-        this.submitTime = submitTime;
-    }
-
-    public String getSubmitSystem() {
-        return submitSystem;
-    }
-
-    public void setSubmitSystem(String submitSystem) {
-        this.submitSystem = submitSystem == null ? null : submitSystem.trim();
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    public String getRetain1() {
-        return retain1;
-    }
-
-    public String getPayType() {
-        return retain1;
-    }
-
-    public void setRetain1(String retain1) {
-        this.retain1 = retain1 == null ? null : retain1.trim();
-    }
-
-    public String getRetain2() {
-        return retain2;
-    }
-
-    public void setRetain2(String retain2) {
-        this.retain2 = retain2 == null ? null : retain2.trim();
-    }
-
-    public String getRetain3() {
-        return retain3;
-    }
-
-    public void setRetain3(String retain3) {
-        this.retain3 = retain3 == null ? null : retain3.trim();
-    }
-
-    public String getDealDescribe() {
-        return dealDescribe;
-    }
-
-    public void dealApp(String dealDescribe) {
-        this.dealDescribe = dealDescribe == null ? null : dealDescribe.trim();
-    }
-
-    @Override
-	public String toString() {
-		return "DealOrderApp [id=" + id + ", orderId=" + orderId + ", orderType=" + orderType + ", orderAccount="
-				+ orderAccount + ", orderStatus=" + orderStatus + ", orderAmount=" + orderAmount + ", orderIp="
-				+ orderIp + ", appOrderId=" + appOrderId + ", createTime=" + createTime + ", feeId=" + feeId
-				+ ", notify=" + notify + ", back=" + back + ", submitTime=" + submitTime + ", submitSystem="
-				+ submitSystem + ", status=" + status + ", retain1=" + retain1 + ", retain2=" + retain2 + ", retain3="
-				+ retain3 + ", dealDescribe=" + dealDescribe + "]";
-	}
 }

@@ -1,9 +1,16 @@
 package alipay.manage.bean.util;
 
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * <p>下游商户交易实体</p>
  * @author Kent
  */
+@Data
 public class DealBean {
 	/** 
 	 * 	appid		是	是	24	商户号，例如：11396	商户交易号
@@ -30,95 +37,5 @@ public class DealBean {
 	private String subject;
 	private String applyDate;
 	private String payName;
-
-	public String getUserid() {
-		return userid;
-	}
-
-	public void setUserid(String userid) {
-		this.userid = userid;
-	}
-
-	public String getPayName() {
-		return payName;
-	}
-
-	public void setPayName(String payName) {
-		this.payName = payName;
-	}
-
 	private String ip;
-	
-	public String getIp() {
-		return ip;
-	}
-	public void setIp(String ip) {
-		this.ip = ip;
-	}
-	public String getPageUrl() {
-		return pageUrl;
-	}
-	public void setPageUrl(String pageUrl) {
-		this.pageUrl = pageUrl;
-	}
-	public String getAmount() {
-		return amount;
-	}
-	public void setAmount(String amount) {
-		this.amount = amount;
-	}
-	public String getRsasign() {
-		return rsasign;
-	}
-	public void setRsasign(String rsasign) {
-		this.rsasign = rsasign;
-	}
-	public String getBankCode() {
-		return bankCode;
-	}
-	public void setBankCode(String bankCode) {
-		this.bankCode = bankCode;
-	}
-	public String getSubject() {
-		return subject;
-	}
-	public void setSubject(String subject) {
-		this.subject = subject;
-	}
-	public String getAppId() {
-		return appId;
-	}
-	public void setAppId(String appId) {
-		this.appId = appId;
-	}
-	public String getOrderId() {
-		return orderId;
-	}
-	public void setOrderId(String orderId) {
-		this.orderId = orderId;
-	}
-	public String getNotifyUrl() {
-		return notifyUrl;
-	}
-	public void setNotifyUrl(String notifyUrl) {
-		this.notifyUrl = notifyUrl;
-	}
-	public String getPassCode() {
-		return passCode;
-	}
-	public void setPassCode(String passCode) {
-		this.passCode = passCode;
-	}
-	public String getApplyDate() {
-		return applyDate;
-	}
-	public void setApplyDate(String applyDate) {
-		this.applyDate = applyDate;
-	}
-	@Override
-	public String toString() {
-		return "DealBean [appId=" + appId + ", orderId=" + orderId + ", notifyUrl=" + notifyUrl + ", pageUrl=" + pageUrl
-				+ ", amount=" + amount + ", passCode=" + passCode + ", rsasign=" + rsasign + ", userId=" + userid
-				+ ", bankCode=" + bankCode + ", subject=" + subject + ", applyDate=" + applyDate + ", ip=" + ip + "]";
-	}
 }

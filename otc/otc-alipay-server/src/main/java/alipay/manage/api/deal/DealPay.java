@@ -77,7 +77,6 @@ public class DealPay {
         if (StrUtil.isNotBlank(clientIP)) {
             mapToBean.setIp(clientIP);
         }
-
         Object o = redis.get(mapToBean.getOrderId() + mapToBean.getAppId());
         if (null != o) {
             if (o.toString().equals(mapToBean.getOrderId() + mapToBean.getAppId())) {
@@ -103,7 +102,7 @@ public class DealPay {
             }
             if (bigDecimal.compareTo(systemAmount) >= 0 && bigDecimal.compareTo(new BigDecimal(channel.getMaxAmount())) > -1) {
                 log.info("bigDecimal:{} systemAmount:{} channel.getMaxAmount：{}",bigDecimal,systemAmount,channel.getMaxAmount());
-                Result result1 = forQueryOrder(mapToBean, clientIP, rate);
+                Result result1 = forQueryOrder(mapToBean, clientIP, rate, depositRequestVO);
                 if(!result1.isSuccess()){
                     continue;
                 }
@@ -116,21 +115,14 @@ public class DealPay {
         return Result.buildFailMessage("请求支付失败");
     }
 
-    DealOrderApp createDealAppOrder(DealBean dealBean, UserRate userRate) {
+    DealOrderApp createDealAppOrder(DealBean dealBean, UserRate userRate,DepositRequestVO depositRequestVO) {
         DealOrderApp dealApp = new DealOrderApp();
         dealApp.setAppOrderId(dealBean.getOrderId());
-        if(userRate.getPayTypr().equals("ALIPAY_H_B")){
-            dealApp.setOrderId(Number.getAppOredera());
-        }else if(userRate.getPayTypr().equals("ALIPAY_H_B_S")){
-            dealApp.setOrderId(Number.getAppOredera());
-        }else{
             dealApp.setOrderId(Number.getAppOreder());
-        }
         BigDecimal amount = BigDecimal.ZERO;
       /*  if(new BigDecimal(dealBean.getAmount()).compareTo(new BigDecimal(200))<0){
             amount = getAmount(new BigDecimal(dealBean.getAmount())).setScale(2,BigDecimal.ROUND_UP);
         }else{
-
         }*/
         amount =  new BigDecimal(dealBean.getAmount());
         dealApp.setNotify(dealBean.getNotifyUrl());
@@ -153,8 +145,12 @@ public class DealPay {
         dealApp.setRetain3(userRate.getFee().multiply(amount).setScale(2,BigDecimal.ROUND_UP).toString());
         UserFund userFund = userInfoServiceImpl.findCurrency(userId);//缓存以加
         dealApp.setCurrency(userFund.getCurrency());
+        if(ObjectUtil.isNotNull(depositRequestVO)){
+            dealApp.setPayName(dealBean.getUserid());
+        }else {
+            dealApp.setPayName(depositRequestVO.getMcPayName());
+        }
 
-        dealApp.setPayName(dealBean.getUserid());
         boolean add = false;
         try {
             add = orderAppServiceImpl.add(dealApp);
@@ -171,7 +167,7 @@ public class DealPay {
         return null;
     }
 
-   Result forQueryOrder( DealBean mapToBean , String clientIP ,  UserRate userRate){
+   Result forQueryOrder( DealBean mapToBean , String clientIP ,  UserRate userRate,DepositRequestVO depositRequestVO){
        log.info("【当前请求交易实体类：" + mapToBean.toString() + "】");
        String passcode = mapToBean.getPassCode(); //通道支付编码
        if (StrUtil.isBlank(passcode)) {
@@ -193,7 +189,7 @@ public class DealPay {
            return Result.buildFailMessage("通道实体不存在，费率配置错误");
        }
 
-       DealOrderApp dealBean = createDealAppOrder(mapToBean, userRate);
+       DealOrderApp dealBean = createDealAppOrder(mapToBean, userRate,depositRequestVO);
        if (ObjectUtil.isNull(dealBean)) {
            exceptionOrderServiceImpl.addDealOrder(mapToBean, "用户报错：交易预订单生成出错；处理方法：让商户重新发起支付提交请求，或联系技术人员处理", clientIP);
            return Result.buildFailMessage("交易预订单生成出错");
@@ -206,15 +202,7 @@ public class DealPay {
            exceptionOrderServiceImpl.addDealOrder(mapToBean, "用户报错：当前通道编码不存在；处理方法：生成交易订单时候出现错误，或者请求三方渠道支付请求的时候出现异常返回，或联系技术人员处理," +
                    "三方渠道报错信息：" + e.getMessage(), clientIP);
            return Result.buildFailMessage("当前通道编码不存在");
-       } finally {
-           userRate = null;
-           channelFee = null;
-           mapToBean = null;
-           clientIP = null;
-           dealBean = null;
        }
-		/*if (deal.isSuccess())
-			deal.setResult(new ResultDeal(true, 0, deal.getCode(), deal.getResult()));*/
        log.info(deal.toString());
        return deal;
     }

@@ -79,4 +79,16 @@ public class ResultDeal {
     public void setPayInfo1(String payInfo1) {
         this.payInfo1 = payInfo1;
     }
+
+    @Override
+    public String toString() {
+        return "ResultDeal{" +
+                "sussess=" + sussess +
+                ", cod=" + cod +
+                ", openType=" + openType +
+                ", returnUrl='" + returnUrl + '\'' +
+                ", payInfo='" + payInfo + '\'' +
+                ", payInfo1='" + payInfo1 + '\'' +
+                '}';
+    }
 }

@@ -166,13 +166,6 @@ public class WitPay extends PayOrderService {
             redisLockUtil.unLock(RedisLockUtil.AMOUNT_USER_KEY + userId);
             return Result.buildFailMessage("当前通道编码不存在");
         } finally {
-            //    bean = null;
-            o = null;
-            bankcode = null;
-            channelFee = null;
-            wit = null;
-            userRate = null;
-            result = null;
             redisLockUtil.unLock(RedisLockUtil.AMOUNT_USER_KEY + userId);
         }
         return deal;
@@ -229,14 +222,14 @@ public class WitPay extends PayOrderService {
         /**
          * 新加入规则 时间 2022-08-23
          */
-        if (witb.getAmount().compareTo(new BigDecimal(500)) < 0) {
-            witb.setWatingTime(900);
+        if (witb.getAmount().compareTo(new BigDecimal(1999)) < 0) {
+            witb.setWatingTime(180);
         }
-        if (witb.getAmount().compareTo(new BigDecimal(500)) > 0 && witb.getAmount().compareTo(new BigDecimal(500)) < 2999) {
+        if (witb.getAmount().compareTo(new BigDecimal(1999)) > 0 && witb.getAmount().compareTo(new BigDecimal(9999)) < 0) {
+            witb.setWatingTime(180);
+        }
+        if (witb.getAmount().compareTo(new BigDecimal(9999)) > 0) {
             witb.setWatingTime(600);
-        }
-        if (witb.getAmount().compareTo(new BigDecimal(2999)) > 0) {
-            witb.setWatingTime(240);
         }
         /*if(Integer.valueOf(wit.getAmount())<1000 && Integer.valueOf(wit.getAmount())>499 ){
             witb.setWatingTime(1200);
@@ -305,13 +298,6 @@ public class WitPay extends PayOrderService {
                 throw new OrderException("代付订单结算失败", null);
             }
         } catch (Exception e) {
-            push("当前推送发生异常，修改订单为已推送状态， 请及时检查异常情况，当前订单号：" + order.getOrderId() + "，当前程序堆栈数据：" + printStackTrace(e.getStackTrace()));
-            boolean b = withdrawServiceImpl.updatePush(order.getOrderId());
-            if (b) {
-                log.info("【当前订单已推送，状态已修改，当前订单号：" + order.getOrderId() + "】");
-            } else {
-                log.info("【当前订单已推送，状态未修改，当前订单号：" + order.getOrderId() + "】");
-            }
         }
         return deal;
     }
@@ -336,7 +322,6 @@ public class WitPay extends PayOrderService {
             boolean b = withdrawServiceImpl.updatePush(order.getOrderId());
 
             push("当前订单推送异常，请及时检查异常情况，当前订单号：" + order.getOrderId() + "，当前程序堆栈数据：" + printStackTrace(e.getStackTrace()));
-            //  return Result.buildFailMessage("推送异常");
         }
         boolean b = withdrawServiceImpl.updatePush(order.getOrderId());
         if (b) {

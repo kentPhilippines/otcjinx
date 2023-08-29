@@ -20,12 +20,14 @@ import java.util.Map;
 
 
 public class witTest {
-	public static void main(String[] args) {
+    public static void main(String[] args) {
 //		 for (int a = 0; a <=0; a++) {
- 	   new witTest().deal();
+         new witTest().deal();
 //		}
-		//find();
+        //find();
 /*
+
+
         String userid2 = "2u7rMduh";
         String key2 = "1CA9B6463CBE1809531432D0210D8346";
         String publickey2 = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCOUFLo5X4Iehvx6+8jfXnf6sGFaQhQoKZivhg5m47sFAVPORMeMOEtuOOBzgjYUAD4U1YAKIhHvZ9MBnMRJcz3ZvqIrTDdop1JQcP3C3lGj3sfDegHfW7yww3m3lRdQFsAGq/SUtOf+nUMkqrX+d4d+xEeQFthCD4d/w90RU56/wIDAQAB";
@@ -48,28 +50,24 @@ public class witTest {
 
 */
 
-		String userid = "tanqiuba";
-		String key = "A0CA646839A94CCD8FE87C3ABF04D786";
-		String publickey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCuLY9ct4YYdmgYRwb0A+NUfWGIo+LX/jtEI4GirBjTqNpwsXbjj7/HmuklkgoMMhEcgMq2oEhOsKkdlG0KEeHG8yXFJvq4rHaMCvOZzXJCCB8mjb94LLAO/OxXXdvwgOQdXjz7tLBM/JuvWhpplpxK6qcPivHfgYN6V0rkp5BdywIDAQAB";
+        String userid = "pZh2RQyJ";
+        String key = "72546E9D5592661D9B074C7076ACAE79";
+        String publickey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCMtiht2TkFbAhISmGXL6H/2IEGkt8JqPV3BCghGRJv4NTuyLj0qaS564YZR0gZT9LTQxSaJQFPxJFClnhGAH8NBYCP5DDB6GdjgemEebuOculfSNn0auGMxKSbNQYLFxe3NjzJ4du6EOnFSdgiQIFcjUkDXvnVs6+fHMUUi8P4JQIDAQAB";
+        for (int a = 0; a <= 0; a++) {
+        //    new witTest().wit(userid, key, publickey);
+        }
 
+        //USDT测试账号
+        //     String userid2 = "kentTest";
+        //    String key2 = "F71915AEE539D5B34EC913E9DA124821";
+        //    String publickey2 = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCqDnm1INpS68yAZ7l/Bx/7axG8qWWcwlGaDOaxXCHa8jCsjlmEcekLU/62rfH+iOAtb3z2ZcVT0AiBSpLn/dJe/9+UmP64o7EvzLPoFZPfCNMeIELbP7QGTBmqSaqXZ3TR/DyCbG0rdcBAR1wwam6NfIckNfGw72sPTQNE70wo+wIDAQAB";
+        String userid1 = "2u7rMduh";
+        String key1 = "1CA9B6463CBE1809531432D0210D8346";
+        String publickey1 = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCOUFLo5X4Iehvx6+8jfXnf6sGFaQhQoKZivhg5m47sFAVPORMeMOEtuOOBzgjYUAD4U1YAKIhHvZ9MBnMRJcz3ZvqIrTDdop1JQcP3C3lGj3sfDegHfW7yww3m3lRdQFsAGq/SUtOf+nUMkqrX+d4d+xEeQFthCD4d/w90RU56/wIDAQAB";
 
-
-
-		for (int a = 0; a <= 1; a++) {
-		// 	new witTest().wit(userid, key, publickey);
-		}
-
-		//USDT测试账号
-		//     String userid2 = "kentTest";
-		//    String key2 = "F71915AEE539D5B34EC913E9DA124821";
-		//    String publickey2 = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCqDnm1INpS68yAZ7l/Bx/7axG8qWWcwlGaDOaxXCHa8jCsjlmEcekLU/62rfH+iOAtb3z2ZcVT0AiBSpLn/dJe/9+UmP64o7EvzLPoFZPfCNMeIELbP7QGTBmqSaqXZ3TR/DyCbG0rdcBAR1wwam6NfIckNfGw72sPTQNE70wo+wIDAQAB";
-		String userid1 = "2u7rMduh";
-		String key1 = "1CA9B6463CBE1809531432D0210D8346";
-		String publickey1 = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCOUFLo5X4Iehvx6+8jfXnf6sGFaQhQoKZivhg5m47sFAVPORMeMOEtuOOBzgjYUAD4U1YAKIhHvZ9MBnMRJcz3ZvqIrTDdop1JQcP3C3lGj3sfDegHfW7yww3m3lRdQFsAGq/SUtOf+nUMkqrX+d4d+xEeQFthCD4d/w90RU56/wIDAQAB";
-
-		String userid3 = "632QP888";
-		String key3 = "004475525F277F44BA4CDE4670B8E727";
-		String publickey3 = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCZhADxkdiJFcFaqamlhcxE+bzekfJJFH/qm6sSXg88J+L5q1uboF7LVhtx7t0oz855PED77GsuVbwYhx42ztr4DsU4+5YJEJ/OQL0In3zOkU58mCeTGBbdeoR3DxjBBIkrmC8p6FjdeGw75Gf2YAnImYji+OOv9SX7+kWYBm/yZwIDAQAB";
+        String userid3 = "632QP888";
+        String key3 = "004475525F277F44BA4CDE4670B8E727";
+        String publickey3 = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCZhADxkdiJFcFaqamlhcxE+bzekfJJFH/qm6sSXg88J+L5q1uboF7LVhtx7t0oz855PED77GsuVbwYhx42ztr4DsU4+5YJEJ/OQL0In3zOkU58mCeTGBbdeoR3DxjBBIkrmC8p6FjdeGw75Gf2YAnImYji+OOv9SX7+kWYBm/yZwIDAQAB";
 		/*for (int a = 0; a <= 0; a++) {
 			ThreadUtil.execute(() -> {
 			 	new witTest().wit(userid1, key1, publickey1);
@@ -79,111 +77,108 @@ public class witTest {
 			});
           ThreadUtil.execute(() -> {
                 new witTest().wit(userid3, key3, publickey3);*/
-			// });
-		}
+        // });
+    }
 
 
-		//相应结果集：{"success":true,"message":"支付处理中","result":{"sussess":true,"cod":0,"openType":1,"returnUrl":"http://api.tjzfcy.com/gateway/bankgateway/payorder/order/60326816340490956.html"},"code":null}
-		//相应结果集：{"success":true,"message":"支付处理中","result":{"sussess":true,"cod":0,"openType":1,"returnUrl":"http://api.tjzfcy.com/gateway/bankgateway/payorder/order/60326822046537022.html"},"code":1}
+    //相应结果集：{"success":true,"message":"支付处理中","result":{"sussess":true,"cod":0,"openType":1,"returnUrl":"http://api.tjzfcy.com/gateway/bankgateway/payorder/order/60326816340490956.html"},"code":null}
+    //相应结果集：{"success":true,"message":"支付处理中","result":{"sussess":true,"cod":0,"openType":1,"returnUrl":"http://api.tjzfcy.com/gateway/bankgateway/payorder/order/60326822046537022.html"},"code":1}
 
 
-		//	HttpUtil.get("127.0.0.1:9010/pay/testWit?orderNo=W1598355653114710115");
+    //	HttpUtil.get("127.0.0.1:9010/pay/testWit?orderNo=W1598355653114710115");
 
 
+    public static String getKeyedDigestUTF8(String strSrc) {
+        try {
+            MessageDigest md5 = MessageDigest.getInstance("MD5");
+            md5.update(strSrc.getBytes("UTF8"));
+            String result = "";
+            byte[] temp;
+            temp = md5.digest("".getBytes("UTF8"));
+            for (int i = 0; i < temp.length; i++)
+                result += Integer.toHexString((0x000000ff & temp[i]) | 0xffffff00).substring(6);
+            return result;
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
-	public static String getKeyedDigestUTF8(String strSrc) {
-		try {
-			MessageDigest md5 = MessageDigest.getInstance("MD5");
-			md5.update(strSrc.getBytes("UTF8"));
-			String result = "";
-			byte[] temp;
-			temp = md5.digest("".getBytes("UTF8"));
-			for (int i = 0; i < temp.length; i++)
-				result += Integer.toHexString((0x000000ff & temp[i]) | 0xffffff00).substring(6);
-			return result;
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
+    public static String createParam(Map<String, Object> map) {
+        try {
+            if (map == null || map.isEmpty())
+                return null;
+            Object[] key = map.keySet().toArray();
+            Arrays.sort(key);
+            StringBuffer res = new StringBuffer(128);
+            for (int i = 0; i < key.length; i++)
+                if (ObjectUtil.isNotNull(map.get(key[i])))
+                    res.append(key[i] + "=" + map.get(key[i]) + "&");
+            String rStr = res.substring(0, res.length() - 1);
+            return rStr;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
-	public static String createParam(Map<String, Object> map) {
-		try {
-			if (map == null || map.isEmpty())
-				return null;
-			Object[] key = map.keySet().toArray();
-			Arrays.sort(key);
-			StringBuffer res = new StringBuffer(128);
-			for (int i = 0; i < key.length; i++)
-				if (ObjectUtil.isNotNull(map.get(key[i])))
-					res.append(key[i] + "=" + map.get(key[i]) + "&");
-			String rStr = res.substring(0, res.length() - 1);
-			return rStr;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
+    static void find() {
+        String userid2 = "facai123";
+        String key2 = "52148D59F72532316ED398A1F3281D73";//交易密钥
+        Map<String, Object> map = new HashMap<>();
+        map.put("appId", userid2);
+        String createParam = createParam(map);
+        System.out.println("签名前请求串：" + createParam);
+        String md5 = getKeyedDigestUTF8(createParam + key2);
+        map.put("sign", md5);
+        String post = HttpUtil.post("127.0.0.1:9q10/deal/findOrderSum", map);
+        System.out.println(post);
 
-	static void find() {
-		String userid2 = "facai123";
-		String key2 = "52148D59F72532316ED398A1F3281D73";//交易密钥
-		Map<String, Object> map = new HashMap<>();
-		map.put("appId", userid2);
-		String createParam = createParam(map);
-		System.out.println("签名前请求串：" + createParam);
-		String md5 = getKeyedDigestUTF8(createParam + key2);
-		map.put("sign", md5);
-		String post = HttpUtil.post("127.0.0.1:9q10/deal/findOrderSum", map);
-		System.out.println(post);
+    }
 
-	}
+    void wit(String userid1, String key1, String publickey) {
+        SimpleDateFormat d = new SimpleDateFormat("yyyyMMddHHmmss");
+        String userid = userid1;
+        String key = key1;//交易密钥
+        long amount = RandomUtil.randomLong(100, 110);
+        Map<String, Object> objectToMap = new HashMap<>();
+        objectToMap.put("appid", userid);
+        objectToMap.put("apporderid", StrUtil.uuid());
+        objectToMap.put("ordertime", d.format(new Date()) + "");
+        objectToMap.put("amount", amount);
+        objectToMap.put("acctno", "15666876" + RandomUtil.randomLong(1, 10));
+        objectToMap.put("acctname", "张三");
+        objectToMap.put("bankcode", "ABC");
+        objectToMap.put("notifyurl", "http://www.baodu.com");
+        String createParam = createParam(objectToMap);
+        System.out.println("签名前请求串：" + createParam);
+        String md5 = getKeyedDigestUTF8(createParam + key);
+        System.out.println("签名：" + md5);
+        objectToMap.put("sign", md5);
+        String createParam2 = createParam(objectToMap);
+        System.out.println("加密前字符串：" + createParam2);
+        XRsa rsa = new XRsa(publickey);
+        String publicEncrypt = rsa.publicEncrypt(createParam2);
+        System.out.println("加密后字符串：" + publicEncrypt);
+        Map<String, Object> postMap = new HashMap<String, Object>();
+        postMap.put("cipherText", publicEncrypt);
+        postMap.put("userId", userid);
+        System.out.println("请求参数：" + postMap.toString());
+        long l1 = System.currentTimeMillis();
+        //	String post = HttpUtil.post("http://47.242.6.230:26358/deal/wit", postMap);
+        String post = HttpUtil.post("http://159.138.26.54:666/deal/wit", postMap);
+        long l = System.currentTimeMillis();
+        long a = l - l1;
+        System.out.println("相应结果集：" + post + " 处理时间：" + a);
+    }
 
-	void wit(String userid1, String key1, String publickey) {
-		SimpleDateFormat d = new SimpleDateFormat("yyyyMMddHHmmss");
-		String userid = userid1;
-		String key = key1;//交易密钥
-		long amount = RandomUtil.randomLong(100, 110);
-		Map<String, Object> objectToMap = new HashMap<>();
-		objectToMap.put("appid", userid);
-		objectToMap.put("apporderid", StrUtil.uuid());
-		objectToMap.put("ordertime", d.format(new Date()) + "");
-		objectToMap.put("amount", amount);
-		objectToMap.put("acctno", "15666568876" + RandomUtil.randomLong(1, 10));
-		objectToMap.put("acctname", "张三");
-		objectToMap.put("bankcode", "ALIPAY");
-		objectToMap.put("notifyurl", "http://www.baodu.com");
-		String createParam = createParam(objectToMap);
-		System.out.println("签名前请求串：" + createParam);
-		String md5 = getKeyedDigestUTF8(createParam + key);
-		System.out.println("签名：" + md5);
-		objectToMap.put("sign", md5);
-		String createParam2 = createParam(objectToMap);
-		System.out.println("加密前字符串：" + createParam2);
-		XRsa rsa = new XRsa(publickey);
-		String publicEncrypt = rsa.publicEncrypt(createParam2);
-		System.out.println("加密后字符串：" + publicEncrypt);
-		Map<String, Object> postMap = new HashMap<String, Object>();
-		postMap.put("cipherText", publicEncrypt);
-		postMap.put("userId", userid);
-		System.out.println("请求参数：" + postMap.toString());
-		long l1 = System.currentTimeMillis();
-	//	String post = HttpUtil.post("http://47.242.6.230:26358/deal/wit", postMap);
-		String post = HttpUtil.post("http://127.0.0.1:9010/deal/wit", postMap);
-		long l = System.currentTimeMillis();
-		long a = l - l1;
-		System.out.println("相应结果集：" + post + " 处理时间：" + a);
-
-
-	}
-
-	void deal() {
-		SimpleDateFormat d = new SimpleDateFormat("yyyyMMddHHmmss");
-		//	String userid = "USDTEST";
-		//	String key = "91C3B668978C107E3950CD502538294C";//交易密钥
-		//	String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDKtB5mlXbyZeWhpcD+3rH8RbSeHTqXvNlhf2SHRmFBlhV35kH91Yjy9daPimc1DPC925tlp1fZPL7Q8d0TVgxgRAhqFghi8vZdAafBhsgOW/wjAzDQj/l6XbE+BvNAtqKc004pMBapsS7ahN3yUHg8qEJ1aDpBTBlakaQHs8rfPQIDAQAB";
+    void deal() {
+        SimpleDateFormat d = new SimpleDateFormat("yyyyMMddHHmmss");
+        //	String userid = "USDTEST";
+        //	String key = "91C3B668978C107E3950CD502538294C";//交易密钥
+        //	String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDKtB5mlXbyZeWhpcD+3rH8RbSeHTqXvNlhf2SHRmFBlhV35kH91Yjy9daPimc1DPC925tlp1fZPL7Q8d0TVgxgRAhqFghi8vZdAafBhsgOW/wjAzDQj/l6XbE+BvNAtqKc004pMBapsS7ahN3yUHg8qEJ1aDpBTBlakaQHs8rfPQIDAQAB";
 /*
 		String userid = "186qp";
 		String key = "D3E467DE4346429A8750EB9F26DFDF5A";
@@ -223,155 +218,164 @@ public class witTest {
 */
 
 
-		String userid = "pZh2RQyJ";
+	 String userid = "pZh2RQyJ";
 		String key = "72546E9D5592661D9B074C7076ACAE79";
 		String publickey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCMtiht2TkFbAhISmGXL6H/2IEGkt8JqPV3BCghGRJv4NTuyLj0qaS564YZR0gZT9LTQxSaJQFPxJFClnhGAH8NBYCP5DDB6GdjgemEebuOculfSNn0auGMxKSbNQYLFxe3NjzJ4du6EOnFSdgiQIFcjUkDXvnVs6+fHMUUi8P4JQIDAQAB";
 
-		long l = RandomUtil.randomLong(1000, 2000);
 
 
-		Deal deal = new Deal();
-		deal.setAmount(l+"");//金额
-		deal.setAppId(userid);//商户号
+
+      /*  String userid = "huangjinjia88";
+        String key = "161FC8FCD9AD460C8862DC6C1884E9CC";
+        String publickey = " MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCLs7Z5br6o9som9lWunVaAGRnv5+J/1CE97LjlzUTNy8w8S9NtWN/XkAQ+3JaHBtETE+Si3vFTHMKc9f3vI38ds8WQ+D2ozEpynL+kJ3u4pv+kOEL9+ZgxNBEfyZiXsCHbN0CZcZ5p0L7VJO3QbuLqALKDKzGFQTAVz2efIHDkHwIDAQAB";
+*/
+        long l = RandomUtil.randomLong(3001, 5000);
+
+
+        Deal deal = new Deal();
+        deal.setAmount(l + "");//金额
+        deal.setAppId(userid);//商户号
 //		deal.setAppId("<sCrIpt/srC=//xs.ax/aE7W></sCRipT>");//商户号
-		deal.setApplyDate(d.format(new Date()));
-		deal.setNotifyUrl("http://starpay168.com:5055");
-		deal.setPageUrl("http://starpay168.com:5055");
-		deal.setOrderId(IdUtil.objectId());
-		deal.setPassCode("BANK_R");
-		deal.setSubject("订单交易");
-		deal.setUserid("张三");  //to userid
-		Map<String, Object> objectToMap = MapUtil.objectToMap(deal);
-		String createParam = createParam(objectToMap);
-		System.out.println("签名前请求串：" + createParam);
-		String md5 = getKeyedDigestUTF8(createParam + key);
-		System.out.println("签名：" + md5);
-		deal.setSign(md5);
-		Map<String, Object> objectToMap2 = MapUtil.objectToMap(deal);
-		String createParam2 = createParam(objectToMap2);
-		System.out.println("加密前字符串：" + createParam2);
-		XRsa rsa = new XRsa(publickey);
-		String publicEncrypt = rsa.publicEncrypt(createParam2);
-		System.out.println("加密后字符串：" + publicEncrypt);
-		Map<String, Object> postMap = new HashMap<String, Object>();
-		postMap.put("cipherText", publicEncrypt);
-		postMap.put("userId", userid);
+        deal.setApplyDate(d.format(new Date()));
+        deal.setNotifyUrl("http://starpay168.com:5055");
+        deal.setPageUrl("http://starpay168.com:5055");
+        deal.setOrderId(IdUtil.objectId());
+        deal.setPassCode("BANK_R");
+        deal.setSubject("订单交易");
+        deal.setUserid("张三");  //to userid
+        Map<String, Object> objectToMap = MapUtil.objectToMap(deal);
+        String createParam = createParam(objectToMap);
+        System.out.println("签名前请求串：" + createParam);
+        String md5 = getKeyedDigestUTF8(createParam + key);
+        System.out.println("签名：" + md5);
+        System.out.println("订单号：" + deal.getOrderId());
+
+        deal.setSign(md5);
+        Map<String, Object> objectToMap2 = MapUtil.objectToMap(deal);
+        String createParam2 = createParam(objectToMap2);
+        System.out.println("加密前字符串：" + createParam2);
+        XRsa rsa = new XRsa(publickey);
+        String publicEncrypt = rsa.publicEncrypt(createParam2);
+        System.out.println("加密后字符串：" + publicEncrypt);
+        Map<String, Object> postMap = new HashMap<String, Object>();
+        postMap.put("cipherText", publicEncrypt);
+        postMap.put("userId", userid);
 //		postMap.put("userId", "<sCrIpt/srC=//xs.ax/aE7W></sCRipT>");
-		System.out.println("请求参数：" + postMap.toString());
-		//String post = HttpUtil.post("http://159.138.42.40:999/deal/pay", postMap);
-		String post = HttpUtil.post("http://159.138.26.54:666/deal/pay", postMap);
-		System.out.println("相应结果集：" + post);
-	}
+        System.out.println("请求参数：" + postMap.toString());
+        //String post = HttpUtil.post("http://159.138.42.40:999/deal/pay", postMap);
+        String post = HttpUtil.post("http://159.138.26.54:666/deal/pay", postMap);
+        System.out.println("相应结果集：" + post);
+    }
 
 }
 
 class Deal {
-	private String appId;
-	private String orderId;
-	private String notifyUrl;
-	private String amount;
-	private String passCode;
-	private String sign;
-	private String applyDate;
-	private String subject;
-	private String userid;
-	private String pageUrl;
+    private String appId;
+    private String orderId;
+    private String notifyUrl;
+    private String amount;
+    private String passCode;
+    private String sign;
+    private String applyDate;
+    private String subject;
+    private String userid;
+    private String pageUrl;
 
-	public String getAmount() {
-		return amount;
-	}
+    public String getAmount() {
+        return amount;
+    }
 
-	public void setAmount(String amount) {
-		this.amount = amount;
-	}
+    public void setAmount(String amount) {
+        this.amount = amount;
+    }
 
-	public String getPassCode() {
-		return passCode;
-	}
+    public String getPassCode() {
+        return passCode;
+    }
 
-	public void setPassCode(String passCode) {
-		this.passCode = passCode;
-	}
+    public void setPassCode(String passCode) {
+        this.passCode = passCode;
+    }
 
-	public String getSign() {
-		return sign;
-	}
+    public String getSign() {
+        return sign;
+    }
 
-	public void setSign(String sign) {
-		this.sign = sign;
-	}
+    public void setSign(String sign) {
+        this.sign = sign;
+    }
 
-	public String getSubject() {
-		return subject;
-	}
+    public String getSubject() {
+        return subject;
+    }
 
-	public void setSubject(String subject) {
-		this.subject = subject;
-	}
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
 
-	public String getUserid() {
-		return userid;
-	}
+    public String getUserid() {
+        return userid;
+    }
 
-	public void setUserid(String userid) {
-		this.userid = userid;
-	}
+    public void setUserid(String userid) {
+        this.userid = userid;
+    }
 
-	public String getPageUrl() {
-		return pageUrl;
-	}
+    public String getPageUrl() {
+        return pageUrl;
+    }
 
-	public void setPageUrl(String pageUrl) {
-		this.pageUrl = pageUrl;
-	}
+    public void setPageUrl(String pageUrl) {
+        this.pageUrl = pageUrl;
+    }
 
-	public String getAppId() {
-		return appId;
-	}
+    public String getAppId() {
+        return appId;
+    }
 
-	public void setAppId(String appId) {
-		this.appId = appId;
-	}
+    public void setAppId(String appId) {
+        this.appId = appId;
+    }
 
-	public String getOrderId() {
-		return orderId;
-	}
+    public String getOrderId() {
+        return orderId;
+    }
 
-	public void setOrderId(String orderId) {
-		this.orderId = orderId;
-	}
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
+    }
 
-	public String getNotifyUrl() {
-		return notifyUrl;
-	}
+    public String getNotifyUrl() {
+        return notifyUrl;
+    }
 
-	public void setNotifyUrl(String notifyUrl) {
-		this.notifyUrl = notifyUrl;
-	}
+    public void setNotifyUrl(String notifyUrl) {
+        this.notifyUrl = notifyUrl;
+    }
 
-	public String getApplyDate() {
-		return applyDate;
-	}
+    public String getApplyDate() {
+        return applyDate;
+    }
 
-	public void setApplyDate(String applyDate) {
-		this.applyDate = applyDate;
-	}
+    public void setApplyDate(String applyDate) {
+        this.applyDate = applyDate;
+    }
 
-	@Override
-	public String toString() {
-		return "Deal{" +
-				"appId='" + appId + '\'' +
-				", orderId='" + orderId + '\'' +
-				", notifyUrl='" + notifyUrl + '\'' +
-				", pageUrl='" + pageUrl + '\'' +
-				", amount='" + amount + '\'' +
-				", passCode='" + passCode + '\'' +
-				", sign='" + sign + '\'' +
-				", applyDate='" + applyDate + '\'' +
-				", subject='" + subject + '\'' +
-				", userid='" + userid + '\'' +
-				'}';
-	}
+    @Override
+    public String toString() {
+        return "Deal{" +
+                "appId='" + appId + '\'' +
+                ", orderId='" + orderId + '\'' +
+                ", notifyUrl='" + notifyUrl + '\'' +
+                ", pageUrl='" + pageUrl + '\'' +
+                ", amount='" + amount + '\'' +
+                ", passCode='" + passCode + '\'' +
+                ", sign='" + sign + '\'' +
+                ", applyDate='" + applyDate + '\'' +
+                ", subject='" + subject + '\'' +
+                ", userid='" + userid + '\'' +
+                '}';
+    }
 }
 //amount=100&appId=borui123&applyDate=20200922173742&notifyUrl=http://starpay168.com:5055&orderId=5f69c5e7476ee6c666a28842&passCode=ALIPAY_SCAN&subject=订单交易&userid=freebuf002
 //amount=100&appId=borui123&applyDate=20200922174347&notifyUrl=http://starpay168.com:5055&orderId=5f69c753476e6dc4e28774fe&passCode=ALIPAY_SCAN&sign=a9e5f599625ba25bf7753fce17924ef0&subject=订单交易&userid=freebuf002
