@@ -294,11 +294,6 @@ public class AccountApiSericeImpl implements AccountApiService {
             case "remitOrderState"://代付状态
             case "enterWitOpen"://代付反查询开关
             case "receiveOrderState"://接单状态
-                userInfo = userInfoDao.findUserByUserId(userId);
-                userStatusEnum = UserStatusEnum.resolve(UserStatusEnum.CLOSE.getCode());
-                if (userStatusEnum.matches(userInfo.getSwitchs())) {
-                    return Result.buildFailMessage("此商户已被停用，无法操作");
-                }
                 i = userInfoDao.updateMerchantStatusByUserId(userId, paramKey, paramValue);
                 break;
         }

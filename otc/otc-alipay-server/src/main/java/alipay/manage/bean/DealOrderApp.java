@@ -5,8 +5,10 @@ import lombok.Data;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+
 /**
  * <p>下游商户交易订单</p>
+ *
  * @author K
  */
 @Data
@@ -35,4 +37,10 @@ public class DealOrderApp implements Serializable {
     private String currency;  ///货币类型
     private String payName;
     private String openType;                        //付款人打开方式
+    public String getPayType() {
+        return retain1;
+    }
+    public void setPayType(String PayType) {
+         this.retain1 = PayType;
+    }
 }

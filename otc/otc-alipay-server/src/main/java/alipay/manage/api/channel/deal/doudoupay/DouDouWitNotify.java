@@ -45,7 +45,8 @@ public class DouDouWitNotify extends NotfiyChannel {
         Object object = ipmap.get(clientIP);
         if (ObjectUtil.isNull(object)) {
             log.info("【当前回调ip为：" + clientIP + "，固定IP登记为：" + ipmap.toString() + "】");
-            log.info("【当前回调ip不匹配】");
+            log.info("【" +
+                    "】");
             return "ip errer";
         }
         String orderId = req.getParameter("orderId");

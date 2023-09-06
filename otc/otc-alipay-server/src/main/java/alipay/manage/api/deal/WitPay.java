@@ -245,7 +245,8 @@ public class WitPay extends PayOrderService {
         boolean flag = false;
         try {
             flag = withdrawServiceImpl.addOrder(witb);
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            log.error("异常：",e);
             log.info("【当前商户订单号重复：" + wit.getApporderid() + "】");
             exceptionOrderServiceImpl.addWitOrder(wit, "用户报错：商户订单号重复；处理方法：提醒用户换一个订单号提交代付请求请求", wit.getIp());
             //	throw new OrderException("订单号重复", null);
@@ -318,7 +319,8 @@ public class WitPay extends PayOrderService {
         try {
             redis.set(KEY_WIT_PUSHWIT + order.getOrderId(), order.getOrderId(), 20); //防止多个任务同时获取一个订单发起结算
             withdraw = factoryForStrategy.getStrategy(channelFee.getImpl()).withdraw(order);
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            log.error("异常：",e);
             boolean b = withdrawServiceImpl.updatePush(order.getOrderId());
 
             push("当前订单推送异常，请及时检查异常情况，当前订单号：" + order.getOrderId() + "，当前程序堆栈数据：" + printStackTrace(e.getStackTrace()));

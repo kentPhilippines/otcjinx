@@ -146,16 +146,16 @@ public class DealPay {
         UserFund userFund = userInfoServiceImpl.findCurrency(userId);//缓存以加
         dealApp.setCurrency(userFund.getCurrency());
         if(ObjectUtil.isNotNull(depositRequestVO)){
-            dealApp.setPayName(dealBean.getUserid());
-        }else {
             dealApp.setPayName(depositRequestVO.getMcPayName());
+        }else {
+            dealApp.setPayName(dealBean.getUserid());
         }
 
         boolean add = false;
         try {
             add = orderAppServiceImpl.add(dealApp);
-        } catch (Exception e) {
-            log.info("商户订单号重复：");
+        } catch (Throwable e) {
+            log.error("异常：",e);
             log.info("【当前商户订单号重复：" + dealApp.getOrderId() + "】");
             exceptionOrderServiceImpl.addDealOrder(dealBean, "用户报错：商户订单号重复；处理方法：提醒用户换一个订单号提交支付请求", dealBean.getIp());
             //throw new OrderException("订单号重复", null);
@@ -198,6 +198,7 @@ public class DealPay {
        try {
            deal = factoryForStrategy.getStrategy(channelFee.getImpl()).deal(dealBean, channelFee.getChannelId());
        } catch (Throwable e) {
+           log.error("异常：",e);
            log.error("【当前通道编码对于的实体类不存在：" + e.getMessage() + "】", e);
            exceptionOrderServiceImpl.addDealOrder(mapToBean, "用户报错：当前通道编码不存在；处理方法：生成交易订单时候出现错误，或者请求三方渠道支付请求的时候出现异常返回，或联系技术人员处理," +
                    "三方渠道报错信息：" + e.getMessage(), clientIP);

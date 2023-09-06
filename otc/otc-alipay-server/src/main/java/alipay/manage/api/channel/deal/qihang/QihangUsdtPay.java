@@ -32,7 +32,7 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
-@Component("QihangUsdtPay")
+@Component("QihangPay")
 public class QihangUsdtPay extends PayOrderService {
     @Autowired
     private UserInfoService userInfoServiceImpl;
@@ -41,7 +41,6 @@ public class QihangUsdtPay extends PayOrderService {
     private RedisUtil redis;
     @Autowired
     private OrderService orderServiceImpl;
-
     @Override
     public Result deal(DealOrderApp dealOrderApp, String channel) throws Exception {
         log.info("【进入qihangPay支付，当前请求产品：" + dealOrderApp.getRetain1() + "，当前请求渠道：" + channel + "】");
@@ -70,12 +69,11 @@ public class QihangUsdtPay extends PayOrderService {
     }
 
     private String name = "付款人：";
-
     private Result createOrder(String notify, BigDecimal orderAmount,
                                String orderId,
                                ChannelInfo channelInfo, String payInfo) throws IOException {
 
-        String signKey = channelInfo.getBalanceUrl();
+        String signKey = channelInfo.getDealurl();
         String key = channelInfo.getChannelPassword();
         String order_no = orderId;
         String amount = orderAmount.toString();
@@ -88,8 +86,8 @@ public class QihangUsdtPay extends PayOrderService {
         headers.put("Content-Type", "application/json");
         Map<String, String> body = new HashMap();
         body.put("order_no", order_no);
-        body.put("gateway", "usdt");
-        body.put("coin_type", "USDT_TRC20");
+        body.put("gateway", channelInfo.getChannelType());
+        /*body.put("coin_type", "USDT_TRC20");*/
         body.put("amount", amount);
         body.put("ip", ip);
         body.put("time", time);
@@ -101,7 +99,7 @@ public class QihangUsdtPay extends PayOrderService {
         body.put("sign", sign1);
         JSONObject param = JSONUtil.parseFromMap(body);
         System.out.println("请求参数为：" + param);
-        HttpResponse execute = HttpRequest.post("https://api.ykt66.cc/api/v1/deposits")
+        HttpResponse execute = HttpRequest.post(channelInfo.getWitUrl())
                 .addHeaders(headers).body(param).execute();
         String ruselt = execute.body().toString();
         JSONObject resultMap = JSONUtil.parseFromXml(ruselt);
@@ -119,7 +117,6 @@ public class QihangUsdtPay extends PayOrderService {
         //<SuccessResponse><code>200</code><message>OK</message><data><no>9820220911141703765636665</no><action>jump</action><amount>100.000000</amount><url>https://ybf.usdtlab.net/zh/?no=AD13820220911141703783976834</url><order_no>358776053</order_no></data></SuccessResponse>
         String payUrl = successResponse.getJSONObject("data").getStr("url");
         return Result.buildSuccessResult("支付处理中", payUrl);
-
     }
     public static String sign(String secretKey, String data) {
 

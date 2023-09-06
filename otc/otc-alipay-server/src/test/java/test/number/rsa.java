@@ -2,10 +2,15 @@ package test.number;
 
 
 import alipay.manage.api.channel.deal.jiabao.RSAUtil;
+import alipay.manage.bean.util.ResultDeal;
 import cn.hutool.core.util.CharsetUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.asymmetric.KeyType;
 import cn.hutool.crypto.asymmetric.RSA;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
+import otc.result.Result;
 import otc.util.RSAUtils;
 
 import java.io.BufferedReader;
@@ -19,6 +24,7 @@ import java.net.URLConnection;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,13 +33,35 @@ public class rsa {
     private static final String ENCODE_TYPE = "md5";
 
     public static void main(String[] args) throws IOException {
+        String payInfo1 = "";
 
-        String s = md5("6228480425808874779");
-
-        System.out.println(s);
+        try {
+            Map map = new HashMap();
+            Map<Object, Object> hmget = new HashMap<>();
+            System.out.println(hmget.toString());
+            if(ObjectUtil.isNotNull(hmget)){
+                Object bank_name = hmget.get("bank_name");
+                Object card_no = hmget.get("card_no");
+                Object card_user = hmget.get("card_user");
+                Object money_order = hmget.get("money_order");
+                Object address = hmget.get("address");
+                map.put("amount",money_order);
+                map.put("bankCard",card_no);
+                map.put("bankName",bank_name);
+                map.put("name",card_user);
+                map.put("bankBranch",address);
+                JSONObject jsonObject = JSONUtil.parseFromMap(map);
+                payInfo1 = jsonObject.toString();
+            }
+        } catch (Throwable e ){
+            // log.error(e);
+            // log.info("详细数据解析异常，当前订单号：" + dealOrderApp.getAppOrderId());
+            System.out.println( Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl("result.getResult())")).toString());
+        }
 
 
     }
+
 
     public static String md5(String a) {
         String c = "";
