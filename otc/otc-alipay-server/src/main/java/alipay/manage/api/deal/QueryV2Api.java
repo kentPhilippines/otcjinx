@@ -2,6 +2,8 @@ package alipay.manage.api.deal;
 
 import alipay.config.redis.RedisUtil;
 import alipay.manage.api.V2.vo.BalanceRequestVo;
+import alipay.manage.api.V2.vo.OrderRequestVo;
+import alipay.manage.api.V2.vo.OrderResponseVo;
 import alipay.manage.bean.DealOrderApp;
 import alipay.manage.bean.UserFund;
 import alipay.manage.bean.UserInfo;
