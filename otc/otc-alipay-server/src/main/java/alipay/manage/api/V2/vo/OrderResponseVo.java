@@ -4,7 +4,7 @@ package alipay.manage.api.V2.vo;
 import lombok.Data;
 
 @Data
-public class OrderResponseVo1 {
+public class OrderResponseVo {
     private String orderId;
     private String orderNo;
     private String orderStatus;
