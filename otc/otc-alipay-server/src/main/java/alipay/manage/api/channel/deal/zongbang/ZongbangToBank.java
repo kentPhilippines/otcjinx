@@ -16,6 +16,7 @@ import cn.hutool.http.HttpUtil;
 import cn.hutool.http.Method;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -226,8 +227,7 @@ public class ZongbangToBank extends PayOrderService {
         return null;
     }
 }
-
-
+@Data
 class Deal {
     private String appId;
     private String orderId;
@@ -240,99 +240,4 @@ class Deal {
     private String userId;
     private String pageUrl;
 
-    public String getAmount() {
-        return amount;
-    }
-
-    public void setAmount(String amount) {
-        this.amount = amount;
-    }
-
-    public String getPassCode() {
-        return passCode;
-    }
-
-    public void setPassCode(String passCode) {
-        this.passCode = passCode;
-    }
-
-    public String getSign() {
-        return sign;
-    }
-
-    public void setSign(String sign) {
-        this.sign = sign;
-    }
-
-    public String getSubject() {
-        return subject;
-    }
-
-    public void setSubject(String subject) {
-        this.subject = subject;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userid) {
-        this.userId = userid;
-    }
-
-    public String getPageUrl() {
-        return pageUrl;
-    }
-
-    public void setPageUrl(String pageUrl) {
-        this.pageUrl = pageUrl;
-    }
-
-    public String getAppId() {
-        return appId;
-    }
-
-    public void setAppId(String appId) {
-        this.appId = appId;
-    }
-
-    public String getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(String orderId) {
-        this.orderId = orderId;
-    }
-
-    public String getNotifyUrl() {
-        return notifyUrl;
-    }
-
-    public void setNotifyUrl(String notifyUrl) {
-        this.notifyUrl = notifyUrl;
-    }
-
-    public String getApplyDate() {
-        return applyDate;
-    }
-
-    public void setApplyDate(String applyDate) {
-        this.applyDate = applyDate;
-    }
-
-    @Override
-    public String toString() {
-        return "Deal{" +
-                "appId='" + appId + '\'' +
-                ", orderId='" + orderId + '\'' +
-                ", notifyUrl='" + notifyUrl + '\'' +
-                ", pageUrl='" + pageUrl + '\'' +
-                ", amount='" + amount + '\'' +
-                ", passCode='" + passCode + '\'' +
-                ", sign='" + sign + '\'' +
-                ", applyDate='" + applyDate + '\'' +
-                ", subject='" + subject + '\'' +
-                ", userid='" + userId + '\'' +
-                '}';
-    }
 }

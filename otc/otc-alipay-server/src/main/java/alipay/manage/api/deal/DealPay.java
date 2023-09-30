@@ -140,17 +140,19 @@ public class DealPay {
         if(StrUtil.isNotEmpty(dealBean.getUserid())){
             dealDescribe = "付款人："+ dealBean.getUserid();
         }
-        dealApp.setDealDescribe(dealDescribe);
         dealApp.setRetain1(userRate.getPayTypr());
         dealApp.setRetain3(userRate.getFee().multiply(amount).setScale(2,BigDecimal.ROUND_UP).toString());
         UserFund userFund = userInfoServiceImpl.findCurrency(userId);//缓存以加
         dealApp.setCurrency(userFund.getCurrency());
         if(ObjectUtil.isNotNull(depositRequestVO)){
             dealApp.setPayName(depositRequestVO.getMcPayName());
-        }else {
-            dealApp.setPayName(dealBean.getUserid());
+            dealDescribe = "付款人："+ depositRequestVO.getMcPayName();
+        } else {
+            if(StrUtil.isNotEmpty(dealBean.getUserid())) {
+                dealApp.setPayName(dealBean.getUserid());
+            }
         }
-
+        dealApp.setDealDescribe(dealDescribe);
         boolean add = false;
         try {
             add = orderAppServiceImpl.add(dealApp);

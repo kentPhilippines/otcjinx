@@ -1,20 +1,71 @@
 package test.number;
 
 import cn.hutool.core.thread.ThreadUtil;
+import org.apache.tomcat.Jar;
+import otc.util.MapUtil;
+import otc.util.RSAUtils;
 
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
+
+import static alipay.manage.util.bankcardUtil.CreateOrder.log;
 
 public class name {
     public static void main(String[] args) {
-        for (int a = 0; a <= 100; a++) {
-            ThreadUtil.execute(() -> {
-                name();
-            });
 
-        }
+        /**
+         *{"
+         * appId":"guanyu0092002
+         * orderId":"P1700009383941271552
+         * notifyUrl":"https://guanyupayr7ny8dx.vbcc.xyz/api/pay/notify/T1694079446/P1700009383941271552
+         * pageUrl":"https://guanyupayr7ny8dx.vbcc.xyz/api/pay/return/T1694079446/P1700009383941271552
+         * amount":"3000.00","
+         * passCode":"BANK_R","
+         * applyDate":"20230908125316","
+         * userId":"艾阳","
+         * sign":"dd8b22f809bd25bbb383cbad75c8ead8
+         */
+
+
+        String appId = "guanyu0092002";
+        String orderId = "P1700009383941271552";
+        String pageUrl = "https://guanyupayr7ny8dx.vbcc.xyz/api/pay/return/T1694079446/P1700009383941271552";
+        String notifyUrl = "https://guanyupayr7ny8dx.vbcc.xyz/api/pay/notify/T1694079446/P1700009383941271552";
+        String amount = "3000.00";
+        String passCode = "BANK_R";
+        String applyDate = "20230908125316";
+        String userId = "艾阳";
+        Map<String,Object> map = new HashMap<>();
+        map.put("appId",appId);
+        map.put("orderId",orderId);
+        map.put("pageUrl",pageUrl);
+        map.put("notifyUrl",notifyUrl);
+        map.put("amount",amount);
+        map.put("passCode",passCode);
+        map.put("applyDate",applyDate);
+        map.put("userId",userId);
+        map.put("sign","dd8b22f809bd25bbb383cbad75c8ead8");
+
+
+        boolean b = verifySign(map, "DDEF3A10F6664A95A66E63C3FBAD64DE");
+
+
     }
-
+    public static boolean verifySign(Map<String, Object> map, String key) {
+        String paramStr = MapUtil.createParam(map);
+        log.info("【验证签名前的参数为：" + paramStr.toString() + "】");
+        String md5 = RSAUtils.md5(paramStr + key);
+        Object oldmd5 = map.get("sign");
+        if (!oldmd5.toString().equalsIgnoreCase(md5)) {
+            log.info("【当前用户验签不通过】");
+            log.info("【请求方签名值为：" + oldmd5 + "】");
+            log.info("【我方验签值为：" + md5 + "】");
+            return false;
+        }
+        return true;
+    }
     static void name() {
         Random random = new Random(System.currentTimeMillis());
         /* 598 百家姓 */
