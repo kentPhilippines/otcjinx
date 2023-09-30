@@ -19,7 +19,7 @@ import javax.validation.Valid;
  * 订单查询
  */
 @CrossOrigin
-public class OrderQueryApi1 {
+public class OrderQueryApi {
     private QueryV2Api queryV2Api;
 
 
