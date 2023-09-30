@@ -2,17 +2,13 @@ package alipay.manage.api.channel.deal.maida.ctrl;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
-import alipay.manage.api.channel.deal.maida.utils.DateUtil;
 import alipay.manage.api.channel.deal.maida.utils.HttpUtil;
-import alipay.manage.api.channel.deal.maida.utils.SignUtil;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -1,7 +1,6 @@
 package alipay.manage.api.V2;
 
 import alipay.manage.api.V2.vo.BalanceRequestVo;
-import alipay.manage.api.deal.QueryV2Api;
 import cn.hutool.json.JSONUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
