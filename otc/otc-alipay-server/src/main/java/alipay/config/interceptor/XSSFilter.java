@@ -22,7 +22,7 @@ public class XSSFilter implements Filter {
  //   @Value("#{'${xss.excludes}'.split(',')}")
     private List<String> excludes;
 
-    @Value("${xss.enabled}")
+    @Value("${xss.enabled:true}")
     private Boolean enabled;
 
 

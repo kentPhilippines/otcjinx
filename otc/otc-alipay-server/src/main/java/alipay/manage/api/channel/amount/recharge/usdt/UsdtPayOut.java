@@ -65,7 +65,7 @@ public class UsdtPayOut extends NotfiyChannel implements USDT {
     private RedisUtil redis;
 
 
-    @Value("${otc.url.forwardGet}")
+    @Value("${otc.url.forwardGet:''}")
     public String forwardGet;
     public   String findETHUSDTOrderList(String address) {
         String url = FIND_URL + address + "&page=1&offset=20&sort=desc&apikey=" + APP_KEY;
