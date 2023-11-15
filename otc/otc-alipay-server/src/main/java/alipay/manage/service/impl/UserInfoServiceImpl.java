@@ -394,4 +394,10 @@ public class UserInfoServiceImpl implements UserInfoService {
         int a = userInfoDao.updataRemitOrderStateOFF(userId);
         return a > 0 && a < 2;
     }
+
+    @Override
+    public UserInfo findUserNode(String channelNo) {
+
+        return  userInfoDao.findUserNode(channelNo);
+    }
 }

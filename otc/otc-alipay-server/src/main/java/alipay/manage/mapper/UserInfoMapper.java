@@ -269,4 +269,7 @@ public interface UserInfoMapper {
     @CacheEvict(value = USER, allEntries = true)
     @Update("update alipay_user_info set remitOrderState = 2 where userId = #{userId}")
     int updataRemitOrderStateOFF(@Param("userId") String userId);
+    @Select("select * from alipay_user_info where userNode = #{userNode}  ")
+    UserInfo findUserNode(@Param("userNode") String userNode);
+
 }
