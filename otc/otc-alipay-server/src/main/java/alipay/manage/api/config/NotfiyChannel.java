@@ -15,6 +15,7 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
+import com.alibaba.fastjson.JSON;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import otc.api.alipay.Common;
@@ -22,6 +23,11 @@ import otc.bean.dealpay.Withdraw;
 import otc.result.Result;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -188,8 +194,34 @@ public abstract class NotfiyChannel {
     void pushDeal(String orderId, String msg, String ip, boolean flag) {
         redisTemplate.convertAndSend("order-deal", orderId + mark + ip);//推送消息
     }
+    public String getKey(String channelNo) {
+    UserInfo info = userInfoServiceImpl.findPassword(channelNo);
+   //     UserInfo info = userInfoServiceImpl.findUserNode(channelNo);
+        return info.getPayPasword();
+    }
 
     void pushWit(String orderId, String ip) {
         redisTemplate.convertAndSend("order-wit", orderId + mark + ip);//推送消息
     }
+
+
+
+    public Map<String, Object> getRequestBody(HttpServletRequest request) {
+        Map<String, Object> params = new HashMap<>();
+        BufferedReader br;
+        try {
+            br = request.getReader();
+            String str, wholeParams = "";
+            while ((str = br.readLine()) != null) {
+                wholeParams += str;
+            }
+            if (StrUtil.isNotBlank(wholeParams)) {
+                params = JSON.parseObject(wholeParams, Map.class);
+            }
+        } catch (IOException e) {
+            return params;
+        }
+        return params;
+    }
+
 }
