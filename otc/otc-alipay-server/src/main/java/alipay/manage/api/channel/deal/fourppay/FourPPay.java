@@ -74,7 +74,7 @@ public class FourPPay extends PayOrderService {
         map.put("merchantOrderId",orderId);
         map.put("amount",  amount);
         map.put("notifyUrl", notify);
-        map.put("payerName", "王二");
+        map.put("payerName", dealOrderApp.getPayName());
         String createParam = YiFuUtil.createParam(map)+ ""+channelInfo.getChannelPassword();
         System.out.println("【fourp 签名前参数："+createParam+"】");
         String md5 = YiFuUtil.md5(createParam );
