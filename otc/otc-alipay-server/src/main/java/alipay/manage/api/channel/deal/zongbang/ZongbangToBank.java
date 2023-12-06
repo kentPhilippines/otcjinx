@@ -56,7 +56,8 @@ public class ZongbangToBank extends PayOrderService {
     @Autowired
     private OrderService orderServiceImpl;
     @Value("${otc.payInfo.url}")
-    public   String url;
+    public String url;
+
     @Override
     public Result deal(DealOrderApp dealOrderApp, String channel) {
         log.info("【进入刚盾支付，当前请求产品：" + dealOrderApp.getRetain1() + "，当前请求渠道：" + channel + "】");
@@ -78,46 +79,44 @@ public class ZongbangToBank extends PayOrderService {
                 getChannelInfo(channel, dealOrderApp.getRetain1()), dealOrderApp, payInfo
         );
         log.info(result.toString());
-        if(   result.isSuccess() && dealOrderApp.getRetain1().contains("ALIPAY")){
+        if (result.isSuccess() && dealOrderApp.getRetain1().contains("ALIPAY")) {
             return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(result.getResult()));
         }
 
         String payInfo1 = "";
         if (result.isSuccess()) {
-
             try {
-            Map map = new HashMap();
-            Map<Object, Object> hmget = redis.hmget(MARS + orderId);
+                Map map = new HashMap();
+                Map<Object, Object> hmget = redis.hmget(MARS + orderId);
                 log.info(hmget.toString());
-                if(ObjectUtil.isNotNull(hmget)){
+                if (ObjectUtil.isNotNull(hmget)) {
                     Object bank_name = hmget.get("bank_name");
                     Object card_no = hmget.get("card_no");
                     Object card_user = hmget.get("card_user");
                     Object money_order = hmget.get("money_order");
                     Object address = hmget.get("address");
-                    map.put("amount",money_order);
-                    map.put("bankCard",card_no);
-                    map.put("bankName",bank_name);
-                    map.put("name",card_user);
-                    map.put("bankBranch",address);
+                    map.put("amount", money_order);
+                    map.put("bankCard", card_no);
+                    map.put("bankName", bank_name);
+                    map.put("name", card_user);
+                    map.put("bankBranch", address);
                     JSONObject jsonObject = JSONUtil.parseFromMap(map);
                     payInfo1 = jsonObject.toString();
                 }
-            } catch (Throwable e ){
+            } catch (Throwable e) {
                 log.error(e);
                 log.info("详细数据解析异常，当前订单号：" + dealOrderApp.getAppOrderId());
                 return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(result.getResult()));
             }
-    //"{\"amount\":\"200\",\"bankCard\":\"6217566400010691931\",\"bankBranch\":\"福建省漳浦县佛昙支行\",\"name\":\"杨艺平\",\"bankName\":\"中国银行\"}
-            return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrlAndPayInfo1(result.getResult(),result.getMessage(),payInfo1));
+            //"{\"amount\":\"200\",\"bankCard\":\"6217566400010691931\",\"bankBranch\":\"福建省漳浦县佛昙支行\",\"name\":\"杨艺平\",\"bankName\":\"中国银行\"}
+            return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrlAndPayInfo1(result.getResult(), result.getMessage(), payInfo1));
         } else {
-             orderEr(dealOrderApp, "错误消息：" + result.getMessage());
+            orderEr(dealOrderApp, "错误消息：" + result.getMessage());
             return result;
         }
     }
 
     static final String PUBLIC_KEY = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCJA3kkGVMP3lTsWR6PtBSWFOtP+RmEEv4yWS3E4rIKG07rzX2f7sgQnm2CGld25s4lL9bWT8Hw9ulTpi1vNACHLXko0O/YyNuIfeUvfaXirBgWlErDlQ+hOFdhLle+vdITu+5JW08i+G9Z1gZkcdtk/UeomBuY0FNaLxx/dRCNyQIDAQAB";
-
 
 
     private Result createOrder(String notify, BigDecimal orderAmount, String orderId, ChannelInfo channelInfo, DealOrderApp dealOrderApp, String payInfo) {
@@ -131,7 +130,7 @@ public class ZongbangToBank extends PayOrderService {
             deal.setOrderId(orderId);
             deal.setPassCode(channelInfo.getChannelType());
             deal.setSubject("deal_order");
-            deal.setUserId(getPayName(payInfo,orderId));
+            deal.setUserId(getPayName(payInfo, orderId));
             Map<String, Object> objectToMap = MapUtil.objectToMap(deal);
             String createParam = createParam(objectToMap);
             log.info("签名前请求串：" + createParam);
@@ -148,7 +147,7 @@ public class ZongbangToBank extends PayOrderService {
             postMap.put("cipherText", publicEncrypt);
             postMap.put("userId", channelInfo.getChannelAppId());
             log.info("请求参数：" + postMap.toString());
-            String post = HttpUtil.post( channelInfo.getDealurl(), postMap);
+            String post = HttpUtil.post(channelInfo.getDealurl(), postMap);
             log.info("相应结果集：" + post);
             //   {"success":false,"message":"当前账户交易权限未开通","result":null,"code":null}
             // "payInfo":"张三:兴业银行:34583174378286786"
@@ -166,19 +165,19 @@ public class ZongbangToBank extends PayOrderService {
                     String name = split[0];
                     String bankname = split[1];
                     String bankno = split[2];
-                    String address = split[3];
+                    String address = "";
                     String amount = "";
                     try {
                         String payInfo2 = resultObject.getStr("payInfo2");//支付信息
-
                         JSONObject jsonObject1 = JSONUtil.parseObj(payInfo2);
-                         amount = jsonObject1.getStr("amount");
+                        amount = jsonObject1.getStr("amount");
+                        address = jsonObject1.getStr("bankBranch");
 
-                    }catch (Exception e ){
+                    } catch (Exception e) {
 
                     }
-                    if(StrUtil.isEmpty(amount)){
-                        amount  =    orderAmount.toString();
+                    if (StrUtil.isEmpty(amount)) {
+                        amount = orderAmount.toString();
                     }
                     Map cardmap = new HashMap();
                     cardmap.put("bank_name", bankname);
@@ -197,7 +196,7 @@ public class ZongbangToBank extends PayOrderService {
                 }
                 return Result.buildSuccessResult(pay, url + "/pay?orderId=" + orderId + "&type=203");
             } else {
-               // orderAppEr(dealOrderApp, jsonObject.getStr("message"));
+                // orderAppEr(dealOrderApp, jsonObject.getStr("message"));
                 return Result.buildFailMessage(jsonObject.getStr("message"));
             }
         } catch (Exception e) {
@@ -227,6 +226,7 @@ public class ZongbangToBank extends PayOrderService {
         return null;
     }
 }
+
 @Data
 class Deal {
     private String appId;

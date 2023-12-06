@@ -17,32 +17,10 @@ import lombok.Data;
  */
 @Data
 public class Result {
-	/**
-	 * True 成功  false  失败
-	 * 【以该数据判断订单是否成功】
-	 *
-	 */
+
 	private boolean success;
-	/**
-	 * 提示消息
-	 */
 	private String message = "";
-
-	/**
-	 * sussess  True 成功  false  失败
-	 *
-	 * returnUrl  支付连接
-	 *
-	 * openType 1：URL  0 ： HTML
-	 *
-	 * cod 1 ：成功
-	 *
-	 */
 	private Object result = "";
-
-	/**
-	 * 1 ：成功
-	 */
 	private Integer code;
 
 	public Result(boolean b, Integer o, Object result) {

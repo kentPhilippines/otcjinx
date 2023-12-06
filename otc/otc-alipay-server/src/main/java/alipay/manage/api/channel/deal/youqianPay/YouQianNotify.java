@@ -77,17 +77,21 @@ public class YouQianNotify extends NotfiyChannel {
         }
         Map<String, Object> reqMap = getRequestBody(req);
         map.putAll(reqMap);
+        log.info(" 有钱 回调数据为： "+ map.toString());
         Object sign = map.get("sign");
         map.remove("sign");
         String param = createParam(map);
-        String key = getDPAyChannelKey((String) map.get("payout_cl_id"));
-        String s = md5(param + "&" + key);
+        String key = getDPAyChannelKey((String) map.get("out_trade_no"));
+        String s = md5(param + "&key=" + key).toUpperCase();
         if(sign.toString().equals(s)){
-            if ("2".equals(map.get("status").toString())) {
-                Result result = witNotfy(map.get("payout_cl_id").toString(), HttpUtil.getClientIP(req));
+            if ("1".equals(map.get("code").toString())) {
+                Result result = witNotfy(map.get("out_trade_no").toString(), HttpUtil.getClientIP(req));
                 if (result.isSuccess()) {
                     return "OK";
                 }
+            }else if("4".equals(map.get("code").toString())){
+                witNotfyEr(map.get("out_trade_no").toString(),HttpUtil.getClientIP(req),map.get("msg").toString());
+                return "OK";
             }
         } else {
             log.info("【验签失败， 对方系统签名为：" + sign + "】");
