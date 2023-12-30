@@ -53,7 +53,7 @@ public class EtPay extends PayOrderService {
                     orderId,
                     getChannelInfo(channelId, dealOrderApp.getRetain1())
             );
-            if (url.isSuccess()) {
+            if (!url.isSuccess()) {
                 return Result.buildFailMessage("支付失败");
             } else {
                 return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(url.getResult()));
