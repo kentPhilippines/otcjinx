@@ -138,8 +138,8 @@ public class MyPay extends PayOrderService {
         orderId = System.currentTimeMillis() + "";
         channelInfo = new ChannelInfo();
         channelInfo.setChannelPassword(MyPayUtil.PRIVATE_KEY);
-        channelInfo.setChannelAppId("10285");
-        channelInfo.setChannelType("901");
+        channelInfo.setChannelAppId("10334");
+        channelInfo.setChannelType("813");
         channelInfo.setDealurl("https://gateway.guming.vip/api/payOrder/create");
         MyPay pay = new MyPay();
         Result order = pay.createOrder(dealOrderApp, notifyUrl, orderAmount, orderId, channelInfo);

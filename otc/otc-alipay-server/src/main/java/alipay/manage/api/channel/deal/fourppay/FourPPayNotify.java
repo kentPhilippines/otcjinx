@@ -30,7 +30,7 @@ public class FourPPayNotify extends NotfiyChannel {
 
     @RequestMapping("/fourPPayNotify")
     @ResponseBody
-    public String chaofanPayNotify( HttpServletRequest request,@RequestBody Map<String,String> params) {
+    public String chaofanPayNotify(HttpServletRequest request, @RequestBody Map<String, String> params) {
         log.info("fourPPayNotify notify:{}", JSONUtil.toJsonStr(params));
 //        String requestStr="{\"amount\":\"300.00\",\"body\":\"test\",\"channel\":\"alipayCodeSmall\",\"order_status\":\"1\",\"out_trade_no\":\"1671060097960382464\",\"trade_no\":\"1671060097960382464\",\"sign\":\"9442e429aae0db59c8001584dbbb5a5e\"}";
 //        params = JSONUtil.toBean(requestStr,Map.class);
@@ -39,25 +39,24 @@ public class FourPPayNotify extends NotfiyChannel {
         String orderId = params.get("payment_cl_id");
         String password = getChannelKey(orderId);
 //        this.getChannelKey("");
-        String postSign= params.get("sign");
+        String postSign = params.get("sign");
         String sign = createSign(params, password);
-        if(postSign.equalsIgnoreCase(sign) && "2".equals(params.get("status")+"")) {
-            Result result = dealpayNotfiy(orderId+"", clientIP, "三方回调成功");
+        if (postSign.equalsIgnoreCase(sign) && "2".equals(params.get("status") + "")) {
+            Result result = dealpayNotfiy(orderId + "", clientIP, "三方回调成功");
             return "success";
         }
         return "error";
     }
 
 
-    private static String createSign(Map map, String key)
-    {
+    private static String createSign(Map map, String key) {
         map.remove("sign");
         Map<String, String> params = map;
 //        params.put("key", key);
 //        StringBuilder buf = new StringBuilder((params.size() + 1) * 10);
 //        SignUtils.buildPayParams(buf, params, false);
-        String preStr = YiFuUtil.createParam(map)+""+key;
-        log.info("before sign：{}",preStr);
+        String preStr = YiFuUtil.createParam(map) + "" + key;
+        log.info("before sign：{}", preStr);
         String sign = YiFuUtil.md5(preStr).toLowerCase();
 
         return sign;
