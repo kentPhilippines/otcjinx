@@ -274,33 +274,33 @@ public class VendorRequestApi {
             closeObject(witAmount, accountBalance, quota, amount1, userFund, amount1, switchs, key, paramMap, userId, userInfo);
             return Result.buildFailMessage("当前账户金额不足");
         }*/
-//        BigDecimal money = new BigDecimal(userRate.getRetain2());
-//        if (!(money.compareTo(witAmount) == -1)) {
-//            log.info("【当前代付最低金额为+" + userRate.getRetain2() + "】");
-//            BigDecimal finalWitAmount = witAmount;
-//            UserRate finalUserRate = userRate;
-//            ThreadUtil.execute(() -> {
-//                exceptionOrderServiceImpl.addWitEx(userId, finalWitAmount.toString(), "商户相应提示：当前代付最低金额为；" + finalUserRate.getRetain2() + "处理方法：金额限制为" + finalUserRate.getRetain2(), HttpUtil.getClientIP(request), paramMap.get("apporderid").toString());
-//            });
-//            closeObject(witAmount, money, amount1, amount1, switchs, key, paramMap, userId, userInfo, finalWitAmount, finalUserRate);
-//            return Result.buildFailMessage("当前代付最低金额为300");
-//        }
-//        if (!(higMoney.compareTo(witAmount) > -1)) {
-//            log.info("【当前代付最高金额为50000】");
-//            BigDecimal finalWitAmount1 = witAmount;
-//            ThreadUtil.execute(() -> {
-//                exceptionOrderServiceImpl.addWitEx(userId, finalWitAmount1.toString(), "商户相应提示：当前代付最高金额为50000；" + "处理方法：金额限制为300-49999", HttpUtil.getClientIP(request), paramMap.get("apporderid").toString());
-//            });
-//            closeObject(witAmount, money, amount1, amount1, switchs, key, paramMap, userId, userInfo);
-//            return Result.buildFailMessage("金额限制为300-49999");
-//        }
-//        if (CheckUtils.isNumber(witAmount)) {
-//            ThreadUtil.execute(() -> {
-//                exceptionOrderServiceImpl.addWitEx(userId, paramMap.get("amount").toString(), "商户相应提示：代付金额不能存在小数；" + "处理方法：提醒商户更换代付金额", HttpUtil.getClientIP(request), paramMap.get("apporderid").toString());
-//            });
-//            closeObject(witAmount, money, amount1, amount1, switchs, key, paramMap, userId, userInfo);
-//            return Result.buildFailMessage("代付金额不能存在小数");
-//        }
+        BigDecimal money = new BigDecimal(userRate.getRetain2());
+        if (!(money.compareTo(witAmount) == -1)) {
+            log.info("【当前代付最低金额为+" + userRate.getRetain2() + "】");
+            BigDecimal finalWitAmount = witAmount;
+            UserRate finalUserRate = userRate;
+            ThreadUtil.execute(() -> {
+                exceptionOrderServiceImpl.addWitEx(userId, finalWitAmount.toString(), "商户相应提示：当前代付最低金额为；" + finalUserRate.getRetain2() + "处理方法：金额限制为" + finalUserRate.getRetain2(), HttpUtil.getClientIP(request), paramMap.get("apporderid").toString());
+            });
+            closeObject(witAmount, money, amount1, amount1, switchs, key, paramMap, userId, userInfo, finalWitAmount, finalUserRate);
+            return Result.buildFailMessage("当前代付最低金额为300");
+        }
+        if (!(higMoney.compareTo(witAmount) > -1)) {
+            log.info("【当前代付最高金额为50000】");
+            BigDecimal finalWitAmount1 = witAmount;
+            ThreadUtil.execute(() -> {
+                exceptionOrderServiceImpl.addWitEx(userId, finalWitAmount1.toString(), "商户相应提示：当前代付最高金额为50000；" + "处理方法：金额限制为300-49999", HttpUtil.getClientIP(request), paramMap.get("apporderid").toString());
+            });
+            closeObject(witAmount, money, amount1, amount1, switchs, key, paramMap, userId, userInfo);
+            return Result.buildFailMessage("金额限制为300-49999");
+        }
+        if (CheckUtils.isNumber(witAmount)) {
+            ThreadUtil.execute(() -> {
+                exceptionOrderServiceImpl.addWitEx(userId, paramMap.get("amount").toString(), "商户相应提示：代付金额不能存在小数；" + "处理方法：提醒商户更换代付金额", HttpUtil.getClientIP(request), paramMap.get("apporderid").toString());
+            });
+            closeObject(witAmount, money, amount1, amount1, switchs, key, paramMap, userId, userInfo);
+            return Result.buildFailMessage("代付金额不能存在小数");
+        }
         witAmount = null;
         userInfo = null;
         userRate = null;
