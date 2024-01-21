@@ -4,7 +4,6 @@ import alipay.manage.bean.DealOrder;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.thread.ThreadUtil;
-import cn.hutool.core.util.NetUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.cron.CronUtil;
 import cn.hutool.cron.task.Task;
@@ -41,7 +40,7 @@ import java.util.concurrent.*;
 @EnableTransactionManagement //事务
 @EnableRedisHttpSession //redis   session 共享
 @EnableAspectJAutoProxy(proxyTargetClass = true)
-@NacosPropertySource(dataId = "${nacos.config.data-id}",autoRefreshed = true)
+//@NacosPropertySource(dataId = "${nacos.config.data-id}",autoRefreshed = true)
 public class AlipayApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(AlipayApplication.class, args);
