@@ -2,13 +2,20 @@ package alipay.manage.api.channel.deal.huachenghui;
 
 import alipay.manage.api.channel.util.ChannelInfo;
 import alipay.manage.api.channel.util.qiangui.MD5;
+import alipay.manage.api.config.ChannelLocalUtil;
+import alipay.manage.api.config.NotifyApi;
 import alipay.manage.api.config.PayOrderService;
+import alipay.manage.api.config.PayOrderServiceV2;
+import alipay.manage.bean.DealOrder;
 import alipay.manage.bean.DealOrderApp;
+import alipay.manage.bean.DealWit;
 import alipay.manage.bean.UserInfo;
 import alipay.manage.bean.util.ResultDeal;
+import alipay.manage.bean.util.WitInfo;
 import alipay.manage.service.UserInfoService;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -20,118 +27,77 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import otc.bean.dealpay.Withdraw;
 import otc.common.PayApiConstant;
 import otc.result.Result;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 @Component("HuachenghuiPay")
 @Slf4j
-public class HuachenghuiPay extends PayOrderService {
-
+public class HuachenghuiPay extends PayOrderServiceV2 {
+    final String NOTIFY_TYPE = NotifyApi.NOTIFY_TYPE_FORM;//文档定义的上游回调传参类型
+    final String NOTIFY = NOTIFY_TYPE + (NOTIFY_MARK + StrUtil.split(this.getClass().getName(), MARK)[StrUtil.split(this.getClass().getName(), MARK).length - 1]).trim();//"/HongYunTong";
     @Autowired
-    private UserInfoService userInfoServiceImpl;
-
+    HuachenghuiPayUtil huachenghuiPayUtil;
     @Override
-    public Result deal(DealOrderApp dealOrderApp, String channel) throws Exception {
-        log.info("【进入HuachenghuiPay支付，当前请求产品：" + dealOrderApp.getRetain1() + "，当前请求渠道：" + channel + "】");
-        String orderId = create(dealOrderApp, channel);
-        UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(dealOrderApp.getOrderAccount());
-        if (StrUtil.isBlank(userInfo.getDealUrl())) {
-            orderDealEr(orderId, "当前商户交易url未设置");
-            return Result.buildFailMessage("请联系运营为您的商户好设置交易url");
-        }
-
-        Result result = createOrder(
-                userInfo.getDealUrl() +
-                        PayApiConstant.Notfiy.NOTFIY_API_WAI + "/huachenghuiPayNotify",
-                dealOrderApp.getOrderAmount(),
-                orderId,
-                getChannelInfo(channel, dealOrderApp.getRetain1()));
-        if (result.isSuccess()) {
-            return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(result.getResult()));
+    public Result deal(DealOrderApp dealOrderApp, String channel) {
+        Result deal = deal(dealOrderApp, channel, NOTIFY);
+        if (deal.isSuccess()) {
+            DealOrder result = (DealOrder) deal.getResult();
+            Result deal1 = deal(huachenghuiPayUtil, result);
+            if (deal1.isSuccess()) {
+                return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(deal1.getResult()));
+            } else {
+                return deal1;
+            }
         } else {
-            orderDealEr(orderId, result.getMessage());
-            return result;
+            return deal;
         }
     }
-
-    private Result createOrder(String notify, BigDecimal orderAmount,
-                               String orderId,
-                               ChannelInfo channelInfo) throws IOException {
-        String payurl = channelInfo.getDealurl();
-        String payAmount = orderAmount.intValue()+""; // 金额
-        String tradeType = channelInfo.getChannelType(); // '银行编码
-        String mchId = channelInfo.getChannelAppId();// 商户id
-        String notifyUrl = notify;// 通知地址
-
-//        String key ="knC2cwLbt8948861lZkEb4uB4GRZ70y8nO5a3Q8TTd";
-        String key =channelInfo.getChannelPassword();
-//        String payurl = "https://apimvzyda.ercuy.xyz/InterfaceV9/CreatePayOrder/";
-        String amount = payAmount; // 金额
-        String payTypeId = tradeType; // '银行编码
-        String payTypeIdFormat = "URL"; // '银行编码
-//        String mchId = "43675";// 商户id
-        String clientRealName = "张三";
-        String remark = "test";
-        String ip = "127.0.0.1";
-
-        MultiValueMap<String, String> param= new LinkedMultiValueMap<String, String>();
-        param.add("Amount", amount);
-        param.add("ClientRealName", clientRealName);
-        param.add("Ip", ip);
-        param.add("MerchantId", mchId);
-        param.add("MerchantUniqueOrderId", orderId);
-        param.add("NotifyUrl", notifyUrl);
-        param.add("PayTypeId", payTypeId);
-        param.add("PayTypeIdFormat", payTypeIdFormat);
-        param.add("Remark", remark);
-        String originalStr = createParam(param.toSingleValueMap())+""+key;
-        log.info(originalStr);
-        String sign = MD5.MD5Encode(originalStr).toLowerCase();
-        param.add("sign", sign);
-//        param.add("nurl", notifyUrl);
-        log.info(JSONUtil.toJsonStr(param.toSingleValueMap()));
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(param, headers);
-        String rString = restTemplate.postForObject(payurl, request, String.class);
-        //{"Code":"0","MessageForUser":"OK","MessageForSystem":"OK","MerchantUniqueOrderId":"9257847107","Amount":"100","RealAmount":"100","Url":"http://www.hchqa.xyz/n/D43675230203205703021","BankCardRealName":"","BankCardNumber":"","BankCardBankName":"","BankCardBankBranchName":"","ExpiryTime":""}
-        log.info(rString);
-        JSONObject jsonObject =  JSONUtil.parseObj(rString);
-        if ("0".equals(jsonObject.getStr("Code"))) {
-            //业务处理
-            String resultUrl = jsonObject.getStr("Url");
-            return Result.buildSuccessResult("支付处理中", resultUrl);
-        }else {
-            String str = jsonObject.getStr("MessageForUser");
-            orderDealEr(orderId,str);
+    @Override
+    public Result withdraw(Withdraw wit, String channelId) {
+        Result withdraw = withdraw(wit, channelId, NOTIFY);
+        if (withdraw.isSuccess()) {
+            DealWit wits = (DealWit) withdraw.getResult();
+            Result withdraw1 = withdraw(huachenghuiPayUtil, wits);
+            if (withdraw1.isSuccess()) {
+                return withdraw1;
+            } else {
+                return Result.buildFail();
+            }
+        } else {
             return Result.buildFail();
         }
     }
 
-    private static String createParam(Map<String, String> map) {
-        try {
-            if (map == null || map.isEmpty()) {
-                return null;
-            }
-            Object[] key = map.keySet().toArray();
-            Arrays.sort(key);
-            StringBuffer res = new StringBuffer(128);
-            for (int i = 0; i < key.length; i++) {
-                if (ObjectUtil.isNotNull(map.get(key[i]))) {
-                    res.append(key[i] + "=" + map.get(key[i]) + "&");
-                }
-            }
-            String rStr = res.substring(0, res.length() - 1);
-            return rStr;
-        } catch (Exception e) {
-            e.printStackTrace();
+
+    @Override
+    public String dealNotify(Map map) {
+        Result result = huachenghuiPayUtil.dealNotify(map);
+        if(result.isSuccess()){
+            return "SUCCESS";
         }
-        return null;
+        return super.dealNotify(map);
+    }
+
+    @Override
+    public String witNotify(Map map) {
+        Result result = huachenghuiPayUtil.witNotify(map);
+        if(result.isSuccess()){
+            return "SUCCESS";
+        }
+        return super.witNotify(map);
+    }
+
+    @Override
+    public Result findBalance(String channelId, String payType) {
+        huachenghuiPayUtil.findBalance(channelId,getChannelInfo(channelId, payType));
+        return Result.buildSuccess();
     }
 }

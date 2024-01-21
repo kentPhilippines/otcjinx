@@ -92,24 +92,23 @@ public class PaySource extends PayOrderService {
             String createParam = PayUtil.createParam(map);
             String md5 = PayUtil.md5(createParam + "&key=" + channelInfo.getChannelPassword());
             map.put("sign", md5);
+            map.put("realname", getPayName(payInfo, orderId));
             map.put("return_type", "json");
             try{
                 log.info(channelInfo.getDealurl());
                 log.info(map.toString());
-                post = HttpUtil.post(channelInfo.getDealurl()+"/pay/order", map);
+                post = HttpUtil.post(channelInfo.getDealurl(), map);
             }catch (Throwable e){
                 log.error("异常",e);
             }
         }catch (Throwable e){
             log.error("兴盛异常",e);
         }
-
         log.info("【新盛话费返回数据：" + post + "】");
         JSONObject jsonObject = JSONUtil.parseObj(post);
         String status = jsonObject.getStr("status");
         if ("1".equals(status)) {
             String payUrlInfo = jsonObject.getStr("data");
-
             JSONObject payinfo = JSONUtil.parseObj(payUrlInfo);
             String pay_url = payinfo.getStr("pay_url");
             return Result.buildSuccessResult(pay_url);

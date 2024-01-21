@@ -16,6 +16,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
 import com.alibaba.fastjson.JSON;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import otc.api.alipay.Common;
@@ -26,6 +27,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
@@ -206,7 +208,14 @@ public abstract class NotfiyChannel {
 
 
 
-    public Map<String, Object> getRequestBody(HttpServletRequest request) {
+    public Map<String, Object> getRequestBody(HttpServletRequest request ) {
+        Map<String, Object> map = new HashMap<>();
+        Enumeration<String> parameterNames = request.getParameterNames();
+        while (parameterNames.hasMoreElements()) {
+            String key = parameterNames.nextElement();
+            String value = request.getParameter(key);
+            map.put(key, value);
+        }
         Map<String, Object> params = new HashMap<>();
         BufferedReader br;
         try {
@@ -215,13 +224,14 @@ public abstract class NotfiyChannel {
             while ((str = br.readLine()) != null) {
                 wholeParams += str;
             }
-            if (StrUtil.isNotBlank(wholeParams)) {
+            if (StringUtils.isNotBlank(wholeParams)) {
                 params = JSON.parseObject(wholeParams, Map.class);
             }
         } catch (IOException e) {
             return params;
         }
-        return params;
+        map.putAll(params);
+        return map;
     }
 
 }

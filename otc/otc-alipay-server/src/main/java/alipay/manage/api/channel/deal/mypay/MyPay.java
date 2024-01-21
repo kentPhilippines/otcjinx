@@ -13,7 +13,6 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import com.mashape.unirest.http.HttpResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -103,7 +102,6 @@ public class MyPay extends PayOrderService {
         String sign = RSAUtil.signByPrivateKeyStr(MyPayUtil.PRIVATE_KEY,MapUtil.createParam(map));
         map.put("sign", sign);
 //        Unirest.setTimeouts(2, 2);
-        HttpResponse<String> response = null;
         log.info(" 请求参数: " + map.toString());
         String post = HttpUtil.post(channelInfo.getDealurl(), JSONUtil.toJsonStr(map));
         log.info("请求三方响应：" + post);

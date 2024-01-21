@@ -39,12 +39,6 @@ public class XinShenNotify extends NotfiyChannel {
         String clientIP = HttpUtil.getClientIP(req);
         log.info("【当前回调ip为：" + clientIP + "】");
         Map mapip = new HashMap();
-        mapip.put("34.96.180.78","34.96.180.78");
-        mapip.put("35.220.182.58","35.220.182.58");
-        if(StrUtil.isEmpty(clientIP) || ObjectUtil.isNull(mapip.get(clientIP)) ){
-            log.info("【当前回调ip有误】");
-            return;
-        }
         String app_id = req.getParameter("app_id");
         String status = req.getParameter("status");
         String money = req.getParameter("money");

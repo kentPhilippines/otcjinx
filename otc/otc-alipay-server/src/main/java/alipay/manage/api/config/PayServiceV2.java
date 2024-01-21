@@ -6,7 +6,7 @@ import otc.result.Result;
 
 import java.util.Map;
 
-public interface PayServiceV2 {
+public interface PayServiceV2 extends PayService {
 	/**
 	 * <p>交易请求【支付宝扫码】</p>
 	 * @return
@@ -25,14 +25,6 @@ public interface PayServiceV2 {
 	 * @return
 	 */
 	Result findBalance(String channelId , String payType);
-
-	String dealNotify(Map<String,Object> map);
-
-	String witNotify(Map<String,Object> map);
-
-
-
-
 
 
 }
