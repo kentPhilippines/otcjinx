@@ -40,7 +40,7 @@ import java.util.concurrent.*;
 @EnableTransactionManagement //事务
 @EnableRedisHttpSession //redis   session 共享
 @EnableAspectJAutoProxy(proxyTargetClass = true)
-//@NacosPropertySource(dataId = "${nacos.config.data-id}",autoRefreshed = true)
+@NacosPropertySource(dataId = "${nacos.config.data-id}",autoRefreshed = true)
 public class AlipayApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(AlipayApplication.class, args);
