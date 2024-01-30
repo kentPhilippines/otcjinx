@@ -111,7 +111,7 @@ public class DealOrder implements Serializable{
     }
 
     public String getPayType() {
-        return payType;
+        return this.retain1;
 	}
 	public void setPayType(String payType) {
 		this.payType = payType;

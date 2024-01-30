@@ -30,7 +30,7 @@ public class V2qsUtil extends ChannelUtil implements ChannelLocalUtil {
         String orderId = order.getOrderId();
         String notifyUrl = order.getNotify();
         String pageUrl = notifyUrl;
-        String amount = order.getActualAmount()+"";
+        String amount = order.getDealAmount()+"";
         String passCode = channelInfo.getChannelType();
         String applyDate = d.format(new Date());
         String userId =  order.getMcRealName();

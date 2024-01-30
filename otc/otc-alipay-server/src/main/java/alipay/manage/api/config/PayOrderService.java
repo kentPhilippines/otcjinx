@@ -83,14 +83,14 @@ public abstract class PayOrderService implements PayService {
         }
         dealUrl = dealUrl.trim();
         DealOrder dealOrder = create(dealOrderApp, channelId, dealUrl + PayApiConstant.Notfiy.NOTFIY_API_WAI + notify + NOTIFY_DEAL);
-        BigDecimal limitBalance = userinfo.getLimitBalance();
+        /*BigDecimal limitBalance = userinfo.getLimitBalance();
         UserFund userFund = userFundService.findUserInfoByUserId(userinfo.getUserId());
         BigDecimal accountBalance = userFund.getAccountBalance();
         if((limitBalance.compareTo(accountBalance)>0)){
             String msg = "当前渠道余额限制，暂停充值";
             orderEr(dealOrder,msg);
             return Result.buildFailMessage(msg);
-        }
+        }*/
         return Result.buildSuccessResult(dealOrder);
     }
     public Result deal(ChannelLocalUtil util , DealOrder order) {

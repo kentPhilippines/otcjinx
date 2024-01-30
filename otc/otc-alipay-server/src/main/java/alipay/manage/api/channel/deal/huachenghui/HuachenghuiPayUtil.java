@@ -56,7 +56,7 @@ public class HuachenghuiPayUtil extends ChannelUtil implements ChannelLocalUtil 
     public Result channelDealPush(DealOrder order, ChannelInfo channelInfo) {
         String payurl = channelInfo.getDealurl();
         String orderId = order.getOrderId(); // 金额
-        String payAmount = order.getActualAmount().intValue() + ""; // 金额
+        String payAmount = order.getDealAmount().intValue() + ""; // 金额
         String tradeType = channelInfo.getChannelType(); // '银行编码
         String mchId = channelInfo.getChannelAppId();// 商户id
         String notifyUrl = order.getNotify();// 通知地址

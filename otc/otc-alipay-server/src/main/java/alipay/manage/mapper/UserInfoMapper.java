@@ -151,7 +151,7 @@ public interface UserInfoMapper {
      */
     @Cacheable(cacheNames = {USER_LONG}, unless = "#result == null")
     @Select("select id, userId, userName, userNode ,  " +
-            "   dealUrl,balanceUrl " +
+            "   dealUrl,balanceUrl    " +
             " from alipay_user_info where userId = #{userId}")
     UserInfo findDealUrl(@Param("userId") String userId);
 
