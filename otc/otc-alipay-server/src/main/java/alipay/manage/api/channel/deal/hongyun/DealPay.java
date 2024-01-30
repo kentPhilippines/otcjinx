@@ -1,4 +1,4 @@
-package alipay.manage.api.channel.deal.huanya;
+package alipay.manage.api.channel.deal.hongyun;
 
 import alipay.manage.api.config.ChannelInfo;
 import alipay.manage.api.config.PayOrderService;
@@ -21,23 +21,23 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
-@Component("huanyapay")
+@Component("hongyunPay")
 public class DealPay extends PayOrderService {
     private static final Log log = LogFactory.get();
     @Autowired
     private UserInfoService userInfoServiceImpl;
     @Override
     public Result deal(DealOrderApp dealOrderApp, String channel) throws Exception {
-        log.info("【进入家宝支付，当前请求产品：" + dealOrderApp.getRetain1() + "，当前请求渠道：" + channel + "】");
+        log.info("【进入hongyun支付，当前请求产品：" + dealOrderApp.getRetain1() + "，当前请求渠道：" + channel + "】");
         String orderId = create(dealOrderApp, channel);
         UserInfo userInfo = userInfoServiceImpl.findDealUrl(dealOrderApp.getOrderAccount());
         if (StrUtil.isBlank(userInfo.getDealUrl())) {
-            orderEr(dealOrderApp, "当前商户交易url未设置");
+            orderDealEr(orderId, "当前商户交易url未设置");
             return Result.buildFailMessage("请联系运营为您的商户好设置交易url");
         }
         Result result = createOrder(
                 userInfo.getDealUrl() +
-                        PayApiConstant.Notfiy.NOTFIY_API_WAI + HuanYaUtil.NOTIFY,
+                        PayApiConstant.Notfiy.NOTFIY_API_WAI + HongYunUtil.NOTIFY,
                 dealOrderApp.getOrderAmount(),
                 orderId,
                 getChannelInfo(channel, dealOrderApp.getRetain1()), dealOrderApp);
@@ -70,38 +70,34 @@ public class DealPay extends PayOrderService {
      * @return
      */
     private Result createOrder(String s, BigDecimal orderAmount, String orderId, ChannelInfo channelInfo, DealOrderApp dealOrderApp) {
-        log.info("进入换环亚支付请求");
+        log.info("进入换hongyun支付请求");
         Map<String, Object> mapp = new HashMap<>();
-        String channelAppId = channelInfo.getChannelAppId();
-        String[] split = channelAppId.split(",");
-        String mchId = split[0];
-        String appId = split[1];
+        String mchId = channelInfo.getChannelAppId();
+//        String[] split = channelAppId.split(",");
+//        String mchId = split[0];
+//        String appId = split[1];
         String productId = channelInfo.getChannelType();
         String mchOrderNo = orderId;
         String currency = "cny";
         Integer amount = orderAmount.intValue() * 100;
         String notifyUrl = s;
-        String subject = "huanya";
-        String body = "huanya";
-        String extra = "huanya";
+
         mapp.put("mchId", mchId);
-        mapp.put("appId", appId);
+//        mapp.put("appId", appId);
         mapp.put("productId", productId);
         mapp.put("mchOrderNo", mchOrderNo);
-        mapp.put("currency", currency);
+//        mapp.put("currency", currency);
         mapp.put("amount", amount);
         mapp.put("notifyUrl", notifyUrl);
-        mapp.put("subject", subject);
-        mapp.put("body", body);
-        mapp.put("extra", extra);
-        String param = HuanYaUtil.createParam(mapp);
+
+        String param = HongYunUtil.createParam(mapp);
         param = param + "&key=" + channelInfo.getChannelPassword();
-        log.info("【环亚加密前参数：" + param + "】");
-        String sign = HuanYaUtil.md5(param);
+        log.info("【hongyun加密前参数：" + param + "】");
+        String sign = HongYunUtil.md5(param);
         mapp.put("sign", sign);
-        log.info("【环亚请求参数：" + param + "】");
+        log.info("【hongyun请求参数：" + param + "】");
         String post = HttpUtil.post(channelInfo.getDealurl(), mapp);
-        log.info("【环亚响应参数：" + post + "】");
+        log.info("【hongyun响应参数：" + post + "】");
         JSONObject jsonObject = JSONUtil.parseObj(post);
         String code = jsonObject.getStr("retCode");
         if ("SUCCESS".equals(code)) {
@@ -110,7 +106,7 @@ public class DealPay extends PayOrderService {
             String payUrl = pay.getStr("payUrl");
             return Result.buildSuccessResult("支付处理中", payUrl);
         } else {
-            orderEr(dealOrderApp, jsonObject.getStr("retMsg"));
+            orderDealEr(orderId,  jsonObject.toString());
             return Result.buildFailMessage(jsonObject.getStr("retMsg"));
         }
     }

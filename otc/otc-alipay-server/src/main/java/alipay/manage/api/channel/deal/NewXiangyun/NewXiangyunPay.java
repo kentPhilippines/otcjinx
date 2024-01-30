@@ -1,15 +1,14 @@
 package alipay.manage.api.channel.deal.NewXiangyun;
 
 import alipay.config.redis.RedisUtil;
-import alipay.manage.api.channel.util.ChannelInfo;
 import alipay.manage.api.channel.util.qiangui.MD5;
+import alipay.manage.api.config.ChannelInfo;
 import alipay.manage.api.config.PayOrderService;
 import alipay.manage.bean.DealOrderApp;
 import alipay.manage.bean.UserInfo;
 import alipay.manage.bean.util.ResultDeal;
 import alipay.manage.service.OrderService;
 import alipay.manage.service.UserInfoService;
-import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
@@ -24,7 +23,6 @@ import otc.result.Result;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Component("NewXiangyunPay")

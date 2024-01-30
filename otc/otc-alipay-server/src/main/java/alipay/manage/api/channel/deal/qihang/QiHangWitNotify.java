@@ -1,7 +1,6 @@
 package alipay.manage.api.channel.deal.qihang;
 
-import alipay.manage.api.channel.util.ChannelInfo;
-import alipay.manage.api.channel.util.shenfu.PayUtil;
+import alipay.manage.api.config.ChannelInfo;
 import alipay.manage.api.config.NotfiyChannel;
 import alipay.manage.mapper.WithdrawMapper;
 import cn.hutool.core.util.ObjectUtil;

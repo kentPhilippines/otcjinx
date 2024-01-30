@@ -2,12 +2,10 @@ package alipay.manage.api.channel.deal.anxin;
 
 import alipay.manage.api.channel.deal.anxin.util.HttpClientUtils;
 import alipay.manage.api.channel.deal.anxin.util.PayDigestUtil;
-import alipay.manage.api.channel.util.ChannelInfo;
+import alipay.manage.api.config.ChannelInfo;
 import alipay.manage.api.config.PayOrderService;
 import alipay.manage.bean.UserInfo;
 import alipay.manage.service.UserInfoService;
-import cn.hutool.core.date.DatePattern;
-import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import cn.hutool.log.Log;

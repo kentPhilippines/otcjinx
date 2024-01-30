@@ -1,22 +1,12 @@
 package alipay.manage.api.channel.deal.dadaPay;
 
-import alipay.manage.api.channel.util.ChannelInfo;
 import alipay.manage.api.channel.util.shenfu.PayUtil;
 import alipay.manage.api.config.NotfiyChannel;
-import alipay.manage.api.config.PayOrderService;
-import alipay.manage.bean.UserInfo;
 import alipay.manage.mapper.WithdrawMapper;
-import alipay.manage.service.UserInfoService;
-import cn.hutool.core.date.DatePattern;
-import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
-import cn.hutool.json.JSONObject;
-import cn.hutool.json.JSONUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import otc.bean.dealpay.Withdraw;
@@ -26,8 +16,6 @@ import otc.result.Result;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.*;
 @RequestMapping(PayApiConstant.Notfiy.NOTFIY_API_WAI)
 @RestController

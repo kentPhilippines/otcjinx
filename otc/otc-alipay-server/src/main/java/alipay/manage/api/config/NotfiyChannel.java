@@ -1,7 +1,6 @@
 package alipay.manage.api.config;
 
 import alipay.config.redis.RedisLockUtil;
-import alipay.manage.api.channel.util.ChannelInfo;
 import alipay.manage.bean.ChannelFee;
 import alipay.manage.bean.DealOrder;
 import alipay.manage.bean.UserInfo;

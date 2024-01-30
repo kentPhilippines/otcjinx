@@ -1,7 +1,7 @@
 package alipay.manage.api.channel.deal.youqing;
 
-import alipay.manage.api.channel.util.ChannelInfo;
 import alipay.manage.api.channel.util.shenfu.PayUtil;
+import alipay.manage.api.config.ChannelInfo;
 import alipay.manage.api.config.NotfiyChannel;
 import alipay.manage.mapper.WithdrawMapper;
 import cn.hutool.core.util.ObjectUtil;
@@ -21,7 +21,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 @RequestMapping(PayApiConstant.Notfiy.NOTFIY_API_WAI)

@@ -1,58 +1,44 @@
 package alipay.manage.api.channel.deal.v2qs;
 
-import alipay.manage.api.channel.util.ChannelInfo;
-import alipay.manage.api.channel.util.qiangui.MD5;
+import alipay.manage.api.config.ChannelInfo;
+import alipay.manage.api.config.NotifyApi;
 import alipay.manage.api.config.PayOrderService;
+import alipay.manage.bean.DealOrder;
 import alipay.manage.bean.DealOrderApp;
-import alipay.manage.bean.UserInfo;
 import alipay.manage.bean.util.ResultDeal;
 import alipay.manage.service.UserInfoService;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.http.HttpUtil;
-import cn.hutool.json.JSONObject;
-import cn.hutool.json.JSONUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import otc.common.PayApiConstant;
 import otc.result.Result;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 @Component("V2qs")
 public class V2qs extends PayOrderService {
     @Autowired
     private UserInfoService userInfoServiceImpl;
-    private static SimpleDateFormat d = new SimpleDateFormat("yyyyMMddHHmmss");
-
+    final String NOTIFY_TYPE = NotifyApi.NOTIFY_TYPE_FORM;//文档定义的上游回调传参类型
+    final String NOTIFY = NOTIFY_TYPE + (NOTIFY_MARK + StrUtil.split(this.getClass().getName(), MARK)[StrUtil.split(this.getClass().getName(), MARK).length - 1]).trim();//"/HongYunTong";
+    @Autowired
+    V2qsUtil v2qsUtil;
     @Override
     public Result deal(DealOrderApp dealOrderApp, String channel) throws Exception {
         log.info("【进入  V2qs   Pay支付，当前请求产品：" + dealOrderApp.getRetain1() + "，当前请求渠道：" + channel + "】");
-        String orderId = create(dealOrderApp, channel);
-        UserInfo userInfo = userInfoServiceImpl.findUserInfoByUserId(dealOrderApp.getOrderAccount());
-        if (StrUtil.isBlank(userInfo.getDealUrl())) {
-            orderEr(dealOrderApp, "当前商户交易url未设置");
-            return Result.buildFailMessage("请联系运营为您的商户好设置交易url");
-        }
-        String payInfo = "";
-        if (dealOrderApp.getDealDescribe().contains("付款人")) {
-            payInfo = dealOrderApp.getDealDescribe();
-        }
-        Result result = createOrder(
-                userInfo.getDealUrl() +
-                        PayApiConstant.Notfiy.NOTFIY_API_WAI + "/V2qs-pay",
-                dealOrderApp.getOrderAmount(),
-                orderId,
-                getChannelInfo(channel, dealOrderApp.getRetain1()), payInfo);
-        if (result.isSuccess()) {
-            return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(result.getResult()));
+        Result deal = deal(dealOrderApp, channel, NOTIFY);
+        if (deal.isSuccess()) {
+            DealOrder result = (DealOrder) deal.getResult();
+            Result deal1 = deal(v2qsUtil, result);
+            if (deal1.isSuccess()) {
+                return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(deal1.getResult()));
+            } else {
+                return deal1;
+            }
         } else {
-            return result;
+            return deal;
         }
     }
 
@@ -69,7 +55,7 @@ public class V2qs extends PayOrderService {
      *
      * @return
      */
-    private Result createOrder(
+ /*   private Result createOrder(
             String notify,
             BigDecimal orderAmount,
             String orderNo,
@@ -99,7 +85,7 @@ public class V2qs extends PayOrderService {
         map.put("sign", sign);
         log.info("请求前参数为: " + JSONUtil.parse(map).toString());
         try {
-            String post = HttpUtil.post(channelInfo.getDealurl() + "/v2/deal/pay", JSONUtil.parse(map).toString());
+             String post = HttpUtil.post(channelInfo.getDealurl() + "/v2/deal/pay", JSONUtil.parse(map).toString());
             log.info("响应数据为：" + post);
             //：{"success":true,"message":"支付处理中","result":{"sussess":true,"cod":1,"openType":1,"returnUrl":"http://20.188.122.189:8122/api/Pay/Cashier/8111c0c8479d4d418d9062293d82dae3","payInfo":"","payInfo2":""},"code":1}
             JSONObject jsonObject = JSONUtil.parseObj(post);
@@ -116,7 +102,7 @@ public class V2qs extends PayOrderService {
         }
         return Result.buildFail();
     }
-
+*/
     public static String createParam(Map<String, Object> map) {
         try {
             if (map == null || map.isEmpty()) {
@@ -138,6 +124,14 @@ public class V2qs extends PayOrderService {
         return null;
     }
 
+    @Override
+    public String dealNotify(Map map) {
+        Result result = v2qsUtil.dealNotify(map);
+        if(result.isSuccess()){
+            return "SUCCESS";
+        }
+        return super.dealNotify(map);
+    }
     public static void main(String[] args) {
         String notify;
         BigDecimal orderAmount;
@@ -154,6 +148,6 @@ public class V2qs extends PayOrderService {
         channelInfo.setChannelAppId("qixiing888");
         payInfo = "付款人：张纸";
         V2qs v2 = new V2qs();
-        v2.createOrder(notify, orderAmount, orderNo, channelInfo, payInfo);
+       // v2.createOrder(notify, orderAmount, orderNo, channelInfo, payInfo);
     }
 }

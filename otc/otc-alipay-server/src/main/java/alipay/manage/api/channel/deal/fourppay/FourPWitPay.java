@@ -1,32 +1,23 @@
 package alipay.manage.api.channel.deal.fourppay;
 
-import alipay.manage.api.channel.deal.anxin.util.PayDigestUtil;
-import alipay.manage.api.channel.util.ChannelInfo;
 import alipay.manage.api.channel.util.yifu.YiFuUtil;
+import alipay.manage.api.config.ChannelInfo;
 import alipay.manage.api.config.PayOrderService;
-import alipay.manage.bean.DealOrderApp;
 import alipay.manage.bean.UserInfo;
-import alipay.manage.bean.util.ResultDeal;
 import alipay.manage.service.UserInfoService;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.http.HttpRequest;
-import cn.hutool.http.HttpResponse;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import com.google.common.collect.ImmutableMap;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import otc.bean.dealpay.Withdraw;
 import otc.common.PayApiConstant;
 import otc.result.Result;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 @Component("FourPWitPay")
@@ -308,7 +299,7 @@ public class FourPWitPay extends PayOrderService {
             String amount = pay_amount;
             String channel = channelInfo.getChannelType();
             String merchantId = channelInfo.getChannelAppId();
-            String url = channelInfo.getDealurl();
+            String url = channelInfo.getWitUrl();
 
             Map<String,Object> map = new HashMap<String,Object>();
             map.put("merchantOrderId",pay_order_id);
@@ -316,7 +307,7 @@ public class FourPWitPay extends PayOrderService {
             map.put("channelTypeId", new Integer(channel));
             map.put("amount",  amount);
             map.put("notifyUrl", notify);
-            map.put("payerName", pay_account_name);
+            map.put("payeeName", pay_account_name);
 //            map.put("accountName", wit.getBankName());
             map.put("payeeBankId", bankMap.get(wit.getBankcode()));
             map.put("payeeAccount", wit.getBankNo());
@@ -325,7 +316,6 @@ public class FourPWitPay extends PayOrderService {
             String md5 = YiFuUtil.md5(createParam );
             String sign = md5.toLowerCase();
             map.put("sign", sign);
-
             String reqUrl = url;
             log.info("reqUrl：" + reqUrl);
             log.info("param：" + JSONUtil.toJsonStr(map));

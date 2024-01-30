@@ -1,7 +1,6 @@
 package alipay.manage.api.config;
 
 import alipay.config.redis.RedisUtil;
-import alipay.manage.api.channel.util.ChannelInfo;
 import alipay.manage.bean.*;
 import alipay.manage.bean.util.WitInfo;
 import alipay.manage.mapper.ChannelFeeMapper;
@@ -11,7 +10,10 @@ import alipay.manage.util.NotifyUtil;
 import alipay.manage.util.OrderUtil;
 import alipay.manage.util.amount.AmountPublic;
 import alipay.manage.util.amount.AmountRunUtil;
+import cn.hutool.core.date.DatePattern;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.map.MapUtil;
+import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
@@ -29,6 +31,7 @@ import otc.util.number.GenerateOrderNo;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -69,15 +72,35 @@ public abstract class PayOrderService implements PayService {
     private WithdrawService withdrawServiceImpl;
     @Autowired
     private RedisUtil redisUtil;
+    @Autowired
+    private UserFundService userFundService;
 
-
-
-
-
-
-
-
-
+    public Result deal(DealOrderApp dealOrderApp, String channelId, String notify) {
+        UserInfo userinfo = userInfoServiceImpl.findDealUrl(dealOrderApp.getOrderAccount());//查询渠道账户
+        String dealUrl = userinfo.getDealUrl();
+        if (StrUtil.isEmpty(dealUrl)) {
+            return Result.buildFailMessage("当前账户未配置 交易url");
+        }
+        dealUrl = dealUrl.trim();
+        DealOrder dealOrder = create(dealOrderApp, channelId, dealUrl + PayApiConstant.Notfiy.NOTFIY_API_WAI + notify + NOTIFY_DEAL);
+        BigDecimal limitBalance = userinfo.getLimitBalance();
+        UserFund userFund = userFundService.findUserInfoByUserId(userinfo.getUserId());
+        BigDecimal accountBalance = userFund.getAccountBalance();
+        if((limitBalance.compareTo(accountBalance)>0)){
+            String msg = "当前渠道余额限制，暂停充值";
+            orderEr(dealOrder,msg);
+            return Result.buildFailMessage(msg);
+        }
+        return Result.buildSuccessResult(dealOrder);
+    }
+    public Result deal(ChannelLocalUtil util , DealOrder order) {
+        Result result = util.channelDealPush(order, getChannelInfo(order.getOrderQrUser(), order.getPayType()));
+        return result;
+    }
+    public Result withdraw(ChannelLocalUtil util ,  DealWit wit ) {
+        Result result = util.channelWitPush(wit, getChannelInfo(wit.getChanenlId(), wit.getWitType()));
+        return result;
+    }
 
 
     @Override
@@ -120,6 +143,15 @@ public abstract class PayOrderService implements PayService {
         }
         return false;
     }
+    public Result orderEr(DealOrder order, String msg) {
+        log.info("【订单错误，将订单置为失败：" + order.getOrderId() + "】");
+        boolean b = orderServiceImpl.updateOrderStatus(order.getOrderId(), Common.Order.DealOrder.ORDER_STATUS_ER, msg);
+        if (b) {
+            return Result.buildSuccess();
+        } else {
+            return Result.buildFail();
+        }
+    }
 
     public boolean orderEr(String orderId, String msg) {
         log.info("【将当前订单置为失败，当前交易订单号：" + orderId + "】");
@@ -146,14 +178,11 @@ public abstract class PayOrderService implements PayService {
     }
 
 
-    public String create(DealOrderApp orderApp, String channeId, String notify) {
+    public DealOrder create(DealOrderApp orderApp, String channeId, String notify) {
         log.info("【开始创建本地订单，当前创建订单的商户订单为：" + orderApp.toString() + "】");
         log.info("【当前交易的渠道账号为：" + channeId + "】");
         DealOrder order = new DealOrder();
-        UserInfo userinfo = userInfoServiceImpl.findDealUrl(channeId);//查询渠道账户
-        UserRate rate = userRateServiceImpl.findRateFeeType(orderApp.getFeeId());//长久缓存
-        ChannelFee channelFee = channelFeeDao.findChannelFee(rate.getChannelId(), rate.getPayTypr());
-        log.info("【当前交易的产品类型为：" + userinfo.getUserNode() + "】");
+        ChannelFee channelFee = channelFeeDao.findChannelFee(channeId, orderApp.getRetain1());
         order.setAssociatedId(orderApp.getOrderId());
         order.setDealDescribe("正常交易订单");
         order.setActualAmount(orderApp.getOrderAmount().subtract(new BigDecimal(orderApp.getRetain3())));
@@ -161,15 +190,18 @@ public abstract class PayOrderService implements PayService {
         order.setDealFee(new BigDecimal(orderApp.getRetain3()));
         order.setExternalOrderId(orderApp.getAppOrderId());
         order.setOrderAccount(orderApp.getOrderAccount());
-        order.setNotify(notify);
-        String orderQrCh = GenerateOrderNo.Generate("JS");
+        order.setNotify(  notify);
+        order.setGenerationIp(orderApp.getOrderIp());
+        String orderQrCh = GenerateOrderNo.Generate("SD");
         order.setOrderId(orderQrCh);
-        order.setOrderQrUser(userinfo.getUserId());
+        order.setOrderQrUser(channeId);
         order.setOrderStatus(Common.Order.DealOrder.ORDER_STATUS_DISPOSE.toString());
         order.setOrderType(Common.Order.ORDER_TYPE_DEAL.toString());
-        order.setRetain1(rate.getPayTypr());
+        order.setRetain1(orderApp.getRetain1());
         order.setBack(orderApp.getBack());
+        order.setOpenType(orderApp.getOpenType());
         order.setCurrency(orderApp.getCurrency());
+        order.setMcRealName(orderApp.getPayName());
         String channelRFee = channelFee.getChannelRFee();
         BigDecimal orderAmount = orderApp.getOrderAmount();
         BigDecimal fee = new BigDecimal(channelRFee);
@@ -181,7 +213,7 @@ public abstract class PayOrderService implements PayService {
         log.info("【当前订单系统盈利：" + subtract + "】");
         order.setRetain3(subtract.toString());
         orderServiceImpl.addOrder(order);
-        return orderQrCh;
+        return order;
     }
 
     ;
@@ -432,4 +464,20 @@ public abstract class PayOrderService implements PayService {
         return "";
 
     }
+    public void logRequestDeal(String channel, Object paras, String orderId, String mcOrderId) {
+        String msg = "【请求 " + channel + " 上游渠道的参数为：" + paras.toString() + "，当前订单我方订单号为：" + orderId + "，当前商户订单号为：" + mcOrderId + "，请求时间：" + DateUtil.format(new Date(), DatePattern.NORM_DATETIME_MS_FORMAT) + "】";
+        ThreadUtil.execute(() -> {
+            orderServiceImpl.updateOrderRequest(orderId, msg.toString());
+        });
+        log.info(msg);
+    }
+
+    public void logResponseDeal(String channel, Object paras, String orderId, String mcOrderId) {
+        String msg = "【响应 " + channel + " 响应参数为：" + paras.toString() + "，当前订单我方订单号为：" + orderId + "，当前商户订单号为：" + mcOrderId + "，响应时间：" + DateUtil.format(new Date(), DatePattern.NORM_DATETIME_MS_FORMAT) + "】";
+        ThreadUtil.execute(() -> {
+            orderServiceImpl.updateOrderResponse(orderId, msg.toString());
+        });
+        log.info(msg);
+    }
+
 }

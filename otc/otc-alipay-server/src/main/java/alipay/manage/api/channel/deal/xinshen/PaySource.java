@@ -1,7 +1,7 @@
 package alipay.manage.api.channel.deal.xinshen;
 
-import alipay.manage.api.channel.util.ChannelInfo;
 import alipay.manage.api.channel.util.shenfu.PayUtil;
+import alipay.manage.api.config.ChannelInfo;
 import alipay.manage.api.config.PayOrderService;
 import alipay.manage.bean.DealOrderApp;
 import alipay.manage.bean.UserInfo;
@@ -18,11 +18,8 @@ import otc.result.Result;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
-import static alipay.manage.api.channel.util.QueryBalanceTool.channelInfoMap;
 
 @Component("XinShenHuafeiPay")
 public class PaySource extends PayOrderService {

@@ -1,7 +1,7 @@
 package alipay.manage.api.channel.deal.maida;
 
 import alipay.manage.api.channel.deal.maida.ctrl.MaiDaPayServer;
-import alipay.manage.api.channel.util.ChannelInfo;
+import alipay.manage.api.config.ChannelInfo;
 import alipay.manage.api.config.PayOrderService;
 import alipay.manage.bean.DealOrderApp;
 import alipay.manage.bean.UserInfo;
@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 import otc.common.PayApiConstant;
 import otc.result.Result;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
