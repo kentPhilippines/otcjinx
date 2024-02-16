@@ -2,7 +2,7 @@ package alipay.manage.api.channel.deal.CGPay;
 
 import alipay.config.redis.RedisUtil;
 import alipay.manage.api.channel.deal.anxin.util.PayDigestUtil;
-import alipay.manage.api.channel.util.ChannelInfo;
+import alipay.manage.api.config.ChannelInfo;
 import alipay.manage.api.config.PayOrderService;
 import alipay.manage.bean.DealOrderApp;
 import alipay.manage.bean.UserInfo;

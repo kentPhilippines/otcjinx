@@ -151,7 +151,7 @@ public interface UserInfoMapper {
      */
     @Cacheable(cacheNames = {USER_LONG}, unless = "#result == null")
     @Select("select id, userId, userName, userNode ,  " +
-            "   dealUrl,balanceUrl " +
+            "   dealUrl,balanceUrl    " +
             " from alipay_user_info where userId = #{userId}")
     UserInfo findDealUrl(@Param("userId") String userId);
 
@@ -190,7 +190,6 @@ public interface UserInfoMapper {
      * @param userId
      * @return
      */
-    @Cacheable(cacheNames = {USER_LONG}, unless = "#result == null")
     @Select("select id, userId, userName, password, payPasword, salt ," +
             "      privateKey, publicKey  " +
             "   from alipay_user_info where userId = #{userId}")
@@ -205,7 +204,6 @@ public interface UserInfoMapper {
     UserInfo findClick(@Param("userId") String userId);
 
 
-    @Cacheable(cacheNames = {USER}, unless = "#result == null")
     @Select("select id, userId, userName,   userType, userNode," +
             "    agent, isAgent " +
             "  from alipay_user_info where userId = #{userId}")

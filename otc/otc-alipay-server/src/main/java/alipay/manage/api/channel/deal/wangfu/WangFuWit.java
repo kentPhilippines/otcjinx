@@ -1,6 +1,6 @@
 package alipay.manage.api.channel.deal.wangfu;
 
-import alipay.manage.api.channel.util.ChannelInfo;
+import alipay.manage.api.config.ChannelInfo;
 import alipay.manage.api.config.PayOrderService;
 import alipay.manage.bean.UserInfo;
 import alipay.manage.service.UserInfoService;
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 import otc.bean.dealpay.Withdraw;
 import otc.common.PayApiConstant;
 import otc.result.Result;
-import otc.util.MapUtil;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
@@ -21,7 +20,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 @Component("WangFuWit")

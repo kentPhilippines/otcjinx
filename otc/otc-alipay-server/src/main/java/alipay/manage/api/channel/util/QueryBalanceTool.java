@@ -2,6 +2,7 @@ package alipay.manage.api.channel.util;
 
 import alipay.manage.api.channel.amount.BalanceInfo;
 import alipay.manage.api.channel.util.shenfu.PayUtil;
+import alipay.manage.api.config.ChannelInfo;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;

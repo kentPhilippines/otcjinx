@@ -1,13 +1,14 @@
 package alipay.manage.api.channel.deal.fourppay;
 
-import alipay.manage.api.channel.util.ChannelInfo;
+import alipay.config.redis.RedisUtil;
 import alipay.manage.api.channel.util.yifu.YiFuUtil;
+import alipay.manage.api.config.ChannelInfo;
 import alipay.manage.api.config.PayOrderService;
 import alipay.manage.bean.DealOrderApp;
 import alipay.manage.bean.UserInfo;
 import alipay.manage.bean.util.ResultDeal;
+import alipay.manage.service.OrderService;
 import alipay.manage.service.UserInfoService;
-import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
@@ -15,17 +16,13 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import otc.bean.dealpay.Withdraw;
 import otc.common.PayApiConstant;
 import otc.result.Result;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,6 +32,12 @@ public class FourPPay extends PayOrderService {
     @Autowired
     private UserInfoService userInfoServiceImpl;
 
+    @Autowired
+    private RedisUtil redis;
+    @Autowired
+    private OrderService orderServiceImpl;
+    @Value("${otc.payInfo.url}")
+    public String url_pay;
     @Override
     public Result deal(DealOrderApp dealOrderApp, String channel) throws Exception {
         log.info("【进入4ppay，当前请求产品：{}，当前请求渠道：{} 】", JSONUtil.toJsonStr(dealOrderApp),channel);
@@ -54,7 +57,31 @@ public class FourPPay extends PayOrderService {
                 orderId,channelInfo
         );
         if (result.isSuccess()) {
-            return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(result.getResult()));
+            String payInfo1 = "";
+            try {
+                Map map = new HashMap();
+                Map<Object, Object> hmget = redis.hmget(MARS + orderId);
+                log.info(hmget.toString());
+                if (ObjectUtil.isNotNull(hmget)) {
+                    Object bank_name = hmget.get("bank_name");
+                    Object card_no = hmget.get("card_no");
+                    Object card_user = hmget.get("card_user");
+                    Object money_order = hmget.get("money_order");
+                    Object address = hmget.get("address");
+                    map.put("amount", money_order);
+                    map.put("bankCard", card_no);
+                    map.put("bankName", bank_name);
+                    map.put("name", card_user);
+                    map.put("bankBranch", address);
+                    JSONObject jsonObject = JSONUtil.parseFromMap(map);
+                    payInfo1 = jsonObject.toString();
+                }
+            } catch (Throwable e) {
+                log.error(e);
+                log.info("详细数据解析异常，当前订单号：" + dealOrderApp.getAppOrderId());
+                return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrl(result.getResult()));
+            }
+            return Result.buildSuccessResult("支付处理中", ResultDeal.sendUrlAndPayInfo1(result.getResult(), result.getMessage(), payInfo1));
         } else {
             orderEr(dealOrderApp, result.getMessage());
             return result;
@@ -82,8 +109,8 @@ public class FourPPay extends PayOrderService {
         map.put("sign", sign);
 
         String reqUrl = url;
-        log.info("reqUrl：" + reqUrl);
-        log.info("param：" + JSONUtil.toJsonStr(map));
+        log.info(" 4ppay reqUrl：" + reqUrl);
+        log.info(" 4ppay param：" + JSONUtil.toJsonStr(map));
 
         //{
         //    "code": "0000",
@@ -96,23 +123,69 @@ public class FourPPay extends PayOrderService {
         String res = null;
         try {
             String post = HttpUtil.post(url, JSONUtil.toJsonStr(map));
-            log.info("请求结果：" + post);
+            log.info(" 4ppay 请求结果：" + post);
             if (StringUtils.isNotEmpty(post)) {
                 JSONObject jsonObject = JSONUtil.parseObj(post);
                 String code = jsonObject.getStr("code");
                 if ("0000".equals(code)) {
-                    String resultUrl = JSONUtil.toBean(jsonObject.get("data")+"",Map.class).get("upstreamLink")+"" ;
-                    return Result.buildSuccessResult("支付处理中", resultUrl);
+                    /**
+                     * {"code":"0000",
+                     *                  * "data":{
+                     *                  * "systemOrderId":"LHPL00007903",
+                     *                  * "amount":4001,
+                     *                  * "displayAmount":4001,
+                     *                  * "upstreamLink":"",
+                     *                  * "cardName":"韦耀庆",
+                     *                  * "cardAccount":"6217852000014693736",
+                     *                  * "cardBank":"中国银行",
+                     *                  * "cardBranch":""}}
+                     */
+                    try {
+                        String cardBank = JSONUtil.parseObj(post).getJSONObject("data").getStr("cardBank");
+                        String resultUrl = JSONUtil.toBean(jsonObject.get("data")+"",Map.class).get("upstreamLink")+"";
+                        if(StrUtil.isNotEmpty(resultUrl) && StrUtil.isEmpty(cardBank)){
+                            return Result.buildSuccessResult("支付处理中", resultUrl);
+                        }
+                    }catch ( Throwable e ){
+                        String resultUrl = JSONUtil.toBean(jsonObject.get("data")+"",Map.class).get("upstreamLink")+"";
+                        if(StrUtil.isNotEmpty(resultUrl)  ){
+                            return Result.buildSuccessResult("支付处理中", resultUrl);
+                        }
+                    }
+                    Map cardmap = new HashMap();
+                    cardmap.put("bank_name", JSONUtil.parseObj(post).getJSONObject("data").getStr("cardBank"));
+                    cardmap.put("card_no", JSONUtil.parseObj(post).getJSONObject("data").getStr("cardAccount"));
+                    cardmap.put("card_user", JSONUtil.parseObj(post).getJSONObject("data").getStr("cardName"));
+                    cardmap.put("money_order", orderAmount);
+                    cardmap.put("no_order", orderId);
+                    cardmap.put("oid_partner", orderId);
+                    cardmap.put("address", JSONUtil.parseObj(post).getJSONObject("data").getStr("cardBranch"));
+                    orderServiceImpl.updateBankInfoByOrderId(dealOrderApp.getPayName() + " 收款信息：" +
+                            JSONUtil.parseObj(post).getJSONObject("data").getStr("cardBank") + ":" +
+                            JSONUtil.parseObj(post).getJSONObject("data").getStr("cardAccount")+ ":" +
+                            JSONUtil.parseObj(post).getJSONObject("data").getStr("cardName"), orderId);
+                    redis.hmset(MARS + orderId, cardmap, 600);
+                    return Result.buildSuccessResult(
+                            JSONUtil.parseObj(post).getJSONObject("data").getStr("cardBank") + ":" +
+                                    JSONUtil.parseObj(post).getJSONObject("data").getStr("cardAccount") + ":" +
+                                    JSONUtil.parseObj(post).getJSONObject("data").getStr("cardName"),
+                            url_pay + "/pay?orderId=" + orderId + "&type=203");
+
+                   /* String resultUrl = JSONUtil.toBean(jsonObject.get("data")+"",Map.class).get("upstreamLink")+"" ;
+                    return Result.buildSuccessResult("支付处理中", resultUrl);*/
                 }
             } else {
                 res = "操作失败";
+                orderEr(orderId,post);
             }
         } catch (Exception e) {
             e.printStackTrace();
             res = "系统异常";
+            orderEr(orderId,res);
         }
         return Result.buildFailMessage(res);
     }
+    private static final String MARS = "SHENFU";
 
     public static void main(String[] args) throws Exception {
         DealOrderApp dealOrderApp;
@@ -125,8 +198,8 @@ public class FourPPay extends PayOrderService {
         orderAmount = new BigDecimal(1000);
         orderId = System.currentTimeMillis() + "";
         channelInfo = new ChannelInfo();
-        channelInfo.setChannelPassword("eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb2RlIjoiem4wMDQiLCJpYXQiOjE3MDEyNDcwMDgsImV4cCI6NDg1NDg0NzAwOCwiYXVkIjoiZm91ci1wYXJ0eTphdXRoIiwiaXNzIjoiZm91ci1wYXJ0eTphdXRoIiwic3ViIjoiMjIiLCJqdGkiOiJmb3VyLXBhcnR5LWp3dGlkIn0.Wj_RDQdDAHVku3SP7M-Dcr1hQ8uGGro4-DmcQVKdSZrb8-JC9l_Lb33nSZ_Eqx9U5BI8MMClnhBUXCcSBUk9e4E7Qcv0Sjh_TlYf4LdnGZr66MAlDXpXOpjAignE5YPhu-M-jGGwENeM56VxdM6eHLfRmU9advgVOor4yakf_s3htZj55SlFZNYK2-_MrIcje8qcB0SaqqGR_eR3YiwPwo744C-MxVLg-oWPpqTDGbSZh2QmC9R9QHRHpofnyue083po5EjJtRdkncWvcKqsh9TvVK7t4uDHwKK0wqVPp7A0YEkBt0Gc0gBBiczAjj648kQltr7eR2rUVu4JofM59rJflgvLuYvyv9HNChzh7kUGfI7DxSOvhqfcuJdltC4Im1Hb8tEkcZQ_VgLSZ8zqv6CMVTYlRby03h7K-SBPfFNK1NF-i_O2qpgKto86i7tvERY10iABmAfJ4I_pX7OBkJzXL5ZYM1_sytlE425SNLLcB-_8zb7S3Y3eCluWZASWBl41KL2FpURcNGjqVVuDd7jh4FZZpWs_KzXim4sLmGgDsI8c-yi6myTKnqZRQ0GKc8ti1BLZctqm5AYNp7EW5jN6ndfXK8UX3mze0v6_ODUeDpEqyiJF-kuH-UoqieKtwaQh3jSB3vj1xByKFl3MhFzcIy3JndqW26BS_Zs2U_I");
-        channelInfo.setChannelAppId("zn004");
+        channelInfo.setChannelPassword("eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb2RlIjoiY24wMTIiLCJpYXQiOjE3MDQ4OTk4MzcsImV4cCI6NDg1ODQ5OTgzNywiYXVkIjoiZm91ci1wYXJ0eTphdXRoIiwiaXNzIjoiZm91ci1wYXJ0eTphdXRoIiwic3ViIjoiNDQiLCJqdGkiOiJmb3VyLXBhcnR5LWp3dGlkIn0.MjoPPl-z7yHzIH_VXdGhGSVpUdBYhnS7IqupK7OjCBPRVayBfnstsb5r8V6EysXRu3p8cX2N5R0E9hHlSlMi9uYCyvg5dATlBp_zL3jtNWDt2b4qIT0aysgK2Weywqp7LYz0OIcqYBLyJ1OIuLfSggd6xfWL3ZM7p1lp2FFNPLdc7rHUoLaFuKTARDhoGEpDx8o25OoLOLuquO_w8drDS-xTb11D5FWBz8t-SDDKinKDjEZmpAhtGamZ4ByH1oG6nL7-XqTz8rIrhReM0FAaFw6ZW5fWjf53l7C0dvr8GIGAJFaD7fjh-imDUvHop8Mog4iieNk1LQW3s_3LdZwNkjvPOpdWHpY0lZJI_Ahp0RYX6WdsmOP0AOUw7iibYzodZSHDb7I_kLmziFaQwJIAZe7uWSR7fE_a0aNw3FMavtevmaD1tyHCjo3vyrw0jaQCPKX04WwJYarbzwexd5_51-QrfBGc2leink3acv7zq8xMzUEj0_c-7UvOx5bS8yMK2iZ-hEa4tbPj7eDQ0wmpOr8knqDcPttrvxNNM69wJEInZJPsR7yiJI5OkCUpo-ybestwLJ6GxcnltFupGD8COE7QLCWIUZv5cSO8y7S_EZxRH87iXLHYa9wDnye7CtiRgQv5HJsconS4BI80h4ZPhnAqfLj76ew4uzIEVR-R0vU");
+        channelInfo.setChannelAppId("cn012");
         channelInfo.setChannelType("2");
         channelInfo.setDealurl("https://api.65258723.com/v1/b2b/payment-orders/place-order");
         FourPPay pay = new FourPPay();

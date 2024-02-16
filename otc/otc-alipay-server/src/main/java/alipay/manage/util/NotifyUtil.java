@@ -145,7 +145,7 @@ public class NotifyUtil {
         String sign = CheckUtils.getSign(map, userInfo.getPayPasword());
         map.put("sign", sign);
         ThreadUtil.execute(() -> {
-            send(order.getNotify(), order.getOrderId(), map, true);
+            send(orderApp.getNotify(), order.getOrderId(), map, true);
         });
     }
 

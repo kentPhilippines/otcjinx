@@ -1,9 +1,8 @@
 package alipay.manage.api.channel.deal.xinda;
 
 import alipay.config.redis.RedisUtil;
-import alipay.manage.api.channel.util.ChannelInfo;
+import alipay.manage.api.config.ChannelInfo;
 import alipay.manage.api.config.PayOrderService;
-import alipay.manage.api.systemInfo.bean.Sys;
 import alipay.manage.bean.DealOrderApp;
 import alipay.manage.bean.UserInfo;
 import alipay.manage.bean.util.ResultDeal;
@@ -12,7 +11,6 @@ import alipay.manage.service.UserInfoService;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
-import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
@@ -146,19 +144,7 @@ public class XinDaPay extends PayOrderService {
         log.info("【请求参数：" + JSONUtil.parseObj(map).toString() + "】");
         log.info("【请求渠道实体：" + JSONUtil.parseObj(channelInfo).toString() + "】");
         String post = HttpUtil.post(channelInfo.getDealurl(), JSONUtil.parseObj(map).toString());
-        log.info("【响应参数：" + post + "】");
-
-        /**
-         * {"retcode":"0","status":"2","payeeName":"测试银行",
-         * "payeeBankName":"福建省农村信用社联合社",
-         * "branchName":"测试分行",
-         * "payeeAcctNo":"123456789",
-         * "rockTradeNo":"5690",
-         * "tradeNo":"1691220989474",
-         * "amount":"400100",
-         * "postScript":"null",
-         * "link":"https://www.rolexpays.com/Merchant/WebBank?Token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJUaWNrZXRJbmZvIjp7IlRpY2tldCI6eyJBbW91bnQiOjQwMDEsIkJhbmsiOiLnpo_lu7rnnIHlhpzmnZHkv6HnlKjnpL7ogZTlkIjnpL4iLCJOYW1lIjoi5rWL6K-V6ZO26KGMIiwiTnVtYmVyIjoiMTIzNDU2Nzg5IiwiQnJhbmNoIjoi5rWL6K-V5YiG6KGMIiwiVGlja2V0SWQiOjU2OTAsIk1lbWJlcklkIjo1NjIzfSwiRGVwb3NpdFRpY2tldElkIjo1NjkwLCJBbW91bnQiOjQwMDEsIk5vdGVkIjoibnVsbCIsIlVwc3RyZWFtIjoid2ViX2JhbmsifSwiTWVtYmVyQ29kZSI6InZpcCIsIkFtb3VudCI6NDAwMSwiQ2hhbm5lbFR5cGUiOiJXRUJfQkFOSyIsIk5vdGVkIjoiIiwiUmVzVHlwZSI6Impzb24iLCJNZXJjaGFudFRva2VuIjoiZXlKaGJHY2lPaUpJVXpJMU5pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SkJaMlZ1ZEVsa0lqb3hPU3dpVkdsamEyVjBTV1FpT2pVMk9UQXNJbWxoZENJNk1UWTVNVEl5TURrNU1Td2laWGh3SWpveE5qa3hNakl4TVRjeGZRLmdBQnBJMzB6SzV0bkZLb0dIZ0thbmZuU3ZRWUZhel9DRE5tajd2Szh5RGMiLCJNZXJjaGFudFRpY2tldElkIjoiMTY5MTIyMDk4OTQ3NCIsIk1lcmNoYW50UmVtYXJrIjoibnVsbCIsIk1lbWJlck5hbWUiOiLlsJrpo5_lsYAiLCJpYXQiOjE2OTEyMjA5OTEsImV4cCI6MTY5MTIyMTA1MX0.v0zfwQryX6JugsvY4MUv2otJB8oJBIrHlrwfLbYhErs&ts=1691220991210"}
-         */
+        log.info("【响应参数：" + post + " tradeNo "+ tradeNo+"】");
         String retcode = JSONUtil.parseObj(post).getStr("retcode");
         if ("0".equals(retcode)) {
             String status = JSONUtil.parseObj(post).getStr("status");
@@ -191,8 +177,21 @@ public class XinDaPay extends PayOrderService {
                  * "branchName":"天津支行",
                  * "payeeAcctNo":"6231039919018333964",
                  * "link":"https://biz.fwuc0i9.net/checkoutCounter?m=77624376&o=wanc_6280&s=744e5690312ce96c0b71c6d624824f59"}
+                 * {"code":"0000",
+                 * "data":{
+                 * "systemOrderId":"LHPL00007903",
+                 * "amount":4001,
+                 * "displayAmount":4001,
+                 * "upstreamLink":"",
+                 * "cardName":"韦耀庆",
+                 * "cardAccount":"6217852000014693736",
+                 * "cardBank":"中国银行",
+                 * "cardBranch":""}}
                  */
                 //      return Result.buildSuccessResult(JSONUtil.parseObj(post).getStr("link"));
+            }else {
+                String msg = "渠道失败";
+                orderDealEr(orderId,retcode);
             }
         }
         return Result.buildFail();

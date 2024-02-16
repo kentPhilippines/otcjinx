@@ -1,6 +1,6 @@
 package alipay.manage.api.channel.deal.youkuaitong;
 
-import alipay.manage.api.channel.util.ChannelInfo;
+import alipay.manage.api.config.ChannelInfo;
 import alipay.manage.api.config.PayOrderService;
 import alipay.manage.bean.UserInfo;
 import alipay.manage.service.UserInfoService;

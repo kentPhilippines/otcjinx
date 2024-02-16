@@ -1,15 +1,14 @@
 package alipay.manage.api.channel.deal.NewXiangyun;
 
-import alipay.manage.api.channel.util.ChannelInfo;
 import alipay.manage.api.channel.util.qiangui.MD5;
 import alipay.manage.api.channel.util.shenfu.PayUtil;
+import alipay.manage.api.config.ChannelInfo;
 import alipay.manage.api.config.PayOrderService;
 import alipay.manage.bean.UserInfo;
 import alipay.manage.service.UserInfoService;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.RandomStringUtils;

@@ -1,41 +1,18 @@
 package alipay.manage.api.channel.deal.huachenghui;
 
-import alipay.manage.api.channel.util.ChannelInfo;
-import alipay.manage.api.channel.util.qiangui.MD5;
-import alipay.manage.api.config.ChannelLocalUtil;
 import alipay.manage.api.config.NotifyApi;
-import alipay.manage.api.config.PayOrderService;
 import alipay.manage.api.config.PayOrderServiceV2;
 import alipay.manage.bean.DealOrder;
 import alipay.manage.bean.DealOrderApp;
 import alipay.manage.bean.DealWit;
-import alipay.manage.bean.UserInfo;
 import alipay.manage.bean.util.ResultDeal;
-import alipay.manage.bean.util.WitInfo;
-import alipay.manage.service.UserInfoService;
-import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.http.HttpUtil;
-import cn.hutool.json.JSONObject;
-import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
 import otc.bean.dealpay.Withdraw;
-import otc.common.PayApiConstant;
 import otc.result.Result;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 @Component("HuachenghuiPay")

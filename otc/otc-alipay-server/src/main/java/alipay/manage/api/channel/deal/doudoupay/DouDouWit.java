@@ -1,9 +1,8 @@
 package alipay.manage.api.channel.deal.doudoupay;
 
-import alipay.manage.api.channel.util.ChannelInfo;
 import alipay.manage.api.channel.util.shenfu.PayUtil;
+import alipay.manage.api.config.ChannelInfo;
 import alipay.manage.api.config.PayOrderService;
-import alipay.manage.bean.DealOrderApp;
 import alipay.manage.bean.UserInfo;
 import alipay.manage.service.UserInfoService;
 import cn.hutool.core.util.StrUtil;
@@ -18,10 +17,7 @@ import otc.bean.dealpay.Withdraw;
 import otc.common.PayApiConstant;
 import otc.result.Result;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Locale;
 import java.util.Map;
 
 @Component("DouDouWit")

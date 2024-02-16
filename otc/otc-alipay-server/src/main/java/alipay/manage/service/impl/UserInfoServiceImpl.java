@@ -319,9 +319,6 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     @Override
     public List<UserInfo> finauserAll(String userId) {
-        if (StrUtil.isEmpty(userId)) {
-            return userInfoMapper.findAll();
-        }
         List<UserInfo> userList = new ArrayList<>();
         UserInfo user = userInfoMapper.findUserByUserId(userId);
         userList.add(user);

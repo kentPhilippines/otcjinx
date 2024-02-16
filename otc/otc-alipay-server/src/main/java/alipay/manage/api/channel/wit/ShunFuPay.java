@@ -1,7 +1,7 @@
 package alipay.manage.api.channel.wit;
 
-import alipay.manage.api.channel.util.ChannelInfo;
 import alipay.manage.api.channel.util.qiangui.MD5;
+import alipay.manage.api.config.ChannelInfo;
 import alipay.manage.api.config.PayOrderService;
 import alipay.manage.bean.UserInfo;
 import alipay.manage.service.UserInfoService;
