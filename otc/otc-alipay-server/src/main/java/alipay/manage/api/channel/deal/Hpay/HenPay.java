@@ -33,7 +33,7 @@ import java.util.Map;
 
 @Component("HenPay")
 public class HenPay extends PayOrderService {
-    @Value("${otc.payInfo.url}")
+    @Value("${otc.payInfo.url:''}")
     public   String url;
     private static final String MARS = "SHENFU";
     private static SimpleDateFormat d = new SimpleDateFormat("YYYYMMDDhhmmss");
