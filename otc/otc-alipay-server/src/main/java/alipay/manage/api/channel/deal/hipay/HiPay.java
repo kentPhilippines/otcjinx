@@ -1,6 +1,6 @@
 package alipay.manage.api.channel.deal.hipay;
 
-import alipay.manage.api.channel.util.ChannelInfo;
+import alipay.manage.api.config.ChannelInfo;
 import alipay.manage.api.config.PayOrderService;
 import alipay.manage.bean.DealOrderApp;
 import alipay.manage.bean.UserInfo;
@@ -115,7 +115,7 @@ public class HiPay extends PayOrderService {
         // /*    String error_code = jsonObject1.getStr("error_code");
 
         if ("1".equals(JSONUtil.parseObj(ruselt).getStr("code"))) {
-            orderServiceImpl.updatePayer(payInfo, orderId);
+//            orderServiceImpl.updatePayer(payInfo, orderId);
             String url =  JSONUtil.parseObj(ruselt).getJSONObject("data").getStr("payurl");
             return Result.buildSuccessResult(url);
         } else {
