@@ -22,7 +22,7 @@ public class FactoryForStrategy {
     public PayService getStrategy(String component) throws Exception{
     	PayService strategy = strategys.get(component);
         if (strategy == null) {
-            throw new RuntimeException("没有这个实现类，参数配置错误");
+            throw new RuntimeException("没有这个实现类，参数配置错误"+component);
         }
         return strategy;
     }
