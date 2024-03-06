@@ -90,3 +90,7 @@ spring:
   logging:
     level:
       alipay.*: debug
+
+otc:
+  payInfo:
+    url:

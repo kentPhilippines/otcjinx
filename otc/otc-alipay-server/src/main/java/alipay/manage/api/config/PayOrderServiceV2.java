@@ -68,7 +68,17 @@ public class PayOrderServiceV2 implements PayServiceV2 {
         return Result.buildFail().toJson();
     }
 
-    public Result deal(DealOrderApp dealOrderApp, String channelId, String notify) {
+    public Result deal(ChannelLocalUtil util , DealOrder order) {
+        Result result = util.channelDealPush(order, getChannelInfo(order.getOrderQrUser(), order.getPayType()));
+        return result;
+    }
+    public Result withdraw(ChannelLocalUtil util ,  DealWit wit ) {
+        Result result = util.channelWitPush(wit, getChannelInfo(wit.getChanenlId(), wit.getWitType()));
+        return result;
+    }
+
+
+        public Result deal(DealOrderApp dealOrderApp, String channelId, String notify) {
         UserInfo userinfo = userInfoServiceImpl.findDealUrl(dealOrderApp.getOrderAccount());//查询渠道账户
         String dealUrl = userinfo.getDealUrl();
         if (StrUtil.isEmpty(dealUrl)) {
@@ -93,6 +103,11 @@ public class PayOrderServiceV2 implements PayServiceV2 {
         return deal(dealOrderApp, payType, "");
     }
 
+    @Override
+    public Result withdraw(Withdraw wit) {
+        return null;
+    }
+
     public Result withdraw(Withdraw wit, String channelId, String notify) {
         UserInfo userinfo = userInfoServiceImpl.findDealUrl(wit.getUserId());//查询渠道账户
         String dealUrl = userinfo.getDealUrl();
@@ -108,6 +123,7 @@ public class PayOrderServiceV2 implements PayServiceV2 {
     public Result withdraw(Withdraw wit, String channelId) {
         return withdraw(wit, channelId, "");
     }
+
 
     @Override
     public Result findBalance(String channelId, String payType) {
@@ -162,7 +178,6 @@ public class PayOrderServiceV2 implements PayServiceV2 {
         log.info("【开始创建本地订单，当前创建订单的商户订单为：" + wit.toString() + "】");
         log.info("【当前交易的渠道账号为：" + channeId + "】");
         DealWit order = new DealWit();
-        UserInfo userinfo = userInfoServiceImpl.findDealUrl(channeId);//查询渠道账户
         ChannelFee channelFee = channelFeeDao.findChannelFee(channeId, wit.getWitType());
         order.setAssociatedId(wit.getOrderId());
         order.setActualAmount(wit.getAmount().add(new BigDecimal(channelFee.getChannelDFee())));

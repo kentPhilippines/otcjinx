@@ -1,6 +1,6 @@
 package alipay.manage.api.channel.deal.wt;
 
-import alipay.manage.api.channel.util.ChannelInfo;
+import alipay.manage.api.config.ChannelInfo;
 import alipay.manage.api.config.PayOrderService;
 import alipay.manage.bean.DealOrderApp;
 import alipay.manage.bean.UserInfo;
@@ -11,7 +11,6 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
-import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import cn.hutool.log.Log;

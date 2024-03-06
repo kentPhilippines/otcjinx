@@ -164,4 +164,8 @@ public interface DealOrderMapper {
     void updateOrderRequest(@Param("orderId")String orderId, @Param("request") String request);
     @Update(" update alipay_deal_order set response = #{response}  where orderId = #{orderId}")
     void updateOrderResponse(@Param("orderId") String orderId, @Param("response") String response);
+
+    @CacheEvict(value = ORDER_INFO_CHANNEL, allEntries = true)
+    @Update("update alipay_deal_order set   payer  = #{payer}   where orderId = #{orderId}")
+    void updatePayer(@Param("payer")String payer,@Param("orderId") String orderId);
 }

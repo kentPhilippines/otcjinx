@@ -1,12 +1,11 @@
 package alipay.manage.api.channel.deal.qihang;
 
-import alipay.manage.api.channel.util.ChannelInfo;
+import alipay.manage.api.config.ChannelInfo;
 import alipay.manage.api.config.NotfiyChannel;
 import alipay.manage.bean.DealOrder;
 import alipay.manage.mapper.WithdrawMapper;
 import alipay.manage.service.OrderService;
 import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONUtil;
 import cn.hutool.log.Log;
@@ -17,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import otc.bean.dealpay.Withdraw;
 import otc.common.PayApiConstant;
 import otc.result.Result;
 
@@ -26,7 +24,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import java.util.Base64;
-import java.util.HashMap;
 import java.util.Map;
 
 @RequestMapping(PayApiConstant.Notfiy.NOTFIY_API_WAI)

@@ -9,6 +9,7 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
+import com.google.common.collect.Maps;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,13 +36,14 @@ public class CGWitNotify extends NotfiyChannel {
         log.info("【收到CG支付成功回调】");
         String clientIP = HttpUtil.getClientIP(req);
         log.info("【当前回调ip为：" + clientIP + "】");
-        Map map = PayUtil.ipMap;
-        Object object = map.get(clientIP);
-        if (ObjectUtil.isNull(object)) {
-            log.info("【当前回调ip为：" + clientIP + "，固定IP登记为：" + map.toString() + "】");
-            log.info("【当前回调ip不匹配】");
-            return "ip errer";
-        }
+        Map map = Maps.newHashMap();
+//        Map map = PayUtil.ipMap;
+//        Object object = map.get(clientIP);
+//        if (ObjectUtil.isNull(object)) {
+//            log.info("【当前回调ip为：" + clientIP + "，固定IP登记为：" + map.toString() + "】");
+//            log.info("【当前回调ip不匹配】");
+//            return "ip errer";
+//        }
 
 
         /**

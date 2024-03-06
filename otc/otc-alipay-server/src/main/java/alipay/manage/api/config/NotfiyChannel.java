@@ -1,7 +1,6 @@
 package alipay.manage.api.config;
 
 import alipay.config.redis.RedisLockUtil;
-import alipay.manage.api.channel.util.ChannelInfo;
 import alipay.manage.bean.ChannelFee;
 import alipay.manage.bean.DealOrder;
 import alipay.manage.bean.UserInfo;
@@ -15,6 +14,8 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
+import com.alibaba.fastjson.JSON;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import otc.api.alipay.Common;
@@ -22,6 +23,12 @@ import otc.bean.dealpay.Withdraw;
 import otc.result.Result;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -188,8 +195,42 @@ public abstract class NotfiyChannel {
     void pushDeal(String orderId, String msg, String ip, boolean flag) {
         redisTemplate.convertAndSend("order-deal", orderId + mark + ip);//推送消息
     }
+    public String getKey(String channelNo) {
+    UserInfo info = userInfoServiceImpl.findPassword(channelNo);
+   //     UserInfo info = userInfoServiceImpl.findUserNode(channelNo);
+        return info.getPayPasword();
+    }
 
     void pushWit(String orderId, String ip) {
         redisTemplate.convertAndSend("order-wit", orderId + mark + ip);//推送消息
     }
+
+
+
+    public Map<String, Object> getRequestBody(HttpServletRequest request ) {
+        Map<String, Object> map = new HashMap<>();
+        Enumeration<String> parameterNames = request.getParameterNames();
+        while (parameterNames.hasMoreElements()) {
+            String key = parameterNames.nextElement();
+            String value = request.getParameter(key);
+            map.put(key, value);
+        }
+        Map<String, Object> params = new HashMap<>();
+        BufferedReader br;
+        try {
+            br = request.getReader();
+            String str, wholeParams = "";
+            while ((str = br.readLine()) != null) {
+                wholeParams += str;
+            }
+            if (StringUtils.isNotBlank(wholeParams)) {
+                params = JSON.parseObject(wholeParams, Map.class);
+            }
+        } catch (IOException e) {
+            return params;
+        }
+        map.putAll(params);
+        return map;
+    }
+
 }

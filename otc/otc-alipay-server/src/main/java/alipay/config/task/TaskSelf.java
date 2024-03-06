@@ -84,7 +84,6 @@ public class TaskSelf {
         log.info("【开始进行每日账户清算】");
         userTaskImpl.userAddTask();
         userTaskImpl.userTask();
-
     }
 
 

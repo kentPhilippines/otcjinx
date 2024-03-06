@@ -131,7 +131,7 @@ public class OrderTask {
 	/**
 	 * 异步推送订单
 	 */
-	public void orderWitTask() {
+	public synchronized void orderWitTask() {
 		RedisLockUtil.redisLock(KEY_WIT_PUSH + "lock");
 		List<Withdraw> orderList = withdrawServiceImpl.findNotPush();
 		for (Withdraw order : orderList) {

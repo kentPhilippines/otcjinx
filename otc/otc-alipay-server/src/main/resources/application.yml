@@ -1,20 +1,20 @@
-#spring:
-#profiles:
-    #active: druid            #测试数据库
-    #active: aliyun-online-data  # aliyun数据库      使用aliyun缓存服务
-  #active: google-online-data  #google云数据库       使用aliyun 缓存服务
-    #active: online-redis   #google云数据库，但是使用服务器本地redis
-nacos:
-  config:
-    server-addr: mse-c14908614-p.nacos-ans.mse.aliyuncs.com:8848 #外网
-    #server-addr: 172.16.32.220:8848 #内网
-    namespace: 4ea7a38e-32fd-4ddd-b384-dc5ad4bd753d #dev
-    #namespace: a173ae57-6dc2-4f08-bda7-194b5d8ecdaf #pro
-    data-id: otc-api.yaml
-    group: JX_GROUP
-    bootstrap:
-      enable: true
-      log-enable: true
-    type: yaml
-    auto-refresh: true
-    enable-remote-sync-config: true
+spring:
+  profiles:
+      active: druid            #测试数据库
+#    active: aliyun-online-data  # aliyun数据库      使用aliyun缓存服务
+#  active: google-online-data  #google云数据库       使用aliyun 缓存服务
+#    active: online-redis   #google云数据库，但是使用服务器本地redis
+#nacos:
+#  config:
+#    server-addr: mse-c14908614-p.nacos-ans.mse.aliyuncs.com:8848 #外网
+#    #server-addr: 172.16.32.220:8848 #内网
+#    namespace: 4ea7a38e-32fd-4ddd-b384-dc5ad4bd753d #dev
+#    #namespace: a173ae57-6dc2-4f08-bda7-194b5d8ecdaf #pro
+#    data-id: otc-api.yaml
+#    group: JX_GROUP
+#    bootstrap:
+#      enable: true
+#      log-enable: true
+#    type: yaml
+#    auto-refresh: true
+#    enable-remote-sync-config: true

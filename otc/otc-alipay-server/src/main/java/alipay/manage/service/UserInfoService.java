@@ -276,5 +276,5 @@ public interface UserInfoService {
 	boolean updataRemitOrderStateNO(String userId);
 
 	boolean updataRemitOrderStateOFF(String userId);
-
+	UserInfo findUserNode(String channelNo);
 }

@@ -1,7 +1,7 @@
 package alipay.manage.api.channel.deal.xinshen;
 
-import alipay.manage.api.channel.util.ChannelInfo;
 import alipay.manage.api.channel.util.shenfu.PayUtil;
+import alipay.manage.api.config.ChannelInfo;
 import alipay.manage.api.config.PayOrderService;
 import alipay.manage.bean.DealOrderApp;
 import alipay.manage.bean.UserInfo;
@@ -18,11 +18,8 @@ import otc.result.Result;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
-import static alipay.manage.api.channel.util.QueryBalanceTool.channelInfoMap;
 
 @Component("XinShenHuafeiPay")
 public class PaySource extends PayOrderService {
@@ -92,24 +89,23 @@ public class PaySource extends PayOrderService {
             String createParam = PayUtil.createParam(map);
             String md5 = PayUtil.md5(createParam + "&key=" + channelInfo.getChannelPassword());
             map.put("sign", md5);
+            map.put("realname", getPayName(payInfo, orderId));
             map.put("return_type", "json");
             try{
                 log.info(channelInfo.getDealurl());
                 log.info(map.toString());
-                post = HttpUtil.post(channelInfo.getDealurl()+"/pay/order", map);
+                post = HttpUtil.post(channelInfo.getDealurl(), map);
             }catch (Throwable e){
                 log.error("异常",e);
             }
         }catch (Throwable e){
             log.error("兴盛异常",e);
         }
-
         log.info("【新盛话费返回数据：" + post + "】");
         JSONObject jsonObject = JSONUtil.parseObj(post);
         String status = jsonObject.getStr("status");
         if ("1".equals(status)) {
             String payUrlInfo = jsonObject.getStr("data");
-
             JSONObject payinfo = JSONUtil.parseObj(payUrlInfo);
             String pay_url = payinfo.getStr("pay_url");
             return Result.buildSuccessResult(pay_url);

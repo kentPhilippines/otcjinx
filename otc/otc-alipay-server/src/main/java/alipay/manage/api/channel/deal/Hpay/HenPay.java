@@ -1,8 +1,8 @@
 package alipay.manage.api.channel.deal.Hpay;
 
 import alipay.config.redis.RedisUtil;
-import alipay.manage.api.channel.util.ChannelInfo;
 import alipay.manage.api.channel.util.shenfu.PayUtil;
+import alipay.manage.api.config.ChannelInfo;
 import alipay.manage.api.config.PayOrderService;
 import alipay.manage.bean.DealOrderApp;
 import alipay.manage.bean.UserInfo;
@@ -21,8 +21,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import otc.common.PayApiConstant;
 import otc.result.Result;
-import otc.util.MapUtil;
-import otc.util.encode.XRsa;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -33,7 +31,7 @@ import java.util.Map;
 
 @Component("HenPay")
 public class HenPay extends PayOrderService {
-    @Value("${otc.payInfo.url}")
+    @Value("${otc.payInfo.url:''}")
     public   String url;
     private static final String MARS = "SHENFU";
     private static SimpleDateFormat d = new SimpleDateFormat("YYYYMMDDhhmmss");

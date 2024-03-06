@@ -319,9 +319,6 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     @Override
     public List<UserInfo> finauserAll(String userId) {
-        if (StrUtil.isEmpty(userId)) {
-            return userInfoMapper.findAll();
-        }
         List<UserInfo> userList = new ArrayList<>();
         UserInfo user = userInfoMapper.findUserByUserId(userId);
         userList.add(user);
@@ -393,5 +390,11 @@ public class UserInfoServiceImpl implements UserInfoService {
     public boolean updataRemitOrderStateOFF(String userId) {
         int a = userInfoDao.updataRemitOrderStateOFF(userId);
         return a > 0 && a < 2;
+    }
+
+    @Override
+    public UserInfo findUserNode(String channelNo) {
+
+        return  userInfoDao.findUserNode(channelNo);
     }
 }

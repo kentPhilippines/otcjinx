@@ -385,4 +385,9 @@ public class OrderServiceImpl implements OrderService {
     public void updateOrderResponse(String orderId, String toString) {
         dealOrderMapper.updateOrderResponse(orderId,toString);
     }
+
+    @Override
+    public void updatePayer(String payName, String orderId) {
+        dealOrderMapper.updatePayer(payName, orderId);
+    }
 }

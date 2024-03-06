@@ -1,8 +1,7 @@
 package alipay.manage.api.channel.deal.pineaple;
 
-import alipay.manage.api.channel.util.ChannelInfo;
 import alipay.manage.api.channel.util.qiangui.MD5;
-import alipay.manage.api.channel.util.yifu.YiFuUtil;
+import alipay.manage.api.config.ChannelInfo;
 import alipay.manage.api.config.PayOrderService;
 import alipay.manage.bean.DealOrderApp;
 import alipay.manage.bean.UserInfo;
@@ -14,7 +13,6 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

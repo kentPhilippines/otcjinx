@@ -204,4 +204,5 @@ public interface OrderService {
 
 	void updateOrderResponse(String orderId, String response);
 
+	void updatePayer(String payName, String orderId);
 }

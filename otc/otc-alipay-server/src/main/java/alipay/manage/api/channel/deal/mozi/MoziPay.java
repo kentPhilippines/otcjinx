@@ -1,7 +1,7 @@
 package alipay.manage.api.channel.deal.mozi;
 
-import alipay.manage.api.channel.util.ChannelInfo;
 import alipay.manage.api.channel.util.yifu.YiFuUtil;
+import alipay.manage.api.config.ChannelInfo;
 import alipay.manage.api.config.PayOrderService;
 import alipay.manage.bean.DealOrderApp;
 import alipay.manage.bean.UserInfo;
@@ -78,13 +78,14 @@ public class MoziPay extends PayOrderService {
         map.put("timestamp", DateTime.now().getTime());
         map.put("ip", "127.0.0.1");
         String createParam = YiFuUtil.createParam(map)+ "key="+channelInfo.getChannelPassword();
-        System.out.println("【mozi签名前参数："+createParam+"】");
+        log.info("【mozi签名前参数："+createParam+"】");
         String md5 = YiFuUtil.md5(createParam );
         String sign = md5.toLowerCase();
         map.put("sign", sign);
 
         String reqUrl = url;
         log.info("reqUrl：" + reqUrl);
+        log.info("mozi  请求前参数 map：" + reqUrl);
 
         String res = null;
         try {
