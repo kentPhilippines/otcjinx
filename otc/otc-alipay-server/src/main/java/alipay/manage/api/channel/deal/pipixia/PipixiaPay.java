@@ -1,7 +1,8 @@
 package alipay.manage.api.channel.deal.pipixia;
 
 import alipay.config.redis.RedisUtil;
-import alipay.manage.api.channel.util.ChannelInfo;
+
+import alipay.manage.api.config.ChannelInfo;
 import alipay.manage.api.config.PayOrderService;
 import alipay.manage.bean.DealOrderApp;
 import alipay.manage.bean.UserInfo;
@@ -12,7 +13,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import com.mashape.unirest.http.HttpResponse;
+
 import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,7 +25,7 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-@Component("CangQiongPay")
+@Component("PipixiaPay")
 public class PipixiaPay extends PayOrderService {
     @Autowired
     OrderService orderServiceImpl;
@@ -100,7 +101,6 @@ public class PipixiaPay extends PayOrderService {
         map.put("notify_url", notify_url);
         String sign = sign(map,channelInfo.getChannelPassword(),random);
         map.put("sign", sign);
-        HttpResponse<String> response = null;
         log.info(" 请求参数: " + map.toString());
         String post = HttpUtil.post(channelInfo.getDealurl() , MapUrlParamsUtils.getUrlParamsByMap(map));
         log.info("请求三方响应：" + post);
