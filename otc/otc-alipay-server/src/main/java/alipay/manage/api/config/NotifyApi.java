@@ -33,8 +33,28 @@ public class NotifyApi {
         Enumeration<String> parameterNames = req.getParameterNames();
         while (parameterNames.hasMoreElements()) {
             String key = parameterNames.nextElement();
-            String value  = req.getParameter(key);
-            map.put(key,value);
+            String value = req.getParameter(key);
+            map.put(key, value);
+        }
+        Map<String, Object> reqMap = getRequestBody(req);
+        map.putAll(reqMap);
+        try {
+            String s = factoryForStrategy.getStrategy(method).dealNotify(map);
+            return s;
+        } catch (Throwable e) {
+            return "";
+        }
+    }
+
+    @RequestMapping(NOTIFY_TYPE_JSON + "/{method}/deal")
+    public String notifyDealJson(@PathVariable(name = "method") String method, HttpServletRequest req, HttpServletResponse res) {
+
+        Map<String, Object> map = new HashMap<>();
+        Enumeration<String> parameterNames = req.getParameterNames();
+        while (parameterNames.hasMoreElements()) {
+            String key = parameterNames.nextElement();
+            String value = req.getParameter(key);
+            map.put(key, value);
         }
         Map<String, Object> reqMap = getRequestBody(req);
         map.putAll(reqMap);

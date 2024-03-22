@@ -2,6 +2,7 @@ package alipay.manage.bean;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -13,6 +14,7 @@ import java.util.List;
  * <p>码商交易订单</p>
  * @author K
  */
+@Data
 public class DealOrder implements Serializable{
 	private static final long serialVersionUID = 1L;
     private Integer id;						//数据id

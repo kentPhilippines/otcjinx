@@ -136,10 +136,10 @@ public class CangQiongPay extends PayOrderService {
         orderAmount = new BigDecimal(800);
         orderId = System.currentTimeMillis() + "";
         channelInfo = new ChannelInfo();
-        channelInfo.setChannelPassword("0c0845d258547d37f10dbd39bca51343");
-        channelInfo.setChannelAppId("100377");
-        channelInfo.setChannelType("CnyNumber");
-        channelInfo.setDealurl("http://web233xinyuapipay.hengaofangfuwuo95.com");
+        channelInfo.setChannelPassword("kilTfpMxZYyferulDBTNLHyEmxEfibBr");
+        channelInfo.setChannelAppId("10007");
+        channelInfo.setChannelType("DigitalRMBPay");
+        channelInfo.setDealurl("https://gateway.feifanpingtai.com");
         CangQiongPay pay = new CangQiongPay();
         Result order = pay.createOrder(dealOrderApp, notify, orderAmount, orderId, channelInfo);
 

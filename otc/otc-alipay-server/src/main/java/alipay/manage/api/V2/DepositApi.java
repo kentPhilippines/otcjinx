@@ -33,13 +33,13 @@ public class DepositApi {
 
     /**
      * 创建代收订单
+     *
      * @param depositRequestVO
      * @return
      */
     @PostMapping("/pay")
     public Result dealAppPay(HttpServletRequest request, @RequestBody DepositRequestVO depositRequestVO) {
-   ///     log.info("v2 depsoit request:{}", JSONUtil.toJsonStr(depositRequestVO));
-
-        return dealPay.deal(request,depositRequestVO);
+        log.info("v2 depsoit request:{}", JSONUtil.toJsonStr(depositRequestVO));
+        return dealPay.deal(request, depositRequestVO);
     }
 }

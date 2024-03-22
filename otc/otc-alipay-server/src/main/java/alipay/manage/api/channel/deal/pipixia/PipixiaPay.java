@@ -64,16 +64,15 @@ public class PipixiaPay extends PayOrderService {
     }
 
     /**
-     * mchid	            string	是	是	商户id
-     * out_trade_no	        string	是	是	商户订单id 唯一 不能重复 重复会创建订单失败 由商户控制
-     * amount	            double	是	是	金额 最大两位小数
-     * channel	            string	是	是	渠道 见附件 渠道列表
-     * notify_url	        string	是	是	异步通知地址 必须http:或者https:格式
-     * return_url	        string	是	是	同步通知地址 必须http:或者https:格式
-     * time_stamp	        string	是	是	时间如20180824030711
-     * body	                string	是	是	宝转卡 必须传支付宝用户名 否则无法到账其它请填１２３
-     * sign	                string	是	否	签名 见签名规则
-     *
+
+     *  member_code     string 必选 16 商户号
+     *  req_time        int 必选 11 接口请求时间 （上海时区）列如 1705151479
+     *  rk              string 必选 32 随机32位字母（a-zA-Z）
+     *  out_trade_no    string 必选 50 平台订单号
+     *  pay_amount      string 必选 8 支付金额，单位元。支持小数点后两位 如：0.1
+     *  product_code    string 必选 16 产品代号：如ALISCAN
+     *  notify_url      string 必选 250 回调地址
+     *  sign            string 必选 250 签名
      * @param dealOrderApp
      * @param notify
      * @param orderAmount
@@ -108,10 +107,10 @@ public class PipixiaPay extends PayOrderService {
         JSONObject jsonObject = JSONUtil.parseObj(post);
         String code = jsonObject.getStr("code");
         if ("0".equals(code)) {
-            String data = jsonObject.getStr("pay_url");
+            String data = jsonObject.getJSONObject("data").getStr("pay_url");
             return Result.buildSuccessResult(data);
         } else {
-            orderDealEr(orderId, jsonObject.getStr("msg"));
+            orderDealEr(orderId, post );
             return Result.buildFailMessage(jsonObject.getStr("msg"));
         }
     }
